@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace badger
+namespace badger_view
 {
     public class Startup
     {
@@ -57,10 +57,6 @@ namespace badger
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-            
-            routes.MapRoute(
-                    name: "test",
-                    template: "{controller=Test}/{action=Index}/{id?}");
             });
         }
     }
