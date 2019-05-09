@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "serialService", "serialService\serialService.csproj", "{B7848661-107E-4F8F-82F1-2B63D2EC987F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "itemService", "serialService\itemService.csproj", "{B7848661-107E-4F8F-82F1-2B63D2EC987F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "badger_Api", "badger_main\badger_Api.csproj", "{D00DF533-2648-478A-9042-63A3EAD8506A}"
 EndProject
