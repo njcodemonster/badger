@@ -15,6 +15,7 @@ namespace itemService.Models
         {
         }
 
+        public virtual DbSet<EventTypes> EventTypes { get; set; }
         public virtual DbSet<ItemEvents> ItemEvents { get; set; }
         public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<ItemStatus> ItemStatus { get; set; }
@@ -23,13 +24,41 @@ namespace itemService.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL(@"Server=itemsdb.cl35upw5sngr.us-west-1.rds.amazonaws.com;database=itemsdb;uid=admin;pwd=Captain2018.;");
-            }
+           }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<EventTypes>(entity =>
+            {
+                entity.HasKey(e => e.EventTypeId);
+
+                entity.ToTable("event_types", "itemsdb");
+
+                entity.Property(e => e.EventTypeId)
+                    .HasColumnName("event_type_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.CreatedAt2)
+                    .HasColumnName("created_at_2")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EventTypeDescription)
+                    .HasColumnName("event_type_description")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EventTypeName)
+                    .HasColumnName("event_type_name")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<ItemEvents>(entity =>
             {
                 entity.HasKey(e => e.ItemEventId);
