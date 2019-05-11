@@ -13,5 +13,7 @@ namespace itemService.Models
         public string EventNotes { get; set; }
         public int UserId { get; set; }
         public double CreatedAt { get; set; }
+
+        public virtual EventTypes EventType { get; set; }
     }
 }

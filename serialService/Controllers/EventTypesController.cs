@@ -26,7 +26,20 @@ namespace itemService.Controllers
         {
             return await _context.EventTypes.ToListAsync();
         }
+        [HttpGet("name/{searchterm}")]
+        public async Task<ActionResult<IEnumerable<EventTypes>>> GetEventTypes(string searchterm)
+        {
+            //var x = _context.EventTypes.FromSql<EventTypes>();
+            searchterm = searchterm.Split('#')[0];
+            var eventTypes = _context.EventTypes.Where(x => x.EventTypeName == searchterm).ToList();
 
+            if (eventTypes == null)
+            {
+                return NotFound();
+            }
+
+            return eventTypes;
+        }
         // GET: api/EventTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<EventTypes>> GetEventTypes(int id)

@@ -5,10 +5,16 @@ namespace itemService.Models
 {
     public partial class EventTypes
     {
+        public EventTypes()
+        {
+            ItemEvents = new HashSet<ItemEvents>();
+        }
+
         public int EventTypeId { get; set; }
         public string EventTypeName { get; set; }
         public string EventTypeDescription { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public string CreatedAt2 { get; set; }
+
+        public virtual ICollection<ItemEvents> ItemEvents { get; set; }
     }
 }
