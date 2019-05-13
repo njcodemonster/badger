@@ -17,18 +17,22 @@ namespace itemService.Models
 
         public virtual DbSet<EventTypes> EventTypes { get; set; }
         public virtual DbSet<ItemEvents> ItemEvents { get; set; }
-        public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<ItemStatus> ItemStatus { get; set; }
+        public virtual DbSet<Items> Items { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-           }
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+              //  optionsBuilder.UseMySQL("Server=itemsdb.cl35upw5sngr.us-west-1.rds.amazonaws.com;database=itemsdb;uid=admin;pwd=Captain2018.;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+
             modelBuilder.Entity<EventTypes>(entity =>
             {
                 entity.HasKey(e => e.EventTypeId);
@@ -42,11 +46,6 @@ namespace itemService.Models
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                entity.Property(e => e.CreatedAt2)
-                    .HasColumnName("created_at_2")
-                    .HasMaxLength(45)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.EventTypeDescription)
                     .HasColumnName("event_type_description")
@@ -65,6 +64,12 @@ namespace itemService.Models
 
                 entity.ToTable("item_events", "itemsdb");
 
+                entity.HasIndex(e => e.EventTypeId)
+                    .HasName("event_type_id_idx");
+
+                entity.HasIndex(e => e.ItemId)
+                    .HasName("item_id_idx");
+
                 entity.Property(e => e.ItemEventId)
                     .HasColumnName("item_event_id")
                     .HasColumnType("int(11)")
@@ -75,8 +80,8 @@ namespace itemService.Models
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
                 entity.Property(e => e.EventNotes)
-                    .IsRequired()
-                    .HasColumnName("event_notes");
+                    .HasColumnName("event_notes")
+                    .IsUnicode(false);
 
                 entity.Property(e => e.EventTypeId)
                     .HasColumnName("event_type_id")
@@ -93,6 +98,30 @@ namespace itemService.Models
                 entity.Property(e => e.UserId)
                     .HasColumnName("user_id")
                     .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.EventType)
+                    .WithMany(p => p.ItemEvents)
+                    .HasForeignKey(d => d.EventTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("event_type_id");
+            });
+
+            modelBuilder.Entity<ItemStatus>(entity =>
+            {
+                entity.ToTable("item_status", "itemsdb");
+
+                entity.Property(e => e.ItemStatusId)
+                    .HasColumnName("item_status_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnName("description")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             });
 
             modelBuilder.Entity<Items>(entity =>
@@ -101,11 +130,8 @@ namespace itemService.Models
 
                 entity.ToTable("items", "itemsdb");
 
-                entity.HasIndex(e => e.BagCode)
-                    .HasName("bag_code");
-
-                entity.HasIndex(e => e.SlotNumber)
-                    .HasName("slot_number");
+                entity.HasIndex(e => e.ItemStatusId)
+                    .HasName("item_status_id_idx");
 
                 entity.Property(e => e.ItemId)
                     .HasColumnName("item_id")
@@ -144,7 +170,8 @@ namespace itemService.Models
 
                 entity.Property(e => e.RaStatus)
                     .HasColumnName("ra_status")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("0");
 
                 entity.Property(e => e.Sku)
                     .IsRequired()
@@ -175,23 +202,12 @@ namespace itemService.Models
                 entity.Property(e => e.VendorId)
                     .HasColumnName("vendor_id")
                     .HasColumnType("int(11)");
-            });
 
-            modelBuilder.Entity<ItemStatus>(entity =>
-            {
-                entity.ToTable("item_status", "itemsdb");
-
-                entity.Property(e => e.ItemStatusId)
-                    .HasColumnName("item_status_id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnName("description");
-
-                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+                entity.HasOne(d => d.ItemStatus)
+                    .WithMany(p => p.Items)
+                    .HasForeignKey(d => d.ItemStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("item_status_id");
             });
         }
     }

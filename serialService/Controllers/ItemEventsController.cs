@@ -9,7 +9,7 @@ using itemService.Models;
 
 namespace itemService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("items/[controller]")]
     [ApiController]
     public class ItemEventsController : ControllerBase
     {
