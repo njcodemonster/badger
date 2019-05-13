@@ -12,5 +12,9 @@ namespace badger_view.Controllers
         {
             return View("Index");
         }
+        public IActionResult Single()
+        {
+            return View();
+        }
     }
 }

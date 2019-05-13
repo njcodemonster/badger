@@ -4,12 +4,15 @@
 }
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-12">
         <h2 class="text-info">Open Purchase Orders (5)</h2>
     </div>
     <div class="col-md-9">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalpo1">
-            Add New PO
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalpo1">
+            Add New P.O.
+        </button>
+        <button type="button" class="btn btn-primary">
+            Add New Vendor
         </button>
     </div>
 </div>
@@ -25,7 +28,7 @@
             <th>Shipment Window</th>
             <th>Last Change</th>
             <th>Status</th>
-            <th>Check In</th>
+            <th>Check-in</th>
             <th>Edit P.O.</th>
             <th></th>
             <th></th>
@@ -35,7 +38,7 @@
     </thead>
     <tbody>
         <tr style="background-color: #FED6D7;">
-            <td>278399
+            <td>278399</td>
             <td>3/2/2018</td>
             <td>ASTR</td>
             <td>6</td>
@@ -51,9 +54,11 @@
                 <button type="button" class="btn btn-light">Edit</button>
             </td>
             <td>
-                <a href="#"><i class="far fa-edit"></i></a>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
             </td>
-            <td></td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
             <td>
                 <a href="#">Claim</a>
             </td>
@@ -62,7 +67,7 @@
             </td>
         </tr>
         <tr>
-            <td>278399
+            <td>278399</td>
             <td>3/2/2018</td>
             <td>ASTR</td>
             <td>6</td>
@@ -77,8 +82,12 @@
             <td>
                 <button type="button" class="btn btn-light">Edit</button>
             </td>
-            <td></td>
-            <td></td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
             <td>
                 <a href="#">Claim</a>
             </td>
@@ -87,7 +96,7 @@
             </td>
         </tr>
         <tr>
-            <td>278399
+            <td>278399</td>
             <td>3/2/2018</td>
             <td>ASTR</td>
             <td>6</td>
@@ -95,15 +104,19 @@
             <td>3</td>
             <td>3/7-3/21/2018</td>
             <td>17 Days</td>
-            <td>In Progress</td>
+            <td><span class="text-danger"><b>Not Received</b></span></td>
             <td>
-                <button type="button" class="btn btn-success">Checked-in</button>
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalcheckin">Check-in</button>
             </td>
             <td>
                 <button type="button" class="btn btn-light">Edit</button>
             </td>
-            <td></td>
-            <td></td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
             <td>
                 <a href="#">Claim</a>
             </td>
@@ -112,7 +125,7 @@
             </td>
         </tr>
         <tr>
-            <td>278399
+            <td>278399</td>
             <td>3/2/2018</td>
             <td>ASTR</td>
             <td>6</td>
@@ -127,8 +140,12 @@
             <td>
                 <button type="button" class="btn btn-light">Edit</button>
             </td>
-            <td></td>
-            <td></td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
             <td>
                 <a href="#">Claim</a>
             </td>
@@ -137,7 +154,7 @@
             </td>
         </tr>
         <tr>
-            <td>278399
+            <td>278399</td>
             <td>3/2/2018</td>
             <td>ASTR</td>
             <td>6</td>
@@ -152,8 +169,12 @@
             <td>
                 <button type="button" class="btn btn-light">Edit</button>
             </td>
-            <td></td>
-            <td></td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
             <td>
                 <a href="#">Claim</a>
             </td>
@@ -162,7 +183,7 @@
             </td>
         </tr>
         <tr>
-            <td>278399
+            <td>278399</td>
             <td>3/2/2018</td>
             <td>ASTR</td>
             <td>6</td>
@@ -177,8 +198,12 @@
             <td>
                 <button type="button" class="btn btn-light">Edit</button>
             </td>
-            <td></td>
-            <td></td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
             <td>
                 <a href="#">Claim</a>
             </td>
@@ -198,7 +223,7 @@
             <th>Shipment Window</th>
             <th>Last Change</th>
             <th>Status</th>
-            <th>Check In</th>
+            <th>Check-in</th>
             <th>Edit P.O.</th>
             <th></th>
             <th></th>
@@ -379,6 +404,70 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Check-in -->
+<div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Purchase Order #294854 - Stylestalker - Check-in</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Tracking Number</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Upload Invoices</label>
+                                <input type="file" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Shipping &amp; Handling</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-group col-md-5">
+                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-group col-md-5">
+                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-group col-md-5">
+                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin: 0 auto;">
+                <button type="button" class="btn btn-success">Check-in</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
