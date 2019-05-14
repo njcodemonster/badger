@@ -4,17 +4,236 @@
 }
 
 <div class="row">
-    <div class="col-6">
-        <h2 class="text-info">Purchase Order</h2>
+    <div class="col-md-3 col-sm-12">
+        <h2 class="text-info">Open Purchase Orders (5)</h2>
     </div>
-    <div class="col-6 text-right">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalpo1">
-            Add New PO
+    <div class="col-md-9">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalpo1">
+            Add New P.O.
+        </button>
+        <button type="button" class="btn btn-primary">
+            Add New Vendor
         </button>
     </div>
 </div>
+<table id="openpo" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>P.O. Number</th>
+            <th>Order Date</th>
+            <th>Vendor</th>
+            <th>Styles</th>
+            <th>Photos</th>
+            <th>Remaining</th>
+            <th>Shipment Window</th>
+            <th>Last Change</th>
+            <th>Status</th>
+            <th>Check-in</th>
+            <th>Edit P.O.</th>
+            <th></th>
+            <th></th>
+            <th>Inspect</th>
+            <th>Go Live</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background-color: #FED6D7;">
+            <td>278399</td>
+            <td>3/2/2018</td>
+            <td>ASTR</td>
+            <td>6</td>
+            <td>5</td>
+            <td>3</td>
+            <td>3/7-3/21/2018</td>
+            <td>17 Days</td>
+            <td>In Progress</td>
+            <td>
+                <button type="button" class="btn btn-success">Checked-in</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+        </tr>
+        <tr>
+            <td>278399</td>
+            <td>3/2/2018</td>
+            <td>ASTR</td>
+            <td>6</td>
+            <td>5</td>
+            <td>3</td>
+            <td>3/7-3/21/2018</td>
+            <td>17 Days</td>
+            <td>In Progress</td>
+            <td>
+                <button type="button" class="btn btn-success">Checked-in</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+        </tr>
+        <tr>
+            <td>278399</td>
+            <td>3/2/2018</td>
+            <td>ASTR</td>
+            <td>6</td>
+            <td>5</td>
+            <td>3</td>
+            <td>3/7-3/21/2018</td>
+            <td>17 Days</td>
+            <td><span class="text-danger"><b>Not Received</b></span></td>
+            <td>
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalcheckin">Check-in</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+        </tr>
+        <tr>
+            <td>278399</td>
+            <td>3/2/2018</td>
+            <td>ASTR</td>
+            <td>6</td>
+            <td>5</td>
+            <td>3</td>
+            <td>3/7-3/21/2018</td>
+            <td>17 Days</td>
+            <td>In Progress</td>
+            <td>
+                <button type="button" class="btn btn-success">Checked-in</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+        </tr>
+        <tr>
+            <td>278399</td>
+            <td>3/2/2018</td>
+            <td>ASTR</td>
+            <td>6</td>
+            <td>5</td>
+            <td>3</td>
+            <td>3/7-3/21/2018</td>
+            <td>17 Days</td>
+            <td>In Progress</td>
+            <td>
+                <button type="button" class="btn btn-success">Checked-in</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+        </tr>
+        <tr>
+            <td>278399</td>
+            <td>3/2/2018</td>
+            <td>ASTR</td>
+            <td>6</td>
+            <td>5</td>
+            <td>3</td>
+            <td>3/7-3/21/2018</td>
+            <td>17 Days</td>
+            <td>In Progress</td>
+            <td>
+                <button type="button" class="btn btn-success">Checked-in</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-upload h3"></i></a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+            <td>
+                <a href="#">Claim</a>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>P.O. Number</th>
+            <th>Order Date</th>
+            <th>Vendor</th>
+            <th>Styles</th>
+            <th>Photos</th>
+            <th>Remaining</th>
+            <th>Shipment Window</th>
+            <th>Last Change</th>
+            <th>Status</th>
+            <th>Check-in</th>
+            <th>Edit P.O.</th>
+            <th></th>
+            <th></th>
+            <th>Inspect</th>
+            <th>Go Live</th>
+        </tr>
+    </tfoot>
+</table>
 
-<!-- Modal -->
+<!-- Modal PO -->
 <div class="modal fade" id="modalpo1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -89,7 +308,7 @@
                                 <br />
                                 <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
                                 <br />
-                                <a href="#">Add Discount %</a>
+                                <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
                             </div>
                         </div>
                         <div class="form-row">
@@ -114,7 +333,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Add Invoice -->
 <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -149,6 +368,106 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Discount -->
+<div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Discount %</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Discount</label>
+                                <input type="text" class="form-control" placeholder="%">
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label>Note</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="text-center w-100">
+                            <span class="text-danger"><b>IMPORTANT:</b> </span>Your unit costs should be inputted with discounts already applied to them.
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Check-in -->
+<div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Purchase Order #294854 - Stylestalker - Check-in</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Tracking Number</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Upload Invoices</label>
+                                <input type="file" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Shipping &amp; Handling</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-group col-md-5">
+                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-group col-md-5">
+                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-group col-md-5">
+                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin: 0 auto;">
+                <button type="button" class="btn btn-success">Check-in</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
