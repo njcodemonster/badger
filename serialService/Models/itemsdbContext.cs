@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace itemService.Models
+namespace itemService_entity.Models
 {
     public partial class itemsdbContext : DbContext
     {
@@ -24,8 +24,8 @@ namespace itemService.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-              //  optionsBuilder.UseMySQL("Server=itemsdb.cl35upw5sngr.us-west-1.rds.amazonaws.com;database=itemsdb;uid=admin;pwd=Captain2018.;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySQL("Server=itemsdb.cl35upw5sngr.us-west-1.rds.amazonaws.com;database=itemsdb;uid=admin;pwd=Captain2018.;");
             }
         }
 

@@ -9,7 +9,7 @@ using itemService.Interfaces;
 
 namespace itemService.Controllers
 {
-    [Route("items/[controller]")]
+    [Route("item/[controller]")]
     [ApiController]
     public class EventTypeController : ControllerBase
     {
@@ -21,14 +21,14 @@ namespace itemService.Controllers
         }
         // GET: api/EventType
         [HttpGet]
-        public async Task<ActionResult<List<event_type>>> GetEventTypes()
+        public async Task<ActionResult<List<EventTypes>>> GetEventTypes()
         {
             return await _EventTyperepo.GetAllAsync();
         }
 
         // GET: api/EventType/5
         [HttpGet("{id}", Name = "Get")]
-        public async Task<event_type> GetAsync(int id)
+        public async Task<EventTypes> GetAsync(int id)
         {
             return await _EventTyperepo.GetByID(1);
            

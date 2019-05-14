@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace itemService.Models
+namespace itemService_entity.Models
 {
     public partial class EventTypes
     {

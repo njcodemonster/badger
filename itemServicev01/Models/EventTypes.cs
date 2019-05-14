@@ -3,7 +3,8 @@ using System;
 
 namespace itemService.Models
 {
-    public partial class event_type
+    [Table("event_types")]
+    public partial class EventTypes
     {
 
         [Key]
