@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "itemService_entity", "serialService\itemService_entity.csproj", "{B7848661-107E-4F8F-82F1-2B63D2EC987F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "badger_Api", "badger_main\badger_Api.csproj", "{D00DF533-2648-478A-9042-63A3EAD8506A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "badgerApi", "badger_main\badgerApi.csproj", "{D00DF533-2648-478A-9042-63A3EAD8506A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "badger_view", "badger_view\badger_view.csproj", "{0A453B17-8DAC-4F3A-ACA0-50D4D68A992B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "itemService", "itemServicev01\itemService.csproj", "{59D828F5-C7FC-4802-87E1-DD91BBECA96F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "itemService", "itemServicev01\itemService.csproj", "{59D828F5-C7FC-4802-87E1-DD91BBECA96F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
