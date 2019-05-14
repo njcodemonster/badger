@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("product_size_and_fit")]
     public partial class ProductSizeAndFit
     {
-        public int SizeAndFitId { get; set; }
-        public string SizeAndFitName { get; set; }
-        public double CreatedAt { get; set; }
+        public int size_and_fit_id { get; set; }
+        public string size_and_fit_name { get; set; }
+        public double created_at { get; set; }
     }
 }
