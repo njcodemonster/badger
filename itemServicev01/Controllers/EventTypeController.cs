@@ -9,7 +9,7 @@ using itemService.Interfaces;
 
 namespace itemService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("items/[controller]")]
     [ApiController]
     public class EventTypeController : ControllerBase
     {
@@ -21,18 +21,25 @@ namespace itemService.Controllers
         }
         // GET: api/EventType
         [HttpGet]
-        public async Task<ActionResult<List<EventTypes>>> GetEventTypes()
+        public async Task<ActionResult<List<event_type>>> GetEventTypes()
         {
             return await _EventTyperepo.GetAllAsync();
         }
 
         // GET: api/EventType/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public async Task<event_type> GetAsync(int id)
         {
-            return "value";
+            return await _EventTyperepo.GetByID(1);
+           
         }
+        [HttpGet("ponka")]
+        public async Task<ponkaquery> Getponka()
+        {
+            var z = await _EventTyperepo.GetPonka();
+            return z.ToArray()[0];
 
+        }
         // POST: api/EventType
         [HttpPost]
         public void Post([FromBody] string value)

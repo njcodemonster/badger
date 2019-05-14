@@ -14,6 +14,6 @@ namespace itemService.Models
         public int UserId { get; set; }
         public double CreatedAt { get; set; }
 
-        public virtual EventTypes EventType { get; set; }
+        public virtual event_type EventType { get; set; }
     }
 }

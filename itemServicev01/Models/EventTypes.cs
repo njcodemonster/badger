@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 
 namespace itemService.Models
 {
-    public partial class EventTypes
+    public partial class event_type
     {
-       
 
-        public int EventTypeId { get; set; }
-        public string EventTypeName { get; set; }
-        public string EventTypeDescription { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        [Key]
+        public int event_type_id { get; set; }
+        public string event_type_name { get; set; }
+        public string event_type_description { get; set; }
+        public DateTime? created_at { get; set; }
 
         
     }

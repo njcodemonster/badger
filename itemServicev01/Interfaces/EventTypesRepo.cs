@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Dapper.Contrib.Extensions;
 using itemService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +14,10 @@ namespace itemService.Interfaces
 {
     public interface IItemTypeRepository
     {
-        Task<EventTypes> GetByID(int id);
-        Task<List<EventTypes>> GetAllAsync();
+        Task<event_type> GetByID(int id);
+        Task<List<event_type>> GetAllAsync();
 
+        Task<List<ponkaquery>> GetPonka();
         
     }
     public class ItemTypeRepo : IItemTypeRepository
@@ -33,22 +35,36 @@ namespace itemService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ItemsDatabase"));
             }
         }
-        public async Task<List<EventTypes>> GetAllAsync()
+        public async Task<List<event_type>> GetAllAsync()
         {
             using (IDbConnection conn = Connection)
             {
-                string sQuery = "SELECT event_type_id as 'EventTypeId' ,event_type_name as 'EventTypeName',event_type_description as 'EventTypeDescription' ,created_at as 'CreatedAt' from event_types";
                 conn.Open();
-                var result =  conn.Query<EventTypes>(sQuery);
-                return result.ToList();
+                var result = await conn.GetAllAsync<event_type>();
+                return result.ToList(); 
             }
         }
 
        
 
-        public Task<EventTypes> GetByID(int id)
+        public async Task<event_type> GetByID(int id)
         {
-            throw new NotImplementedException();
+            using (IDbConnection conn = Connection)
+            {
+                conn.Open();
+                var result = conn.Get<event_type>(id);
+                return result;
+            }
+        }
+
+        public async Task<List<ponkaquery>> GetPonka()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                conn.Open();
+                var result =  conn.Query<ponkaquery>("select event_type_id as id , event_type_name as name from event_types where(event_type_id=1);");
+                return result.ToList<ponkaquery>();
+            }
         }
     }
 
