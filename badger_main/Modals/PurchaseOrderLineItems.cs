@@ -1,24 +1,26 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("purchase_order_line_items")]
     public partial class PurchaseOrderLineItems
     {
-        public int LineItemId { get; set; }
-        public int PoId { get; set; }
-        public int VendorId { get; set; }
-        public string Sku { get; set; }
-        public int ProductId { get; set; }
-        public decimal LineItemCost { get; set; }
-        public decimal LineItemRetail { get; set; }
-        public int LineItemType { get; set; }
-        public int LineItemOrderedQuantity { get; set; }
-        public int LineItemAcceptedQuantity { get; set; }
-        public int LineItemRejectedQuantity { get; set; }
-        public int CreatedBy { get; set; }
-        public int UpdatedBy { get; set; }
-        public int CreatedAt { get; set; }
-        public int UpdatedAt { get; set; }
+        public int line_item_id { get; set; }
+        public int po_id { get; set; }
+        public int vendor_id { get; set; }
+        public string sku { get; set; }
+        public int product_id { get; set; }
+        public decimal line_item_cost { get; set; }
+        public decimal line_item_retail { get; set; }
+        public int line_item_type { get; set; }
+        public int line_item_ordered_quantity { get; set; }
+        public int line_item_accepted_quantity { get; set; }
+        public int line_item_rejected_quantity { get; set; }
+        public int created_by { get; set; }
+        public int updated_by { get; set; }
+        public int created_at { get; set; }
+        public int updated_at { get; set; }
     }
 }

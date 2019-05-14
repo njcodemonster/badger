@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("purchase_order_discounts")]
     public partial class PurchaseOrderDiscounts
     {
-        public int PoDiscountId { get; set; }
-        public decimal DiscountPercentage { get; set; }
-        public string DiscountNote { get; set; }
-        public int CompletedStatus { get; set; }
-        public double CreatedAt { get; set; }
-        public double? UpdatedAt { get; set; }
-        public int CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
+        public int po_discount_id { get; set; }
+        public decimal discount_percentage { get; set; }
+        public string discount_note { get; set; }
+        public int completed_status { get; set; }
+        public double created_at { get; set; }
+        public double? updated_at { get; set; }
+        public int created_by { get; set; }
+        public int? updated_by { get; set; }
     }
 }
