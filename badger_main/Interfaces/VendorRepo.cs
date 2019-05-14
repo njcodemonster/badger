@@ -9,18 +9,21 @@ using badgerApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-
+using CommonHelper;
 namespace badgerApi.Interfaces
 { 
     public interface IVendorRepository
     {
-        Task<Vendor> GetByID(int id);
+        Task<Vendor> GetById(int id);
         Task<List<Vendor>> GetAll(Int32 Limit);
+        Task<String> Create(Vendor NewVendor);
+        Task<Boolean> Update(Vendor VendorToUpdate);
+        Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
     }
     public class VendorRepo : IVendorRepository
     {
         private readonly IConfiguration _config;
-
+        private string TableName = "vendor"; 
         public VendorRepo(IConfiguration config)
         {
             _config = config;
@@ -32,13 +35,20 @@ namespace badgerApi.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
-      
+
+        public async Task<string> Create(Vendor NewVendor)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<Vendor>(NewVendor);
+                return result.ToString() ;
+            }
+        }
 
         public async Task<List<Vendor>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
             {
-                conn.Open();
                 IEnumerable<Vendor> result = new List<Vendor>();
                 if(Limit > 0)
                 {
@@ -54,15 +64,36 @@ namespace badgerApi.Interfaces
 
        
 
-        public async Task<Vendor> GetByID(int id)
+        public async Task<Vendor> GetById(int id)
         {
             using (IDbConnection conn = Connection)
             {
                 
-                conn.Open();
                 var result = await conn.GetAsync<Vendor>(id);
                 return result;
             }
+        }
+
+        public async Task<Boolean> Update( Vendor VendorToUpdate)
+        {
+            
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<Vendor>(VendorToUpdate);
+                return result;
+            }
+           
+        }
+        public async Task UpdateSpeific(Dictionary<String , String> ValuePairs, String where)
+        {
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+               
+            }
+
         }
     }
 }
