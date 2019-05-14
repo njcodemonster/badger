@@ -1,0 +1,195 @@
+﻿
+@{
+    ViewData["Title"] = "Vendor";
+}
+
+<div class="row">
+    <div class="col-md-2 col-sm-12">
+        <h2 class="text-info">Vendors (3)</h2>
+    </div>
+    <div class="col-md-10">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalvendor">
+            Add New Vendor
+        </button>
+    </div>
+</div>
+<table id="openpo" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Vendor Name</th>
+            <th>Vendor Code</th>
+            <th>Orders Count</th>
+            <th>Most Recent Order</th>
+            <th>Edit Profile</th>
+            <th>Vendor Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ASTR</td>
+            <td>AS</td>
+            <td>3</td>
+            <td><a href="#">45923451</a></td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td>Free People</td>
+            <td>FP</td>
+            <td>8</td>
+            <td><a href="#">123445</a></td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td>Stylestalker</td>
+            <td>SS</td>
+            <td>12</td>
+            <td><a href="#">9019225</a></td>
+            <td>
+                <button type="button" class="btn btn-light">Edit</button>
+            </td>
+            <td>
+                <a href="#"><i class="fa fa-edit h3"></i></a>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Vendor Name</th>
+            <th>Vendor Code</th>
+            <th>Orders Count</th>
+            <th>Most Recent Order</th>
+            <th>Edit Profile</th>
+            <th>Vendor Notes</th>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- Modal Vendor -->
+<div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add a New Vendor Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Vendor Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Corporation Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Exact Statement Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Vendor Code</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Our Customer #</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Street Address</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Unit Number</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>City</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Zip Code</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>State</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Rep Name</label>
+                                <input type="text" class="form-control"><input type="checkbox" /> <small>Primary</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Email</label>
+                                <input type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Phone Number</label>
+                                <div class="row">
+                                    <div class="col-md-3 p-0">
+                                        <span class="d-inline">(</span> <input type="tel" class="form-control d-inline w-75"> <span class="d-inline">)</span>
+                                    </div>
+                                    <div class="col-md-4 p-0">
+                                        <input type="tel" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <input type="tel" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <input type="file" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Vendor Notes</label>
+                                <textarea class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Add</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
