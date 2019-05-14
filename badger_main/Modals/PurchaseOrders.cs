@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("purchase_orders")]
     public partial class PurchaseOrders
     {
         public int PoId { get; set; }
