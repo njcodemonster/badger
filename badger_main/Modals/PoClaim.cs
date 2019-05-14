@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("po_claim")]
     public partial class PoClaim
     {
-        public int PoId { get; set; }
-        public int? InspectClaimer { get; set; }
-        public int? PublishClaimer { get; set; }
-        public decimal? InspectClaimedAt { get; set; }
-        public decimal? PublishClaimedAt { get; set; }
-        public string PoClaimcol { get; set; }
+        public int po_id { get; set; }
+        public int? inspect_claimer { get; set; }
+        public int? publish_claimer { get; set; }
+        public decimal? inspect_claimed_at { get; set; }
+        public decimal? publish_claimed_at { get; set; }
+        public string po_claimcol { get; set; }
     }
 }

@@ -1,18 +1,20 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("sku")]
     public partial class Sku
     {
-        public int SkuId { get; set; }
-        public string Sku1 { get; set; }
-        public int VendorId { get; set; }
-        public int ProductId { get; set; }
-        public int Weight { get; set; }
-        public int CreatedBy { get; set; }
-        public int UpdatedBy { get; set; }
-        public double CreatedAt { get; set; }
-        public double UpdatedAt { get; set; }
+        public int sku_id { get; set; }
+        public string sku { get; set; }
+        public int vendor_id { get; set; }
+        public int product_id { get; set; }
+        public int weight { get; set; }
+        public int created_by { get; set; }
+        public int updated_by { get; set; }
+        public double created_at { get; set; }
+        public double updated_at { get; set; }
     }
 }

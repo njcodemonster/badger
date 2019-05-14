@@ -1,21 +1,23 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("vendor_contact_person")]
     public partial class VendorContactPerson
     {
-        public int ContactId { get; set; }
-        public int VendorId { get; set; }
-        public string FirstName { get; set; }
-        public string FullName { get; set; }
-        public byte Main { get; set; }
-        public string Phone1 { get; set; }
-        public string Phone2 { get; set; }
-        public string Email { get; set; }
-        public int CreatedBy { get; set; }
-        public int UpdatedBy { get; set; }
-        public double CreatedAt { get; set; }
-        public double UpdatedAt { get; set; }
+        public int contact_id { get; set; }
+        public int vendor_id { get; set; }
+        public string first_name { get; set; }
+        public string full_name { get; set; }
+        public byte main { get; set; }
+        public string phone1 { get; set; }
+        public string phone2 { get; set; }
+        public string email { get; set; }
+        public int created_by { get; set; }
+        public int updated_by { get; set; }
+        public double created_at { get; set; }
+        public double updated_at { get; set; }
     }
 }

@@ -1,19 +1,21 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace badgerApi.Models
 {
+    [Table("photoshoot_models")]
     public partial class PhotoshootModels
     {
-        public int ModelId { get; set; }
-        public string ModelName { get; set; }
-        public string ModelHeight { get; set; }
-        public string ModelEthnicity { get; set; }
-        public string ModelHair { get; set; }
-        public int ActiveStatus { get; set; }
-        public double UpdatedAt { get; set; }
-        public int UpdatedBy { get; set; }
-        public int CreatedBy { get; set; }
-        public double CreatedAt { get; set; }
+        public int model_id { get; set; }
+        public string model_name { get; set; }
+        public string model_height { get; set; }
+        public string model_ethnicity { get; set; }
+        public string model_hair { get; set; }
+        public int active_status { get; set; }
+        public double updated_at { get; set; }
+        public int updated_by { get; set; }
+        public int created_by { get; set; }
+        public double created_at { get; set; }
     }
 }
