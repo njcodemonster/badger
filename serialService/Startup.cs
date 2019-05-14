@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using itemService.Models;
+using itemService_entity.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,7 +28,7 @@ namespace serialService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-             services.AddDbContext<itemService.Models.itemsdbContext>(options => options.UseMySQL(Configuration.GetConnectionString("ItemsDatabase")));
+             services.AddDbContext<itemService_entity.Models.itemsdbContext>(options => options.UseMySQL(Configuration.GetConnectionString("ItemsDatabase")));
             //services.Add(new ServiceDescriptor(typeof(itemsdbContext), new itemsdbContext(Configuration.GetConnectionString("ItemsDatabase"))));
         }
 

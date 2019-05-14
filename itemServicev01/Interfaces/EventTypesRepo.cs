@@ -14,9 +14,8 @@ namespace itemService.Interfaces
 {
     public interface IItemTypeRepository
     {
-        Task<event_type> GetByID(int id);
-        Task<List<event_type>> GetAllAsync();
-
+        Task<EventTypes> GetByID(int id);
+        Task<List<EventTypes>> GetAllAsync();
         Task<List<ponkaquery>> GetPonka();
         
     }
@@ -35,24 +34,24 @@ namespace itemService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ItemsDatabase"));
             }
         }
-        public async Task<List<event_type>> GetAllAsync()
+        public async Task<List<EventTypes>> GetAllAsync()
         {
             using (IDbConnection conn = Connection)
             {
                 conn.Open();
-                var result = await conn.GetAllAsync<event_type>();
+                var result = await conn.GetAllAsync<EventTypes>();
                 return result.ToList(); 
             }
         }
 
        
 
-        public async Task<event_type> GetByID(int id)
+        public async Task<EventTypes> GetByID(int id)
         {
             using (IDbConnection conn = Connection)
             {
                 conn.Open();
-                var result = conn.Get<event_type>(id);
+                var result = conn.Get<EventTypes>(id);
                 return result;
             }
         }
