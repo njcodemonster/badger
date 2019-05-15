@@ -2,5 +2,110 @@
 @{
     ViewData["Title"] = "Single P.O.";
 }
-
-<h2 class="text-dark">Purchase Order #</h2>
+    <div class="row">
+        <div class="col-md-3 col-sm-10  col-xs-10">
+            <h4 class="text-dark">Purchase Order #: <a href="#">35671</a></h4>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-2">
+            <button type="button" class="btn btn-light btn-sm">
+                Add an item
+            </button>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12" style="white-space: nowrap">
+            <span class="text-center d-inline-block">
+                <b>Inspect</b><br /><a href="#">Claim</a>
+            </span>
+            <span class="text-center d-inline-block pl-4">
+                <b>Go Live</b><br /><a href="#">Claim</a>
+            </span>
+            <span class="d-inline-block pl-4 align-top pt-2">
+                <b>6 total styles, 5 have photos</b>
+            </span>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12 text-right">
+            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalcheckin">
+                Check-in
+            </button>
+            <button type="button" class="btn btn-danger btn-sm">
+                Delete this P.O.
+            </button>
+        </div>
+    </div>
+<div class="row pt-5">
+    <div class="col-md-6">
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Vendor Name</label>
+                    <select id="inputState" class="form-control">
+                        <option selected>Choose...</option>
+                        <option>...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Order Delivery Range</label>
+                    <input id="delivery" /> 
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>P.O. Number</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Total Styles</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Invoice Number</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Total Quantity</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Order Number</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Sub Total</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Order Date</label>
+                    <input id="orderdate" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Shgipping &amp; Handling</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Tracking Number</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Upload Image</label>
+                    <input type="file" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Purchase Notes</label>
+                    <textarea class="form-control"></textarea>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success btn-sm">
+                Save
+            </button>        
+        </form>
+    </div>
+</div>
