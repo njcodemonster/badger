@@ -8,7 +8,6 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 
-
 namespace badgerApi.Controllers
 {
     [Route("api/[controller]")]

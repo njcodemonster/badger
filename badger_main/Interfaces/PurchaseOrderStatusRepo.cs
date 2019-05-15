@@ -94,6 +94,5 @@ namespace badgerApi.Interfaces
 
         }
 
-
     }
 }
