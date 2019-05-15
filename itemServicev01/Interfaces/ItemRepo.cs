@@ -18,9 +18,19 @@ namespace itemService.Interfaces
         Task<List<Items>> getItemById(string id);
         Task<List<Items>> getItemByBarcode(string Barcode);
         Task<List<Items>> getItemByBagNumber(string BagNumber);
-        Task<List<Items>> GetBySkuFamily(string BagNumber);
-
-
+        Task<List<Items>> GetBySkuFamily(string BagNumber, int Limit);
+        Task<List<Items>> GetByProductId(string ProductId, int Limit);
+        Task<List<Items>> GetByVendorId(string VendorId, int Limit);
+        Task<List<Items>> GetBySkuId(string SkuId, int Limit);
+        Task<List<Items>> GetByStatusId(string StatusId, int Limit);
+        Task<List<Items>> GetByPublishDate(string PublishDate, int Limit);
+        Task<List<Items>> GetByRaStatus(string RaStatusId, int Limit);
+        Task<List<Items>> GetByPublishDateRange(string StartDate, string EndDate, int Limit);
+        Task<List<Items>> GetByPublishedBy(string PublishedBy, int Limit);
+        Task<List<Items>> GetByUpdateDateRange(string StartDate, string EndDate, int Limit);
+        Task<List<Items>> GetByCreateDateRange(string StartDate, string EndDate, int Limit);
+        Task<List<Items>> GetAfterDate(string AfterDate, int Limit);
+        Task<List<Items>> GetBeforeDate(string BeforeDate, int Limit);
 
     }
     public class ItemRepo : ItemRepository
@@ -31,17 +41,13 @@ namespace itemService.Interfaces
         {
             _config = config;
         }
+
         public IDbConnection Connection
         {
             get
             {
                 return new MySqlConnection(_config.GetConnectionString("ItemsDatabase"));
             }
-        }
-
-        public Task<List<Items>> GetAllAsync()
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<List<Items>> getItemById(string id)
@@ -55,10 +61,10 @@ namespace itemService.Interfaces
                     if (countComma > 0)
                     {
                         QueryWhereClause = " where item_id IN (" + id + ") ";
-                        string sQuery = "SELECT * from items " + QueryWhereClause;
+                        string Query = "SELECT * from items " + QueryWhereClause;
                         using (IDbConnection conn = Connection)
                         {
-                            var result = conn.Query<Items>(sQuery);
+                            var result = conn.Query<Items>(Query);
                             ToRetrun = result.ToList();
                         }
                     }
@@ -78,6 +84,7 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
+
         public async Task<List<Items>> getItemByBarcode(string Barcode)
         {
             try
@@ -95,8 +102,8 @@ namespace itemService.Interfaces
 
                 using (IDbConnection conn = Connection)
                 {   
-                    string sQuery = "SELECT * from items " + QueryWhereClause; 
-                    var result = conn.Query<Items>(sQuery);
+                    string Query = "SELECT * from items " + QueryWhereClause; 
+                    var result = conn.Query<Items>(Query);
                     return result.ToList();
                 }
             }
@@ -123,8 +130,8 @@ namespace itemService.Interfaces
 
                 using (IDbConnection conn = Connection)
                 {
-                    string sQuery = "SELECT * from items " + QueryWhereClause; 
-                    var result = conn.Query<Items>(sQuery);
+                    string Query = "SELECT * from items " + QueryWhereClause; 
+                    var result = conn.Query<Items>(Query);
                     return result.ToList();
                 }
             }
@@ -134,11 +141,12 @@ namespace itemService.Interfaces
             }
         }
 
-        public async Task<List<Items>> GetBySkuFamily(string SkuFamily)
+        public async Task<List<Items>> GetBySkuFamily(string SkuFamily, int Limit)
         {
             try
             {
                 string QueryWhereClause;
+                string LimitQuery = "" ;
                 int countComma = SkuFamily.Count(c => c == ',');
                 if (countComma > 0)
                 {
@@ -151,10 +159,15 @@ namespace itemService.Interfaces
                     QueryWhereClause = " where sku = \"" + SkuFamily+ "\"";
                 }
 
+                if (Limit > 0 ) {
+                    LimitQuery = " Limit  "+Limit.ToString();
+                }
+
+                string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+
                 using (IDbConnection conn = Connection)
-                {
-                    string sQuery = "SELECT * from items " + QueryWhereClause; 
-                    var result = conn.Query<Items>(sQuery);
+                { 
+                    var result = conn.Query<Items>(Query);
                     return result.ToList();
                 }
             }
@@ -163,6 +176,422 @@ namespace itemService.Interfaces
                 throw ex;
             } 
 
+        }
+
+        public async Task<List<Items>> GetByProductId(string ProductId, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = ProductId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where product_id IN (" + ProductId + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where product_id = " + ProductId;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetByStatusId(string StatusId, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = StatusId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where item_status_id IN (" + StatusId + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where item_status_id = " + StatusId;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetByVendorId(string VendorId, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = VendorId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where vendor_id IN (" + VendorId + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where vendor_id = " + VendorId;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetBySkuId(string SkuId, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = SkuId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where sku_id IN (" + SkuId + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where sku_id = " + SkuId;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+        public async Task<List<Items>> GetByPublishDate(string PublishDate, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = PublishDate.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where published IN (" + PublishDate + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where published = " + PublishDate;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetByPublishDateRange(string StartDate, string EndDate, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                QueryWhereClause = " where published >= " + StartDate + " AND published <= " + EndDate;
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetByRaStatus(string RaStatusId, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = RaStatusId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where ra_status IN (" + RaStatusId + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where ra_status = " + RaStatusId;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetByPublishedBy(string PublishedBy, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                int countComma = PublishedBy.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where published_by IN (" + PublishedBy + ")";
+                }
+                else
+                {
+                    QueryWhereClause = " where published_by = " + PublishedBy;
+                }
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetByUpdateDateRange(string StartDate, string EndDate, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                QueryWhereClause = " where updated_at >= " + StartDate + " AND updated_at <= " + EndDate;
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+        public async Task<List<Items>> GetByCreateDateRange(string StartDate, string EndDate, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                QueryWhereClause = " where created_at >= " + StartDate + " AND created_at <= " + EndDate;
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetAfterDate(string AfterDate, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                QueryWhereClause = " where created_at > " + AfterDate;
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Items>> GetBeforeDate(string BeforeDate, int Limit)
+        {
+            try
+            {
+                string LimitQuery;
+                string QueryWhereClause;
+                QueryWhereClause = " where created_at > " + BeforeDate;
+
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
+                }
+                else
+                {
+                    LimitQuery = "";
+                }
+
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
+                    var result = conn.Query<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
     }
