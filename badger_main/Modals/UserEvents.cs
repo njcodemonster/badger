@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("user_events")]
     public partial class UserEvents
     {
+        [Key]
         public int user_event_id { get; set; }
         public int user_event_type { get; set; }
         public int reference_id { get; set; }

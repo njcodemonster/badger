@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("product_page_detail_types")]
     public partial class ProductPageDetailTypes
     {
+        [Key]
         public int product_detail_type_id { get; set; }
         public string product_detail_name { get; set; }
         public string product_detail_description { get; set; }

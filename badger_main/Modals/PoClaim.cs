@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("po_claim")]
     public partial class PoClaim
     {
+        [Key]
         public int po_id { get; set; }
         public int? inspect_claimer { get; set; }
         public int? publish_claimer { get; set; }

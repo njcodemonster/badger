@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("transaction_types")]
     public partial class TransactionTypes
     {
+        [Key]
         public int transaction_type_id { get; set; }
         public string transaction_name { get; set; }
         public string transaction_description { get; set; }

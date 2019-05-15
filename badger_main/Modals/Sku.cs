@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("sku")]
     public partial class Sku
     {
+        [Key]
         public int sku_id { get; set; }
         public string sku { get; set; }
         public int vendor_id { get; set; }

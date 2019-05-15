@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("attribute_type")]
     public partial class AttributeType
     {
+        [Key]
         public int attribute_type_id { get; set; }
         public string attribute_type_name { get; set; }
         public string attribute_type_description { get; set; }

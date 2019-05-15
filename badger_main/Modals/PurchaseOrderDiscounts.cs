@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("purchase_order_discounts")]
     public partial class PurchaseOrderDiscounts
     {
+        [Key]
         public int po_discount_id { get; set; }
         public decimal discount_percentage { get; set; }
         public string discount_note { get; set; }
