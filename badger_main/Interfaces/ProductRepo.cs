@@ -15,10 +15,10 @@ namespace badgerApi.Interfaces
 {
     public interface IProductRepository
     {
-        Task<Product> GetById(int id);
-        Task<List<Product>> GetAll(Int32 Limit);
-        Task<Product> Create(Vendor NewVendor);
-        Task<Product> Update(Vendor VendorToUpdate);
+        Task<Product> GetByIdAsync(int id);
+        Task<List<Product>> GetAllAsync(Int32 Limit);
+        Task<Product> Create(Product NewProduct);
+        Task<bool> UpdateAsync(Product ProductToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
     }
     public class ProductRepo : IProductRepository
@@ -42,24 +42,47 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public Task<Product> Create(Vendor NewVendor)
+        public Task<Product> Create(Product NewProduct)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Product>> GetAll(int Limit)
+        public async Task<List<Product>> GetAllAsync(int Limit)
         {
-            throw new NotImplementedException();
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Product> result = new List<Product>();
+                if (Limit > 0)
+                {
+                    result = await conn.QueryAsync<Product>("Select * from " + TableName + " Limit " + Limit.ToString() + ";");
+                }
+                else
+                {
+                    result = await conn.GetAllAsync<Product>();
+                }
+                return result.ToList();
+            }
         }
 
-        public Task<Product> GetById(int id)
+        public async Task<Product> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+
+            using (IDbConnection conn = Connection)
+            {
+
+                var result = await conn.GetAsync<Product>(id);
+                return result;
+            }
         }
 
-        public Task<Product> Update(Vendor VendorToUpdate)
+        public async Task<bool>  UpdateAsync(Product ProductToUpdate)
         {
-            throw new NotImplementedException();
+           
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<Product>(ProductToUpdate);
+                return result;
+            }
         }
 
         public Task UpdateSpeific(Dictionary<string, string> ValuePairs, string where)
