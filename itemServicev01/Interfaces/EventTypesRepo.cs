@@ -38,7 +38,7 @@ namespace itemService.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                conn.Open();
+               
                 var result = await conn.GetAllAsync<EventTypes>();
                 return result.ToList(); 
             }
@@ -50,7 +50,7 @@ namespace itemService.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                conn.Open();
+               
                 var result = conn.Get<EventTypes>(id);
                 return result;
             }
@@ -60,7 +60,7 @@ namespace itemService.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                conn.Open();
+               
                 var result =  conn.Query<ponkaquery>("select event_type_id as id , event_type_name as name from event_types where(event_type_id=1);");
                 return result.ToList<ponkaquery>();
             }
