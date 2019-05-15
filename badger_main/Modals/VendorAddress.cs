@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("vendor_address")]
     public partial class VendorAddress
     {
+        [Key]
         public int vendor_address_id { get; set; }
         public int vendor_id { get; set; }
         public string vendor_street { get; set; }

@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("product_attributes")]
     public partial class ProductAttributes
     {
+        [Key]
         public long product_attribute_id { get; set; }
         public int product_id { get; set; }
         public int attribute_id { get; set; }

@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("photoshoots")]
     public partial class Photoshoots
     {
+        [Key]
         public int photoshoot_id { get; set; }
         public string photoshoot_name { get; set; }
         public int model_id { get; set; }

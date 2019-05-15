@@ -7,6 +7,7 @@ namespace badgerApi.Models
     [Table("purchase_order_ledger")]
     public partial class PurchaseOrderLedger
     {
+        [Key]
         public int transaction_id { get; set; }
         public int po_id { get; set; }
         public string description { get; set; }
