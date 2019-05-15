@@ -23,10 +23,14 @@ namespace badgerApi.Interfaces
     public class VendorRepo : IVendorRepository
     {
         private readonly IConfiguration _config;
-        private string TableName = "vendor"; 
+        private string TableName = "vendor";
+        private string selectlimit = "30";
         public VendorRepo(IConfiguration config)
         {
+
             _config = config;
+            selectlimit = _config.GetValue<string>("configs:Default_select_Limit");
+          
         }
         public IDbConnection Connection
         {
@@ -52,7 +56,7 @@ namespace badgerApi.Interfaces
                 IEnumerable<Vendor> result = new List<Vendor>();
                 if(Limit > 0)
                 {
-                    result = await conn.QueryAsync<Vendor>("Select * from vendor Limit 30;");
+                    result = await conn.QueryAsync<Vendor>("Select * from "+TableName+" Limit "+ Limit.ToString() + ";");
                 }
                 else
                 {

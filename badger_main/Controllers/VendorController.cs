@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace badgerApi.Controllers
 {
@@ -15,24 +16,50 @@ namespace badgerApi.Controllers
     public class VendorController : ControllerBase
     {
         private readonly IVendorRepository _VendorRepo;
+        ILoggerFactory _loggerFactory;
 
-        public VendorController(IVendorRepository VendorRepo)
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory)
         {
             _VendorRepo = VendorRepo;
+            _loggerFactory = loggerFactory;
         }
        
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
         {
-            return await _VendorRepo.GetAll(0);
-          
+            List<Vendor> ToReturn = new List<Vendor>();
+            try
+            {
+                return await _VendorRepo.GetAll(0);
+            }
+            catch(Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get all with message"+ex.Message);
+                return ToReturn;
+            }
+           
+
         }
 
        
         [HttpGet("list/{id}")]
-        public async Task<Vendor> GetAsync(int id)
+        public async Task<List<Vendor>> GetAsync(int id)
         {
-            return await _VendorRepo.GetById(id);
+            List<Vendor> ToReturn = new List<Vendor>();
+            try
+            {
+                Vendor Res =  await _VendorRepo.GetById(id);
+                ToReturn.Add(Res);
+               
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+               
+            }
+            return ToReturn;
         }
       
         [HttpPost("create")]
@@ -46,7 +73,8 @@ namespace badgerApi.Controllers
             }
             catch(Exception ex)
             {
-                NewInsertionID = "Creation failed due to reason:" +ex.Message;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -66,7 +94,9 @@ namespace badgerApi.Controllers
             }
             catch (Exception ex)
             {
-                UpdateResult = "Creation failed due to reason:" + ex.Message;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating  vendor with message" + ex.Message);
+                UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
             {
@@ -139,7 +169,9 @@ namespace badgerApi.Controllers
             }
             catch (Exception ex)
             {
-                UpdateResult = "Creation failed due to reason:" + ex.Message;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new vendor with message" + ex.Message);
+                UpdateResult = "Failed";
             }
             
             return UpdateResult;
