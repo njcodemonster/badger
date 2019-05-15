@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace badgerApi.Controllers
 {
@@ -15,30 +16,66 @@ namespace badgerApi.Controllers
     public class PurchaseOrderStatusController : ControllerBase
     {
         private readonly IPurchaseOrderStatusRepository _PurchaseOrderStatusRepo;
-
-        public PurchaseOrderStatusController(IPurchaseOrderStatusRepository PurchaseOrderStatusRepo)
+        ILoggerFactory _loggerFactory;
+        public PurchaseOrderStatusController(IPurchaseOrderStatusRepository PurchaseOrderStatusRepo, ILoggerFactory loggerFactory)
         {
             _PurchaseOrderStatusRepo = PurchaseOrderStatusRepo;
+            _loggerFactory = loggerFactory;
         }
 
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrderStatus>>> GetAsync()
         {
-            return await _PurchaseOrderStatusRepo.GetAll(0);
+            List<PurchaseOrderStatus> ToReturn = new List<PurchaseOrderStatus>();
+            try
+            {
+                return await _PurchaseOrderStatusRepo.GetAll(0);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                return ToReturn;
+            }
 
         }
 
         [HttpGet("list/{id}")]
-        public async Task<PurchaseOrderStatus> GetAsync(int id)
+        public async Task<List<PurchaseOrderStatus>> GetAsync(int id)
         {
-            return await _PurchaseOrderStatusRepo.GetById(id);
+            List<PurchaseOrderStatus> ToReturn = new List<PurchaseOrderStatus>();
+            try
+            {
+                PurchaseOrderStatus Res = await _PurchaseOrderStatusRepo.GetById(id);
+                ToReturn.Add(Res);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ToReturn;
         }
 
 
         [HttpGet("list/name/{name}")]
         public async Task<List<PurchaseOrderStatus>> GetByName(string name)
         {
-            return await _PurchaseOrderStatusRepo.GetByName(name);
+            List<PurchaseOrderStatus> ToReturn = new List<PurchaseOrderStatus>();
+            try
+            {
+                ToReturn = await _PurchaseOrderStatusRepo.GetByName(name);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+
+            return ToReturn;
         }
 
     }
