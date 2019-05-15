@@ -1,28 +1,36 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace itemService.Models
 {
+    [Table("items")]
     public partial class Items
     {
-        public int ItemId { get; set; }
-        public decimal Barcode { get; set; }
-        public int? SlotNumber { get; set; }
-        public int? BagCode { get; set; }
-        public int ItemStatusId { get; set; }
-        public int RaStatus { get; set; }
-        public string Sku { get; set; }
-        public short SkuId { get; set; }
-        public int ProductId { get; set; }
-        public int VendorId { get; set; }
-        public string SkuFamily { get; set; }
-        public int? Published { get; set; }
-        public int? PublishedBy { get; set; }
-        public int CreatedBy { get; set; }
-        public int UpdatedBy { get; set; }
-        public double CreatedAt { get; set; }
-        public double UpdatedAt { get; set; }
+        [Key]
+        public int item_id { get; set; }
+        public decimal barcode { get; set; }
+        public int? slot_number { get; set; }
+        public int? bag_code { get; set; }
+        public int item_status_id { get; set; }
+        public int ra_status { get; set; }
+        public string sku { get; set; }
+        public short sku_id { get; set; }
+        public int product_id { get; set; }
+        public int vendor_id { get; set; }
+        public string sku_family { get; set; }
+        public int? published { get; set; }
+        public int? published_by { get; set; }
+        public int created_by { get; set; }
+        public int updated_by { get; set; }
+        public double created_at { get; set; }
+        public double updated_at { get; set; }
 
-        public virtual ItemStatus ItemStatus { get; set; }
+        public virtual ItemStatus ItemStatus { get; set; } 
+
+        internal object ToArray()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

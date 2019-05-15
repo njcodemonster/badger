@@ -36,7 +36,7 @@ namespace badgerApi.Controllers
         }
       
         [HttpPost("create")]
-        public async Task<string> PostAsync([FromBody]  string value)
+        public async Task<string> PostAsync([FromBody]   string value)
         {
             string NewInsertionID = "0";
             try
