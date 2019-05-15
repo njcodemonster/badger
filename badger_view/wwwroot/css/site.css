@@ -10,7 +10,10 @@ a.navbar-brand {
     text-align: center;
     word-break: break-all;
 }
-
+a:hover
+{
+    text-decoration: none !important;
+}
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
