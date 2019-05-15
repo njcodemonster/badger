@@ -56,7 +56,7 @@ namespace badgerApi.Interfaces
                 IEnumerable<Vendor> result = new List<Vendor>();
                 if(Limit > 0)
                 {
-                    result = await conn.QueryAsync<Vendor>("Select * from "+TableName+" Limit "+selectlimit+";");
+                    result = await conn.QueryAsync<Vendor>("Select * from "+TableName+" Limit "+ Limit.ToString() + ";");
                 }
                 else
                 {
