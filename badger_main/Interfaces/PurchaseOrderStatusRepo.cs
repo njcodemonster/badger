@@ -24,9 +24,11 @@ namespace badgerApi.Interfaces
     {
         private readonly IConfiguration _config;
         private string TableName = "purchase_order_status";
+        private string selectlimit = "30";
         public PurchaseOrderStatusRepo(IConfiguration config)
         {
             _config = config;
+            selectlimit = _config.GetValue<string>("configs:Default_select_Limit");
         }
         public IDbConnection Connection
         {
