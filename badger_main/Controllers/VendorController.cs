@@ -8,6 +8,8 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Net;
 
 namespace badgerApi.Controllers
 {
@@ -42,7 +44,25 @@ namespace badgerApi.Controllers
 
         }
 
-       
+        [HttpGet("count")]
+        public async Task<string> CountAsync()
+        {
+            return await _VendorRepo.Count();
+
+        }
+
+        [HttpGet("countandList")]
+        public async Task<VendorCountAndList> CountAndListAsync()
+        {
+            var Vendors = await _VendorRepo.GetAll(2);
+            var Count = await _VendorRepo.Count();
+            var VendorCountAndList = new VendorCountAndList();
+            VendorCountAndList.Count = Count;
+            VendorCountAndList.vendors = Vendors;
+            return VendorCountAndList;
+
+        }
+
         [HttpGet("list/{id}")]
         public async Task<List<Vendor>> GetAsync(int id)
         {

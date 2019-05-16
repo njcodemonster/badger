@@ -19,6 +19,7 @@ namespace badgerApi.Interfaces
         Task<String> Create(Vendor NewVendor);
         Task<Boolean> Update(Vendor VendorToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
+        Task<string> Count();
     }
     public class VendorRepo : IVendorRepository
     {
@@ -48,7 +49,14 @@ namespace badgerApi.Interfaces
                 return result.ToString() ;
             }
         }
-
+        public async Task<string> Count()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync<String>("select count(vendor_id) from "+TableName+";");
+                return result.ToString();
+            }
+        }
         public async Task<List<Vendor>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
