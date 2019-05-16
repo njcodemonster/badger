@@ -28,7 +28,11 @@ namespace badgerApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IVendorRepository, VendorRepo>();
+            services.AddTransient<IProductRepository, ProductRepo>();
             services.AddTransient<IPurchaseOrderStatusRepository, PurchaseOrderStatusRepo>();
+            services.AddTransient<IAttributesRepository, AttributesRepo>();
+            services.AddTransient<IAttributeTypeRepository, AttributeTypeRepo>();
+            services.AddTransient<IAttributeValuesRepository, AttributeValuesRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,6 +8,8 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Net;
 
 namespace badgerApi.Controllers
 {
@@ -23,7 +25,8 @@ namespace badgerApi.Controllers
             _VendorRepo = VendorRepo;
             _loggerFactory = loggerFactory;
         }
-       
+
+        // GET: api/vendor/list
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
         {
@@ -41,8 +44,27 @@ namespace badgerApi.Controllers
            
 
         }
+        // GET: api/vendor/count
+        [HttpGet("count")]
+        public async Task<string> CountAsync()
+        {
+            return await _VendorRepo.Count();
 
-       
+        }
+        // GET: api/vendor/countandlist
+        [HttpGet("countandlist")]
+        public async Task<VendorCountAndList> CountAndListAsync()
+        {
+            var Vendors = await _VendorRepo.GetAll(2);
+            var Count = await _VendorRepo.Count();
+            var VendorCountAndList = new VendorCountAndList();
+            VendorCountAndList.Count = Count;
+            VendorCountAndList.vendors = Vendors;
+            return VendorCountAndList;
+
+        }
+
+        // GET: api/vendor/list/1
         [HttpGet("list/{id}")]
         public async Task<List<Vendor>> GetAsync(int id)
         {
@@ -61,7 +83,8 @@ namespace badgerApi.Controllers
             }
             return ToReturn;
         }
-      
+
+        // POST: api/vendor/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -79,7 +102,7 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/Vendor/5
+        // PUT: api/vendor/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -104,6 +127,8 @@ namespace badgerApi.Controllers
             }
             return UpdateResult;
         }
+
+        // PUT: api/vendor/specificUpdate/5
         [HttpPut("specificUpdate/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

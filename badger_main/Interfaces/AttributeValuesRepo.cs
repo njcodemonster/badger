@@ -10,28 +10,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+
 namespace badgerApi.Interfaces
-{ 
-    public interface IVendorRepository
+{
+    public interface IAttributeValuesRepository
     {
-        Task<Vendor> GetById(int id);
-        Task<List<Vendor>> GetAll(Int32 Limit);
-        Task<String> Create(Vendor NewVendor);
-        Task<Boolean> Update(Vendor VendorToUpdate);
+        Task<AttributeValues> GetById(int id);
+        Task<List<AttributeValues>> GetAll(Int32 Limit);
+        Task<String> Create(AttributeValues NewAttributeValue);
+        Task<Boolean> Update(AttributeValues AttributeValuesToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
-        Task<string> Count();
     }
-    public class VendorRepo : IVendorRepository
+    public class AttributeValuesRepo : IAttributeValuesRepository
     {
         private readonly IConfiguration _config;
-        private string TableName = "vendor";
+        private string TableName = "attribute_values";
         private string selectlimit = "30";
-        public VendorRepo(IConfiguration config)
+        public AttributeValuesRepo(IConfiguration config)
         {
 
             _config = config;
             selectlimit = _config.GetValue<string>("configs:Default_select_Limit");
-          
+
         }
         public IDbConnection Connection
         {
@@ -41,72 +41,65 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public async Task<string> Create(Vendor NewVendor)
+        public async Task<string> Create(AttributeValues NewAttributeValue)
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<Vendor>(NewVendor);
-                return result.ToString() ;
-            }
-        }
-        public async Task<string> Count()
-        {
-            using (IDbConnection conn = Connection)
-            {
-                var result = await conn.QueryAsync<String>("select count(vendor_id) from "+TableName+";");
+                var result = await conn.InsertAsync<AttributeValues>(NewAttributeValue);
                 return result.ToString();
             }
         }
-        public async Task<List<Vendor>> GetAll(Int32 Limit)
+
+        public async Task<List<AttributeValues>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<Vendor> result = new List<Vendor>();
-                if(Limit > 0)
+                IEnumerable<AttributeValues> result = new List<AttributeValues>();
+                if (Limit > 0)
                 {
-                    result = await conn.QueryAsync<Vendor>("Select * from "+TableName+" Limit "+ Limit.ToString() + ";");
+                    result = await conn.QueryAsync<AttributeValues>("Select * from " + TableName + " Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
-                    result = await conn.GetAllAsync<Vendor>();
+                    result = await conn.GetAllAsync<AttributeValues>();
                 }
                 return result.ToList();
             }
         }
 
-       
 
-        public async Task<Vendor> GetById(int id)
+
+        public async Task<AttributeValues> GetById(int id)
         {
             using (IDbConnection conn = Connection)
             {
-                
-                var result = await conn.GetAsync<Vendor>(id);
+
+                var result = await conn.GetAsync<AttributeValues>(id);
                 return result;
             }
         }
 
-        public async Task<Boolean> Update( Vendor VendorToUpdate)
+        public async Task<Boolean> Update(AttributeValues AttributeValuesToUpdate)
         {
-            
+
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.UpdateAsync<Vendor>(VendorToUpdate);
+                var result = await conn.UpdateAsync<AttributeValues>(AttributeValuesToUpdate);
                 return result;
             }
-           
+
         }
-        public async Task UpdateSpeific(Dictionary<String , String> ValuePairs, String where)
+        public async Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
             string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.QueryAsync(UpdateQuery);
-               
+
             }
 
         }
+
     }
 }
-
