@@ -10,9 +10,22 @@ a.navbar-brand {
     text-align: center;
     word-break: break-all;
 }
+.btn-light {
+    border: 2px solid grey !important;
+}
 a:hover
 {
     text-decoration: none !important;
+}
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+    border: 1px solid #dddddd;
+    border-right-width: 0px;
+    border-left-width: 0px;
 }
 /* Sticky footer styles
 -------------------------------------------------- */
