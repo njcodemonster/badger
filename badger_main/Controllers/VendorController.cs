@@ -51,11 +51,11 @@ namespace badgerApi.Controllers
             return await _VendorRepo.Count();
 
         }
-        // GET: api/vendor/countandlist
+        // GET: api/vendor/listpageview/10
         [HttpGet("listpageview/{limit}")]
-        public async Task<VendorPagerList> listpageviewAsync(int limit)
+        public async Task<object> listpageviewAsync(int limit)
         {
-            VendorPagerList vPageList = new VendorPagerList();
+            dynamic vPageList = new object();
             try
             {
                 vPageList = await _VendorRepo.GetVendorPageList(limit);

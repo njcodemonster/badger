@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using System.Dynamic;
+
 namespace badgerApi.Interfaces
 { 
     public interface IVendorRepository
@@ -20,7 +22,7 @@ namespace badgerApi.Interfaces
         Task<Boolean> Update(Vendor VendorToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
-        Task<VendorPagerList> GetVendorPageList(int limit);
+        Task<object> GetVendorPageList(int limit);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -109,10 +111,10 @@ namespace badgerApi.Interfaces
 
         }
 
-        public async Task<VendorPagerList> GetVendorPageList(int limit)
+        public async Task<object> GetVendorPageList(int limit)
         {
 
-            VendorPagerList vPageList = new VendorPagerList();
+            dynamic vPageList = new ExpandoObject();
             string sQuery = "";
             if(limit > 0)
             {
@@ -125,8 +127,7 @@ namespace badgerApi.Interfaces
 
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<VendorInfo> vendorInfo = await conn.QueryAsync<VendorInfo>(sQuery);
-                vPageList.Count = vendorInfo.FirstOrDefault<VendorInfo>().Count;
+                IEnumerable<object> vendorInfo = await conn.QueryAsync<object>(sQuery);
                 vPageList.vendorInfo = vendorInfo;
             }
             return vPageList;

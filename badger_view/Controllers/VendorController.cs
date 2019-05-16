@@ -30,7 +30,6 @@ namespace badger_view.Controllers
             {
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
-            ViewData["tottalVendors"] = "5";
             VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/20");
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 

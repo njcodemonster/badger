@@ -27,7 +27,12 @@ namespace badger_view.Helpers
             var response = await client.GetAsync(BadgerAPIURL + _call, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(data);
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(data,settings);
 
         }
 
