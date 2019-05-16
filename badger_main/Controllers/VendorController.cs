@@ -52,15 +52,24 @@ namespace badgerApi.Controllers
 
         }
         // GET: api/vendor/countandlist
-        [HttpGet("countandlist")]
-        public async Task<VendorCountAndList> CountAndListAsync()
+        [HttpGet("listpageview/{limit}")]
+        public async Task<VendorPagerList> listpageviewAsync(int limit)
         {
-            var Vendors = await _VendorRepo.GetAll(2);
-            var Count = await _VendorRepo.Count();
-            var VendorCountAndList = new VendorCountAndList();
-            VendorCountAndList.Count = Count;
-            VendorCountAndList.vendors = Vendors;
-            return VendorCountAndList;
+            VendorPagerList vPageList = new VendorPagerList();
+            try
+            {
+                vPageList = await _VendorRepo.GetVendorPageList(limit);
+                string  vPageCount = await _VendorRepo.Count();
+                vPageList.Count = vPageCount;
+            }
+            catch(Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+                
+            }
+
+            return vPageList;
 
         }
 
