@@ -23,7 +23,8 @@ namespace badgerApi.Controllers
             _AttributesRepo = AttributesRepo;
             _loggerFactory = loggerFactory;
         }
-       
+
+        // GET: api/attributes/list
         [HttpGet("list")]
         public async Task<ActionResult<List<Attributes>>> GetAsync()
         {
@@ -39,10 +40,9 @@ namespace badgerApi.Controllers
                 return ToReturn;
             }
            
-
         }
 
-       
+        // GET: api/attributes/list/1
         [HttpGet("list/{id}")]
         public async Task<List<Attributes>> GetAsync(int id)
         {
@@ -61,7 +61,8 @@ namespace badgerApi.Controllers
             }
             return ToReturn;
         }
-      
+
+        // POST: api/attributes/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -74,12 +75,12 @@ namespace badgerApi.Controllers
             catch(Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
             }
             return NewInsertionID;
         }
 
-        // PUT: api/Vendor/5
+        // PUT: api/attributes/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -95,7 +96,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  vendor with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -105,6 +106,7 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
+        // PUT: api/attributes/specificUpdate/1
         [HttpPut("specificUpdate/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -143,7 +145,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new vendor with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             

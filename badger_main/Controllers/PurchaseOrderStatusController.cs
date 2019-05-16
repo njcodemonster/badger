@@ -23,6 +23,7 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
+        // GET: api/purchaseorderstatus/list
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrderStatus>>> GetAsync()
         {
@@ -40,6 +41,7 @@ namespace badgerApi.Controllers
 
         }
 
+        // GET: api/purchaseorderstatus/list/1
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrderStatus>> GetAsync(int id)
         {
@@ -59,7 +61,7 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-
+        // GET: api/purchaseorderstatus/list/name/
         [HttpGet("list/name/{name}")]
         public async Task<List<PurchaseOrderStatus>> GetByName(string name)
         {
