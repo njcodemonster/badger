@@ -198,7 +198,7 @@ namespace badgerApi.Controllers
                 }
 
 
-                await _VendorRepo.UpdateSpeific(ValuesToUpdate, "vendor_id="+id);
+                await _VendorRepo.UpdateSpecific(ValuesToUpdate, "vendor_id="+id);
             }
             catch (Exception ex)
             {

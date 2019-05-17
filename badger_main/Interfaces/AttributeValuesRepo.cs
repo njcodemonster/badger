@@ -19,7 +19,7 @@ namespace badgerApi.Interfaces
         Task<List<AttributeValues>> GetAll(Int32 Limit);
         Task<String> Create(AttributeValues NewAttributeValue);
         Task<Boolean> Update(AttributeValues AttributeValuesToUpdate);
-        Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
+        Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
     }
     public class AttributeValuesRepo : IAttributeValuesRepository
     {
@@ -89,7 +89,7 @@ namespace badgerApi.Interfaces
             }
 
         }
-        public async Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where)
+        public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
             string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
