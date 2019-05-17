@@ -82,7 +82,6 @@ namespace badgerApi.Controllers
             {
                 Vendor Res =  await _VendorRepo.GetById(id);
                 ToReturn.Add(Res);
-               
             }
             catch (Exception ex)
             {
