@@ -25,12 +25,5 @@ namespace itemService.Models
         public int updated_by { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
-
-        public virtual ItemStatus ItemStatus { get; set; } 
-
-        internal object ToArray()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

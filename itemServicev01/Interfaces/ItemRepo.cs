@@ -15,9 +15,10 @@ namespace itemService.Interfaces
 {
     public interface ItemRepository
     {
-        Task<List<Items>> getItemById(string id);
-        Task<List<Items>> getItemByBarcode(string Barcode);
-        Task<List<Items>> getItemByBagNumber(string BagNumber);
+        Task<List<Items>> GetAll(Int32 Limit);
+        Task<List<Items>> GetItemById(string id);
+        Task<List<Items>> GetItemByBarcode(string Barcode);
+        Task<List<Items>> GetItemByBagNumber(string BagNumber);
         Task<List<Items>> GetBySkuFamily(string BagNumber, int Limit);
         Task<List<Items>> GetByProductId(string ProductId, int Limit);
         Task<List<Items>> GetByVendorId(string VendorId, int Limit);
@@ -31,11 +32,16 @@ namespace itemService.Interfaces
         Task<List<Items>> GetByCreateDateRange(string StartDate, string EndDate, int Limit);
         Task<List<Items>> GetAfterDate(string AfterDate, int Limit);
         Task<List<Items>> GetBeforeDate(string BeforeDate, int Limit);
+        Task<String> Create(Items NewItem);
+        Task<Boolean> Update(Items ItemToUpdate);
+        Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
 
     }
     public class ItemRepo : ItemRepository
     {
         private readonly IConfiguration _config;
+        private string TableName = "items";
+        private string selectlimit = "30";
 
         public ItemRepo(IConfiguration config)
         {
@@ -50,7 +56,24 @@ namespace itemService.Interfaces
             }
         }
 
-        public async Task<List<Items>> getItemById(string id)
+        public async Task<List<Items>> GetAll(Int32 Limit)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Items> result = new List<Items>();
+                if (Limit > 0)
+                {
+                    result = await conn.QueryAsync<Items>("Select * from " + TableName + " Limit " + Limit.ToString() + ";");
+                }
+                else
+                {
+                    result = await conn.GetAllAsync<Items>();
+                }
+                return result.ToList();
+            }
+        }
+
+        public async Task<List<Items>> GetItemById(string id)
         {
             try
             {
@@ -85,7 +108,7 @@ namespace itemService.Interfaces
             }
         }
 
-        public async Task<List<Items>> getItemByBarcode(string Barcode)
+        public async Task<List<Items>> GetItemByBarcode(string Barcode)
         {
             try
             {
@@ -113,7 +136,7 @@ namespace itemService.Interfaces
             }
         }
 
-        public async Task<List<Items>> getItemByBagNumber(string BagNumber)
+        public async Task<List<Items>> GetItemByBagNumber(string BagNumber)
         {
             try
             {
@@ -594,5 +617,36 @@ namespace itemService.Interfaces
             }
         }
 
+        public async Task<string> Create(Items NewItem)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<Items>(NewItem);
+                return result.ToString();
+            }
+        }
+
+        public async Task<Boolean> Update(Items ItemToUpdate)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<Items>(ItemToUpdate);
+                return result;
+            }
+
+        }
+
+       
+        public async Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where)
+        {
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
+            }
+
+        }
     }
 }
