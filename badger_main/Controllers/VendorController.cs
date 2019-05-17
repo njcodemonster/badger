@@ -137,7 +137,7 @@ namespace badgerApi.Controllers
         }
 
         // PUT: api/vendor/specificUpdate/5
-        [HttpPut("specificUpdate/{id}")]
+        [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
 

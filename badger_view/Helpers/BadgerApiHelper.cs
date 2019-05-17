@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,48 @@ namespace badger_view.Helpers
             return JsonConvert.DeserializeObject<T>(data,settings);
 
         }
+        public async Task<T> GenericPostAsync<T>(T json,String _call)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.PostAsJsonAsync(BadgerAPIURL + _call, json);
+            response.EnsureSuccessStatusCode();
+           
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(data, settings);
 
+        }
+
+        public async Task<String> GenericPostAsyncString<T>(T json, String _call)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.PostAsJsonAsync(BadgerAPIURL + _call, json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+
+        }
+        public async Task<string> GenericPostSyncStringAsync<T>(T json, String _call)
+        {
+            var client = new HttpClient();
+            
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.PutAsJsonAsync(BadgerAPIURL + _call, json);
+
+            response.EnsureSuccessStatusCode();
+
+            var data =  response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+
+        }
     }
 }
