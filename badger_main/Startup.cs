@@ -33,6 +33,8 @@ namespace badgerApi
             services.AddTransient<IAttributesRepository, AttributesRepo>();
             services.AddTransient<IAttributeTypeRepository, AttributeTypeRepo>();
             services.AddTransient<IAttributeValuesRepository, AttributeValuesRepo>();
+            services.AddTransient<IPurchaseOrdersRepository, PurchaseOrdersRepo>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
