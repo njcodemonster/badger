@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using System.Dynamic;
+
 namespace badgerApi.Interfaces
 { 
     public interface IVendorRepository
@@ -20,6 +22,7 @@ namespace badgerApi.Interfaces
         Task<Boolean> Update(Vendor VendorToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
+        Task<object> GetVendorPageList(int limit);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -54,7 +57,7 @@ namespace badgerApi.Interfaces
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.QueryAsync<String>("select count(vendor_id) from "+TableName+";");
-                return result.ToString();
+                return result.FirstOrDefault();
             }
         }
         public async Task<List<Vendor>> GetAll(Int32 Limit)
@@ -106,6 +109,29 @@ namespace badgerApi.Interfaces
                
             }
 
+        }
+
+        public async Task<object> GetVendorPageList(int limit)
+        {
+
+            dynamic vPageList = new ExpandoObject();
+            string sQuery = "";
+            if(limit > 0)
+            {
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + limit+";";
+            }
+            else
+            {
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc;";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> vendorInfo = await conn.QueryAsync<object>(sQuery);
+                vPageList.vendorInfo = vendorInfo;
+            }
+            return vPageList;
+           
         }
     }
 }

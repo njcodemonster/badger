@@ -1,4 +1,5 @@
 ﻿
+
 @{
     ViewData["Title"] = "Vendor";
 }
@@ -6,7 +7,7 @@
 
 <div class="row">
     <div class="col-md-2 col-sm-12">
-        <h4 class="text-info">Vendors (VendorPageModal.VendorCount)</h4>
+        <h2 class="text-info">Vendors (@Model.VendorCount)</h2>
     </div>
     <div class="col-md-10">
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
@@ -14,24 +15,25 @@
         </button>
     </div>
 </div>
-<div class="table-responsive">
-    <table id="openpo" class="table table-bordered" style="width:100%">
-        <thead>
+<table id="openpo" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Vendor Name</th>
+            <th>Vendor Code</th>
+            <th>Orders Count</th>
+            <th>Most Recent Order</th>
+            <th>Edit Profile</th>
+            <th>Vendor Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (VendorInfo vendor in Model.VendorLists)
+        {
             <tr>
-                <th>Vendor Name</th>
-                <th>Vendor Code</th>
-                <th>Orders Count</th>
-                <th>Most Recent Order</th>
-                <th>Edit Profile</th>
-                <th>Vendor Notes</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>ASTR</td>
-                <td>AS</td>
-                <td>3</td>
-                <td><a href="#">45923451</a></td>
+                <td>@vendor.vendor_name</td>
+                <td>@vendor.vendor_code</td>
+                <td>@vendor.order_count</td>
+                <td><a href="#">@vendor.last_order</a></td>
                 <td>
                     <button type="button" class="btn btn-light btn-sm">Edit</button>
                 </td>
@@ -39,40 +41,16 @@
                     <a href="#"><i class="fa fa-edit h3"></i></a>
                 </td>
             </tr>
-            <tr>
-                <td>Free People</td>
-                <td>FP</td>
-                <td>8</td>
-                <td><a href="#">123445</a></td>
-                <td>
-                    <button type="button" class="btn btn-light btn-sm">Edit</button>
-                </td>
-                <td>
-                    <a href="#"><i class="fa fa-edit h3"></i></a>
-                </td>
-            </tr>
-            <tr>
-                <td>Stylestalker</td>
-                <td>SS</td>
-                <td>12</td>
-                <td><a href="#">9019225</a></td>
-                <td>
-                    <button type="button" class="btn btn-light btn-sm">Edit</button>
-                </td>
-                <td>
-                    <a href="#"><i class="fa fa-edit h3"></i></a>
-                </td>
-            </tr>
+        }
         </tbody>
-        <tfoot>
-            <tr>
-                <th>Vendor Name</th>
-                <th>Vendor Code</th>
-                <th>Orders Count</th>
-                <th>Most Recent Order</th>
-                <th>Edit Profile</th>
-                <th>Vendor Notes</th>
-            </tr>
-        </tfoot>
-    </table>
-</div>
+    <tfoot>
+        <tr>
+            <th>Vendor Name</th>
+            <th>Vendor Code</th>
+            <th>Orders Count</th>
+            <th>Most Recent Order</th>
+            <th>Edit Profile</th>
+            <th>Vendor Notes</th>
+        </tr>
+    </tfoot>
+</table>
