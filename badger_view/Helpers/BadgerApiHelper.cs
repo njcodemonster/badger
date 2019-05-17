@@ -35,6 +35,12 @@ namespace badger_view.Helpers
             return JsonConvert.DeserializeObject<T>(data,settings);
 
         }
+        public string ConvertUnixtime(double unixtime)
+        {
+            var DateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(unixtime);
+
+            return DateTime.ToString("M/d/yyyy");
+        }
 
     }
 }
