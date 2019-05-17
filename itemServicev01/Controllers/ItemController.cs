@@ -51,8 +51,10 @@ namespace itemService.Controllers
                 ToRetrunItems = await _ItemRepository.GetItemById(ItemId);
                 return ToRetrunItems;
             }
-            catch (Exception IdException)
+            catch (Exception ex)
             {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get Item with message" + ex.Message); 
                 return ToRetrunItems;
             }
         }
@@ -66,8 +68,10 @@ namespace itemService.Controllers
                 ToRetrun = await _ItemRepository.GetItemByBarcode(Barcode);
                 return ToRetrun;
             }
-            catch (Exception BarcodeException)
+            catch (Exception ex)
             {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get Item by barcode with message" + ex.Message);
                 return ToRetrun;
             }
 
@@ -82,8 +86,10 @@ namespace itemService.Controllers
                  ToRetrun = await _ItemRepository.GetItemByBagNumber(BagNumber);
                 return ToRetrun;
             }
-            catch(Exception BagNumberException)
+            catch (Exception ex)
             {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get Item by bagNumber with message" + ex.Message);
                 return ToRetrun;
             }
         }

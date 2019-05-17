@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Inphoto";
+}
+
+<div class="row">
+    <div class="col-md-3 col-sm-12">
+        <h4>In-Progress Photoshoots</h4>
+    </div>
+    <div class="col-md-9 text-right">
+        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modaladdmodel">
+            Add a Model
+        </button>
+    </div>
+</div>
+<div class="table-responsive pt-5">
+    <table id="openpo" class="table   table-bordered " style="width:100%;">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Scheduled Date</th>
+                <th>Stlye (count)</th>
+                <th>Notes</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <select id="inputState" class="form-control">
+                        <option selected>Alexis</option>
+                        <option>...</option>
+                    </select>
+                </td>
+                <td><input type="date" class="form-control" /></td>
+                <td>1</td>
+                <td><input type="text" class="form-control" /></td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm">
+                        Edit Photoshoot
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select id="inputState" class="form-control">
+                        <option selected>Alexis</option>
+                        <option>...</option>
+                    </select>
+                </td>
+                <td><input type="date" class="form-control" /></td>
+                <td>1</td>
+                <td><input type="text" class="form-control" /></td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm">
+                        Edit Photoshoot
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select id="inputState" class="form-control">
+                        <option selected>Alexis</option>
+                        <option>...</option>
+                    </select>
+                </td>
+                <td><input type="date" class="form-control" /></td>
+                <td>1</td>
+                <td><input type="text" class="form-control" /></td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm">
+                        Edit Photoshoot
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Model</th>
+                <th>Scheduled Date</th>
+                <th>Stlye (count)</th>
+                <th>Notes</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+<!-- Modal Add Model -->
+<div class="modal fade" id="modaladdmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLongTitle">Add a new Model</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Full Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label>Height</label>
+                                <select id="inputState" class="form-control">
+                                    <option>6</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label>Hair</label>
+                                <select id="inputState" class="form-control">
+                                    <option>B</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Ethnicity</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
