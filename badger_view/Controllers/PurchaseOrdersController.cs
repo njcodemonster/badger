@@ -32,5 +32,9 @@ namespace badger_view.Controllers
 
             return View("Index", PurchaseOrdersPageModal);
         }
+        public IActionResult POCheckIn()
+        {
+            return View();
+        }
     }
 }
