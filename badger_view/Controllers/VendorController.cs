@@ -21,17 +21,25 @@ namespace badger_view.Controllers
     {
         
         private readonly IConfiguration _config;
+        private BadgerApiHelper _BadgerApiHelper;
+        private CommonHelper _CommonHelper;
         public VendorController(IConfiguration config)
         {
             _config = config;
 
         }
-        private BadgerApiHelper _BadgerApiHelper ;
         private void SetBadgerHelper()
         {
             if (_BadgerApiHelper == null)
             {
                 _BadgerApiHelper = new BadgerApiHelper(_config);
+            }
+        }
+        private void SetCommonHelper()
+        {
+            if (_CommonHelper == null)
+            {
+                _CommonHelper = new CommonHelper(_config);
             }
         }
         public async Task<IActionResult> Index()
@@ -48,6 +56,7 @@ namespace badger_view.Controllers
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
         {
             SetBadgerHelper();
+            SetCommonHelper();
             JObject vendor = new JObject();
             JObject vendor_adress = new JObject();
             List<JObject> vendor_reps = new List<JObject>();
@@ -58,7 +67,7 @@ namespace badger_view.Controllers
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
             vendor.Add("created_by", 2);
             vendor.Add("active_status", 1);
-            vendor.Add("created_at", 1);
+            vendor.Add("created_at", _CommonHelper.GetTimeStemp());
 
 
 
