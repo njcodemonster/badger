@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewData["Title"] = "Purchase Orders";
+}
+
+@functions {
+    public string ConvertUnixtime(double unixtime)
+    {
+        var DateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(unixtime);
+
+        return DateTime.ToString("M/d/yyyy");
+    }
+}
+
+
+<div class="row">
+    <div class="col-md-3 col-sm-12">
+        <h2 class="text-info">Open Purchase Orders (@Model.PurchaseOrdersCount)</h2>
+    </div>
+    <div class="col-md-9">
+        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalpo1">
+            Add New P.O.
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
+            Add New Vendor
+        </button>
+    </div>
+</div>
+<table id="openpo" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>P.O. Number</th>
+            <th>Order Date</th>
+            <th>Vendor</th>
+            <th>Styles</th>
+            <th>Photos</th>
+            <th>Remaining</th>
+            <th>Shipment Window</th>
+            <th>Last Change</th>
+            <th>Status</th>
+            <th>Check-in</th>
+            <th>Edit P.O.</th>
+            <th></th>
+            <th></th>
+            <th>Inspect</th>
+            <th>Go Live</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
+        {
+            <tr>
+                <!-- td>@purchaseOrders.po_id</!--td>
+                <td>@purchaseOrders.vendor_invoice_number</td>
+                <td>@purchaseOrders.vendor_order_number</td-->
+
+                <td>@purchaseOrders.vendor_po_number</td>
+                <td>
+                    @ConvertUnixtime(@purchaseOrders.order_date)
+                </td>
+                <td>@purchaseOrders.vendor</td>
+                <td>6</td>
+                <td>5</td>
+                <td>3</td>
+                <td>3/7-3/21/2018</td>
+                <td>17 Days</td>
+                <td>@purchaseOrders.po_status</td>
+                <td>
+                    <button type="button" class="btn btn-success btn-sm">Checked-in</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-light btn-sm">Edit</button>
+                </td>
+                <td>
+                    <a href="#"><i class="fa fa-edit h3"></i></a>
+                </td>
+                <td>
+                    <a href="#"><i class="fa fa-upload h3"></i></a>
+                </td>
+                <td>
+                    <a href="#">Claim</a>
+                </td>
+                <td>
+                    <a href="#">Claim</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>P.O. Number</th>
+            <th>Order Date</th>
+            <th>Vendor</th>
+            <th>Styles</th>
+            <th>Photos</th>
+            <th>Remaining</th>
+            <th>Shipment Window</th>
+            <th>Last Change</th>
+            <th>Status</th>
+            <th>Check-in</th>
+            <th>Edit P.O.</th>
+            <th></th>
+            <th></th>
+            <th>Inspect</th>
+            <th>Go Live</th>
+        </tr>
+    </tfoot>
+</table>

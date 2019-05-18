@@ -106,8 +106,8 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // PUT: api/attributes/specificUpdate/1
-        [HttpPut("specificUpdate/{id}")]
+        // PUT: api/attributes/updatespecific/1
+        [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
 
@@ -140,7 +140,7 @@ namespace badgerApi.Controllers
                     ValuesToUpdate.Add("created_at", AttributesToUpdate.created_at.ToString());
                 }
 
-                await _AttributesRepo.UpdateSpeific(ValuesToUpdate, "attribute_id=" + id);
+                await _AttributesRepo.UpdateSpecific(ValuesToUpdate, "attribute_id=" + id);
             }
             catch (Exception ex)
             {

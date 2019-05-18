@@ -20,7 +20,7 @@ namespace badgerApi.Interfaces
         Task<List<Vendor>> GetAll(Int32 Limit);
         Task<String> Create(Vendor NewVendor);
         Task<Boolean> Update(Vendor VendorToUpdate);
-        Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
+        Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
         Task<object> GetVendorPageList(int limit);
     }
@@ -99,7 +99,7 @@ namespace badgerApi.Interfaces
             }
            
         }
-        public async Task UpdateSpeific(Dictionary<String , String> ValuePairs, String where)
+        public async Task UpdateSpecific(Dictionary<String , String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
             string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);

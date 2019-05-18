@@ -3,9 +3,16 @@
 
 // Write your JavaScript code.
 
+// Initiate data table
 
 $(document).ready(function () {
     $('#openpo').DataTable();
+    $('.datatable_js').DataTable({
+        "columnDefs": [
+            { "orderable": false, "targets": [0,1,7] },
+           // { "orderable": true, "targets": [1, 2, 3] }
+        ]
+    });
 });
 
 // Add another field
