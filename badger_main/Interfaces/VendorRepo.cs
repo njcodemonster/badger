@@ -23,6 +23,9 @@ namespace badgerApi.Interfaces
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
         Task<object> GetVendorPageList(int limit);
+        Task<Object> GetVendorDetailsAdressRep(Int32 id);
+        Task<Object> GetVendorDetailsRep(Int32 id);
+        Task<Object> GetVendorDetailsAddress(Int32 id);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -132,6 +135,39 @@ namespace badgerApi.Interfaces
             }
             return vPageList;
            
+        }
+        public async Task<Object> GetVendorDetailsAdressRep(Int32 id)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "select * from vendor,vendor_address,vendor_contact_person where(vendor.vendor_id=" + id.ToString() + "and vendor_address.vendor_id = vendor.vendor_id and vendor_contact_person.vendor_id = vendor.vendor_id)";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+                
+            }
+            return vendorDetails;
+        }
+        public async Task<Object> GetVendorDetailsAddress(Int32 id)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "select * from vendor_address where(vendor_address.vendor_id=" + id.ToString() +")";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
+        }
+        public async Task<Object> GetVendorDetailsRep(Int32 id)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "select * from vendor_contact_person where(vendor_contact_person.vendor_id=" + id.ToString() + ")";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
         }
     }
 }
