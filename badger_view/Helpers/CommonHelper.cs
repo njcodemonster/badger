@@ -11,16 +11,18 @@ namespace badger_view.Helpers
 {
     public class CommonHelper
     {
-        private String BadgerAPIURL = "";
         private readonly IConfiguration _config;
         public CommonHelper(IConfiguration config)
         {
 
             _config = config;
-            BadgerAPIURL = _config.GetValue<string>("Services:Badger");
 
         }
 
+        public Double GetTimeStemp()
+        {
+          return  (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        }
         public string ConvertToDate(double unixtime)
         {
             return (new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(unixtime)).ToString("M/d/yyyy");
