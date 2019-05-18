@@ -67,6 +67,8 @@
         <footer>
             <p>&copy; 2019 - badger</p>
         </footer>
+
+        @RenderSection("purchase_order_popup", required: false)
     </div>
 
     <environment include="Development">
@@ -106,6 +108,7 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
 
 <!-- Modal PO -->
 <div class="modal fade" id="modalpo1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

@@ -45,11 +45,14 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             SetCommonHelper();
+
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20");
 
             string NewDateFormat = "";
             string NumDays = "";
+
             var TotalList = purchaseOrdersPagerList.purchaseOrdersInfo;
+
             List<PurchaseOrdersInfo> newPurchaseOrderInfoList = new List<PurchaseOrdersInfo>();
 
             foreach (PurchaseOrdersInfo poList in TotalList)

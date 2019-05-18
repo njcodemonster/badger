@@ -28,12 +28,10 @@ namespace badger_view.Helpers
 
         public string NumberOfDays( double unixtime) {
 
-            double TimeNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            DateTime StartDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            DateTime EndDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(unixtime);
 
-            DateTime StartDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(unixtime);
-            DateTime EndDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(TimeNow);
-
-            string NumOfDate = (EndDateTime - StartDateTime).Days.ToString();
+            string NumOfDate = (StartDateTime - EndDateTime).Days.ToString();
 
             string TheDays = "Day";
 
@@ -46,9 +44,7 @@ namespace badger_view.Helpers
                 TheDays = "Days";
             }
 
-            string aaa = NumOfDate + " " + TheDays;
-
-            return aaa;
+            return NumOfDate + " " + TheDays;
         }
     }
 }
