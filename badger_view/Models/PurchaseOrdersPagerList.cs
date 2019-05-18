@@ -12,10 +12,12 @@ namespace badger_view.Models
         public string vendor_invoice_number { get; set; }
         public int vendor_order_number { get; set; }
         public int vendor_id { get; set; }
-        public string vendor { get; set; }
         public double order_date { get; set; }
+        public string vendor { get; set; }
         public int po_status { get; set; }
-
+        public double updated_at { get; set; }
+        public string custom_order_date { get; set; }
+        public string num_of_days { get; set; }
     }
 
     public class PurchaseOrdersPagerList
