@@ -65,19 +65,6 @@ namespace badger_view.Helpers
             return data.ToString();
 
         }
-        public async Task<string> GenericPostSyncStringAsync<T>(T json, String _call)
-        {
-            var client = new HttpClient();
-            
-            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
-            var response = await client.PutAsJsonAsync(BadgerAPIURL + _call, json);
-
-            response.EnsureSuccessStatusCode();
-
-            var data =  response.Content.ReadAsStringAsync();
-
-            return data.ToString();
-
-        }
+       
     }
 }
