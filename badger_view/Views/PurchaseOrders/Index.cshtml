@@ -3,15 +3,9 @@
     ViewData["Title"] = "Purchase Orders";
 }
 
-@functions {
-    public string ConvertUnixtime(double unixtime)
-    {
-        var DateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(unixtime);
-
-        return DateTime.ToString("M/d/yyyy");
-    }
+@section Scripts {
+    <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
-
 
 <div class="row">
     <div class="col-md-3 col-sm-12">
@@ -56,14 +50,14 @@
 
                 <td>@purchaseOrders.vendor_po_number</td>
                 <td>
-                    @ConvertUnixtime(@purchaseOrders.order_date)
+                    @purchaseOrders.custom_order_date
                 </td>
                 <td>@purchaseOrders.vendor</td>
                 <td>6</td>
                 <td>5</td>
                 <td>3</td>
                 <td>3/7-3/21/2018</td>
-                <td>17 Days</td>
+                <td>@purchaseOrders.num_of_days</td>
                 <td>@purchaseOrders.po_status</td>
                 <td>
                     <button type="button" class="btn btn-success btn-sm">Checked-in</button>

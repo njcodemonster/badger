@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using System.Net;
+using System.Dynamic;
 
 namespace badgerApi.Controllers
 {
@@ -72,7 +69,73 @@ namespace badgerApi.Controllers
             return vPageList;
 
         }
+        //GET: api/vendor/detailsadressandrep/103
+        [HttpGet("detailsaddressandrep/{id}")]
+        public async Task<object> DetailsAddressAndRep(int id)
+        {
+            dynamic AdressAndrepDetails = new ExpandoObject();
+            dynamic vendor = new ExpandoObject();
+            dynamic vendor_address = new ExpandoObject();
+            dynamic vendor_Rep = new ExpandoObject();
+            try
+            {
+                vendor = await _VendorRepo.GetById(id);
+                vendor_address = await _VendorRepo.GetVendorDetailsAddress(id);
+                vendor_Rep = await _VendorRepo.GetVendorDetailsRep(id);
+                AdressAndrepDetails.Vendor = vendor;
+                AdressAndrepDetails.Addresses = vendor_address;
+                AdressAndrepDetails.Reps = vendor_Rep;
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
 
+            }
+
+            return AdressAndrepDetails;
+
+        }
+        //GET: api/vendor/detailsaddress/103
+        [HttpGet("detailsaddress/{id}")]
+        public async Task<List<object>> DetailsAddress(int id)
+        {
+            dynamic AdressDetails = new object();
+            try
+            {
+                AdressDetails = await _VendorRepo.GetVendorDetailsAddress(id);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return AdressDetails;
+
+        }
+        //GET: api/vendor/detailsrep/103
+        [HttpGet("detailsRep/{id}")]
+        public async Task<List<object>> DetailsRep(int id)
+        {
+            dynamic RepDetails = new object();
+            try
+            {
+                RepDetails = await _VendorRepo.GetVendorDetailsRep(id);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return RepDetails;
+
+        }
         // GET: api/vendor/list/1
         [HttpGet("list/{id}")]
         public async Task<List<Vendor>> GetAsync(int id)

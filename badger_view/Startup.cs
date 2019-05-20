@@ -56,7 +56,7 @@ namespace badger_view
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=PurchaseOrders}/{action=POCheckIn}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
                
             });
            
