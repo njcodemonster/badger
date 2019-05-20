@@ -34,6 +34,9 @@ namespace badgerApi
             services.AddTransient<IAttributeTypeRepository, AttributeTypeRepo>();
             services.AddTransient<IAttributeValuesRepository, AttributeValuesRepo>();
             services.AddTransient<IPurchaseOrdersRepository, PurchaseOrdersRepo>();
+            services.AddTransient<IVendorAdress, VendorAdressRepo>();
+            services.AddTransient<IVendorRepRepository, VendorRepRepo>();
+
             services.AddTransient<IPhotoshootModelRepository, PhotoshootModelRepo>();
         }
 

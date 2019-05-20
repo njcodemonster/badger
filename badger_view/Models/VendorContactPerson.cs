@@ -10,7 +10,7 @@ namespace badger_view.Models
         public int vendor_id { get; set; }
         public string first_name { get; set; }
         public string full_name { get; set; }
-        public byte main { get; set; }
+        public Boolean main { get; set; }
         public string phone1 { get; set; }
         public string phone2 { get; set; }
         public string email { get; set; }
