@@ -6,7 +6,7 @@
 // Initiate data table
 
 $(document).ready(function () {
-    $('#openpo').DataTable();
+    $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
         "columnDefs": [
             { "orderable": false, "targets": [0,1,7] },

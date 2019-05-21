@@ -28,6 +28,11 @@ namespace badger_view.Helpers
             return (new DateTime(1970, 1, 1).AddSeconds(unixtime)).ToString("M/d/yyyy");
         }
 
+        public string MultiDatePickerFormat(double starttime, double endtime)
+        {
+            return (new DateTime(1970, 1, 1).AddSeconds(starttime)).ToString("M/d")+"-"+ (new DateTime(1970, 1, 1).AddSeconds(endtime)).ToString("M/d/yyyy");
+        }
+
         public string NumberOfDays( double timestamp) {
 
             double TimeNow = (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;

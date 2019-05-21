@@ -57,7 +57,7 @@
                 <td>6</td>
                 <td>5</td>
                 <td>3</td>
-                <td>3/7-3/21/2018</td>
+                <td>@purchaseOrders.custom_delivery_window_start_end</td>
                 <td>@purchaseOrders.num_of_days</td>
                 <td>@purchaseOrders.po_status</td>
                 <td>
@@ -121,9 +121,12 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
-                                  <select id="inputState" class="form-control d-inline-block" style="width: 90%">
+                                    <select id="poVendor" class="form-control d-inline-block" style="width: 90%">
                                         <option selected>Choose...</option>
-                                        <option>...</option>
+                                        @foreach (Vendor vendor in Model.GetVendorsNameAndId)
+                                        {
+                                            <option value="@vendor.vendor_id">@vendor.vendor_name</option>
+                                        }
                                     </select>
                                     <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
                                 </div>
