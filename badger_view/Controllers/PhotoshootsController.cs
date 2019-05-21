@@ -6,15 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace badger_view.Controllers
 {
-    public class PurchaseOrderController : Controller
+    public class PhotoshootsController : Controller
     {
         public IActionResult Index()
         {
-            return View("Index");
-        }
-        public IActionResult Single()
-        {
             return View();
+        }
+
+        public IActionResult inProgress()
+        {
+            return View("inprogress");
         }
     }
 }

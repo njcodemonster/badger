@@ -1,11 +1,15 @@
 ﻿
+
 @{
     ViewData["Title"] = "Vendor";
 }
-
+@model dynamic
+@section Scripts {
+    <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
+}
 <div class="row">
     <div class="col-md-2 col-sm-12">
-        <h2 class="text-info">Vendors (3)</h2>
+        <h4 class="text-info">Vendors (@Model.VendorCount)</h4><h1>@Model.Reps[1].contact_id</h1>
     </div>
     <div class="col-md-10">
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
@@ -13,63 +17,44 @@
         </button>
     </div>
 </div>
-<table id="openpo" class="table table-bordered" style="width:100%">
-    <thead>
-        <tr>
-            <th>Vendor Name</th>
-            <th>Vendor Code</th>
-            <th>Orders Count</th>
-            <th>Most Recent Order</th>
-            <th>Edit Profile</th>
-            <th>Vendor Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ASTR</td>
-            <td>AS</td>
-            <td>3</td>
-            <td><a href="#">45923451</a></td>
-            <td>
-                <button type="button" class="btn btn-light btn-sm">Edit</button>
-            </td>
-            <td>
-                <a href="#"><i class="fa fa-edit h3"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td>Free People</td>
-            <td>FP</td>
-            <td>8</td>
-            <td><a href="#">123445</a></td>
-            <td>
-                <button type="button" class="btn btn-light btn-sm">Edit</button>
-            </td>
-            <td>
-                <a href="#"><i class="fa fa-edit h3"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td>Stylestalker</td>
-            <td>SS</td>
-            <td>12</td>
-            <td><a href="#">9019225</a></td>
-            <td>
-                <button type="button" class="btn btn-light btn-sm">Edit</button>
-            </td>
-            <td>
-                <a href="#"><i class="fa fa-edit h3"></i></a>
-            </td>
-        </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <th>Vendor Name</th>
-            <th>Vendor Code</th>
-            <th>Orders Count</th>
-            <th>Most Recent Order</th>
-            <th>Edit Profile</th>
-            <th>Vendor Notes</th>
-        </tr>
-    </tfoot>
-</table>
+<div class="table-responsive pt-5">
+    <table id="openpo" class="table table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Vendor Name</th>
+                <th>Vendor Code</th>
+                <th>Orders Count</th>
+                <th>Most Recent Order</th>
+                <th>Edit Profile</th>
+                <th>Vendor Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VendorInfo vendor in Model.VendorLists)
+            {
+                <tr>
+                    <td>@vendor.vendor_name</td>
+                    <td>@vendor.vendor_code</td>
+                    <td>@vendor.order_count</td>
+                    <td><a href="#" data-toggle="modal" data-target="#modalpo1">@vendor.last_order</a></td>
+                    <td>
+                        <button type="button" class="btn btn-light btn-sm">Edit</button>
+                    </td>
+                    <td>
+                        <a href="#"><i class="fa fa-edit h3"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Vendor Name</th>
+                <th>Vendor Code</th>
+                <th>Orders Count</th>
+                <th>Most Recent Order</th>
+                <th>Edit Profile</th>
+                <th>Vendor Notes</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

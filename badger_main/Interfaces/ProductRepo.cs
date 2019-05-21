@@ -16,10 +16,10 @@ namespace badgerApi.Interfaces
     public interface IProductRepository
     {
         Task<Product> GetByIdAsync(int id);
-        Task<List<Product>> GetAllAsync(Int32 Limit);
+        Task<List<Product>> GetAll(Int32 Limit);
         Task<Product> Create(Product NewProduct);
         Task<bool> UpdateAsync(Product ProductToUpdate);
-        Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
+        Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
     }
     public class ProductRepo : IProductRepository
     {
@@ -47,7 +47,7 @@ namespace badgerApi.Interfaces
             throw new NotImplementedException();
         }
 
-        public async Task<List<Product>> GetAllAsync(int Limit)
+        public async Task<List<Product>> GetAll(int Limit)
         {
             using (IDbConnection conn = Connection)
             {
@@ -72,6 +72,7 @@ namespace badgerApi.Interfaces
 
                 var result = await conn.GetAsync<Product>(id);
                 return result;
+
             }
         }
 
@@ -85,7 +86,7 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public Task UpdateSpeific(Dictionary<string, string> ValuePairs, string where)
+        public Task UpdateSpecific(Dictionary<string, string> ValuePairs, string where)
         {
             throw new NotImplementedException();
         }

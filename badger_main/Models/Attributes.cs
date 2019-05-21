@@ -13,6 +13,6 @@ namespace badgerApi.Models
         public int attribute_type_id { get; set; }
         public string attribute_display_name { get; set; }
         public string data_type { get; set; }
-        public int created_at { get; set; }
+        public double created_at { get; set; }
     }
 }
