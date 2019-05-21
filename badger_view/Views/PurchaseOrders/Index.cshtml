@@ -3,6 +3,7 @@
     ViewData["Title"] = "Purchase Orders";
 }
 
+@model dynamic
 @section Scripts {
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
@@ -12,7 +13,7 @@
         <h2 class="text-info">Open Purchase Orders (@Model.PurchaseOrdersCount)</h2>
     </div>
     <div class="col-md-9">
-        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalpo1">
+        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalPurchaseOrder">
             Add New P.O.
         </button>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
@@ -100,3 +101,109 @@
         </tr>
     </tfoot>
 </table>
+
+
+@section purchase_order_popup
+    {
+    <!-- Modal PO -->
+    <div class="modal fade" id="modalPurchaseOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add New Purchase Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="newPurchaseOrderForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Vendor Name</label>
+                                  <select id="inputState" class="form-control d-inline-block" style="width: 90%">
+                                        <option selected>Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                    <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Order Delivery Range</label>
+                                    <input type="text" class="form-control" id="poDelieveryRange">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>P.O. Number</label>
+                                    <input type="text" class="form-control" id="poNumber">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Total Styles</label>
+                                    <input type="text" class="form-control" id="poTotalStyles">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Invoice Number</label>
+                                    <input type="text" class="form-control" id="poInvoiceNumber">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Total Quantity</label>
+                                    <input type="text" class="form-control" id="poTotalQuantity">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Order Number</label>
+                                    <input type="text" class="form-control" id="poOrderNumber">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Subtotal</label>
+                                    <input type="text" class="form-control" id="poSubtotal">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Order Date</label>
+                                    <input type="text" class="form-control" id="poOrderDate">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Shipping &amp; Handling</label>
+                                    <input type="text" class="form-control" id="poShipping">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Tracking #</label>
+                                    <input type="text" class="form-control d-inline-block" id="poTracking" style="width: 90%">
+                                    <a href="#" class="h4">+</a>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <br />
+                                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
+                                    <br />
+                                    <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Upload Images</label>
+                                    <input type="file" class="form-control" id="poUploadImage">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Purchase Order Notes</label>
+                                    <textarea class="form-control" id="poNotes"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete this P.O.</button>
+                    <button type="button" class="btn btn-primary" id="NewPurchaseOrderButton">Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
