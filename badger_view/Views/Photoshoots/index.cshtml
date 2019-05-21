@@ -27,6 +27,13 @@
         -webkit-box-shadow: none;
         border-color: #cccccc;
     }
+    .shoot-dropdown {
+        background: none !important;
+        color:#000;
+        border:1px #ccc solid;
+        padding:5px 15px;
+        border-radius:5px;
+    }
 </style>
 <div class="row">
     <div class="col-md-8 col-sm-12">
@@ -55,17 +62,7 @@
                 <th>Color</th>
                 <th>SKU</th>
                 <th>Item Status</th>
-                <th>
-                    <div class="dropdown">
-                        <a class="th-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Photoshoot Status
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Not started</a>
-                            <a class="dropdown-item" onclick="addNewPhotoshoot();" href="#">Add to photoshoot</a>
-                        </div>
-                    </div>
-                </th>
+                <th> Photoshoot Status </th>
             </tr>
         </thead>
         <tbody>
@@ -80,8 +77,18 @@
                 <td><b>JS112</b></td>
                 <td>Expected 3/10-3/20</td>
                 <td>
-                    <select class="browser-default custom-select col-sm-6">
+                    <div class="dropdown">
+                        <button class="shoot-dropdown  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Shoot not started
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">Not started</a>
+                            <a class="dropdown-item" onclick="addNewPhotoshoot();" href="#">Add to photoshoot</a>
+                        </div>
+                    </div>
+                    <select class="browser-default custom-select">
                         <option selected>Shoot not started</option>
+                        <option>Add to photoshoot</option>
                     </select>
                 </td>
             </tr>
@@ -97,8 +104,9 @@
                 <td><b>JS112</b></td>
                 <td>Expected 3/10-3/20</td>
                 <td>
-                    <select class="browser-default custom-select col-sm-6">
+                    <select class="browser-default custom-select">
                         <option selected>Shoot not started</option>
+                        <option>Add to photoshoot</option>
                     </select>
                 </td>
             </tr>
