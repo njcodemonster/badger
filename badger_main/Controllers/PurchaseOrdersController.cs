@@ -71,7 +71,7 @@ namespace badgerApi.Controllers
         }
         // GET: api/vendor/listpageview/10
         [HttpGet("listpageview/{limit}")]
-        public async Task<object> listpageviewAsync(int limit)
+        public async Task<object> ListPageViewAsync(int limit)
         {
             dynamic poPageList = new object();
             try

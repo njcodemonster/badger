@@ -12,12 +12,14 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
     </environment>
 </head>
 <body>
@@ -67,7 +69,13 @@
         <footer>
             <p>&copy; 2019 - badger</p>
         </footer>
+
+        @RenderSection("purchase_order_popup", required: false)
     </div>
+
+
+
+
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -86,6 +94,8 @@
                 uiLibrary: 'bootstrap4'
             });
         </script>
+        <script src="~/js/moment.min.js" asp-append-version="true"></script>
+        <script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
@@ -101,11 +111,16 @@
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/moment.min.js" asp-append-version="true"></script>
+        <script  src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
     </environment>
+
+    
 
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
 
 <!-- Modal PO -->
 <div class="modal fade" id="modalpo1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

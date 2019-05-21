@@ -69,6 +69,29 @@ namespace badgerApi.Controllers
             return vPageList;
 
         }
+
+        //GET: api/vendor/getvendornameandid
+        [HttpGet("getvendorsnameandid")]
+        public async Task<List<object>> GetVendorsNameAndID()
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetVendorsNameAndID();
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+
+
         //GET: api/vendor/detailsadressandrep/103
         [HttpGet("detailsaddressandrep/{id}")]
         public async Task<object> DetailsAddressAndRep(int id)

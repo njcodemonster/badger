@@ -45,17 +45,26 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             SetCommonHelper();
+
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20");
+
+            List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
+
+            string DeliveryStartEnd = "";
 
             string NewDateFormat = "";
             string NumDays = "";
+
             var TotalList = purchaseOrdersPagerList.purchaseOrdersInfo;
+
             List<PurchaseOrdersInfo> newPurchaseOrderInfoList = new List<PurchaseOrdersInfo>();
 
             foreach (PurchaseOrdersInfo poList in TotalList)
             {
 
-               NewDateFormat = _CommonHelper.ConvertToDate(poList.order_date);
+                DeliveryStartEnd = _CommonHelper.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
+                
+                NewDateFormat = _CommonHelper.ConvertToDate(poList.order_date);
                      NumDays = _CommonHelper.NumberOfDays(poList.updated_at);
 
                 newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo {
@@ -66,6 +75,7 @@ namespace badger_view.Controllers
                                             vendor_id = poList.vendor_id,
                                             order_date = poList.order_date,
                                             vendor = poList.vendor,
+                                            custom_delivery_window_start_end = DeliveryStartEnd,
                                             po_status = poList.po_status,
                                             updated_at = poList.updated_at,
                                             custom_order_date = NewDateFormat,
@@ -79,6 +89,7 @@ namespace badger_view.Controllers
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
+            PurchaseOrdersPageModal.GetVendorsNameAndId = getVendorsNameAndId;
 
             return View("Index", PurchaseOrdersPageModal);
         }
