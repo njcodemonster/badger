@@ -99,5 +99,9 @@ namespace badger_view.Controllers
             return newPurchaseOrderID;
 
         }
-    }
+        public IActionResult POCheckIn()
+ {
+            return View();
+        }
+}
 }
