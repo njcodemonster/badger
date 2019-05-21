@@ -27,6 +27,22 @@ a:hover
     border-right-width: 0px;
     border-left-width: 0px;
 }
+button.btn.btn-link:hover, button.btn.btn-link:focus, button.btn.btn-link:active {
+    text-decoration: none;
+}
+.accordion i
+{
+    margin-right: 5px;
+}
+.accordion .card-header {
+    background: none;
+}
+.accordion .card-header {
+    border-bottom: 0;
+}
+table.borderless td, table.borderless th {
+    border: none !important;
+}
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
