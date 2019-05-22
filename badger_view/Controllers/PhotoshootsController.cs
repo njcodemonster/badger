@@ -17,5 +17,16 @@ namespace badger_view.Controllers
         {
             return View("inprogress");
         }
+
+        public IActionResult shootInProgress(int photoshootId)
+        {
+            return View("shootInProgress");
+        }
+
+        public IActionResult sendToEditor(int photoshootId)
+        {
+            return View("sendToEditor");
+        }
+
     }
 }
