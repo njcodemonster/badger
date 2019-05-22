@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "Edit Attribute";
+}
+
+
+<div class="text-right w-100">
+    <input type="checkbox" /><label class="pl-1">Hide from customers</label>
+    <button type="button" class="btn btn-sm btn-primary ml-2 mr-2">SAVE</button>
+</div>
+<div class="row table-bordered shadow m-2 p-2">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table borderless ">
+                    <tr>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <label class="text_label edittitlel h5">Item's Style Name Here</label><div class="edit"></div>
+                                        <input class="edittitlet" type="text" value="Item's Style Name Here" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Size &amp; Fit</label>
+                                        <select id="inputState" class="form-control d-inline-block">
+                                            <option selected>Choose...</option>
+                                            <option>...</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Model</label>
+                                        <select id="inputState" class="form-control d-inline-block">
+                                            <option selected>Choose...</option>
+                                            <option>...</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Color</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <img src="~/images/dress-clipart.jpg" height="100" />
+                            WS114
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <label>Cost</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <label>Retail</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <label>Discount (%)</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                XYZ
+            </div>
+        </div>
+    </div>
+</div>
+
+
