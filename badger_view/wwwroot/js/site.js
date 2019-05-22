@@ -6,7 +6,7 @@
 // Initiate data table
 
 $(document).ready(function () {
-    $('#openpo').DataTable();
+    $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
         "columnDefs": [
             { "orderable": false, "targets": [0,1,7] },
@@ -34,4 +34,20 @@ $(document).ready(function () {
     $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
         e.preventDefault(); $(this).parent('div').remove(); x--;
     })
+});
+
+// Accordian PO Mgmt
+
+$(document).ready(function () {
+    // Add minus icon for collapse element which is open by default
+    $(".collapse.show").each(function () {
+        $(this).prev(".card-header").find(".fa").addClass("fa-minus").removeClass("fa-plus");
+    });
+
+    // Toggle plus minus icon on show hide of collapse element
+    $(".collapse").on('show.bs.collapse', function () {
+        $(this).prev(".card-header").find(".fa").removeClass("fa-plus").addClass("fa-minus");
+    }).on('hide.bs.collapse', function () {
+        $(this).prev(".card-header").find(".fa").removeClass("fa-minus").addClass("fa-plus");
+    });
 });

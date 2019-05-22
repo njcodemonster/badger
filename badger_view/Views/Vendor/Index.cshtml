@@ -12,7 +12,7 @@
         <h4 class="text-info">Vendors (@Model.VendorCount)</h4><h1>@Model.Reps[1].contact_id</h1>
     </div>
     <div class="col-md-10">
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="AddNewVendorButton" data-target="#modalvendor">
             Add New Vendor
         </button>
     </div>
@@ -38,7 +38,7 @@
                     <td>@vendor.order_count</td>
                     <td><a href="#" data-toggle="modal" data-target="#modalpo1">@vendor.last_order</a></td>
                     <td>
-                        <button type="button" class="btn btn-light btn-sm">Edit</button>
+                        <button type="button" id="EditVendor" data-ID="@vendor.vendor_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
                         <a href="#"><i class="fa fa-edit h3"></i></a>

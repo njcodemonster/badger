@@ -13,10 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace badger_view.Controllers
 {
-    internal class localDTO
-    {
-
-    }
+   
     public class VendorController : Controller
     {
         
@@ -45,7 +42,7 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/20");
+            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/200");
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
             VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
@@ -53,6 +50,13 @@ namespace badger_view.Controllers
           
             VendorPageModal.Reps = venderAdressandRep.Reps;
             return View("Index",VendorPageModal);
+        }
+        [HttpGet("vendor/details/{id}")]
+        public async Task<VenderAdressandRep> GetDetails(Int32 id)
+        {
+            SetBadgerHelper();
+            VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/vendor/detailsaddressandrep/"+id.ToString());
+            return venderAdressandRep;
         }
         [HttpPost("vendor/newvendor")]
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
