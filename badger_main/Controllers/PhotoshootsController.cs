@@ -79,7 +79,7 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/vendor/listpageview/10
+        // GET: api/Photoshoots/listpageview/10
         [HttpGet("listpageview/{limit}")]
         public async Task<object> listpageviewAsync(int limit)
         {

@@ -121,11 +121,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                 sQuery = "SELECT a.* , b.product_shoot_status_id , c.* FROM  photoshoots a , product_photoshoots b  , product c where a.photoshoot_id =  b.photoshoot_id and b.product_id=c.product_id  and b.photoshoot_id =0 Limit " + Limit.ToString() + " ;)";
+                 sQuery = "SELECT  b.product_shoot_status_id , c.* FROM   product_photoshoots b  , product c where  b.product_id=c.product_id  and b.photoshoot_id =0  Limit " + Limit.ToString() + " ;";
             }
             else
             {
-                 sQuery = "SELECT a.* , b.product_shoot_status_id , c.* FROM  photoshoots a , product_photoshoots b  , product c where a.photoshoot_id =  b.photoshoot_id and b.product_id=c.product_id  and b.photoshoot_id =0 ;)";
+                 sQuery = "SELECT  b.product_shoot_status_id , c.* FROM   product_photoshoots b  , product c where  b.product_id=c.product_id  and b.photoshoot_id =0 ;";
             }
 
             using (IDbConnection conn = Connection)
