@@ -38,8 +38,8 @@ namespace notesService.Controllers
             return "value";
         }
         // GET: api/Notes/Reff/5
-        [HttpGet("Reff/{id}/{type}/{limit}")]
-        public async Task<List<Notes>> GetByReff(int id,int type,int Limit)
+        [HttpGet("Reff/{id}/{notetype}/{limit}")]
+        public async Task<List<Notes>> GetByReff(int id,int notetype, int Limit)
         {
            
 
@@ -47,7 +47,7 @@ namespace notesService.Controllers
             
             try
             {
-                ToReturn = await _NotesRepo.GetAllByReff(id,type,Limit);   
+                ToReturn = await _NotesRepo.GetAllByReff(id, notetype, Limit);   
             }
             catch (Exception ex)
             {

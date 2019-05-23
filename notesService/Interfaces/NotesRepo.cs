@@ -46,18 +46,18 @@ namespace notesService.Interfaces
             }
         }
 
-        public async Task<List<Notes>> GetAllByReff(int reff,int type, int Limit)
+        public async Task<List<Notes>> GetAllByReff(int reff,int note_type, int Limit)
         {
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Notes> result = new List<Notes>();
                 if (Limit > 0)
                 {
-                    result = await conn.QueryAsync<Notes>("Select * from " + TableName + " where (ref_id=" + reff.ToString() + " and note_type_id = "+type.ToString()+" ) order by note_id DESC Limit " + Limit.ToString() + ";");
+                    result = await conn.QueryAsync<Notes>("Select * from " + TableName + " where (ref_id=" + reff.ToString() + " and note_type_id = "+ note_type.ToString()+" ) order by note_id DESC Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
-                    result = await conn.QueryAsync<Notes>("Select * from " + TableName + " where (ref_id=" + reff.ToString() + " and note_type_id = " + type.ToString() + " ) order by note_id DESC Limit " + selectlimit + ";");
+                    result = await conn.QueryAsync<Notes>("Select * from " + TableName + " where (ref_id=" + reff.ToString() + " and note_type_id = " + note_type.ToString() + " ) order by note_id DESC Limit " + selectlimit + ";");
                 }
                 return result.ToList();
             }

@@ -40,10 +40,10 @@ namespace badgerApi.Helper
     }
     public interface INotesAndDocHelper
     {
-        Task<List<Notes>> GenericNote<T>(int Reff , int Limit);
+        Task<List<Notes>> GenericNote<T>(int Reff ,int note_type, int Limit);
         Task<String> GenericPostNote<T>(int reffId, int noteType,string note, int createdBy, Double createdAt);
         Task<String> GenericPostDoc<T>(int reffId,int docType,string URL ,string notes  ,int createdBy, Double createdAt);
-        Task<List<Documents>> GenericGetDoc<T>(int Reff , int Limit);
+        Task<List<Documents>> GenericGetDoc<T>(int Reff ,int doc_type, int Limit);
     }
     public class NotesAndDocHelper:INotesAndDocHelper
     {
@@ -89,10 +89,10 @@ namespace badgerApi.Helper
         }
 
        
-        public async Task<List<Notes>> GenericNote<T>(int Reff, int Limit)
+        public async Task<List<Notes>> GenericNote<T>(int Reff,int note_type, int Limit)
         {
             List<Notes> notes = new List<Notes>();
-            notes = await GenericGetAsync<List<Notes>>("/notes/reff/" + Reff.ToString());
+            notes = await GenericGetAsync<List<Notes>>("/notes/reff/" + Reff.ToString() + "/"+note_type.ToString()+"/"+Limit.ToString());
             return notes;
         }
 
@@ -112,7 +112,7 @@ namespace badgerApi.Helper
             throw new NotImplementedException();
         }
 
-        public Task<List<Documents>> GenericGetDoc<T>(int Reff, int Limit)
+        public Task<List<Documents>> GenericGetDoc<T>(int Reff, int doc_type,int Limit)
         {
             throw new NotImplementedException();
         }
