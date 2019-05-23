@@ -43,6 +43,11 @@ button.btn.btn-link:hover, button.btn.btn-link:focus, button.btn.btn-link:active
 table.borderless td, table.borderless th {
     border: none !important;
 }
+table.vborder td, table.vborder th {
+    border: 1px solid #ced4da !important;
+    border-bottom: none !important;
+    border-top: none !important;
+}
 input.edittitlet[type=text] {
     margin-top: 8px;
     display: none;
