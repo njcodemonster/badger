@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dapper.Contrib.Extensions;
 
 namespace itemService.Models
 {
+    [Table("item_events")]
     public partial class ItemEvents
     {
-        public int ItemEventId { get; set; }
-        public int ItemId { get; set; }
-        public double? Barcode { get; set; }
-        public int EventTypeId { get; set; }
-        public long ReferenceId { get; set; }
-        public string EventNotes { get; set; }
-        public int UserId { get; set; }
-        public double CreatedAt { get; set; }
+       
 
-        public virtual EventTypes EventType { get; set; }
+        public int item_event_id { get; set; }
+        public int item_id { get; set; }
+        public double? barcode { get; set; }
+        public int event_type_id { get; set; }
+        public long reference_id { get; set; }
+        public string event_notes { get; set; }
+        public int user_id { get; set; }
+        public double created_at { get; set; }
+
+        
     }
 }
