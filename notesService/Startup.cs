@@ -8,12 +8,11 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MySql.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using itemService.Interfaces;
+using notesService.Interfaces;
 
-namespace itemService
+namespace notesService
 {
     public class Startup
     {
@@ -27,19 +26,16 @@ namespace itemService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IItemTypeRepository,ItemTypeRepo >();
-            services.AddTransient<ItemRepository, ItemRepo>();
-            services.AddTransient<IItemStatusRepository, ItemStatusRepo>();
-            services.AddTransient<IItemEventsRepository, ItemEventsRepo>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddTransient<INotesRepository, NotesRepo>();
+            services.AddTransient<IDocumentsRepository, DocumentsRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddFile("Logs/BadgerServiceFunctional-{Date}.txt");
             if (env.IsDevelopment())
-            { 
+            {
                 app.UseDeveloperExceptionPage();
             }
             else

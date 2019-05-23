@@ -1,20 +1,22 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace itemService.Models
 {
+    [Table(" item_status")]
     public partial class ItemStatus
     {
-        public ItemStatus()
+        [Key]
+        public int item_status_id { get; set; }
+        public string description { get; set; }
+       
+        public double created_at { get; set; }
+        public double updated_at { get; set; }
+
+        internal object ToArray()
         {
-            Items = new HashSet<Items>();
+            throw new NotImplementedException();
         }
-
-        public int ItemStatusId { get; set; }
-        public string Description { get; set; }
-        public double CreatedAt { get; set; }
-        public double UpdatedAt { get; set; }
-
-        public virtual ICollection<Items> Items { get; set; }
     }
 }
