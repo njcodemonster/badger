@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "badger_view", "badger_view\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "itemService", "itemServicev01\itemService.csproj", "{59D828F5-C7FC-4802-87E1-DD91BBECA96F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonHelper", "CommonHelper\CommonHelper.csproj", "{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonHelper", "CommonHelper\CommonHelper.csproj", "{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "notesService", "notesService\notesService.csproj", "{975EEE84-5AF5-45E9-A713-22C65156AA34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
