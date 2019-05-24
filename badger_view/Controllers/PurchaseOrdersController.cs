@@ -115,5 +115,9 @@ namespace badger_view.Controllers
         {
             return View();
         }
+        public IActionResult POReporting()
+        {
+            return View();
+        }
     }
 }
