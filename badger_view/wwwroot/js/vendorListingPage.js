@@ -23,7 +23,17 @@
         data:  JSON.stringify(jsonData) ,
         processData: false,
 
-    }).always(function (data) { console.log(data);});
+    }).always(function (data) {
+        console.log(data);
+
+        if (data > 0) {
+            console.log("New Vender Added");
+
+            $('#modalvendor').modal('hide');
+            $('#newVendorForm')[0].reset();
+        }
+
+    });
    
 
 

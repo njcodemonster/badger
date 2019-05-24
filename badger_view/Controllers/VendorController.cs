@@ -46,7 +46,7 @@ namespace badger_view.Controllers
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
             VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
-            VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
+            VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/7");
           
             VendorPageModal.Reps = venderAdressandRep.Reps;
             return View("Index",VendorPageModal);
