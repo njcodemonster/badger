@@ -35,8 +35,8 @@ namespace badgerApi.Controllers
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
         {
-            List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
-            string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
+           // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
+           // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
             List<Vendor> ToReturn = new List<Vendor>();
             try
             {
