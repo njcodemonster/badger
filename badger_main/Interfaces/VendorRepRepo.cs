@@ -26,12 +26,13 @@
             private readonly IConfiguration _config;
             private string TableName = "vendor";
             private string selectlimit = "30";
+            private int note_type = 0;
             public VendorRepRepo(IConfiguration config)
             {
 
                 _config = config;
                 selectlimit = _config.GetValue<string>("configs:Default_select_Limit");
-
+                note_type = _config.GetValue<int>("Note_Types:vendor");
             }
             public IDbConnection Connection
             {

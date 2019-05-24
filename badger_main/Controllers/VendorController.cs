@@ -7,6 +7,8 @@ using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using System.Dynamic;
+using badgerApi.Helper;
+using Microsoft.Extensions.Configuration;
 
 namespace badgerApi.Controllers
 {
@@ -14,19 +16,27 @@ namespace badgerApi.Controllers
     [ApiController]
     public class VendorController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly IVendorRepository _VendorRepo;
         ILoggerFactory _loggerFactory;
+        private INotesAndDocHelper _NotesAndDoc;
+        private int note_type = 3;
 
-        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory)
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config)
         {
+            _config = config;
             _VendorRepo = VendorRepo;
             _loggerFactory = loggerFactory;
+            _NotesAndDoc = NotesAndDoc;
+           
         }
 
         // GET: api/vendor/list
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
         {
+           // List<Notes> notes = await _NotesAndDoc.GenericNote<Notes>(1, 1, 2);
+           // string nnn = await _NotesAndDoc.GenericPostNote<String>(1, 1, "this is a testnote", 3, 22525678.2);
             List<Vendor> ToReturn = new List<Vendor>();
             try
             {

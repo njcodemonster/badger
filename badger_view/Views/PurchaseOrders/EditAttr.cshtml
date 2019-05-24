@@ -1,0 +1,243 @@
+﻿@{
+    ViewData["Title"] = "Edit Attribute";
+}
+<div class="text-right w-100">
+    <input type="checkbox" /><label class="pl-1">Hide from customers</label>
+    <button type="button" class="btn btn-sm btn-primary ml-2 mr-2">SAVE</button>
+</div>
+<div class="row table-bordered shadow m-2 p-2">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table borderless ">
+                    <tr>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <label class="text_label edittitlel h5">Item's Style Name Here</label><div class="edit"></div>
+                                        <input class="edittitlet" type="text" value="Item's Style Name Here" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Size &amp; Fit</label>
+                                        <select class="form-control d-inline-block">
+                                            <option selected>Choose...</option>
+                                            <option>...</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Model</label>
+                                        <select class="form-control d-inline-block">
+                                            <option selected>Choose...</option>
+                                            <option>...</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Color</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <img src="~/images/dress-clipart.jpg" height="100" />
+                            WS114
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <label>Cost</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <label>Retail</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <label>Discount (%)</label>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table borderless">
+                    <tr>
+                        <td>
+                            <label>Product details</label>
+                            <textarea class="form-control"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="row table-bordered shadow ml-2 mr-1 mt-4 mb-4 p-2" style="min-height: 500px;">
+            <div class="col-md-12">
+                <table class="table borderless">
+                    <tr>
+                        <td>
+                            <h5>Product Photos:</h5>
+                            <img src="~/images/sample-dress.jpg" height="300" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="h5">Photoshoot status</label>
+                            <select class="form-control">
+                                <option selected>Photoshoot complete</option>
+                                <option>Photoshoot Inprogress</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <div class="row table-bordered shadow mr-2 ml-1 mt-4 p-2" style="min-height: 500px;">
+            <div class="col-md-12">
+                <table class="table borderless">
+                    <tr>
+                        <td>
+                            <label>Internal Product Notes</label>
+                            <textarea class="form-control" placeholder="Item notes from the earlier screen are also populated here."></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row table-bordered shadow ml-2 mr-2 p-2">
+            <div class="col-md-6">
+                <table class="table borderless">
+                    <tr>
+                        <td>
+                            <label>Type</label>
+                            <select class="form-control w-50">
+                                <option selected>Clothing</option>
+                                <option>Accessories</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Pair with</label>
+                            <input type="text" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Other colors available</label>
+                            <input type="text" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Search tags</label>
+                            <input type="text" class="form-control w-50" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row m-4">
+    <div class="col-md-12 table-responsive">
+        <table class="table vborder">
+            <tr>
+                <th>
+                    Product type
+                </th>
+                <th>
+                    Clothing type
+                </th>
+                <th>
+                    Occasion
+                </th>
+                <th>
+                    Dress style
+                </th>
+                <th>
+                    Color
+                </th>
+                <th>
+                    Sleeve style
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" /> <label>Cloting</label>
+                    <br />
+                    <input type="checkbox" /> <label>Accessories</label>
+                </td>
+                <td>
+                    <input type="checkbox" /> <label>activewear-legging</label>
+                    <br />
+                    <input type="checkbox" /> <label>bikini-top</label>
+                </td>
+                <td>
+                    <input type="checkbox" /> <label>black-tie</label>
+                    <br />
+                    <input type="checkbox" /> <label>bridal</label>
+                </td>
+                <td>
+                    <input type="checkbox" /> <label>animal-print</label>
+                    <br />
+                    <input type="checkbox" /> <label>camo</label>
+                </td>
+                <td>
+                    <input type="checkbox" /> <label>black</label>
+                    <br />
+                    <input type="checkbox" /> <label>blue</label>
+                </td>
+                <td>
+                    <input type="checkbox" /> <label>strapless</label>
+                    <br />
+                    <input type="checkbox" /> <label>sleeveless</label>
+                </td>
+            </tr>
+        </table>
+        <button type="button" class="btn btn-primary btn-sm float-right mt-3">SAVE</button>
+    </div>
+</div>

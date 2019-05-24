@@ -108,8 +108,12 @@ namespace badger_view.Controllers
 
         }
         public IActionResult POMgmt()
- {
+        {
             return View();
         }
-}
+        public IActionResult EditAttr()
+        {
+            return View();
+        }
+    }
 }
