@@ -13,7 +13,7 @@
         <h2 class="text-info">Open Purchase Orders (@Model.PurchaseOrdersCount)</h2>
     </div>
     <div class="col-md-9">
-        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalPurchaseOrder">
+        <button type="button" class="btn btn-success btn-sm model_purchase_order" data-toggle="modal" data-target="#modalPurchaseOrder">
             Add New P.O.
         </button>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
@@ -64,7 +64,7 @@
                     <button type="button" class="btn btn-success btn-sm">Checked-in</button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-light btn-sm">Edit</button>
+                    <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
                 </td>
                 <td>
                     <a href="#"><i class="fa fa-edit h3"></i></a>
@@ -110,7 +110,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add New Purchase Order</h5>
+                    <h5 class="modal-title" id="purchaseOrderModalLongTitle">Add New Purchase Order</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

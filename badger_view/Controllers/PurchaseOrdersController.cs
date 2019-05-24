@@ -94,6 +94,14 @@ namespace badger_view.Controllers
             return View("Index", PurchaseOrdersPageModal);
         }
 
+        [HttpGet("purchaseorders/details/{id}")]
+        public async Task<PurchaseOrdersPagerList> GetDetails(Int32 id)
+        {
+            SetBadgerHelper();
+            dynamic poDetails = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/list/" + id.ToString());
+            return poDetails;
+        }
+
         public IActionResult Single()
         {
             return View();
