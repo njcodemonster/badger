@@ -38,21 +38,23 @@ namespace notesService.Controllers
             return "value";
         }
         // GET: api/Notes/Reff/5
-        [HttpGet("Reff/{id}")]
-        public async Task<List<Notes>> GetByReff(int id)
+        [HttpGet("Reff/{id}/{notetype}/{limit}")]
+        public async Task<List<Notes>> GetByReff(int id,int notetype, int Limit)
         {
+           
+
             List<Notes> ToReturn = new List<Notes>();
+            
             try
             {
-                ToReturn = await _NotesRepo.GetAllByReff(id,1);
-                
+                ToReturn = await _NotesRepo.GetAllByReff(id, notetype, Limit);   
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
-
             }
+           
             return ToReturn;
         }
 

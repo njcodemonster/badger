@@ -14,7 +14,7 @@ namespace notesService.Interfaces
     public interface IDocumentsRepository
     {
         Task<Documents> GetByIDAsync(int id);
-        Task<List<Documents>> GetAllByReffAsync(int reff, int Limit);
+        Task<List<Documents>> GetAllByReffAsync(int reff, int doc_type ,int Limit);
         Task<String> CreateAsync(Documents NewDoc);
 
     }
@@ -46,18 +46,18 @@ namespace notesService.Interfaces
             }
         }
 
-        public async Task<List<Documents>> GetAllByReffAsync(int reff,int Limit)
+        public async Task<List<Documents>> GetAllByReffAsync(int reff,int doc_type, int Limit)
         {
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Documents> result = new List<Documents>();
                 if (Limit > 0)
                 {
-                    result = await conn.QueryAsync<Documents>("Select * from " + TableName + " where ref_id="+reff.ToString()+" Limit " + Limit.ToString() + ";");
+                    result = await conn.QueryAsync<Documents>("Select * from " + TableName + " where ref_id="+reff.ToString()+ " and doc_type_id="+ doc_type.ToString()+"  order by doc_id DESC Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
-                    result = await conn.QueryAsync<Documents>("Select * from " + TableName + " where ref_id=" + reff.ToString() + " Limit " + selectlimit + ";");
+                    result = await conn.QueryAsync<Documents>("Select * from " + TableName + " where ref_id=" + reff.ToString() + " and doc_type_id=" + doc_type.ToString() + " order by doc_id DESC Limit " + selectlimit + ";");
                 }
                 return result.ToList();
             }
