@@ -10,19 +10,27 @@ using System.Dynamic;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace badger_view.Controllers
 {
-   
+    public class vendorFileData
+    {
+        public IFormFile vendorDocument { get; set; }
+        public string Vendor_id { get; set; }
+    }
     public class VendorController : Controller
     {
         
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         private CommonHelper _CommonHelper;
+        private String UploadPath = "";
         public VendorController(IConfiguration config)
         {
             _config = config;
+            UploadPath = _config.GetValue<string>("UploadPath:path");
 
         }
         private void SetBadgerHelper()
@@ -46,9 +54,9 @@ namespace badger_view.Controllers
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
             VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
-            VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/7");
+           // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
           
-            VendorPageModal.Reps = venderAdressandRep.Reps;
+            //VendorPageModal.Reps = venderAdressandRep.Reps;
             return View("Index",VendorPageModal);
         }
         [HttpGet("vendor/details/{id}")]
@@ -57,6 +65,24 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/vendor/detailsaddressandrep/"+id.ToString());
             return venderAdressandRep;
+        }
+        [HttpPost("vendor/newvendor_doc")]
+        public async Task<String> CreateNewVendorDoc(vendorFileData test)
+        {
+            try
+            {
+                string Fill_path = test.vendorDocument.FileName;
+                Fill_path = UploadPath + Fill_path;
+                using (var stream = new FileStream(Fill_path, FileMode.Create))
+                {
+                    await test.vendorDocument.CopyToAsync(stream);
+                }
+                return Fill_path;
+            }
+            catch(Exception ex)
+            {
+                return "0";
+            }
         }
         [HttpPost("vendor/newvendor")]
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
