@@ -95,8 +95,8 @@ namespace badgerApi.Controllers
         }
 
 
-        [HttpGet("photoshootsAndModels/{limit}")]
-        public async Task<object> photoshootsAndModels(int limit)
+        [HttpGet("photoshootsAndModels")]
+        public async Task<object> photoshootsAndModels()
         {
             dynamic photoshootsAndModels = new object();
             try
@@ -134,8 +134,8 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
-        [HttpPut("assignProductPhotoshoot")]
-        public async Task<string> assignProductPhotoshoot([FromBody]   string value)
+        [HttpPost("assignProductPhotoshoot/{productId}")]
+        public async Task<string> assignProductPhotoshoot(string productId, [FromBody]   string value)
         {
             string UpdateResult = "Success";
             try
@@ -149,7 +149,7 @@ namespace badgerApi.Controllers
                 ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
                 ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
 
-                await _PhotoshootsRepo.UpdateSpecific(ValuesToUpdate, "product_id=" + PhotoshootToUpdate.product_id);
+                await _PhotoshootsRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + productId + ")");
             }
             catch (Exception ex)
             {
