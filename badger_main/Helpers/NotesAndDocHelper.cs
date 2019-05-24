@@ -43,7 +43,7 @@ namespace badgerApi.Helper
         Task<List<Notes>> GenericNote<T>(int Reff ,int note_type, int Limit);
         Task<String> GenericPostNote<T>(int reffId, int noteType,string note, int createdBy, Double createdAt);
         Task<String> GenericPostDoc<T>(int reffId,int docType,string URL ,string notes  ,int createdBy, Double createdAt);
-        Task<List<Documents>> GenericGetDoc<T>(int Reff ,int doc_type, int Limit);
+        Task<List<Documents>> GenericGetDocAsync<T>(int Reff ,int doc_type, int Limit);
     }
     public class NotesAndDocHelper:INotesAndDocHelper
     {
@@ -96,7 +96,7 @@ namespace badgerApi.Helper
             return notes;
         }
 
-        public Task<string> GenericPostNote<T>(int reffId, int noteType, string note, int createdBy,Double createdAt)
+        public async Task<string> GenericPostNote<T>(int reffId, int noteType, string note, int createdBy,Double createdAt)
         {
             JObject newNote = new JObject();
             newNote.Add("ref_id", reffId);
@@ -104,17 +104,26 @@ namespace badgerApi.Helper
             newNote.Add("note", note);
             newNote.Add("created_by", createdBy);
             newNote.Add("created_at", createdAt);
-            return GenericPostAsync<string>(newNote.ToString(Formatting.None), "/notes/create");
+            return await GenericPostAsync<string>(newNote.ToString(Formatting.None), "/notes/create");
         }
 
-        public Task<string> GenericPostDoc<T>(int reffId, int docType, string URL, string notes, int createdBy, Double createdAt)
+        public async Task<string> GenericPostDoc<T>(int reffId, int docType, string URL, string notes, int createdBy, Double createdAt)
         {
-            throw new NotImplementedException();
+            JObject newDoc = new JObject();
+            newDoc.Add("ref_id", reffId);
+            newDoc.Add("doc_type_id", docType);
+            newDoc.Add("url", URL);
+            newDoc.Add("note", notes);
+            newDoc.Add("created_by", createdBy);
+            newDoc.Add("created_at", createdAt);
+            return await GenericPostAsync<string>(newDoc.ToString(Formatting.None), "/notes/create");
         }
 
-        public Task<List<Documents>> GenericGetDoc<T>(int Reff, int doc_type,int Limit)
+        public async Task<List<Documents>> GenericGetDocAsync<T>(int Reff, int doc_type,int Limit)
         {
-            throw new NotImplementedException();
+            List<Documents> Docs = new List<Documents>();
+            Docs = await GenericGetAsync<List<Documents>>("/documents/reff/" + Reff.ToString() + "/" + doc_type.ToString() + "/" + Limit.ToString());
+            return Docs;
         }
     }
 }
