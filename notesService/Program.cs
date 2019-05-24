@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace notesService
 {
@@ -19,6 +20,11 @@ namespace notesService
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>().ConfigureLogging((hostingContext, logging) =>
+                {
+                    
+                    logging.AddConsole();
+                    logging.AddDebug();
+                });
     }
 }
