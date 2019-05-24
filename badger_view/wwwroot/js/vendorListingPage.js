@@ -27,6 +27,7 @@
     }).always(function (data) {
         console.log(data);
         if (data != "0") {
+            console.log("New Vender Added");
             alert("vendor created . uploading files");
             var formData = new FormData();
             formData.append('Vendor_id', data);
