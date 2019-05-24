@@ -1,4 +1,5 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
+    debugger;
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
     jsonData["vendor_name"] = $(newVendorForm[0]).val();
@@ -23,7 +24,25 @@
         data:  JSON.stringify(jsonData) ,
         processData: false,
 
-    }).always(function (data) { console.log(data);});
+    }).always(function (data) {
+        console.log(data);
+        if (data != "0") {
+            alert("vendor created . uploading files");
+            var formData = new FormData();
+            formData.append('Vendor_id', data);
+            formData.append('vendorDocument', $('#newVendorForm #vendorDocument')[0].files[0]);
+            $.ajax({
+                url: "/vendor/newvendor_doc",
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+            }).always(function (data) {
+                console.log(data);
+            });
+        }
+    });
    
 
 
