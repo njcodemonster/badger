@@ -78,6 +78,7 @@ namespace badgerApi.Interfaces
         }
         public async Task<List<Vendor>> GetAll(Int32 Limit)
         {
+            
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Vendor> result = new List<Vendor>();
