@@ -16,6 +16,7 @@ namespace badger_view.Controllers
     public class PurchaseOrdersController : Controller
     {
         private readonly IConfiguration _config;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersController(IConfiguration config)
         {
             _config = config;
@@ -31,20 +32,12 @@ namespace badger_view.Controllers
             }
         }
 
-        private CommonHelper _CommonHelper;
-
-        private void SetCommonHelper()
-        {
-            if (_CommonHelper == null)
-            {
-                _CommonHelper = new CommonHelper(_config);
-            }
-        }
+       
 
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-            SetCommonHelper();
+          
 
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20");
 
@@ -62,10 +55,10 @@ namespace badger_view.Controllers
             foreach (PurchaseOrdersInfo poList in TotalList)
             {
 
-                DeliveryStartEnd = _CommonHelper.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
+                DeliveryStartEnd = _common.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
                 
-                NewDateFormat = _CommonHelper.ConvertToDate(poList.order_date);
-                     NumDays = _CommonHelper.NumberOfDays(poList.updated_at);
+                NewDateFormat = _common.ConvertToDate(poList.order_date);
+                     NumDays = _common.NumberOfDays(poList.updated_at);
 
                 newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo {
                                             po_id = poList.po_id,
