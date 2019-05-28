@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using CommonHelper;
 namespace badger_view.Controllers
 {
     public class PhotoshootsController : Controller
@@ -17,19 +17,13 @@ namespace badger_view.Controllers
 
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
-        private CommonHelper _CommonHelper;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PhotoshootsController(IConfiguration config)
         {
             _config = config;
 
         }
-        private void SetCommonHelper()
-        {
-            if (_CommonHelper == null)
-            {
-                _CommonHelper = new CommonHelper(_config);
-            }
-        }
+       
         private void SetBadgerHelper()
         {
             if (_BadgerApiHelper == null)
@@ -76,13 +70,13 @@ namespace badger_view.Controllers
         public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
         {
             SetBadgerHelper();
-            SetCommonHelper();
+           
 
             JObject assignPhotoshoot = new JObject();
             assignPhotoshoot.Add("photoshoot_id", photoshoot_id);
             assignPhotoshoot.Add("product_shoot_status_id", 1);
             assignPhotoshoot.Add("updated_by", 2);
-            assignPhotoshoot.Add("updated_at", _CommonHelper.GetTimeStemp());
+            assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
 
             String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/assignProductPhotoshoot/" + product_id);
 
@@ -93,7 +87,7 @@ namespace badger_view.Controllers
         public async Task<String> addNewPhotoshoot([FromBody]   JObject json)
         {
             SetBadgerHelper();
-            SetCommonHelper();
+           
 
             JObject photoshoot = new JObject();
             photoshoot.Add("photoshoot_name", json.Value<string>("photoshoot_name"));
@@ -103,8 +97,8 @@ namespace badger_view.Controllers
             photoshoot.Add("active_status", 1);
             photoshoot.Add("created_by", 2);
             photoshoot.Add("updated_by", 2);
-            photoshoot.Add("created_at", _CommonHelper.GetTimeStemp());
-            photoshoot.Add("updated_at", _CommonHelper.GetTimeStemp());
+            photoshoot.Add("created_at", _common.GetTimeStemp());
+            photoshoot.Add("updated_at", _common.GetTimeStemp());
             String newPhotoshootID = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshoot.ToString(Formatting.None), "/photoshoots/create");
             
             string productId = json.Value<string>("product_id");
@@ -114,7 +108,7 @@ namespace badger_view.Controllers
             assignPhotoshoot.Add("photoshoot_id", newPhotoshootID);
             assignPhotoshoot.Add("product_shoot_status_id", 1);
             assignPhotoshoot.Add("updated_by", 2);
-            assignPhotoshoot.Add("updated_at", _CommonHelper.GetTimeStemp());
+            assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
 
             String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/assignProductPhotoshoot/"+ productId);
 
