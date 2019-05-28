@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Dynamic;
+using badgerApi.Helper;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+
 
 namespace badgerApi.Controllers
 {
@@ -15,13 +18,18 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PurchaseOrdersController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
         ILoggerFactory _loggerFactory;
+        private INotesAndDocHelper _NotesAndDoc;
+        private int note_type = 4;
 
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config)
         {
+            _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
             _loggerFactory = loggerFactory;
+            _NotesAndDoc = NotesAndDoc;
         }
 
         // GET: api/attributes/list
@@ -50,6 +58,7 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id);
+                object n = await _NotesAndDoc.GenericNote<List<object>>(633, 4, 1);
                 ToReturn.Add(Res);
 
             }
@@ -100,6 +109,19 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
+
+                JObject jsonParsePurchaseOrder = JObject.Parse(value);
+
+                string note = jsonParsePurchaseOrder.Value<string>("note");
+
+                if (note != "") {
+                    double created_at = jsonParsePurchaseOrder.Value<double>("created_at");
+                    string newNoteID = await _NotesAndDoc.GenericPostNote<string>(Int32.Parse(NewInsertionID), note_type, note, 1, created_at);
+                }
+                
+
+                jsonParsePurchaseOrder.RemoveAll();
+
             }
             catch (Exception ex)
             {

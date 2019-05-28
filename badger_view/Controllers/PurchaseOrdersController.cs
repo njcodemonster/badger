@@ -108,12 +108,12 @@ namespace badger_view.Controllers
         }
 
         [HttpPost("purchaseorders/newpurchaseorder")]
-        public async Task<String> CreateNewPurchaseOrder([FromBody]   JObject json)
+        public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
             SetBadgerHelper();
+            SetCommonHelper();
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/create");
             return newPurchaseOrderID;
-
         }
 
 

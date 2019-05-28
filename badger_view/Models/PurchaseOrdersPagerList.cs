@@ -21,10 +21,13 @@ namespace badger_view.Models
         public string custom_delivery_window_start_end { get; set; }
         public string custom_order_date { get; set; }
         public string num_of_days { get; set; }
+
+
     }
 
     public class PurchaseOrdersPagerList
     {
+        public IEnumerable<Notes> notes { get; set; }
         public IEnumerable<PurchaseOrdersInfo> purchaseOrdersInfo { get; set; }
         public string Count { get; set; }
     }

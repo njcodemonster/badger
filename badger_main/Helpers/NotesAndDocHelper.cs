@@ -18,10 +18,10 @@ namespace badgerApi.Helper
         public int ref_id { get; set; }
         public int note_type_id { get; set; }
         public string note { get; set; }
-        public Double created_by { get; set; }
+        public int created_by { get; set; }
         public int updated_by { get; set; }
         public Double created_at { get; set; }
-        public int updated_at { get; set; }
+        public Double updated_at { get; set; }
     }
 
     [Table("documents")]
@@ -33,8 +33,8 @@ namespace badgerApi.Helper
         public int doc_type_id { get; set; }
         public string url { get; set; }
         public string notes { get; set; }
-        public string created_by { get; set; }
-        public string updated_by { get; set; }
+        public int created_by { get; set; }
+        public int updated_by { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
     }
