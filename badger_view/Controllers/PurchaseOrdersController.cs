@@ -94,6 +94,14 @@ namespace badger_view.Controllers
             return View("Index", PurchaseOrdersPageModal);
         }
 
+        [HttpGet("purchaseorders/details/{id}")]
+        public async Task<String> GetDetails(Int32 id)
+        {
+            SetBadgerHelper();
+            Object poDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
+            return poDetails.ToString();
+        }
+
         public IActionResult Single()
         {
             return View();
@@ -107,6 +115,18 @@ namespace badger_view.Controllers
             return newPurchaseOrderID;
 
         }
+
+
+
+        [HttpPost("purchaseorders/updatepurchaseorder/{id}")]
+        public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/"+id);
+            return newPurchaseOrderID;
+        }
+
+
         public IActionResult POMgmt()
         {
             return View();

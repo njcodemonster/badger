@@ -3,5 +3,43 @@
     ViewData["Title"] = "PO Reporting";
 }
 
-<h1>PO Reporting</h1>
+<h4 class="text-center">Inventory Reporting</h4>
+<h4>Select Criteria</h4>
 
+<div class="table-responsive">
+    <table class="table">
+        <tr>
+            <td>
+                <label>Type</label>
+                <select class="form-control">
+                    <option selected>Clothing</option>
+                    <option>Accessories</option>
+                </select>
+            </td>
+            <td>
+                <label>Date Range</label>
+                <input type="date" class="form-control" />
+            </td>
+            <td>
+                <label>Size</label>
+                <select class="form-control">
+                    <option selected>...</option>
+                    <option>....</option>
+                </select>
+            </td>
+            <td>
+                <label>Vendor</label>
+                <select class="form-control">
+                    <option selected>...</option>
+                    <option>....</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <label class="h5 d-block">Perform Search</label>
+                <button type="button" class="btn btn-primary">SEARCH</button>
+            </td>
+        </tr>
+    </table>
+</div>
