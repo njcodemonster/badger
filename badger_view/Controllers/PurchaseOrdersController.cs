@@ -23,7 +23,7 @@ namespace badger_view.Controllers
 
         }
         private BadgerApiHelper _BadgerApiHelper;
-       
+
         private void SetBadgerHelper()
         {
             if (_BadgerApiHelper == null)
@@ -32,12 +32,12 @@ namespace badger_view.Controllers
             }
         }
 
-       
+
 
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-          
+
 
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20");
 
@@ -56,23 +56,24 @@ namespace badger_view.Controllers
             {
 
                 DeliveryStartEnd = _common.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
-                
-                NewDateFormat = _common.ConvertToDate(poList.order_date);
-                     NumDays = _common.NumberOfDays(poList.updated_at);
 
-                newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo {
-                                            po_id = poList.po_id,
-                                            vendor_po_number = poList.vendor_po_number,
-                                            vendor_invoice_number = poList.vendor_invoice_number,
-                                            vendor_order_number = poList.vendor_order_number,
-                                            vendor_id = poList.vendor_id,
-                                            order_date = poList.order_date,
-                                            vendor = poList.vendor,
-                                            custom_delivery_window_start_end = DeliveryStartEnd,
-                                            po_status = poList.po_status,
-                                            updated_at = poList.updated_at,
-                                            custom_order_date = NewDateFormat,
-                                            num_of_days = NumDays
+                NewDateFormat = _common.ConvertToDate(poList.order_date);
+                NumDays = _common.NumberOfDays(poList.updated_at);
+
+                newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo
+                {
+                    po_id = poList.po_id,
+                    vendor_po_number = poList.vendor_po_number,
+                    vendor_invoice_number = poList.vendor_invoice_number,
+                    vendor_order_number = poList.vendor_order_number,
+                    vendor_id = poList.vendor_id,
+                    order_date = poList.order_date,
+                    vendor = poList.vendor,
+                    custom_delivery_window_start_end = DeliveryStartEnd,
+                    po_status = poList.po_status,
+                    updated_at = poList.updated_at,
+                    custom_order_date = NewDateFormat,
+                    num_of_days = NumDays
                 });
 
                 NewDateFormat = "";
@@ -115,7 +116,7 @@ namespace badger_view.Controllers
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
         {
             SetBadgerHelper();
-            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/"+id);
+            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/" + id);
             return newPurchaseOrderID;
         }
 

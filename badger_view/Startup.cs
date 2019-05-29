@@ -57,9 +57,9 @@ namespace badger_view
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-               
+
             });
-           
+
         }
     }
 }

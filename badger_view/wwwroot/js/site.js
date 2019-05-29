@@ -9,8 +9,8 @@ $(document).ready(function () {
     $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
         "columnDefs": [
-            { "orderable": false, "targets": [0,1,7] },
-           // { "orderable": true, "targets": [1, 2, 3] }
+            { "orderable": false, "targets": [0, 1, 7] },
+            // { "orderable": true, "targets": [1, 2, 3] }
         ]
     });
 });
@@ -92,4 +92,64 @@ $(document).ready(function () {
         }
     });
 
+    // date rabge picker
+
+    $('#poreporting').daterangepicker();
 });
+
+$('#delivery').datepicker({
+    uiLibrary: 'bootstrap4'
+});
+$('#orderdate').datepicker({
+    uiLibrary: 'bootstrap4'
+});
+
+
+// dropdpwn with checkbox
+
+$('#vendor').multiselect({
+    nonSelectedText: 'Select Vendor',
+    enableFiltering: true,
+    templates: {
+        li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>',
+        filter: '<li class="multiselect-item filter"><div class="input-group m-0 mb-1"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<div class="input-group-append"><button class="btn btn btn-primary multiselect-clear-filter" type="button"><i class="fa fa-times"></i></button></div>'
+    },
+    selectedClass: 'bg-light',
+    onInitialized: function (select, container) {
+        // hide checkboxes
+        container.find('input[type=checkbox]').addClass('d-none');
+    }
+});
+$('#size').multiselect({
+    nonSelectedText: 'Select Size',
+    enableFiltering: true,
+    templates: {
+        li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>',
+        filter: '<li class="multiselect-item filter"><div class="input-group m-0 mb-1"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<div class="input-group-append"><button class="btn btn btn-primary multiselect-clear-filter" type="button"><i class="fa fa-times"></i></button></div>'
+    },
+    selectedClass: 'bg-light',
+    onInitialized: function (select, container) {
+        // hide checkboxes
+        container.find('input[type=checkbox]').addClass('d-none');
+    }
+});
+$('#status').multiselect({
+    nonSelectedText: 'Select Status',
+    enableFiltering: true,
+    templates: {
+        li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>',
+        filter: '<li class="multiselect-item filter"><div class="input-group m-0 mb-1"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<div class="input-group-append"><button class="btn btn btn-primary multiselect-clear-filter" type="button"><i class="fa fa-times"></i></button></div>'
+    },
+    selectedClass: 'bg-light',
+    onInitialized: function (select, container) {
+        // hide checkboxes
+        container.find('input[type=checkbox]').addClass('d-none');
+    }
+});
+
+// date range picker
+
+
