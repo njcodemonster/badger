@@ -90,12 +90,29 @@
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" asp-append-version="true"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
         <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" asp-append-version="true"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
         <script>
             $('#delivery').datepicker({
                 uiLibrary: 'bootstrap4'
             });
             $('#orderdate').datepicker({
                 uiLibrary: 'bootstrap4'
+            });
+            $('#vendor').multiselect({
+                templates: {
+                    li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>'
+                }
+            });
+             $('#size').multiselect({
+                templates: {
+                    li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>'
+                }
+             });
+            $('#status').multiselect({
+                templates: {
+                    li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>'
+                }
             });
         </script>
         <script src="~/js/moment.min.js" asp-append-version="true"></script>

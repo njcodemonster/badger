@@ -1,5 +1,11 @@
-﻿using System;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,13 +13,43 @@ namespace badgerApi.Interfaces
 {
     public interface IEventRepo
     {
-        Task<String> AddEventAsync<T>(T data, String tableName);
+        Task<bool> AddEventAsync(int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
     }
     public class EventsRepo : IEventRepo
     {
-        public async Task<string> AddEventAsync<T>(T data, string tableName)
+        private readonly IConfiguration _config;
+        public EventsRepo(IConfiguration config)
         {
-            return  "ssdsd";
+
+            _config = config;
+           
+
+        }
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
+            }
+        }
+        public async Task<bool> AddEventAsync(int eventtype, int reffrenceId,int userID,string description,double createdat , string tableName)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+
+                    String DInsertQuery = "insert into " + tableName + " values (null,"+ eventtype.ToString() + "," + userID.ToString() + ","+reffrenceId.ToString()+",\"" + description.ToString() + "\"," + createdat.ToString() + ")";
+                    var vendorDetails = await conn.QueryAsync<object>(DInsertQuery);
+                    res = true;
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return res;
         }
     }
 }

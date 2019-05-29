@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Dynamic;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
+using CommonHelper;
 
 namespace badgerApi.Controllers
 {
@@ -21,9 +22,11 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 3;
-
-        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config)
+        private IEventRepo _eventRepo;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
             _config = config;
             _VendorRepo = VendorRepo;
             _loggerFactory = loggerFactory;
@@ -35,8 +38,9 @@ namespace badgerApi.Controllers
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
         {
-           // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
-           // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
+            // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
+            // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
+           
             List<Vendor> ToReturn = new List<Vendor>();
             try
             {
