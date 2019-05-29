@@ -43,8 +43,14 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Vendor" asp-action="Index">Vendor</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Photoshoots" asp-action="Index">Photoshoots</a>
+                    <li class="nav-item dropdown">
+                        <!-- <a class="nav-link " href="#" id="navbarDropdown"  aria-haspopup="true" aria-expanded="false"> Dropdown </a> -->
+                        <a class="nav-link text-dark dropdown-toggle" role="button" data-toggle="dropdown" asp-area="" asp-controller="Photoshoots" asp-action="Index">Photoshoots</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-area="" asp-controller="Photoshoots" asp-action="inProgress">Photoshoots InProgress</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Photoshoots" asp-action="shootInProgress">Photoshoots InProgress Single</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Photoshoots" asp-action="sendToEditor">Photoshoots SendToEditor</a>
+                        </div>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
