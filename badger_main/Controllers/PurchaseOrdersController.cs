@@ -58,9 +58,7 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id);
-                object n = await _NotesAndDoc.GenericNote<List<object>>(633, 4, 1);
                 ToReturn.Add(Res);
-
             }
             catch (Exception ex)
             {

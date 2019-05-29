@@ -10,6 +10,7 @@ using System.Dynamic;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using CommonHelper;
 
 namespace badger_view.Controllers
 {
@@ -104,7 +105,6 @@ namespace badger_view.Controllers
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
             SetBadgerHelper();
-            SetCommonHelper();
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/create");
             return newPurchaseOrderID;
         }
