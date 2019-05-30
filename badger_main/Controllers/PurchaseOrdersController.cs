@@ -77,15 +77,18 @@ namespace badgerApi.Controllers
 
         }
         // GET: api/vendor/listpageview/10
-        [HttpGet("listpageview/{limit}")]
-        public async Task<object> ListPageViewAsync(int limit)
+        [HttpGet("listpageview/{limit}/{countNeeded}")]
+        public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
         {
             dynamic poPageList = new object();
             try
             {
                 poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(limit);
-                string poPageCount = await _PurchaseOrdersRepo.Count();
-                poPageList.Count = poPageCount;
+                if (countNeeded)
+                {
+                    string poPageCount = await _PurchaseOrdersRepo.Count();
+                    poPageList.Count = poPageCount;
+                }
             }
             catch (Exception ex)
             {

@@ -2,43 +2,44 @@
 @{
     ViewData["Title"] = "P.O. Check-in";
 }
-
+@model dynamic
 @*<table class="table">
-    <tr>
-        <td>
-            <h5>Purchase Order #: <a href="#">35671</a></h5>
-            <h5>Vendor Name: <a href="#">Blue Life</a></h5>
-        </td>
-        <td class="align-middle">
-            <button type="button" class="btn btn-light btn-sm">Edit Original P.O.</button>
-            <button type="button" class="btn btn-light btn-sm">Add an item</button>
-        </td>
-        </td>
-        <td class="align-middle">
-            <span class="text-center d-inline-block">
-                <b>Inspect</b><br /><a href="#">Claim</a>
-            </span>
-            <span class="text-center d-inline-block pl-4">
-                <b>Go Live</b><br /><a href="#">Claim</a>
-            </span>
-            <span class="d-inline-block pl-4 align-top pt-2">
-                <b>6 total styles, 5 have photos</b>
-            </span>
-        </td>
-        <td class="align-middle text-right">
-            <form action="">
-                <input type="text" placeholder="Quick Find" name="search" class="pl-1 pr-1">
-                <button type="submit" class=""><i class="fa fa-search"></i></button>
-            </form>
-        </td>
-    </tr>
-</table>*@
-
-    <table class="table">
         <tr>
             <td>
                 <h5>Purchase Order #: <a href="#">35671</a></h5>
                 <h5>Vendor Name: <a href="#">Blue Life</a></h5>
+            </td>
+            <td class="align-middle">
+                <button type="button" class="btn btn-light btn-sm">Edit Original P.O.</button>
+                <button type="button" class="btn btn-light btn-sm">Add an item</button>
+            </td>
+            </td>
+            <td class="align-middle">
+                <span class="text-center d-inline-block">
+                    <b>Inspect</b><br /><a href="#">Claim</a>
+                </span>
+                <span class="text-center d-inline-block pl-4">
+                    <b>Go Live</b><br /><a href="#">Claim</a>
+                </span>
+                <span class="d-inline-block pl-4 align-top pt-2">
+                    <b>6 total styles, 5 have photos</b>
+                </span>
+            </td>
+            <td class="align-middle text-right">
+                <form action="">
+                    <input type="text" placeholder="Quick Find" name="search" class="pl-1 pr-1">
+                    <button type="submit" class=""><i class="fa fa-search"></i></button>
+                </form>
+            </td>
+        </tr>
+    </table>*@
+@foreach (PurchaseOrdersInfo purchaseOrder in Model.POList)
+{
+    <table class="table">
+        <tr>
+            <td>
+                <h5>Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a></h5>
+                <h5>Vendor Name: <a href="#">@purchaseOrder.vendor</a></h5>
             </td>
             <td class="align-middle">
                 <button type="button" class="btn btn-light btn-sm">Add an item</button>
@@ -607,3 +608,4 @@
             </div>
         </div>
     </div>
+}
