@@ -23,6 +23,7 @@ namespace badgerApi.Interfaces
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int limit);
+        Task<Object> GetOpenPOLineItemDetails(int Limit);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -112,7 +113,27 @@ namespace badgerApi.Interfaces
             }
 
         }
+        public async Task<Object> GetOpenPOLineItemDetails(int Limit)
+        {
 
+            dynamic OpenPoLineItemDetails = new ExpandoObject();
+           /* string sQuery = "";
+            if (limit > 0)
+            {
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 order by a.po_id asc limit " + limit + ";";
+            }
+            else
+            {
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id a.po_status != 2 order by a.po_id asc";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> purchaseOrdersInfo = await conn.QueryAsync<object>(sQuery);
+                poPageList.purchaseOrdersInfo = purchaseOrdersInfo;
+            }*/
+            return OpenPoLineItemDetails;
+        }
         public async Task<object> GetPurchaseOrdersPageList(int limit)
         {
 
@@ -120,11 +141,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (limit > 0)
             {
-                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id order by a.po_id asc limit " + limit + ";";
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 order by a.po_id asc limit " + limit + ";";
             }
             else
             {
-                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id order by a.po_id asc";
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id a.po_status != 2 order by a.po_id asc";
             }
 
             using (IDbConnection conn = Connection)

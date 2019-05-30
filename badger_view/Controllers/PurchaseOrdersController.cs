@@ -10,6 +10,7 @@ using System.Dynamic;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using CommonHelper;
 
 namespace badger_view.Controllers
 {
@@ -102,12 +103,11 @@ namespace badger_view.Controllers
         }
 
         [HttpPost("purchaseorders/newpurchaseorder")]
-        public async Task<String> CreateNewPurchaseOrder([FromBody]   JObject json)
+        public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
             SetBadgerHelper();
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/create");
             return newPurchaseOrderID;
-
         }
 
 
@@ -120,10 +120,21 @@ namespace badger_view.Controllers
             return newPurchaseOrderID;
         }
 
-
-        public IActionResult POMgmt()
+       // public async Task<IActionResult> PurchaseOrderLineItemDetails()
+       // {
+       //     SetBadgerHelper();
+      //      dynamic PageModal = new ExpandoObject();
+      //  }
+        public async Task<IActionResult> PurchaseOrdersManagement()
         {
-            return View();
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
+            PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
+            
+            
+             return View("PurchaseOrdersManagement",PageModal);
         }
         public IActionResult EditAttr()
         {

@@ -118,6 +118,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["created_at"] = (new Date().getTime()) / 1000;
     jsonData["updated_at"] = (new Date().getTime()) / 1000;
 
+    jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
+
     console.log(jsonData);
 
     $.ajax({

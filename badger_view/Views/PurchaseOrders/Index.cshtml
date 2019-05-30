@@ -10,7 +10,7 @@
 
 <div class="row">
     <div class="col-md-3 col-sm-12">
-        <h2 class="text-info">Open Purchase Orders (@Model.PurchaseOrdersCount)</h2>
+        <h4 class="text-info">Open Purchase Orders (@Model.PurchaseOrdersCount)</h4>
     </div>
     <div class="col-md-9">
         <button type="button" class="btn btn-success btn-sm model_purchase_order" data-toggle="modal" data-target="#modalPurchaseOrder">
@@ -60,7 +60,16 @@
                     <td>3</td>
                     <td>@purchaseOrders.custom_delivery_window_start_end</td>
                     <td>@purchaseOrders.num_of_days</td>
-                    <td>@purchaseOrders.po_status</td>
+                    <td class="po_status">
+                        @if(@purchaseOrders.po_status == 1){
+                            <span id="status_open">Open</span>
+                        }
+
+                        @if(@purchaseOrders.po_status == 3)
+                        {
+                            <span id="status_in_progress">In Process</span>
+                        }
+                    </td>
                     <td>
                         <button type="button" class="btn btn-success btn-sm">Checked-in</button>
                     </td>
@@ -106,8 +115,8 @@
 </div>
 
 
-@section purchase_order_popup
-    {
+@section page_popup_area{
+
     <!-- Modal PO -->
     <div class="modal fade" id="modalPurchaseOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -208,6 +217,257 @@
                     <button type="button" class="btn btn-warning" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete this P.O.</button>
                     <button type="button" class="btn btn-primary" id="NewPurchaseOrderButton">Add</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Vendor -->
+    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="newVendorForm" data-currentid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Vendor Name</label>
+                                    <input type="text" class="form-control" id="vendorName">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Corporation Name</label>
+                                    <input type="text" class="form-control" id="vendorCorpName">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Exact Statement Name</label>
+                                    <input type="text" class="form-control" id="vendorStatmentName">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Vendor Code</label>
+                                    <input type="text" class="form-control" id="vendorCode">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Our Customer #</label>
+                                    <input type="text" class="form-control" id="vendorourCustomerNumber">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Street Address</label>
+                                    <input type="text" class="form-control" id="vendorStreetAdress">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Unit Number</label>
+                                    <input type="text" class="form-control" id="vendorUnitNumber">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>City</label>
+                                    <input type="text" class="form-control" id="vendorCity">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Zip Code</label>
+                                    <input type="text" class="form-control" id="vendorZip">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>State</label>
+                                    <input type="text" class="form-control" id="vendorState">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Rep Name</label>
+                                    <input type="text" class="form-control" id="vendorRepName"><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" id="vendorRepEmail">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Phone Number</label>
+                                    <div class="row">
+                                        <div class="col-md-3 p-0">
+                                            <span class="d-inline">(</span> <input type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
+                                        </div>
+                                        <div class="col-md-4 p-0">
+                                            <input type="tel" class="form-control" id="vendorRepPhone12">
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <input type="tel" class="form-control" id="vendorRepPhone13">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Upload</label>
+                                    <input type="file" class="form-control" id="vendorDocument">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Vendor Notes</label>
+                                    <textarea class="form-control" id="vendorNotes"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Add Invoice -->
+    <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add an Invoice Adjustment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Adjustment</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option value="credit">Credit</option>
+                                        <option value="debit">Debit</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Amount</label>
+                                    <input type="text" class="form-control" placeholder="$">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Note</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Discount -->
+    <div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Discount %</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Discount</label>
+                                    <input type="text" class="form-control" placeholder="%">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label>Note</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="text-center w-100">
+                                <span class="text-danger"><b>IMPORTANT:</b> </span>Your unit costs should be inputted with discounts already applied to them.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Check-in -->
+    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Purchase Order #294854 - Stylestalker - Check-in</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Tracking Number</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Upload Invoices</label>
+                                    <input type="file" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Shipping &amp; Handling</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row align-items-center">
+                                <div class="form-group col-md-5">
+                                    <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row align-items-center">
+                                <div class="form-group col-md-5">
+                                    <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row align-items-center">
+                                <div class="form-group col-md-5">
+                                    <label>Light My Fire Dress (VS-1181-1) - XS</label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin: 0 auto;">
+                    <button type="button" class="btn btn-success">Check-in</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
