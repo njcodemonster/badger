@@ -92,7 +92,7 @@ $(document).ready(function () {
         }
     });
 
-    // date rabge picker
+    // date range picker
 
     $('#poreporting').daterangepicker();
 });
