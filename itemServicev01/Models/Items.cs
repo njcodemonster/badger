@@ -19,6 +19,7 @@ namespace itemService.Models
         public int product_id { get; set; }
         public int vendor_id { get; set; }
         public string sku_family { get; set; }
+        public int? PO_id { get; set; }
         public int? published { get; set; }
         public int? published_by { get; set; }
         public int created_by { get; set; }
