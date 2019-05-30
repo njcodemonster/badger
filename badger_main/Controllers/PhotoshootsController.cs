@@ -79,7 +79,7 @@ namespace badgerApi.Controllers
             dynamic vPageList = new object();
             try
             {
-                vPageList = await _PhotoshootRepo.GetPhotoshootsDetailsRep(limit);
+                vPageList = await _PhotoshootRepo.GetPhotoshootDetailsRep(limit);
                 //string vPageCount = await _PhotoshootsRepo.Count();
                 //vPageList.Count = vPageCount;
             }

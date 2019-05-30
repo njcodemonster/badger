@@ -40,7 +40,7 @@ namespace badger_view.Controllers
             SetBadgerHelper();
           
 
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
 
@@ -113,15 +113,20 @@ namespace badger_view.Controllers
             
             string[] dateRangeList = daterange.Split(" - ");
 
-            string startDate =  dateRangeList[0].ToString();
+            string startDate = dateRangeList[0].ToString();
+            string endDate = dateRangeList[1].ToString();
+
+            string orderDate = json.Value<string>("order_date");
+
+            /*
 
             string[] startDateList = startDate.Split("/");
 
-            string endDate = dateRangeList[1].ToString();
+            
 
             string[] endDateList = endDate.Split("/");
 
-            string orderDate = json.Value<string>("order_date");
+            
 
             string[] orderDateList = orderDate.Split("/");
 
@@ -134,7 +139,7 @@ namespace badger_view.Controllers
             double delivery_window_start = (double)(startDateTime - sTime).TotalSeconds;
               double delivery_window_end = (double)(endDateTime - sTime).TotalSeconds;
 
-            double order_date = (double)(orderDateTime - sTime).TotalSeconds;
+            double order_date = (double)(orderDateTime - sTime).TotalSeconds;*/
 
             purchaseOrder.Add("vendor_po_number", json.Value<string>("vendor_po_number"));
             purchaseOrder.Add("vendor_invoice_number", json.Value<string>("vendor_invoice_number"));
@@ -144,12 +149,12 @@ namespace badger_view.Controllers
             purchaseOrder.Add("total_quantity", json.Value<string>("total_quantity"));
             purchaseOrder.Add("subtotal", json.Value<string>("subtotal"));
             purchaseOrder.Add("shipping", json.Value<string>("shipping"));
-            purchaseOrder.Add("delivery_window_start", delivery_window_start);
-            purchaseOrder.Add("delivery_window_end", delivery_window_end);
+            purchaseOrder.Add("delivery_window_start", _common.DateConvertToTimeStamp(startDate));
+            purchaseOrder.Add("delivery_window_end", _common.DateConvertToTimeStamp(endDate));
             purchaseOrder.Add("po_status", json.Value<string>("po_status"));
             purchaseOrder.Add("deleted", 0);
             purchaseOrder.Add("created_by", 2);
-            purchaseOrder.Add("order_date", order_date);
+            purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
             purchaseOrder.Add("created_at", _common.GetTimeStemp());
 
             if (json.Value<string>("note") != "") {
