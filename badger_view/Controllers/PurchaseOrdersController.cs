@@ -67,6 +67,7 @@ namespace badger_view.Controllers
                                             vendor_invoice_number = poList.vendor_invoice_number,
                                             vendor_order_number = poList.vendor_order_number,
                                             vendor_id = poList.vendor_id,
+                                            total_styles = poList.total_styles,
                                             order_date = poList.order_date,
                                             vendor = poList.vendor,
                                             custom_delivery_window_start_end = DeliveryStartEnd,
@@ -105,7 +106,58 @@ namespace badger_view.Controllers
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
             SetBadgerHelper();
-            String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/create");
+
+            JObject purchaseOrder = new JObject();
+
+            string daterange = json.Value<string>("vendor_po_delievery_range");
+            
+            string[] dateRangeList = daterange.Split(" - ");
+
+            string startDate =  dateRangeList[0].ToString();
+
+            string[] startDateList = startDate.Split("/");
+
+            string endDate = dateRangeList[1].ToString();
+
+            string[] endDateList = endDate.Split("/");
+
+            string orderDate = json.Value<string>("order_date");
+
+            string[] orderDateList = orderDate.Split("/");
+
+            DateTime startDateTime = new DateTime(Int32.Parse(startDateList[2]), Int32.Parse(startDateList[0]), Int32.Parse(startDateList[1]), 0, 0, 0, DateTimeKind.Utc);
+            DateTime endDateTime = new DateTime(Int32.Parse(endDateList[2]), Int32.Parse(endDateList[0]), Int32.Parse(endDateList[1]), 0, 0, 0, DateTimeKind.Utc);
+            DateTime orderDateTime = new DateTime(Int32.Parse(orderDateList[2]), Int32.Parse(orderDateList[0]), Int32.Parse(orderDateList[1]), 0, 0, 0, DateTimeKind.Utc);
+
+            DateTime sTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            double delivery_window_start = (double)(startDateTime - sTime).TotalSeconds;
+              double delivery_window_end = (double)(endDateTime - sTime).TotalSeconds;
+
+            double order_date = (double)(orderDateTime - sTime).TotalSeconds;
+
+            purchaseOrder.Add("vendor_po_number", json.Value<string>("vendor_po_number"));
+            purchaseOrder.Add("vendor_invoice_number", json.Value<string>("vendor_invoice_number"));
+            purchaseOrder.Add("vendor_order_number", json.Value<string>("vendor_order_number"));
+            purchaseOrder.Add("vendor_id", json.Value<string>("vendor_id"));
+            purchaseOrder.Add("total_styles", json.Value<string>("total_styles"));
+            purchaseOrder.Add("total_quantity", json.Value<string>("total_quantity"));
+            purchaseOrder.Add("subtotal", json.Value<string>("subtotal"));
+            purchaseOrder.Add("shipping", json.Value<string>("shipping"));
+            purchaseOrder.Add("delivery_window_start", delivery_window_start);
+            purchaseOrder.Add("delivery_window_end", delivery_window_end);
+            purchaseOrder.Add("po_status", json.Value<string>("po_status"));
+            purchaseOrder.Add("deleted", 0);
+            purchaseOrder.Add("created_by", 2);
+            purchaseOrder.Add("order_date", order_date);
+            purchaseOrder.Add("created_at", _common.GetTimeStemp());
+
+            if (json.Value<string>("note") != "") {
+                purchaseOrder.Add("note", json.Value<string>("note"));
+            }
+            
+
+            String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrder.ToString(Formatting.None), "/purchaseorders/create");
             return newPurchaseOrderID;
         }
 

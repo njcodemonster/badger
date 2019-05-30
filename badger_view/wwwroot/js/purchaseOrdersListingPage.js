@@ -77,7 +77,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     
     var jsonData = {};
 
-    var delieveryRange  = $("#newPurchaseOrderForm #poDelieveryRange").val();
+    /*var delieveryRange  = $("#newPurchaseOrderForm #poDelieveryRange").val();
         delieveryRange = delieveryRange.split("-");
 
     var delivery_window_start = new Date(delieveryRange[0].trim());
@@ -94,29 +94,34 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         order_date_milliseconds = order_date.getTime();
         order_date_seconds = order_date_milliseconds / 1000;
 
-    var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
-   
+    var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();*/
+
+    jsonData["vendor_po_delievery_range"] = $("#newPurchaseOrderForm #poDelieveryRange").val();
+
     jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
     jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val();
     jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val();
     jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").val();
-    jsonData["defected"] = 1;
-    jsonData["good_condition"] = 1;
+    //jsonData["defected"] = 1;
+    //jsonData["good_condition"] = 1;
+    jsonData["total_styles"] = $("#newPurchaseOrderForm #poTotalStyles").val();
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
     jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
     jsonData["shipping"] = $("#newPurchaseOrderForm #poShipping").val();
-    jsonData["delivery_window_start"] = delivery_window_start_seconds;
-    jsonData["delivery_window_end"] = delivery_window_end_seconds;
+
+
+    //jsonData["delivery_window_start"] = delivery_window_start_seconds;
+    //jsonData["delivery_window_end"] = delivery_window_end_seconds;
     jsonData["po_status"] = 1;
-    jsonData["po_discount_id"] = 1;
-    jsonData["deleted"] = 0;
-    jsonData["order_date"] = order_date_seconds;
-
+    //jsonData["po_discount_id"] = 1;
+    //jsonData["deleted"] = 0;
+    //jsonData["order_date"] = order_date_seconds;
+    jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
     jsonData["created_by"] = 2;
-    jsonData["updated_by"] = 1;
+   // jsonData["updated_by"] = 1;
 
-    jsonData["created_at"] = (new Date().getTime()) / 1000;
-    jsonData["updated_at"] = (new Date().getTime()) / 1000;
+    //jsonData["created_at"] = (new Date().getTime()) / 1000;
+    //jsonData["updated_at"] = (new Date().getTime()) / 1000;
 
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
@@ -132,7 +137,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
     }).always(function (data) {
         console.log(data);
-
+        return false;
         if (data != 0 && data > 0) {
             alert('New row created - ' + data);
 
@@ -185,6 +190,9 @@ function timeToDateConvert(timeinseconds) {
 
 
 $(document).on('click', "#EditPurhaseOrder", function () {
+
+    $('.po_section').removeClass('d-none');
+
     $("#modalPurchaseOrder #purchaseOrderModalLongTitle").text("Edit Purhase Order");
     $('#modalPurchaseOrder input').prop("disabled", "true");
     $('#modalPurchaseOrder').modal('show');
@@ -210,6 +218,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
         $('select#poVendor option[value=' + podata.vendor_id+']').prop("selected", true);
 
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
+        $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Update");
         $('#modalPurchaseOrder input').removeAttr("disabled");
 
         var startDate = timeToDateConvert(podata.delivery_window_start);
@@ -322,4 +331,18 @@ $(document).on('click', ".model_purchase_order", function () {
     $("#model_purchase_order #purchaseOrderModalLongTitle").text("Add New Purchase Order");
     $("#newPurchaseOrderForm input").val("");
     $("#newPurchaseOrderForm").attr("data-currentid", "");
+    $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Add");
+    $('.po_section').addClass('d-none');
+
+});
+
+
+$(document).on('click', ".add_tracking", function () {
+    //Append a new row of code to the "#items" div
+    $("#wrapper_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
+});
+
+
+$(document).on('click', ".remove_tracking", function () {
+    $(this).parent().remove();
 });

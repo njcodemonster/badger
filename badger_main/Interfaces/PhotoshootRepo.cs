@@ -14,7 +14,7 @@ using System.Dynamic;
 
 namespace badgerApi.Interfaces
 { 
-    public interface IPhotoshootsRepository
+    public interface IPhotoshootRepository
     {
         Task<Photoshoots> GetById(int id);
         Task<List<Photoshoots>> GetAll(Int32 Limit);
@@ -22,12 +22,12 @@ namespace badgerApi.Interfaces
         Task<String> Create(Photoshoots NewPhotoshoot);
         Task<Boolean> Update(Photoshoots PhotoshootToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
-        Task<Object> GetPhotoshootsDetailsRep(Int32 id);
+        Task<Object> GetPhotoshootDetailsRep(Int32 id);
         Task<Object> GetAllPhotoshoots(Int32 id);
         Task<Object> GetAllPhotoshootsModels(Int32 id);
 
     }
-    public class PhotoshootsRepo : IPhotoshootsRepository
+    public class PhotoshootRepo : IPhotoshootRepository
     {
         private readonly IConfiguration _config;
         private string TableName = "product_photoshoots";
@@ -36,7 +36,7 @@ namespace badgerApi.Interfaces
         
 
         private string selectlimit = "30";
-        public PhotoshootsRepo(IConfiguration config)
+        public PhotoshootRepo(IConfiguration config)
         {
 
             _config = config;
@@ -119,7 +119,7 @@ namespace badgerApi.Interfaces
 
         }
 
-        public async Task<Object> GetPhotoshootsDetailsRep(Int32 Limit)
+        public async Task<Object> GetPhotoshootDetailsRep(Int32 Limit)
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";

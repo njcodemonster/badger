@@ -16,7 +16,7 @@ namespace CommonHelper
         public string ConvertToDate(double unixtime)
         {
             return (new DateTime(1970, 1, 1).AddSeconds(unixtime)).ToString("M/d/yyyy");
-        }
+        } 
 
         public string MultiDatePickerFormat(double starttime, double endtime)
         {

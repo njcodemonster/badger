@@ -108,17 +108,21 @@ namespace badgerApi.Controllers
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
 
-                JObject jsonParsePurchaseOrder = JObject.Parse(value);
+                if (NewInsertionID != "0") {
 
-                string note = jsonParsePurchaseOrder.Value<string>("note");
+                    JObject jsonParsePurchaseOrder = JObject.Parse(value);
 
-                if (note != "") {
-                    double created_at = jsonParsePurchaseOrder.Value<double>("created_at");
-                    string newNoteID = await _NotesAndDoc.GenericPostNote<string>(Int32.Parse(NewInsertionID), note_type, note, 1, created_at);
+                    string note = jsonParsePurchaseOrder.Value<string>("note");
+
+                    if (note!= null && note != "")
+                    {
+                        double created_at = jsonParsePurchaseOrder.Value<double>("created_at");
+                        string newNoteID = await _NotesAndDoc.GenericPostNote<string>(Int32.Parse(NewInsertionID), note_type, note, 1, created_at);
+                    }
+
+                    jsonParsePurchaseOrder.RemoveAll();
                 }
-                
 
-                jsonParsePurchaseOrder.RemoveAll();
 
             }
             catch (Exception ex)

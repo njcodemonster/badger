@@ -55,19 +55,19 @@
                         @purchaseOrders.custom_order_date
                     </td>
                     <td>@purchaseOrders.vendor</td>
-                    <td>6</td>
+                    <td>@purchaseOrders.total_styles</td>
                     <td>5</td>
                     <td>3</td>
                     <td>@purchaseOrders.custom_delivery_window_start_end</td>
                     <td>@purchaseOrders.num_of_days</td>
-                    <td class="po_status">
+                    <td>
                         @if(@purchaseOrders.po_status == 1){
-                            <span id="status_open">Open</span>
+                            <span>Open</span>
                         }
 
                         @if(@purchaseOrders.po_status == 3)
                         {
-                            <span id="status_in_progress">In Process</span>
+                            <span>In Process</span>
                         }
                     </td>
                     <td>
@@ -187,17 +187,20 @@
                                     <input type="text" class="form-control" id="poShipping">
                                 </div>
                             </div>
-                            <div class="form-row">
+                            <div class="form-row po_section d-none">
                                 <div class="form-group col-md-6">
                                     <label>Tracking #</label>
-                                    <input type="text" class="form-control d-inline-block" id="poTracking" style="width: 90%">
-                                    <a href="#" class="h4">+</a>
+                                    <input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%">
+                                    <a href="#" class="h4 add_tracking">+</a>
+
+                                    <div id="wrapper_tracking"></div>
+
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <br />
-                                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
-                                    <br />
-                                    <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+                                        <br />
+                                        <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
+                                        <br />
+                                        <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -214,7 +217,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-warning" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete this P.O.</button>
+                    <button type="button" class="btn btn-warning po_section d-none" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete this P.O.</button>
                     <button type="button" class="btn btn-primary" id="NewPurchaseOrderButton">Add</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
