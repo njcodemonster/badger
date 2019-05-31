@@ -22,14 +22,16 @@ namespace badgerApi.Controllers
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
+        private IItemServiceHelper _ItemsHelper;
         private int note_type = 4;
 
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
         {
             _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
             _loggerFactory = loggerFactory;
             _NotesAndDoc = NotesAndDoc;
+            _ItemsHelper = ItemsHelper;
         }
 
         // GET: api/attributes/list

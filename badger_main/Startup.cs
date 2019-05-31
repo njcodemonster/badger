@@ -28,6 +28,7 @@ namespace badgerApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<INotesAndDocHelper,NotesAndDocHelper>();
+            services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
             services.AddTransient<IEventRepo, EventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
             services.AddTransient<IProductRepository, ProductRepo>();

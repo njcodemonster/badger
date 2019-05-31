@@ -32,6 +32,7 @@ namespace itemService.Interfaces
         Task<List<Items>> GetByCreateDateRange(string StartDate, string EndDate, int Limit);
         Task<List<Items>> GetAfterDate(string AfterDate, int Limit);
         Task<List<Items>> GetBeforeDate(string BeforeDate, int Limit);
+        Task<List<Items>> GetByPOid(int PO_id);
         Task<String> Create(Items NewItem);
         Task<Boolean> Update(Items ItemToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
@@ -107,7 +108,25 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
+        public async Task<List<Items>> GetByPOid(int PO_id)
+        {
+            try
+            {
 
+
+                string QueryWhereClause = "where PO_id=" + PO_id.ToString();
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause;
+                    var result = await conn.QueryAsync<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public async Task<List<Items>> GetItemByBarcode(string Barcode)
         {
             try
