@@ -33,6 +33,7 @@
             </td>
         </tr>
     </table>*@
+@{ int First = 0;}
 @foreach (PurchaseOrdersInfo purchaseOrder in Model.POList)
 {
     <table class="table">
@@ -52,560 +53,86 @@
             </td>
         </tr>
     </table>
+
     <div class="bs-example">
-        <div class="accordion" id="accordionpomgmt">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">Drive You Made Blouse (DMB109) in Ivory (WH101)</span></button>
-                        <a href="#" class="h5 text-primary">Edit Attribute</a>
-                    </h2>
-                </div>
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionpomgmt">
-                    <div class="card-body table-responsive">
-                        <table class="table text-center borderless" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Status</th>
-                                    <th>Notes</th>
-                                    <th>Image</th>
-                                    <th>Weight</th>
-                                    <th>SKU</th>
-                                    <th>Barcode</th>
-                                    <th>Publish</th>
-                                    <th>Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
+        @if (First == 0)
+        {
+            First = 1;
+            <div class="accordion" id="accordionpomgmt">
+                @foreach (dynamic LineItem in Model.FirstPOInfor.LineItemDetails)
+                {
 
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
+                                <a href="#" class="h5 text-primary">Edit Attribute</a>
+                            </h2>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionpomgmt">
+                            <div class="card-body table-responsive">
+                                <table class="table text-center borderless" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Size</th>
+                                            <th>Status</th>
+                                            <th>Notes</th>
+                                            <th>Image</th>
+                                            <th>Weight</th>
+                                            <th>SKU</th>
+                                            <th>Barcode</th>
+                                            <th>Publish</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ 
+                                            int i = 0;
+                                            int DisplayTimes = 0;
+                                            DisplayTimes = (int)LineItem.Quantity;
+                                        }
+                                        @while (i < DisplayTimes){
+                                            { i++; }
+                                           
+                                            <tr>
 
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                                <td>@LineItem.Size</td>
+                                                <td>
+                                                    <select class="form-control">
+                                                        <option selected>Choose...</option>
+                                                        <option>...</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control" cols="50"></textarea>
+                                                </td>
+                                                <td>
+                                                    <a href="#"><i class="fa fa-upload h3"></i></a>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-success btn-sm">Publish</button>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm">Remove</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">Faded Denim Pant (DP007) in Blue (BL)</span></button>
-                        <a href="#" class="h5 text-primary">Edit Attribute</a>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionpomgmt">
-                    <div class="card-body table-responsive">
-                        <table class="table text-center borderless" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Status</th>
-                                    <th>Notes</th>
-                                    <th>Image</th>
-                                    <th>Weight</th>
-                                    <th>SKU</th>
-                                    <th>Barcode</th>
-                                    <th>Publish</th>
-                                    <th>Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingThree">
-                    <h2 class="mb-0">
-                        <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">Perfect Plunge Maxi Dress (MXDR123) in Red (RD)</span></button>
-                        <a href="#" class="h5 text-primary">Edit Attribute</a>
-                    </h2>
-                </div>
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionpomgmt">
-                    <div class="card-body table-responsive">
-                        <table class="table text-center borderless" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Status</th>
-                                    <th>Notes</th>
-                                    <th>Image</th>
-                                    <th>Weight</th>
-                                    <th>SKU</th>
-                                    <th>Barcode</th>
-                                    <th>Publish</th>
-                                    <th>Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td>XS</td>
-                                    <td>
-                                        <select class="form-control">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" cols="50"></textarea>
-                                    </td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-upload h3"></i></a>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">Publish</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 }
