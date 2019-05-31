@@ -120,11 +120,13 @@ namespace badger_view.Controllers
             return newPurchaseOrderID;
         }
 
-       // public async Task<IActionResult> PurchaseOrderLineItemDetails()
-       // {
-       //     SetBadgerHelper();
-      //      dynamic PageModal = new ExpandoObject();
-      //  }
+        public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
+        {
+            SetBadgerHelper();
+            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
+
+            return LineItemsDetails;
+        }
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
             SetBadgerHelper();
@@ -132,15 +134,16 @@ namespace badger_view.Controllers
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            
-            
-             return View("PurchaseOrdersManagement",PageModal);
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(601, 0);
+
+
+            return View("PurchaseOrdersManagement", PageModal);
         }
-        public IActionResult EditAttr()
+        public IActionResult EditAttributes()
         {
             return View();
         }
-        public IActionResult POReporting()
+        public IActionResult InventoryReporting()
         {
             return View();
         }

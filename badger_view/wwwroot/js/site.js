@@ -149,7 +149,3 @@ $('#status').multiselect({
         container.find('input[type=checkbox]').addClass('d-none');
     }
 });
-
-// date range picker
-
-
