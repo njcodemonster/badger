@@ -47,20 +47,20 @@ namespace badgerApi.Helper
     }
     public class NotesAndDocHelper:INotesAndDocHelper
     {
-        private String BadgerAPIURL = "";
+        private String NOtesApiUrl = "";
         private readonly IConfiguration _config;
         public NotesAndDocHelper(IConfiguration config)
         {
 
             _config = config;
-            BadgerAPIURL = _config.GetValue<string>("Services:NotesAndDoc");
+            NOtesApiUrl = _config.GetValue<string>("Services:NotesAndDoc");
 
         }
         private async Task<T> GenericGetAsync<T>(String _call)
         {
             var client = new HttpClient();
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
-            var response = await client.GetAsync(BadgerAPIURL + _call, HttpCompletionOption.ResponseHeadersRead);
+            var response = await client.GetAsync(NOtesApiUrl + _call, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             var settings = new JsonSerializerSettings
@@ -75,7 +75,7 @@ namespace badgerApi.Helper
         {
             var client = new HttpClient();
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
-            var response = await client.PostAsJsonAsync(BadgerAPIURL + _call, json);
+            var response = await client.PostAsJsonAsync(NOtesApiUrl + _call, json);
             response.EnsureSuccessStatusCode();
 
             var data = await response.Content.ReadAsStringAsync();
