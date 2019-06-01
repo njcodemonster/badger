@@ -79,7 +79,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseorders/listpageview/10
+        // GET: api/purchaseorders/listpageview/10/boolean
         [HttpGet("listpageview/{limit}/{countNeeded}")]
         public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
         {
@@ -165,6 +165,25 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        // GET: api/purchaseorders/getnote/ref_id
+        [HttpGet("getnote/{ref_id}/{limit}")]
+        public async Task<List<Notes>> GetNoteViewAsync(int ref_id, int limit)
+        {
+            List<Notes> notes = new List<Notes>();
+            try
+            {
+                 notes = await _NotesAndDoc.GenericNote<Notes>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+
+            }
+
+            return notes;
+
+        }
 
         // PUT: api/purchaseorders/update/5
         [HttpPut("update/{id}")]

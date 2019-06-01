@@ -41,8 +41,6 @@ namespace notesService.Controllers
         [HttpGet("Reff/{id}/{notetype}/{limit}")]
         public async Task<List<Notes>> GetByReff(int id,int notetype, int Limit)
         {
-           
-
             List<Notes> ToReturn = new List<Notes>();
             
             try

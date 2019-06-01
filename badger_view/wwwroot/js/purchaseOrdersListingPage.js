@@ -147,10 +147,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     console.log(data);
                     if (data == "0") {
                         console.log("Exception Error");
-                    } else if (data == "File Already Exists") {
-                        console.log(data);
                     } else {
-                        console.log("File uploaded:" + data);
+                        console.log(data.responseText);
                     }
                 });
             }
@@ -246,9 +244,8 @@ $(document).on('click', "#EditPurhaseOrder", function () {
             //what to do after change
         }).val(startDate + " - " + endDate); 
 
-
         $("#newPurchaseOrderForm #poNumber").val(podata.vendor_po_number);
-        $("#newPurchaseOrderForm #poTotalStyles").val(1);
+        $("#newPurchaseOrderForm #poTotalStyles").val(podata.total_styles);
         $("#newPurchaseOrderForm #poInvoiceNumber").val(podata.vendor_invoice_number);
         $("#newPurchaseOrderForm #poTotalQuantity").val(podata.total_quantity);
         $("#newPurchaseOrderForm #poOrderNumber").val(podata.vendor_order_number);
@@ -258,6 +255,11 @@ $(document).on('click', "#EditPurhaseOrder", function () {
         /*$("#newPurchaseOrderForm #poTracking").val(podata.);
         $("#newPurchaseOrderForm #poUploadImage").val(podata.);
         $("#newPurchaseOrderForm #poNotes").val(podata.);*/
+
+
+        var ref_id = podata.po_id;
+
+
     });
 
 });

@@ -48,7 +48,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
           
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/50/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
 
@@ -102,6 +102,9 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             Object poDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
+
+            Object poNoteDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
+
             return poDetails.ToString();
         }
 
@@ -163,10 +166,10 @@ namespace badger_view.Controllers
         public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
         {
             SetBadgerHelper();
-            
+            string messageDocuments = "";
+            string messageAlreadyDocuments = "";
             try
             {
-                int numberOfFiles = 0;
                 List<IFormFile> files = purchaseorderfile.purchaseOrderDocuments;
 
                 foreach (var formFile in files)
@@ -178,12 +181,14 @@ namespace badger_view.Controllers
 
                         if (System.IO.File.Exists(Fill_path))
                         {
-                            return "File Already Exists";
+                            messageAlreadyDocuments += "File Already Exists: "+ Fill_path +" \r\n";
                         }
                         else
                         {
                             using (var stream = new FileStream(Fill_path, FileMode.Create))
                             {
+                                messageDocuments += Fill_path + " \r\n";
+
                                 await formFile.CopyToAsync(stream);
 
                                 JObject purchaseOrderDocuments = new JObject();
@@ -191,13 +196,13 @@ namespace badger_view.Controllers
                                 purchaseOrderDocuments.Add("url", Fill_path);
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
-                                numberOfFiles++;
+                                
                             }
                         }
                     }
                 }
 
-                return "Files uploaded";
+                return messageDocuments + " \r\n " +  messageAlreadyDocuments;
 
             }
             catch (Exception ex)
