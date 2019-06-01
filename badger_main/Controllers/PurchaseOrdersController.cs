@@ -24,7 +24,7 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
         private int note_type = 4;
-
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
         {
             _config = config;
@@ -34,7 +34,7 @@ namespace badgerApi.Controllers
             _ItemsHelper = ItemsHelper;
         }
 
-        // GET: api/attributes/list
+        // GET: api/purchaseorders/list
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrders>>> GetAsync()
         {
@@ -52,7 +52,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/attributes/list/1
+        // GET: api/purchaseorders/list/1
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrders>> GetAsync(int id)
         {
@@ -71,15 +71,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/vendor/count
+        // GET: api/purchaseorders/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
             return await _PurchaseOrdersRepo.Count();
 
         }
-      
-        // GET: api/vendor/listpageview/10
+
+        // GET: api/purchaseorders/listpageview/10
         [HttpGet("listpageview/{limit}/{countNeeded}")]
         public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
         {
@@ -104,7 +104,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/attributes/create
+        // POST: api/purchaseorders/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -113,23 +113,6 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
-
-                if (NewInsertionID != "0") {
-
-                    JObject jsonParsePurchaseOrder = JObject.Parse(value);
-
-                    string note = jsonParsePurchaseOrder.Value<string>("note");
-
-                    if (note!= null && note != "")
-                    {
-                        double created_at = jsonParsePurchaseOrder.Value<double>("created_at");
-                        string newNoteID = await _NotesAndDoc.GenericPostNote<string>(Int32.Parse(NewInsertionID), note_type, note, 1, created_at);
-                    }
-
-                    jsonParsePurchaseOrder.RemoveAll();
-                }
-
-
             }
             catch (Exception ex)
             {
@@ -139,6 +122,28 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        // POST: api/purchaseorders/notecreate
+        [HttpPost("notecreate")]
+        public async Task<string> NoteCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic newPurchaseOrderNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = newPurchaseOrderNote.ref_id;
+                string note = newPurchaseOrderNote.note;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, 1, created_at);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Purchase Order Note with message" + ex.Message);
+            }
+            return newNoteID;
+        }
+
+        // POST: api/purchaseorders/documentcreate
         [HttpPost("documentcreate")]
         public async Task<string> DocumentCreate([FromBody]   string value)
         {
@@ -149,19 +154,19 @@ namespace badgerApi.Controllers
 
                 int ref_id = PurchaseOrdersToUpdate.ref_id;
                 string document_url = PurchaseOrdersToUpdate.url;
-
-                NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, 1, document_url, "", 1, 1);
+                double created_at = _common.GetTimeStemp();
+                NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", 1, created_at);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new Purchase Order Document with message" + ex.Message);
             }
             return NewInsertionID;
         }
 
 
-        // PUT: api/attributes/update/5
+        // PUT: api/purchaseorders/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -188,7 +193,7 @@ namespace badgerApi.Controllers
         }
 
 
-        // PUT: api/attributes/updatespecific/1
+        // PUT: api/purchaseorders/updatespecific/1
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

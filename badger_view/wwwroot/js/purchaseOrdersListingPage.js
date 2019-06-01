@@ -70,13 +70,6 @@ $('#poOrderDate').datepicker();
 $('#poDelieveryRange').daterangepicker();
 
 $(document).on('click', "#NewPurchaseOrderButton", function () {
-   var data = 1;
-
-    var fileLength = $("#poUploadImage")[0].files.length;
-    if (fileLength != 0) {
-        uploadFiles(data);
-    }
-    return false;
 
     var jsonData = {};
 
@@ -127,13 +120,39 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     }).always(function (data) {
         console.log(data);
 
-
         if (data != 0 && data > 0) {
             alert('New row created - ' + data);
 
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
-                uploadFiles(data);
+
+                var files = $("#poUploadImage")[0].files;
+
+                var formData = new FormData();
+
+                formData.append('po_id', data);
+
+                for (var i = 0; i != files.length; i++) {
+                    formData.append("purchaseOrderDocuments", files[i]);
+                }
+
+                $.ajax({
+                    url: "/purchaseorders/purchaseorder_doc",
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                }).always(function (data) {
+                    console.log(data);
+                    if (data == "0") {
+                        console.log("Exception Error");
+                    } else if (data == "File Already Exists") {
+                        console.log(data);
+                    } else {
+                        console.log("File uploaded:" + data);
+                    }
+                });
             }
             $('#purchaseorderlists').DataTable().row.add([
                 $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text()
@@ -154,40 +173,6 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         }
     });
 });
-
-
-function uploadFiles(ref_id) {
-
-    var files = $("#poUploadImage")[0].files;
-    var formData = new FormData();
-    
-    formData.append("po_id", ref_id);
-    //formData.append("purchaseOrderDocument", files[0]);
-    for (var i = 0; i != files.length; i++) {
-        formData.append("purchaseOrderDocument", files[i]);
-    }
- 
-    $.ajax(
-        {
-            url: "/purchaseorders/purchaseorder_doc",
-            data: formData,
-            processData: false,
-            contentType: false,
-            type: "POST",
-            success: function (data) {
-                if (data == "0") {
-                    console.log("Exception Error");
-                } else if (data == "File Already Exists") {
-                    console.log(data);
-                } else {
-                    console.log("File uploaded:" + data);
-                }
-                
-            }
-        }
-    );
-}
-
 
 function timeToDateConvert(timeinseconds) {
     var datetime = new Date(timeinseconds * 1000);

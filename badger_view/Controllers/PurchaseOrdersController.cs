@@ -18,7 +18,7 @@ namespace badger_view.Controllers
 {
     public class purchaseOrderFileData
     {
-        public IFormFile purchaseOrderDocument { get; set; }
+        public List<IFormFile> purchaseOrderDocuments { get; set; }
         public string po_id { get; set; }
     }
     public class PurchaseOrdersController : Controller
@@ -44,14 +44,11 @@ namespace badger_view.Controllers
             }
         }
 
-       
-
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
           
-
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/true");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
 
@@ -113,41 +110,6 @@ namespace badger_view.Controllers
             return View();
         }
 
-        [HttpPost("purchaseorders/purchaseorder_doc")]
-        public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
-        {
-            SetBadgerHelper();
-            try
-            {
-                string Fill_path = purchaseorderfile.purchaseOrderDocument.FileName;
-                Fill_path = UploadPath + Fill_path;
-
-                if (System.IO.File.Exists(Fill_path))
-                {
-                    return "File Already Exists";
-                }
-                else
-                {
-                    using (var stream = new FileStream(Fill_path, FileMode.Create))
-                    {
-                        await purchaseorderfile.purchaseOrderDocument.CopyToAsync(stream);
-
-                        JObject purchaseOrderDocuments = new JObject();
-                        purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
-                        purchaseOrderDocuments.Add("url", Fill_path);
-                        await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
-                    }
-                    return Fill_path;
-                }
-                
-                
-            }
-            catch (Exception ex)
-            {
-                return "0";
-            }
-        }
-
         [HttpPost("purchaseorders/newpurchaseorder")]
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
@@ -180,15 +142,69 @@ namespace badger_view.Controllers
             purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
             purchaseOrder.Add("created_at", _common.GetTimeStemp());
 
-            if (json.Value<string>("note") != "") {
-                purchaseOrder.Add("note", json.Value<string>("note"));
-            }
-            
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrder.ToString(Formatting.None), "/purchaseorders/create");
+
+            if (newPurchaseOrderID != "0")
+            {
+                if (json.Value<string>("note") != "")
+                {
+                    JObject purchaseOrderNote = new JObject();
+                    purchaseOrderNote.Add("ref_id", newPurchaseOrderID);
+                    purchaseOrderNote.Add("note", json.Value<string>("note"));
+
+                    await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+                }
+            }
+
             return newPurchaseOrderID;
         }
 
+        [HttpPost("purchaseorders/purchaseorder_doc")]
+        public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
+        {
+            SetBadgerHelper();
+            
+            try
+            {
+                int numberOfFiles = 0;
+                List<IFormFile> files = purchaseorderfile.purchaseOrderDocuments;
 
+                foreach (var formFile in files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        string Fill_path = formFile.FileName;
+                        Fill_path = UploadPath + Fill_path;
+
+                        if (System.IO.File.Exists(Fill_path))
+                        {
+                            return "File Already Exists";
+                        }
+                        else
+                        {
+                            using (var stream = new FileStream(Fill_path, FileMode.Create))
+                            {
+                                await formFile.CopyToAsync(stream);
+
+                                JObject purchaseOrderDocuments = new JObject();
+                                purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
+                                purchaseOrderDocuments.Add("url", Fill_path);
+                                await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
+
+                                numberOfFiles++;
+                            }
+                        }
+                    }
+                }
+
+                return "Files uploaded";
+
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+        }
 
         [HttpPost("purchaseorders/updatepurchaseorder/{id}")]
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
