@@ -11,16 +11,27 @@ using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommonHelper;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace badger_view.Controllers
 {
+    public class purchaseOrderFileData
+    {
+        public IFormFile purchaseOrderDocument { get; set; }
+        public string po_id { get; set; }
+    }
     public class PurchaseOrdersController : Controller
     {
         private readonly IConfiguration _config;
+
+        private String UploadPath = "";
+
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersController(IConfiguration config)
         {
             _config = config;
+            UploadPath = _config.GetValue<string>("UploadPath:path");
 
         }
         private BadgerApiHelper _BadgerApiHelper;
@@ -102,6 +113,41 @@ namespace badger_view.Controllers
             return View();
         }
 
+        [HttpPost("purchaseorders/purchaseorder_doc")]
+        public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
+        {
+            SetBadgerHelper();
+            try
+            {
+                string Fill_path = purchaseorderfile.purchaseOrderDocument.FileName;
+                Fill_path = UploadPath + Fill_path;
+
+                if (System.IO.File.Exists(Fill_path))
+                {
+                    return "File Already Exists";
+                }
+                else
+                {
+                    using (var stream = new FileStream(Fill_path, FileMode.Create))
+                    {
+                        await purchaseorderfile.purchaseOrderDocument.CopyToAsync(stream);
+
+                        JObject purchaseOrderDocuments = new JObject();
+                        purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
+                        purchaseOrderDocuments.Add("url", Fill_path);
+                        await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
+                    }
+                    return Fill_path;
+                }
+                
+                
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+        }
+
         [HttpPost("purchaseorders/newpurchaseorder")]
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
@@ -117,29 +163,6 @@ namespace badger_view.Controllers
             string endDate = dateRangeList[1].ToString();
 
             string orderDate = json.Value<string>("order_date");
-
-            /*
-
-            string[] startDateList = startDate.Split("/");
-
-            
-
-            string[] endDateList = endDate.Split("/");
-
-            
-
-            string[] orderDateList = orderDate.Split("/");
-
-            DateTime startDateTime = new DateTime(Int32.Parse(startDateList[2]), Int32.Parse(startDateList[0]), Int32.Parse(startDateList[1]), 0, 0, 0, DateTimeKind.Utc);
-            DateTime endDateTime = new DateTime(Int32.Parse(endDateList[2]), Int32.Parse(endDateList[0]), Int32.Parse(endDateList[1]), 0, 0, 0, DateTimeKind.Utc);
-            DateTime orderDateTime = new DateTime(Int32.Parse(orderDateList[2]), Int32.Parse(orderDateList[0]), Int32.Parse(orderDateList[1]), 0, 0, 0, DateTimeKind.Utc);
-
-            DateTime sTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-            double delivery_window_start = (double)(startDateTime - sTime).TotalSeconds;
-              double delivery_window_end = (double)(endDateTime - sTime).TotalSeconds;
-
-            double order_date = (double)(orderDateTime - sTime).TotalSeconds;*/
 
             purchaseOrder.Add("vendor_po_number", json.Value<string>("vendor_po_number"));
             purchaseOrder.Add("vendor_invoice_number", json.Value<string>("vendor_invoice_number"));
@@ -161,7 +184,6 @@ namespace badger_view.Controllers
                 purchaseOrder.Add("note", json.Value<string>("note"));
             }
             
-
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrder.ToString(Formatting.None), "/purchaseorders/create");
             return newPurchaseOrderID;
         }

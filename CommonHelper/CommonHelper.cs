@@ -16,12 +16,17 @@ namespace CommonHelper
 
         public double DateConvertToTimeStamp(string date)
         {
-            string[] DateList = date.Split("/");
+            Double TotalSeconds = 0;
 
-            DateTime newDateTime = new DateTime(Int32.Parse(DateList[2]), Int32.Parse(DateList[0]), Int32.Parse(DateList[1]), 0, 0, 0, DateTimeKind.Utc);
-            DateTime secondsTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            if (date != "") {
+                string[] DateList = date.Split("/");
 
-            return (double)(newDateTime - secondsTime).TotalSeconds;
+                DateTime newDateTime = new DateTime(Int32.Parse(DateList[2]), Int32.Parse(DateList[0]), Int32.Parse(DateList[1]), 0, 0, 0, DateTimeKind.Utc);
+                DateTime secondsTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                TotalSeconds = (double)(newDateTime - secondsTime).TotalSeconds;
+            }
+            
+            return TotalSeconds;
         }
         public string ConvertToDate(double unixtime)
         {

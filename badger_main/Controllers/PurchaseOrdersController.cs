@@ -137,6 +137,28 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        [HttpPost("documentcreate")]
+        public async Task<string> DocumentCreate([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                dynamic PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<JObject>(value);
+
+                int ref_id = PurchaseOrdersToUpdate.ref_id;
+                string document_url = PurchaseOrdersToUpdate.url;
+
+                NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, 1, document_url, "", 1, 1);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
+
         // PUT: api/attributes/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)

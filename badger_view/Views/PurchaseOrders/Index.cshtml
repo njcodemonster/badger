@@ -129,7 +129,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form id="newPurchaseOrderForm" data-currentid="">
+                        <form id="newPurchaseOrderForm" data-currentid="" enctype="multipart/form-data">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
@@ -206,7 +206,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Upload Images</label>
-                                    <input type="file" class="form-control" id="poUploadImage">
+                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple >
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Purchase Order Notes</label>

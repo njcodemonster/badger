@@ -3,11 +3,7 @@ var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
 
 window.purchaseorderrownumber = "";
 $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
-
     window.purchaseorderrownumber = table.row(this)[0][0];
-
-    //var data = table.row(this).data();
-    //alert('You clicked on ' + data[0] + '\'s row');
 });
 
 
@@ -74,7 +70,14 @@ $('#poOrderDate').datepicker();
 $('#poDelieveryRange').daterangepicker();
 
 $(document).on('click', "#NewPurchaseOrderButton", function () {
-    
+   var data = 1;
+
+    var fileLength = $("#poUploadImage")[0].files.length;
+    if (fileLength != 0) {
+        uploadFiles(data);
+    }
+    return false;
+
     var jsonData = {};
 
     var delieveryRange  = $("#newPurchaseOrderForm #poDelieveryRange").val();
@@ -124,9 +127,14 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     }).always(function (data) {
         console.log(data);
 
+
         if (data != 0 && data > 0) {
             alert('New row created - ' + data);
 
+            var fileLength = $("#poUploadImage")[0].files.length;
+            if (fileLength != 0) {
+                uploadFiles(data);
+            }
             $('#purchaseorderlists').DataTable().row.add([
                 $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text()
                 , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", 1, '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data +'" class="btn btn-light btn-sm">Edit</button>', '<a href="#"><i class="fa fa-edit h3"></i></a>', '<a href="#"><i class="fa fa-upload h3"></i></a>', '<a href="#">Claim</a>', '<a href="#">Claim</a>'
@@ -146,6 +154,40 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         }
     });
 });
+
+
+function uploadFiles(ref_id) {
+
+    var files = $("#poUploadImage")[0].files;
+    var formData = new FormData();
+    
+    formData.append("po_id", ref_id);
+    //formData.append("purchaseOrderDocument", files[0]);
+    for (var i = 0; i != files.length; i++) {
+        formData.append("purchaseOrderDocument", files[i]);
+    }
+ 
+    $.ajax(
+        {
+            url: "/purchaseorders/purchaseorder_doc",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                if (data == "0") {
+                    console.log("Exception Error");
+                } else if (data == "File Already Exists") {
+                    console.log(data);
+                } else {
+                    console.log("File uploaded:" + data);
+                }
+                
+            }
+        }
+    );
+}
+
 
 function timeToDateConvert(timeinseconds) {
     var datetime = new Date(timeinseconds * 1000);

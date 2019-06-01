@@ -116,7 +116,7 @@ namespace badgerApi.Helper
             newDoc.Add("note", notes);
             newDoc.Add("created_by", createdBy);
             newDoc.Add("created_at", createdAt);
-            return await GenericPostAsync<string>(newDoc.ToString(Formatting.None), "/notes/create");
+            return await GenericPostAsync<string>(newDoc.ToString(Formatting.None), "/documents/create");
         }
 
         public async Task<List<Documents>> GenericGetDocAsync<T>(int Reff, int doc_type,int Limit)
