@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using badger_view.Models;
 using badger_view.Helpers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace badger_view.Controllers
 {
@@ -17,19 +18,20 @@ namespace badger_view.Controllers
         {
             _LoginHelper = loginHelper;
         }
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            Int32? test =  HttpContext.Session.GetInt32("isLogin");
-            if ( await _LoginHelper.CheckLogin())
-            {
+           // Int32? test =  HttpContext.Session.GetInt32("isLogin");
+           // if ( await _LoginHelper.CheckLogin())
+           // {
                 return View();
-            }
-            else
-            {
-                return View("Login");
-            }
+           // }
+           // else
+          //  {
+          //      return View("Login");
+           // }
         }
-        [HttpGet("Dologin")]
+        [HttpPost("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
 
