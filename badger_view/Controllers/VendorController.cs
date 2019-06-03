@@ -17,7 +17,7 @@ namespace badger_view.Controllers
 {
     public class vendorFileData
     {
-        public IFormFile vendorDocument { get; set; }
+        public List<IFormFile> vendorDocuments { get; set; }
         public string Vendor_id { get; set; }
     }
     public class VendorController : Controller
@@ -61,17 +61,61 @@ namespace badger_view.Controllers
             return venderAdressandRep;
         }
         [HttpPost("vendor/newvendor_doc")]
-        public async Task<String> CreateNewVendorDoc(vendorFileData test)
+        public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
         {
+            SetBadgerHelper();
+            string messageDocuments = "";
+            string messageAlreadyDocuments = "";
             try
             {
-                string Fill_path = test.vendorDocument.FileName;
-                Fill_path = UploadPath + Fill_path;
-                using (var stream = new FileStream(Fill_path, FileMode.Create))
+                //string Fill_path = vendorDoc.vendorDocuments.FileName;
+                //Fill_path = UploadPath + Fill_path;
+                //using (var stream = new FileStream(Fill_path, FileMode.Create))
+                //{
+                //    await vendorDoc.vendorDocument.CopyToAsync(stream);
+                //    int ref_id = Int32.Parse(vendorDoc.Vendor_id);
+                //    JObject vendorDocuments = new JObject();
+                //    vendorDocuments.Add("ref_id", ref_id);
+                //    vendorDocuments.Add("url", Fill_path);
+                //    await _BadgerApiHelper.GenericPostAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/documentcreate");
+                //}
+                //return Fill_path;
+
+
+                List<IFormFile> files = vendorDoc.vendorDocuments;
+
+                foreach (var formFile in files)
                 {
-                    await test.vendorDocument.CopyToAsync(stream);
+                    if (formFile.Length > 0)
+                    {
+                        string Fill_path = formFile.FileName;
+                        Fill_path = UploadPath + Fill_path;
+
+                        if (System.IO.File.Exists(Fill_path))
+                        {
+                            messageAlreadyDocuments += "File Already Exists: " + Fill_path + " \r\n";
+                        }
+                        else
+                        {
+                            using (var stream = new FileStream(Fill_path, FileMode.Create))
+                            {
+                                messageDocuments += Fill_path + " \r\n";
+
+                                await formFile.CopyToAsync(stream);
+
+                                int ref_id = Int32.Parse(vendorDoc.Vendor_id);
+                                JObject vendorDocuments = new JObject();
+                                vendorDocuments.Add("ref_id", ref_id);
+                                vendorDocuments.Add("url", Fill_path);
+                                await _BadgerApiHelper.GenericPostAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/documentcreate");
+
+
+                            }
+                        }
+                    }
                 }
-                return Fill_path;
+
+                return messageDocuments + " \r\n " + messageAlreadyDocuments;
             }
             catch(Exception ex)
             {
@@ -82,10 +126,10 @@ namespace badger_view.Controllers
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
         {
             SetBadgerHelper();
-           
-            JObject vendor = new JObject();
+            //string newVendorID = "12";
+             JObject vendor = new JObject();
             JObject vendor_adress = new JObject();
-            List<JObject> vendor_reps = new List<JObject>();
+            //List<JObject> vendor_reps = new List<JObject>();
             vendor.Add("vendor_name", json.Value<string>("vendor_name"));
             vendor.Add("corp_name", json.Value<string>("corp_name"));
             vendor.Add("statement_name", json.Value<string>("statement_name"));
@@ -104,19 +148,34 @@ namespace badger_view.Controllers
             vendor_adress.Add("created_by", 2);
             vendor_adress.Add("created_at", _common.GetTimeStemp());
             String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAdress/create");
-            JObject vendor_rep = new JObject();
-            vendor_rep.Add("vendor_id", newVendorID);
-            vendor_rep.Add("first_name", json.Value<string>("Rep_first_name"));
-            vendor_rep.Add("full_name", json.Value<string>("Rep_first_name"));
-            vendor_rep.Add("phone1", json.Value<string>("Rep_phone1"));
-            vendor_rep.Add("phone2", json.Value<string>("Rep_phone2"));
-            vendor_rep.Add("email", json.Value<string>("Rep_email"));
-            vendor_rep.Add("main", 1);
-            vendor_rep.Add("created_by", 2);
-            vendor_rep.Add("created_at", _common.GetTimeStemp());
-            String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
+            JObject allData = JObject.Parse(json.ToString());
+            JArray vendor_reps_data = (JArray)allData["vendor_reps"];
 
+            for (int i = 0; i < vendor_reps_data.Count; i++)
+            {
+                JObject vendor_rep = new JObject();
+                vendor_rep.Add("vendor_id", newVendorID);
+                vendor_rep.Add("first_name", vendor_reps_data[i].Value<string>("Rep_first_name"));
+                vendor_rep.Add("full_name", vendor_reps_data[i].Value<string>("Rep_full_name"));
+                vendor_rep.Add("phone1", vendor_reps_data[i].Value<string>("Rep_phone1"));
+                vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
+                vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
+                vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
+                vendor_rep.Add("created_by", 2);
+                vendor_rep.Add("created_at", _common.GetTimeStemp());
+                String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
+            }
+            string vendor_notes = json.Value<string>("vendor_notes");
+            if (vendor_notes != "")
+            {
+                JObject vendorNotes = new JObject();
+                vendorNotes.Add("ref_id", newVendorID);
+                vendorNotes.Add("note", vendor_notes);
+                String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+
+            }
             return newVendorID;
+
            
         }
     }
