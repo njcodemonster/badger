@@ -13,26 +13,26 @@ namespace badgerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VendorAdressController : ControllerBase
+    public class VendorAddressController : ControllerBase
     {
-        private readonly IVendorAdress _VendorAdressRepo ;
+        private readonly IVendorAddress _VendorAddressRepo ;
         ILoggerFactory _loggerFactory;
 
-        public VendorAdressController(IVendorAdress VendorAdressRepo, ILoggerFactory loggerFactory)
+        public VendorAddressController(IVendorAddress VendorAddressRepo, ILoggerFactory loggerFactory)
         {
-            _VendorAdressRepo = VendorAdressRepo;
+            _VendorAddressRepo = VendorAddressRepo;
             _loggerFactory = loggerFactory;
         }
 
 
-        // GET: api/VendorAdress/5
+        // GET: api/VendorAddress/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST: api/VendorAdress/create
+        // POST: api/VendorAddress/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -40,17 +40,17 @@ namespace badgerApi.Controllers
             try
             {
                 VendorAddress newVendorAddress = JsonConvert.DeserializeObject<VendorAddress>(value);
-                NewInsertionID = await _VendorAdressRepo.Create(newVendorAddress);
+                NewInsertionID = await _VendorAddressRepo.Create(newVendorAddress);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new vendor address with message" + ex.Message);
             }
             return NewInsertionID;
         }
 
-        // PUT: api/VendorAdress/5
+        // PUT: api/VendorAddress/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {

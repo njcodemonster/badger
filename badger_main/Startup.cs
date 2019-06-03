@@ -28,6 +28,7 @@ namespace badgerApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<INotesAndDocHelper,NotesAndDocHelper>();
+            services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
             services.AddTransient<IEventRepo, EventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
             services.AddTransient<IProductRepository, ProductRepo>();
@@ -36,9 +37,9 @@ namespace badgerApi
             services.AddTransient<IAttributeTypeRepository, AttributeTypeRepo>();
             services.AddTransient<IAttributeValuesRepository, AttributeValuesRepo>();
             services.AddTransient<IPurchaseOrdersRepository, PurchaseOrdersRepo>();
-            services.AddTransient<IVendorAdress, VendorAdressRepo>();
+            services.AddTransient<IVendorAddress, VendorAddressRepo>();
             services.AddTransient<IVendorRepRepository, VendorRepRepo>();
-            services.AddTransient<IPhotoshootsRepository, PhotoshootsRepo>();
+            services.AddTransient<IPhotoshootRepository, PhotoshootRepo>();
             
             services.AddTransient<IPhotoshootModelRepository, PhotoshootModelRepo>();
         }

@@ -16,7 +16,7 @@ namespace notesService.Models
         public string note { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
-        public Double created_at { get; set; }
-        public Double updated_at { get; set; }
+        public double created_at { get; set; }
+        public double updated_at { get; set; }
     }
 }
