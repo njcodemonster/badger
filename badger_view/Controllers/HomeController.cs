@@ -21,21 +21,21 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-           // Int32? test =  HttpContext.Session.GetInt32("isLogin");
-           // if ( await _LoginHelper.CheckLogin())
-           // {
-                return View();
-           // }
-           // else
-          //  {
-          //      return View("Login");
-           // }
+            // Int32? test =  HttpContext.Session.GetInt32("isLogin");
+            // if ( await _LoginHelper.CheckLogin())
+            // {
+            return View();
+            // }
+            // else
+            //  {
+            //      return View("Login");
+            // }
         }
         [HttpPost("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
 
-            if (await _LoginHelper.DoLogin("x","y"))
+            if (await _LoginHelper.DoLogin("x", "y"))
             {
                 return View("index");
             }
@@ -67,6 +67,11 @@ namespace badger_view.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Form()
+        {
+            return View();
         }
     }
 }
