@@ -101,9 +101,15 @@ namespace badger_view.Controllers
         public async Task<String> GetDetails(Int32 id)
         {
             SetBadgerHelper();
+
+            dynamic poPageList = new object();
+
             Object poDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
 
             Object poNoteDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
+
+            //poPageList.podetails = poDetails;
+            //poPageList.ponotesdetails = poNoteDetails;
 
             return poDetails.ToString();
         }

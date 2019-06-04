@@ -221,14 +221,13 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     }).always(function (data) {
 
         console.log(data);
+        console.log(data.responseText);
 
         var podata = data[0];
 
        // var date = new Date(podata.order_date * 1000);
 
-        $('select#poVendor option[value=' + podata.vendor_id+']').prop("selected", true);
-
-        $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
+        /*$("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Update");
         $('#modalPurchaseOrder input').removeAttr("disabled");
 
@@ -251,13 +250,13 @@ $(document).on('click', "#EditPurhaseOrder", function () {
         $("#newPurchaseOrderForm #poOrderNumber").val(podata.vendor_order_number);
         $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
         $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
-        $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
+        $("#newPurchaseOrderForm #poShipping").val(podata.shipping);*/
         /*$("#newPurchaseOrderForm #poTracking").val(podata.);
         $("#newPurchaseOrderForm #poUploadImage").val(podata.);
         $("#newPurchaseOrderForm #poNotes").val(podata.);*/
 
 
-        var ref_id = podata.po_id;
+        //var ref_id = podata.po_id;
 
 
     });
