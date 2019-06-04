@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Dynamic;
+using badgerApi.Helper;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+
 
 namespace badgerApi.Controllers
 {
@@ -15,16 +18,23 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PurchaseOrdersController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
         ILoggerFactory _loggerFactory;
-
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory)
+        private INotesAndDocHelper _NotesAndDoc;
+        private IItemServiceHelper _ItemsHelper;
+        private int note_type = 4;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
         {
+            _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
             _loggerFactory = loggerFactory;
+            _NotesAndDoc = NotesAndDoc;
+            _ItemsHelper = ItemsHelper;
         }
 
-        // GET: api/attributes/list
+        // GET: api/purchaseorders/list
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrders>>> GetAsync()
         {
@@ -42,7 +52,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/attributes/list/1
+        // GET: api/purchaseorders/list/1
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrders>> GetAsync(int id)
         {
@@ -51,7 +61,6 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id);
                 ToReturn.Add(Res);
-
             }
             catch (Exception ex)
             {
@@ -62,23 +71,27 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/vendor/count
+        // GET: api/purchaseorders/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
             return await _PurchaseOrdersRepo.Count();
 
         }
-        // GET: api/vendor/listpageview/10
-        [HttpGet("listpageview/{limit}")]
-        public async Task<object> ListPageViewAsync(int limit)
+
+        // GET: api/purchaseorders/listpageview/10/boolean
+        [HttpGet("listpageview/{limit}/{countNeeded}")]
+        public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
         {
             dynamic poPageList = new object();
             try
             {
                 poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(limit);
-                string poPageCount = await _PurchaseOrdersRepo.Count();
-                poPageList.Count = poPageCount;
+                if (countNeeded)
+                {
+                    string poPageCount = await _PurchaseOrdersRepo.Count();
+                    poPageList.Count = poPageCount;
+                }
             }
             catch (Exception ex)
             {
@@ -91,7 +104,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/attributes/create
+        // POST: api/purchaseorders/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -109,7 +122,70 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/attributes/update/5
+        // POST: api/purchaseorders/notecreate
+        [HttpPost("notecreate")]
+        public async Task<string> NoteCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic newPurchaseOrderNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = newPurchaseOrderNote.ref_id;
+                string note = newPurchaseOrderNote.note;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, 1, created_at);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Purchase Order Note with message" + ex.Message);
+            }
+            return newNoteID;
+        }
+
+        // POST: api/purchaseorders/documentcreate
+        [HttpPost("documentcreate")]
+        public async Task<string> DocumentCreate([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                dynamic PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<JObject>(value);
+
+                int ref_id = PurchaseOrdersToUpdate.ref_id;
+                string document_url = PurchaseOrdersToUpdate.url;
+                double created_at = _common.GetTimeStemp();
+                NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", 1, created_at);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Purchase Order Document with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
+        // GET: api/purchaseorders/getnote/ref_id
+        [HttpGet("getnote/{ref_id}/{limit}")]
+        public async Task<List<Notes>> GetNoteViewAsync(int ref_id, int limit)
+        {
+            List<Notes> notes = new List<Notes>();
+            try
+            {
+                 notes = await _NotesAndDoc.GenericNote<Notes>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+
+            }
+
+            return notes;
+
+        }
+
+        // PUT: api/purchaseorders/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -135,7 +211,8 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // PUT: api/attributes/updatespecific/1
+
+        // PUT: api/purchaseorders/updatespecific/1
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

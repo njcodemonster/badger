@@ -5,16 +5,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using badger_view.Models;
+using badger_view.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace badger_view.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        ILoginHelper _LoginHelper;
+        public HomeController(ILoginHelper loginHelper)
         {
-            return View();
+            _LoginHelper = loginHelper;
         }
+        public async Task<IActionResult> Index()
+        {
+            Int32? test =  HttpContext.Session.GetInt32("isLogin");
+            if ( await _LoginHelper.CheckLogin())
+            {
+                return View();
+            }
+            else
+            {
+                return View("Login");
+            }
+        }
+        [HttpGet("Dologin")]
+        public async Task<IActionResult> DoLogin()
+        {
 
+            if (await _LoginHelper.DoLogin("x","y"))
+            {
+                return View("index");
+            }
+            else
+            {
+                return View("Login");
+            }
+        }
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

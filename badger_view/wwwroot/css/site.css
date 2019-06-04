@@ -131,3 +131,11 @@ header {
     right: 5px;
     cursor:pointer
 }
+.red_color{
+    color:#ff0000;
+ }
+ 
+ .tracking_add_more_box{
+     padding: 5px 0;
+ >>>>>>> efbb17c0276854ae3067bd745f4a5576ab5fe836
+ }

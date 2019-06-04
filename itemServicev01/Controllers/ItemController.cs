@@ -183,6 +183,20 @@ namespace itemService.Controllers
                 return ToRetrunItems;
             }
         }
+        [HttpGet("list/listforPO/{PO_id}")]
+        public async Task<List<Items>> GetItemsByPo(int PO_id)
+        {
+            List<Items> ToRetrunItems = new List<Items>();
+            try
+            {
+                ToRetrunItems = await _ItemRepository.GetByPOid(PO_id);
+                return ToRetrunItems;
+            }
+            catch (Exception skuFamilyException)
+            {
+                return ToRetrunItems;
+            }
+        }
 
         [HttpGet("list/publishDateRange/{StartDate}/{EndDate}/{Limit}")]
         public async Task<List<Items>> publishDateRange(string StartDate, string EndDate, int Limit)
