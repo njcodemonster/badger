@@ -221,42 +221,62 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     }).always(function (data) {
 
         console.log(data);
-        console.log(data.responseText);
 
-        var podata = data[0];
+        var podata = data['purchase_order'];
+        if (podata.length > 0) {
+            podata = data['purchase_order'][0];
 
-       // var date = new Date(podata.order_date * 1000);
+            var startDate = timeToDateConvert(podata.delivery_window_start);
+            var endDate = timeToDateConvert(podata.delivery_window_end);
+            $("#newPurchaseOrderForm #poDelieveryRange").daterangepicker({
+                startDate: startDate, // after open picker you'll see this dates as picked
+                endDate: endDate,
+                locale: {
+                    format: 'MM/DD/YYYY',
+                }
+            }, function (start, end, label) {
+                //what to do after change
+            }).val(startDate + " - " + endDate); 
 
-        /*$("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
+            $("#newPurchaseOrderForm #poVendor").val(podata.vendor_id);
+            $("#newPurchaseOrderForm #poNumber").val(podata.vendor_po_number);
+            $("#newPurchaseOrderForm #poTotalStyles").val(podata.total_styles);
+            $("#newPurchaseOrderForm #poInvoiceNumber").val(podata.vendor_invoice_number);
+            $("#newPurchaseOrderForm #poTotalQuantity").val(podata.total_quantity);
+            $("#newPurchaseOrderForm #poOrderNumber").val(podata.vendor_order_number);
+            $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
+            $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
+            $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
+        }
+
+        var note = data['notes'];
+        if (note.length > 0) {
+            note = data['notes'][0].note;
+
+            $("#newPurchaseOrderForm #poNotes").val(note);
+        }
+
+        var docs = data['documents'];
+        $(".po_doc_section").empty();
+        if (docs.length > 0) {
+
+            $(docs).each(function (e, i) {
+                $(".po_doc_section").append((e + 1) + " - <a href="+i.url+">" + i.url+"</a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+            
+        } else {
+            $(".po_doc_section").addClass('d-none');
+        }
+
+        $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Update");
         $('#modalPurchaseOrder input').removeAttr("disabled");
 
-        var startDate = timeToDateConvert(podata.delivery_window_start);
-          var endDate = timeToDateConvert(podata.delivery_window_end); 
-        $("#newPurchaseOrderForm #poDelieveryRange").daterangepicker({
-            startDate: startDate, // after open picker you'll see this dates as picked
-            endDate: endDate,
-            locale: {
-                format: 'MM/DD/YYYY',
-            }
-        }, function (start, end, label) {
-            //what to do after change
-        }).val(startDate + " - " + endDate); 
 
-        $("#newPurchaseOrderForm #poNumber").val(podata.vendor_po_number);
-        $("#newPurchaseOrderForm #poTotalStyles").val(podata.total_styles);
-        $("#newPurchaseOrderForm #poInvoiceNumber").val(podata.vendor_invoice_number);
-        $("#newPurchaseOrderForm #poTotalQuantity").val(podata.total_quantity);
-        $("#newPurchaseOrderForm #poOrderNumber").val(podata.vendor_order_number);
-        $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
-        $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
-        $("#newPurchaseOrderForm #poShipping").val(podata.shipping);*/
-        /*$("#newPurchaseOrderForm #poTracking").val(podata.);
-        $("#newPurchaseOrderForm #poUploadImage").val(podata.);
-        $("#newPurchaseOrderForm #poNotes").val(podata.);*/
-
-
-        //var ref_id = podata.po_id;
+        //$("#newPurchaseOrderForm #poTracking").val(podata.);
+        
 
 
     });
@@ -270,6 +290,40 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     var jsonData = {};
 
     var delieveryRange = $("#newPurchaseOrderForm #poDelieveryRange").val();
+    delieveryRange = delieveryRange.split("-");
+
+    var delivery_window_start = new Date(delieveryRange[0].trim());
+    delivery_window_start_milliseconds = delivery_window_start.getTime();
+    delivery_window_start_seconds = delivery_window_start_milliseconds / 1000;
+
+    var delivery_window_end = new Date(delieveryRange[1].trim());
+    delivery_window_end_milliseconds = delivery_window_end.getTime();
+    delivery_window_end_seconds = delivery_window_end_milliseconds / 1000;
+
+    var delivery_window = (delivery_window_start.getMonth() + 1) + "/" + delivery_window_start.getDate() + "-" + (delivery_window_end.getMonth() + 1) + "/" + delivery_window_end.getDate() + "/" + delivery_window_end.getFullYear();
+
+    var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
+    order_date_milliseconds = order_date.getTime();
+    order_date_seconds = order_date_milliseconds / 1000;
+
+    var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+
+    jsonData["vendor_po_delievery_range"] = $("#newPurchaseOrderForm #poDelieveryRange").val();
+    jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
+    jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val();
+    jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val();
+    jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").val();
+    jsonData["total_styles"] = $("#newPurchaseOrderForm #poTotalStyles").val();
+    jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
+    jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
+    jsonData["shipping"] = $("#newPurchaseOrderForm #poShipping").val();
+    jsonData["po_status"] = 1;
+    jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
+    jsonData["updated_by"] = 2;
+
+    jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
+
+    /*var delieveryRange = $("#newPurchaseOrderForm #poDelieveryRange").val();
     delieveryRange = delieveryRange.split("-");
 
     var delivery_window_start = new Date(delieveryRange[0].trim());
@@ -308,7 +362,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     jsonData["updated_by"] = 1;
 
     jsonData["created_at"] = (new Date().getTime()) / 1000;
-    jsonData["updated_at"] = (new Date().getTime()) / 1000;
+    jsonData["updated_at"] = (new Date().getTime()) / 1000;*/
 
     console.log(jsonData);
 
@@ -326,7 +380,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         if (data.responseText == "Success") {
             if (window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), 6, 5, 3, delivery_window, 0 + " Day", 1, '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="'+id+'" class="btn btn-light btn-sm">Edit</button>', '<a href="#"><i class="fa fa-edit h3"></i></a>', '<a href="#"><i class="fa fa-upload h3"></i></a>', '<a href="#">Claim</a>', '<a href="#">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", 1, '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="'+id+'" class="btn btn-light btn-sm">Edit</button>', '<a href="#"><i class="fa fa-edit h3"></i></a>', '<a href="#"><i class="fa fa-upload h3"></i></a>', '<a href="#">Claim</a>', '<a href="#">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
