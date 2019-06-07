@@ -14,16 +14,16 @@ using System.Dynamic;
 
 namespace badgerApi.Interfaces
 {
-    public interface IVendorAdress
+    public interface IVendorAddress
     {
-        Task<string> Create(VendorAddress NewVendorAdress);
+        Task<string> Create(VendorAddress NewVendorAddress);
     }
-    public class VendorAdressRepo : IVendorAdress
+    public class VendorAddressRepo : IVendorAddress
     {
         private readonly IConfiguration _config;
         private string TableName = "vendor";
         private string selectlimit = "30";
-        public VendorAdressRepo(IConfiguration config)
+        public VendorAddressRepo(IConfiguration config)
         {
 
             _config = config;

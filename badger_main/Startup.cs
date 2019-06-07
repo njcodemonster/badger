@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using badgerApi.Interfaces;
-
+using badgerApi.Helper;
 namespace badgerApi
 {
     public class Startup
@@ -27,6 +27,9 @@ namespace badgerApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddTransient<INotesAndDocHelper,NotesAndDocHelper>();
+            services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
+            services.AddTransient<IEventRepo, EventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
             services.AddTransient<IProductRepository, ProductRepo>();
             services.AddTransient<IPurchaseOrderStatusRepository, PurchaseOrderStatusRepo>();
@@ -34,9 +37,11 @@ namespace badgerApi
             services.AddTransient<IAttributeTypeRepository, AttributeTypeRepo>();
             services.AddTransient<IAttributeValuesRepository, AttributeValuesRepo>();
             services.AddTransient<IPurchaseOrdersRepository, PurchaseOrdersRepo>();
-            services.AddTransient<IVendorAdress, VendorAdressRepo>();
+            services.AddTransient<IVendorAddress, VendorAddressRepo>();
             services.AddTransient<IVendorRepRepository, VendorRepRepo>();
-
+            services.AddTransient<IPhotoshootRepository, PhotoshootRepo>();
+            
+            services.AddTransient<IPhotoshootModelRepository, PhotoshootModelRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

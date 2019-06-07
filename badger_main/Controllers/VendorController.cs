@@ -7,6 +7,9 @@ using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using System.Dynamic;
+using badgerApi.Helper;
+using Microsoft.Extensions.Configuration;
+using CommonHelper;
 
 namespace badgerApi.Controllers
 {
@@ -14,19 +17,30 @@ namespace badgerApi.Controllers
     [ApiController]
     public class VendorController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly IVendorRepository _VendorRepo;
         ILoggerFactory _loggerFactory;
-
-        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory)
+        private INotesAndDocHelper _NotesAndDoc;
+        private int note_type = 3;
+        private IEventRepo _eventRepo;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
+            _config = config;
             _VendorRepo = VendorRepo;
             _loggerFactory = loggerFactory;
+            _NotesAndDoc = NotesAndDoc;
+           
         }
 
         // GET: api/vendor/list
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
         {
+            // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
+            // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
+           
             List<Vendor> ToReturn = new List<Vendor>();
             try
             {
@@ -69,6 +83,29 @@ namespace badgerApi.Controllers
             return vPageList;
 
         }
+
+        //GET: api/vendor/getvendornameandid
+        [HttpGet("getvendorsnameandid")]
+        public async Task<List<object>> GetVendorsNameAndID()
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetVendorsNameAndID();
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+
+
         //GET: api/vendor/detailsadressandrep/103
         [HttpGet("detailsaddressandrep/{id}")]
         public async Task<object> DetailsAddressAndRep(int id)

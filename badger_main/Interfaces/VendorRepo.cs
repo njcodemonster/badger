@@ -26,6 +26,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorDetailsAdressRep(Int32 id);
         Task<Object> GetVendorDetailsRep(Int32 id);
         Task<Object> GetVendorDetailsAddress(Int32 id);
+        Task<Object> GetVendorsNameAndID();
     }
     public class VendorRepo : IVendorRepository
     {
@@ -47,6 +48,18 @@ namespace badgerApi.Interfaces
             }
         }
 
+        public async Task<Object> GetVendorsNameAndID()
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "SELECT vendor_id, vendor_name FROM " + TableName + ";";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
+        }
+
         public async Task<string> Create(Vendor NewVendor)
         {
             using (IDbConnection conn = Connection)
@@ -65,6 +78,7 @@ namespace badgerApi.Interfaces
         }
         public async Task<List<Vendor>> GetAll(Int32 Limit)
         {
+            
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Vendor> result = new List<Vendor>();

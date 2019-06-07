@@ -29,6 +29,8 @@ namespace itemService
         {
             services.AddTransient<IItemTypeRepository,ItemTypeRepo >();
             services.AddTransient<ItemRepository, ItemRepo>();
+            services.AddTransient<IItemStatusRepository, ItemStatusRepo>();
+            services.AddTransient<IItemEventsRepository, ItemEventsRepo>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
