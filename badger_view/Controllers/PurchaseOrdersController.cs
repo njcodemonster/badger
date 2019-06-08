@@ -253,6 +253,23 @@ namespace badger_view.Controllers
             purchaseOrder.Add("updated_at", _common.GetTimeStemp());
 
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrder.ToString(Formatting.None), "/purchaseorders/update/"+id);
+
+            JObject jsonObj = JObject.Parse(json.ToString());
+
+            var tracking_data = (JArray)jsonObj["tracking"];
+
+            
+            foreach (var value in tracking_data)
+            {
+                JObject purchaseOrderTracking = new JObject();
+                purchaseOrderTracking.Add("po_id", id);
+                purchaseOrderTracking.Add("tracking_number", value["track"]);
+                purchaseOrderTracking.Add("created_by", 2);
+                purchaseOrderTracking.Add("created_at", _common.GetTimeStemp());
+
+                await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderTracking.ToString(Formatting.None), "/purchaseorderstracking/create");
+            }
+
             return newPurchaseOrderID;
         }
 

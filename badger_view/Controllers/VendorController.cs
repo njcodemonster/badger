@@ -103,7 +103,7 @@ namespace badger_view.Controllers
             vendor_adress.Add("vendor_state", json.Value<string>("vendor_state"));
             vendor_adress.Add("created_by", 2);
             vendor_adress.Add("created_at", _common.GetTimeStemp());
-            String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAdress/create");
+            String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAddress/create");
             JObject vendor_rep = new JObject();
             vendor_rep.Add("vendor_id", newVendorID);
             vendor_rep.Add("first_name", json.Value<string>("Rep_first_name"));
