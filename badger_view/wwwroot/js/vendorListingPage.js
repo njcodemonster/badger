@@ -100,10 +100,20 @@ $(document).on('click', "#EditVendor", function () {
         if (reps.length > 0) {
             rep1 = reps[0];
             $('#vendorRepName').val(rep1.first_name);
+            $('#vendorFullRepName').val(rep1.full_name);
             $('#vendorRepEmail').val(rep1.email);
-            $('#vendorRepPhone11').val(rep1.phone1);
-            $('#vendorRepPhone12').val(rep1.phone1);
-            $('#vendorRepPhone13').val(rep1.phone1);
+            $('#vendorRepPhone11').val(rep1.phone1[0]+rep1.phone1[1]+rep1.phone1[2]);
+            $('#vendorRepPhone12').val(rep1.phone1[3]+rep1.phone1[4]+rep1.phone1[5]);
+            $('#vendorRepPhone13').val(rep1.phone1[6]+rep1.phone1[7]+rep1.phone1[8]+rep1.phone1[9]);
+            $('#vendorRepPhone14').val(rep1.phone2[0]+rep1.phone2[1]+rep1.phone2[2]);
+            $('#vendorRepPhone15').val(rep1.phone2[3]+rep1.phone2[4]+rep1.phone2[5]);
+            $('#vendorRepPhone16').val(rep1.phone2[6]+rep1.phone2[7]+rep1.phone2[8]+rep1.phone2[9]);
+            if (rep1.main) {
+                $('#vendorRepIsPrimary'). prop("checked", true);
+            }
+            if (reps.length > 1) {
+                repsHtml(reps);
+            }
         }
         
         
@@ -163,14 +173,14 @@ $(document).on('click', "#AddMoreReps", function () {
                                             '<label>Phone Number 1</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input maxlength="3" type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                   ' <input type="tel" class="form-control" id="vendorRepPhone12">'+
+                                                   ' <input type="tel" class="form-control" maxlength="3" id="vendorRepPhone12">'+
                                                 '</div>'+
 
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control" id="vendorRepPhone13">'+
+                                                    '<input type="tel" class="form-control" maxlength="4" id="vendorRepPhone13">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -184,20 +194,77 @@ $(document).on('click', "#AddMoreReps", function () {
                                            '<label>Phone Number 2</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" class="form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input type="tel" maxlength="3" class="form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control" maxlength="3" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control" maxlength="4" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
                                     '</div>'+
                                 '</div>'
-    $('.venderRepo').append(html);
+    $('.venderRepo').append(html);  
 });
 $(document).on('click', "#removeCurrentRep", function () {
     $(this).parent().remove();
 });
+
+function repsHtml(data) {
+    for (i = 1; i < data.length; i++) {
+        var html  = '<div class="venderRepoBox"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
+                                    '<div class="form-row">'+
+                                        '<div class="form-group col-md-6">'+
+                                            '<label>Rep First Name</label>'+
+                                            '<input type="text" value="'+data[i].first_name+'" class="form-control" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" name="vendorRepIsPrimary" /> <small>Primary</small>'+
+                                        '</div>'+
+                                       '<div class="form-group col-md-6">'+
+                                            '<label>Rep Full Name</label>'+
+                                            '<span class="firstRep">'+
+                                                '<input type="text" value="'+data[i].full_name+'" class="form-control" id="vendorFullRepName" style="width:90%">'+
+                                            '</span>'+
+                                        '</div>'+
+                                    '</div>'+
+                                    '<div class="form-row">'+
+                                        '<div class="form-group col-md-6">'+
+                                            '<label>Phone Number 1</label>'+
+                                            '<div class="row">'+
+                                                '<div class="col-md-3 p-0">'+
+                                                    '<span class="d-inline">(</span> <input maxlength="3" type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+                                                '</div>'+
+                                                '<div class="col-md-4 p-0">'+
+                                                   ' <input type="tel" class="form-control" maxlength="3" id="vendorRepPhone12">'+
+                                                '</div>'+
+
+                                                '<div class="col-md-5">'+
+                                                    '<input type="tel" class="form-control" maxlength="4" id="vendorRepPhone13">'+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<div class="form-group col-md-6">'+
+                                            '<label>Email</label>'+
+                                            '<input type="email" value="'+data[i].email+'" class="form-control" id="vendorRepEmail">'+
+                                        '</div>'+
+                                    '</div>'+
+                                    '<div class="form-row">'+
+                                        '<div class="form-group col-md-6">'+
+                                           '<label>Phone Number 2</label>'+
+                                            '<div class="row">'+
+                                                '<div class="col-md-3 p-0">'+
+                                                    '<span class="d-inline">(</span> <input type="tel" maxlength="3" class="form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                '</div>'+
+                                                '<div class="col-md-4 p-0">'+
+                                                    '<input type="tel" class="form-control" maxlength="3" id="vendorRepPhone15">'+
+                                                '</div>'+
+                                                '<div class="col-md-5">'+
+                                                    '<input type="tel" class="form-control" maxlength="4" id="vendorRepPhone16">'+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'
+        $('.venderRepo').append(html); 
+    }
+}
