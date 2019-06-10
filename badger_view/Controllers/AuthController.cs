@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authentication;
 namespace badger_view.Controllers
 {
     [Route("[controller]")]
-    [ApiController]
+    
     public class AuthController : Controller
     {
         ILoginHelper _LoginHelper;
@@ -24,21 +24,23 @@ namespace badger_view.Controllers
         [HttpGet("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
-            var claim = new List < Claim >{
-                new Claim(ClaimTypes.NameIdentifier, "Ponka@Ponka.com"),
-                new Claim(ClaimTypes.Name,"Ponka"),
-            };
-            var identity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-            if (await _LoginHelper.DoLogin("x", "y"))
+
+            return View("Login");
+
+        }
+        [HttpPost("TryLogin")]
+        public async Task<IActionResult> TryLogin(badger_view.Models.LogiDetails logiDetails)
+        {
+            if (await _LoginHelper.DoLogin(logiDetails))
             {
-                return View("index");
+                return RedirectToAction("Index", "Home");
             }
             else
             {
-                return View("Login");
+                return View("/Login");
             }
+
         }
+        
     }
 }

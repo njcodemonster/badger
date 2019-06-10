@@ -35,7 +35,7 @@ namespace badger_view.Controllers
 
         }
         private BadgerApiHelper _BadgerApiHelper;
-       
+
         private void SetBadgerHelper()
         {
             if (_BadgerApiHelper == null)
@@ -47,7 +47,7 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-          
+
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/50/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
@@ -65,24 +65,25 @@ namespace badger_view.Controllers
             {
 
                 DeliveryStartEnd = _common.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
-                
-                NewDateFormat = _common.ConvertToDate(poList.order_date);
-                     NumDays = _common.NumberOfDays(poList.updated_at);
 
-                newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo {
-                                            po_id = poList.po_id,
-                                            vendor_po_number = poList.vendor_po_number,
-                                            vendor_invoice_number = poList.vendor_invoice_number,
-                                            vendor_order_number = poList.vendor_order_number,
-                                            vendor_id = poList.vendor_id,
-                                            total_styles = poList.total_styles,
-                                            order_date = poList.order_date,
-                                            vendor = poList.vendor,
-                                            custom_delivery_window_start_end = DeliveryStartEnd,
-                                            po_status = poList.po_status,
-                                            updated_at = poList.updated_at,
-                                            custom_order_date = NewDateFormat,
-                                            num_of_days = NumDays
+                NewDateFormat = _common.ConvertToDate(poList.order_date);
+                NumDays = _common.NumberOfDays(poList.updated_at);
+
+                newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo
+                {
+                    po_id = poList.po_id,
+                    vendor_po_number = poList.vendor_po_number,
+                    vendor_invoice_number = poList.vendor_invoice_number,
+                    vendor_order_number = poList.vendor_order_number,
+                    vendor_id = poList.vendor_id,
+                    total_styles = poList.total_styles,
+                    order_date = poList.order_date,
+                    vendor = poList.vendor,
+                    custom_delivery_window_start_end = DeliveryStartEnd,
+                    po_status = poList.po_status,
+                    updated_at = poList.updated_at,
+                    custom_order_date = NewDateFormat,
+                    num_of_days = NumDays
                 });
 
                 NewDateFormat = "";
@@ -103,7 +104,7 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             Object poDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
 
-            Object poNoteDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
+            Object poNoteDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
 
             return poDetails.ToString();
         }
@@ -121,7 +122,7 @@ namespace badger_view.Controllers
             JObject purchaseOrder = new JObject();
 
             string daterange = json.Value<string>("vendor_po_delievery_range");
-            
+
             string[] dateRangeList = daterange.Split(" - ");
 
             string startDate = dateRangeList[0].ToString();
@@ -181,7 +182,7 @@ namespace badger_view.Controllers
 
                         if (System.IO.File.Exists(Fill_path))
                         {
-                            messageAlreadyDocuments += "File Already Exists: "+ Fill_path +" \r\n";
+                            messageAlreadyDocuments += "File Already Exists: " + Fill_path + " \r\n";
                         }
                         else
                         {
@@ -196,13 +197,13 @@ namespace badger_view.Controllers
                                 purchaseOrderDocuments.Add("url", Fill_path);
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
-                                
+
                             }
                         }
                     }
                 }
 
-                return messageDocuments + " \r\n " +  messageAlreadyDocuments;
+                return messageDocuments + " \r\n " + messageAlreadyDocuments;
 
             }
             catch (Exception ex)
@@ -215,32 +216,38 @@ namespace badger_view.Controllers
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
         {
             SetBadgerHelper();
-            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/"+id);
+            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/" + id);
             return newPurchaseOrderID;
         }
 
         public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
-            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/"+PO_id.ToString()+"/"+limit.ToString());
-            
+            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
+
             return LineItemsDetails;
         }
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
             SetBadgerHelper();
-           
+
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(601,0);
-            
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(601, 0);
 
-            return View("PurchaseOrdersManagement",PageModal);
+
+            return View("PurchaseOrdersManagement", PageModal);
         }
-        public IActionResult EditAttr()
+        public IActionResult EditAttributes()
+        {
+            return View();
+        }
+        public IActionResult InventoryReporting()
         {
             return View();
         }
     }
+
+
 }
