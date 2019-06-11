@@ -178,5 +178,66 @@ namespace badger_view.Controllers
 
            
         }
+        [HttpPost("vendor/updatevendor/{id}")]
+        public async Task<String> UpdateNewVendor(int id ,[FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            //string newVendorID = "12";
+            JObject vendor = new JObject();
+            JObject vendor_adress = new JObject();
+            //List<JObject> vendor_reps = new List<JObject>();
+            vendor.Add("vendor_name", json.Value<string>("vendor_name"));
+            vendor.Add("corp_name", json.Value<string>("corp_name"));
+            vendor.Add("statement_name", json.Value<string>("statement_name"));
+            vendor.Add("vendor_code", json.Value<string>("vendor_code"));
+            vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
+            vendor.Add("updated_by", 2);
+            vendor.Add("active_status", 1);
+            vendor.Add("updated_at", _common.GetTimeStemp());
+            String vendorStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(vendor.ToString(Formatting.None), "/vendor/update/"+id.ToString());
+            if (vendorStatus == "Success")
+            {
+                int address_id = json.Value<int>("address_id");
+                vendor_adress.Add("vendor_id", id);
+                vendor_adress.Add("vendor_street", json.Value<string>("vendor_street"));
+                vendor_adress.Add("vendor_suite_number", json.Value<string>("vendor_suite_number"));
+                vendor_adress.Add("vendor_city", json.Value<string>("vendor_city"));
+                vendor_adress.Add("vendor_zip", json.Value<int>("vendor_zip"));
+                vendor_adress.Add("vendor_state", json.Value<string>("vendor_state"));
+                vendor_adress.Add("updated_by", 2);
+                vendor_adress.Add("updated_at", _common.GetTimeStemp());
+                String VendorAdressStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAddress/update/" + address_id.ToString());
+                JObject allData = JObject.Parse(json.ToString());
+                JArray vendor_reps_data = (JArray)allData["vendor_reps"];
+
+                for (int i = 0; i < vendor_reps_data.Count; i++)
+                {
+                    JObject vendor_rep = new JObject();
+                    vendor_rep.Add("vendor_id", id);
+                    vendor_rep.Add("first_name", vendor_reps_data[i].Value<string>("Rep_first_name"));
+                    vendor_rep.Add("full_name", vendor_reps_data[i].Value<string>("Rep_full_name"));
+                    vendor_rep.Add("phone1", vendor_reps_data[i].Value<string>("Rep_phone1"));
+                    vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
+                    vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
+                    vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
+                    //vendor_rep.Add("repo_id", vendor_reps_data[i].Value<string>("repo_id"));
+                    vendor_rep.Add("updated_by", 2);
+                    vendor_rep.Add("updated_at", _common.GetTimeStemp());
+                    String newVendorRepID = await _BadgerApiHelper.GenericPutAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/update/"+ vendor_reps_data[i].Value<string>("repo_id").ToString());
+                }
+                string vendor_notes = json.Value<string>("vendor_notes");
+                if (vendor_notes != "")
+                {
+                    JObject vendorNotes = new JObject();
+                    vendorNotes.Add("ref_id", id);
+                    vendorNotes.Add("note", vendor_notes);
+                    String newNoteID = await _BadgerApiHelper.GenericPutAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/update");
+
+                }
+            }
+            return vendorStatus;
+
+
+        }
     }
 }

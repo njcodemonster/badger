@@ -114,14 +114,18 @@ namespace badgerApi.Controllers
             dynamic vendor = new ExpandoObject();
             dynamic vendor_address = new ExpandoObject();
             dynamic vendor_Rep = new ExpandoObject();
+            dynamic vendor_Note = new ExpandoObject();
             try
             {
                 vendor = await _VendorRepo.GetById(id);
                 vendor_address = await _VendorRepo.GetVendorDetailsAddress(id);
                 vendor_Rep = await _VendorRepo.GetVendorDetailsRep(id);
+                vendor_Note = await _VendorRepo.GetVendorNotes(id);
                 AdressAndrepDetails.Vendor = vendor;
                 AdressAndrepDetails.Addresses = vendor_address;
                 AdressAndrepDetails.Reps = vendor_Rep;
+                AdressAndrepDetails.Notes = vendor_Note;
+
             }
             catch (Exception ex)
             {

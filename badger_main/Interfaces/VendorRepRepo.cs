@@ -19,7 +19,7 @@
         {
           
             Task<String> Create(VendorContactPerson VendorRep);
-          
+            Task<Boolean> Update(VendorContactPerson VendorToUpdate);
         }
         public class VendorRepRepo : IVendorRepRepository
         {
@@ -50,5 +50,15 @@
                     return result.ToString();
                 }
             }
-        }
+            public async Task<Boolean> Update(VendorContactPerson VendorToUpdate)
+            {
+
+                using (IDbConnection conn = Connection)
+                {
+                    var result = await conn.UpdateAsync<VendorContactPerson>(VendorToUpdate);
+                    return result;
+                }
+
+            }
+    }
 }
