@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 namespace badger_view.Models
 {
@@ -27,15 +30,22 @@ namespace badger_view.Models
         public int created_by { get; set; }
         public int? updated_by { get; set; }
     }
+    public partial class LogiDetails
+    {
+        public String UserIdentity { get; set; }
+        public String UserPass { get; set; }
+    }
+
 }
 
 namespace badger_view.Helpers
 {
+   
     public interface ILoginHelper
     {
        
         Task<Boolean> CheckLogin();
-        Task<Boolean> DoLogin(String UserEmail, String Password);
+        Task<Boolean> DoLogin(badger_view.Models.LogiDetails logiDetails);
     }
     public class LoginHelper : ILoginHelper
     {
@@ -56,15 +66,22 @@ namespace badger_view.Helpers
             return  isLoedIn;
         }
 
-        public async Task<bool> DoLogin(string UserEmail, string Password )
+        public async Task<bool> DoLogin(badger_view.Models.LogiDetails logiDetails)
         {
             // HttpContext httpContext = new HttpContext();
             //HttpContext.Session.SetInt32("logedIn", 1);
             Boolean isLoedIn = false;
-            if (UserEmail == "Testing@test.com" && Password == "Testing")
+            if (logiDetails.UserIdentity == "Testing@test.com" && logiDetails.UserPass == "Testing")
             {
-                _httpContextAccessor.HttpContext.Session.SetInt32("isLogin", 1);
-                 isLoedIn = true;
+               
+                var claim = new List < Claim >{
+                        new Claim(ClaimTypes.NameIdentifier, logiDetails.UserIdentity),
+                        new Claim(ClaimTypes.Name,"tester"),
+                };
+                var identity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                isLoedIn = true;
             }
             else
             {
