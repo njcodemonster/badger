@@ -43,9 +43,24 @@ namespace badgerApi.Controllers
                 logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
                 return ToReturn;
             }
-
-
         }
+
+        [HttpGet("inprogress")]
+        public async Task<ActionResult<Object>> GetInprogress()
+        {
+            dynamic ToReturn = new object();
+            try
+            {
+                return await _PhotoshootsRepo.GetInprogressPhotoshoot(0);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                return ToReturn;
+            }
+        }
+
         // GET: api/Photoshoots/count
         [HttpGet("count")]
         public async Task<string> CountAsync()

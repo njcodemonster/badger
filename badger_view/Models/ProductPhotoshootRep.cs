@@ -19,4 +19,15 @@ namespace badger_view.Models
     {
         public IEnumerable<ProductPhotoshootRep> photoshootsInfo { get; set; }
     }
+
+    public class ProductPhotoshootInProgressRep
+    {
+        public string photoshoot_name  { get; set; }
+        public int photoshoot_id  { get; set; }
+        
+    }
+    public class ProductPhotoshootInProgressPagerList
+    {
+        public IEnumerable<ProductPhotoshootInProgressRep> photoshootsInprogress { get; set; }
+    }
 }
