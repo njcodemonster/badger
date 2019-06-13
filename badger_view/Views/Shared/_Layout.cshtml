@@ -1,8 +1,10 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="~/images/favicon.png" sizes="32x32">
     <title>@ViewData["Title"] - Badger</title>
 
     <environment include="Development">
@@ -21,6 +23,7 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
     </environment>
+    @RenderSection("Head_Scripts", required: false)
 </head>
 <body>
     <header>
@@ -79,7 +82,7 @@
             <p>&copy; 2019 - badger</p>
         </footer>
 
-        @RenderSection("purchase_order_popup", required: false)
+        @RenderSection("page_popup_area", required: false)
     </div>
 
 
@@ -90,21 +93,16 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/popper.js" type="text/javascript"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" asp-append-version="true"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" asp-append-version="true"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
         <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-        <script>
-            $('#delivery').datepicker({
-                uiLibrary: 'bootstrap4'
-            });
-            $('#orderdate').datepicker({
-                uiLibrary: 'bootstrap4'
-            });
-        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" asp-append-version="true"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+        <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/js/moment.min.js" asp-append-version="true"></script>
         <script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
+        @RenderSection("Scripts", required: false)
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
@@ -121,368 +119,14 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
         <script src="~/js/moment.min.js" asp-append-version="true"></script>
-        <script  src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
+        <script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
     </environment>
 
-    
 
-    @RenderSection("Scripts", required: false)
+
+    
 </body>
 </html>
-
-
-<!-- Modal PO -->
-<div class="modal fade" id="modalpo1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add New Purchase Order</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Vendor Name</label>
-                                <select id="inputState" class="form-control d-inline-block" style="width: 90%">
-                                    <option selected>Choose...</option>
-                                    <option>...</option>
-                                </select>
-                                <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Order Delivery Range</label>
-                                <input type="text" class="form-control" id="poDelieveryRange">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>P.O. Number</label>
-                                <input type="text" class="form-control" id="poNumber">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Total Styles</label>
-                                <input type="text" class="form-control" id="poTotalStyles">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Invoice Number</label>
-                                <input type="text" class="form-control" id="poInvoiceNumber">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Total Quantity</label>
-                                <input type="text" class="form-control" id="poTotalQuantity">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Order Number</label>
-                                <input type="text" class="form-control" id="poOrderNumber">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Subtotal</label>
-                                <input type="text" class="form-control" id="poSubtotal">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Order Date</label>
-                                <input type="text" class="form-control" id="poOrderDate">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Shipping &amp; Handling</label>
-                                <input type="text" class="form-control" id="poShipping">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Tracking #</label>
-                                <input type="text" class="form-control d-inline-block" id="poTracking" style="width: 90%">
-                                <a href="#" class="h4">+</a>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <br />
-                                <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
-                                <br />
-                                <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Upload Images</label>
-                                <input type="file" class="form-control" id="poUploadImage">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Purchase Order Notes</label>
-                                <textarea class="form-control" id="poNotes"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-warning" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete this P.O.</button>
-                <button type="button" class="btn btn-primary" id="NewPurchaseOrderButton">Add</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Add Invoice -->
-<div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add an Invoice Adjustment</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <label>Adjustment</label>
-                                <select id="inputState" class="form-control">
-                                    <option selected>Choose...</option>
-                                    <option>...</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label>Amount</label>
-                                <input type="text" class="form-control" placeholder="$">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label>Note</label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Add Discount -->
-<div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add Discount %</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <label>Discount</label>
-                                <input type="text" class="form-control" placeholder="%">
-                            </div>
-                            <div class="form-group col-md-8">
-                                <label>Note</label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="text-center w-100">
-                            <span class="text-danger"><b>IMPORTANT:</b> </span>Your unit costs should be inputted with discounts already applied to them.
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Check-in -->
-<div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Purchase Order #294854 - Stylestalker - Check-in</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Tracking Number</label>
-                                <input type="text" class="form-control">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Upload Invoices</label>
-                                <input type="file" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Shipping &amp; Handling</label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-row align-items-center">
-                            <div class="form-group col-md-5">
-                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-row align-items-center">
-                            <div class="form-group col-md-5">
-                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-row align-items-center">
-                            <div class="form-group col-md-5">
-                                <label>Light My Fire Dress (VS-1181-1) - XS</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer" style="margin: 0 auto;">
-                <button type="button" class="btn btn-success">Check-in</button>
-                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Vendor -->
-<div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form id="newVendorForm" data-currentid="">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Vendor Name</label>
-                                <input type="text" class="form-control" id="vendorName">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Corporation Name</label>
-                                <input type="text" class="form-control" id="vendorCorpName">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Exact Statement Name</label>
-                                <input type="text" class="form-control" id="vendorStatmentName">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Vendor Code</label>
-                                <input type="text" class="form-control" id="vendorCode">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Our Customer #</label>
-                                <input type="text" class="form-control" id="vendorourCustomerNumber">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Street Address</label>
-                                <input type="text" class="form-control" id="vendorStreetAdress">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Unit Number</label>
-                                <input type="text" class="form-control" id="vendorUnitNumber">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>City</label>
-                                <input type="text" class="form-control" id="vendorCity">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Zip Code</label>
-                                <input type="text" class="form-control" id="vendorZip">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>State</label>
-                                <input type="text" class="form-control" id="vendorState">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Rep Name</label>
-                                <input type="text" class="form-control" id="vendorRepName"><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Email</label>
-                                <input type="email" class="form-control" id="vendorRepEmail">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Phone Number</label>
-                                <div class="row">
-                                    <div class="col-md-3 p-0">
-                                        <span class="d-inline">(</span> <input type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
-                                    </div>
-                                    <div class="col-md-4 p-0">
-                                        <input type="tel" class="form-control" id="vendorRepPhone12">
-                                    </div>
-
-                                    <div class="col-md-5">
-                                        <input type="tel" class="form-control" id="vendorRepPhone13">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Upload</label>
-                                <input type="file" class="form-control" id="vendorDocument">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label>Vendor Notes</label>
-                                <textarea class="form-control" id="vendorNotes"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modal Add Style Item Clothing -->
 <div class="modal fade" id="modaladdstylec" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

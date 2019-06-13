@@ -18,13 +18,13 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PhotoshootsController : ControllerBase
     {
-        private readonly IPhotoshootsRepository _PhotoshootsRepo;
+        private readonly IPhotoshootRepository _PhotoshootRepo;
         ILoggerFactory _loggerFactory;
 
-        public PhotoshootsController(IPhotoshootsRepository PhotoshootsRepo, ILoggerFactory loggerFactory)
+        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory)
         {
 
-            _PhotoshootsRepo = PhotoshootsRepo;
+            _PhotoshootRepo = PhotoshootRepo;
             _loggerFactory = loggerFactory;
         }
 
@@ -35,7 +35,7 @@ namespace badgerApi.Controllers
             List<Photoshoots> ToReturn = new List<Photoshoots>();
             try
             {
-                return await _PhotoshootsRepo.GetAll(0);
+                return await _PhotoshootRepo.GetAll(0);
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace badgerApi.Controllers
             dynamic ToReturn = new object();
             try
             {
-                return await _PhotoshootsRepo.GetInprogressPhotoshoot(0);
+                return await _PhotoshootRepo.GetInprogressPhotoshoot(0);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace badgerApi.Controllers
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
-            return await _PhotoshootsRepo.Count();
+            return await _PhotoshootRepo.Count();
 
         }
      
@@ -75,7 +75,7 @@ namespace badgerApi.Controllers
             List<Photoshoots> ToReturn = new List<Photoshoots>();
             try
             {
-                Photoshoots Res = await _PhotoshootsRepo.GetById(id);
+                Photoshoots Res = await _PhotoshootRepo.GetById(id);
                 ToReturn.Add(Res);
             }
             catch (Exception ex)
@@ -94,7 +94,7 @@ namespace badgerApi.Controllers
             dynamic vPageList = new object();
             try
             {
-                vPageList = await _PhotoshootsRepo.GetPhotoshootsDetailsRep(limit);
+                vPageList = await _PhotoshootRepo.GetPhotoshootDetailsRep(limit);
                 //string vPageCount = await _PhotoshootsRepo.Count();
                 //vPageList.Count = vPageCount;
             }
@@ -116,7 +116,7 @@ namespace badgerApi.Controllers
             dynamic photoshootsAndModels = new object();
             try
             {
-                photoshootsAndModels  = await _PhotoshootsRepo.GetAllPhotoshoots(0);
+                photoshootsAndModels  = await _PhotoshootRepo.GetAllPhotoshoots(0);
               //  var photoshootsModels = await _PhotoshootsRepo.GetAllPhotoshootsModels(0);
              //   photoshootsAndModels.photoshootsModels = photoshootsModels;
 
@@ -140,7 +140,7 @@ namespace badgerApi.Controllers
             try
             {
                 Photoshoots newPhotoshoots = JsonConvert.DeserializeObject<Photoshoots>(value);
-                NewInsertionID = await _PhotoshootsRepo.Create(newPhotoshoots);
+                NewInsertionID = await _PhotoshootRepo.Create(newPhotoshoots);
             }
             catch (Exception ex)
             {
@@ -164,7 +164,7 @@ namespace badgerApi.Controllers
                 ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
                 ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
 
-                await _PhotoshootsRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + productId + ")");
+                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + productId + ")");
             }
             catch (Exception ex)
             {

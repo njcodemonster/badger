@@ -5,18 +5,21 @@ for details on configuring this project to bundle and minify static web assets. 
     display: block !important;
     margin-top: -5px;
 }
+
 a.navbar-brand {
     white-space: normal;
     text-align: center;
     word-break: break-all;
 }
+
 .btn-light {
     border: 2px solid grey !important;
 }
-a:hover
-{
+
+a:hover {
     text-decoration: none !important;
 }
+
 .table-bordered > thead > tr > th,
 .table-bordered > tbody > tr > th,
 .table-bordered > tfoot > tr > th,
@@ -27,27 +30,37 @@ a:hover
     border-right-width: 0px;
     border-left-width: 0px;
 }
-button.btn.btn-link:hover, button.btn.btn-link:focus, button.btn.btn-link:active {
+
+button.btn.btn-link:hover,
+button.btn.btn-link:focus,
+button.btn.btn-link:active {
     text-decoration: none;
 }
-.accordion i
-{
+
+.accordion i {
     margin-right: 5px;
 }
+
 .accordion .card-header {
     background: none;
 }
+
 .accordion .card-header {
     border-bottom: 0;
 }
-table.borderless td, table.borderless th {
+
+table.borderless td,
+table.borderless th {
     border: none !important;
 }
-table.vborder td, table.vborder th {
+
+table.vborder td,
+table.vborder th {
     border: 1px solid #ced4da !important;
     border-bottom: none !important;
     border-top: none !important;
 }
+
 input.edittitlet[type=text] {
     margin-top: 8px;
     display: none;
@@ -57,6 +70,7 @@ label.edittitlel {
     float: left;
     margin-top: 8px;
 }
+
 .edit {
     float: left;
     background: url("../images/edit-btn.png") no-repeat;
@@ -77,6 +91,12 @@ html {
 @media (min-width: 768px) {
     html {
         font-size: 16px;
+    }
+}
+
+@media (max-width: 767px) {
+    .porep2 {
+        width: 100% !important;
     }
 }
 
@@ -112,6 +132,7 @@ body {
 header {
     margin-bottom: 80px;
 }
+
 .footer {
     position: absolute;
     bottom: 0;

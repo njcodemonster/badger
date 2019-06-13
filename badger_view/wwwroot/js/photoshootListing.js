@@ -3,7 +3,7 @@
 $('.card-header').click(function () {
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
-    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;">< div class= "spinner-border text-light" role = "status" style = "margin-top: 20%; margin-left: 48%;" ><span class="sr-only">Loading...</span></div ></div >');
+    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
 
     if ($("#collapse_" + photoshootId).is(":hidden")) {
 

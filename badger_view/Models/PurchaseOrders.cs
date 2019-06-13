@@ -13,6 +13,7 @@ namespace badgerApi.Models
         public int? defected { get; set; }
         public int? good_condition { get; set; }
         public decimal? total_quantity { get; set; }
+        public int? total_styles { get; set; }
         public decimal? subtotal { get; set; }
         public decimal? shipping { get; set; }
         public double? delivery_window_start { get; set; }
@@ -21,9 +22,9 @@ namespace badgerApi.Models
         public decimal? po_discount_id { get; set; }
         public int? deleted { get; set; }
         public int created_by { get; set; }
-        public int updated_by { get; set; }
+        public int? updated_by { get; set; }
         public double order_date { get; set; }
         public double created_at { get; set; }
-        public double updated_at { get; set; }
+        public double? updated_at { get; set; }
     }
 }

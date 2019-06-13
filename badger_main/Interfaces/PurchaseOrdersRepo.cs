@@ -23,6 +23,7 @@ namespace badgerApi.Interfaces
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int limit);
+        Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -112,7 +113,27 @@ namespace badgerApi.Interfaces
             }
 
         }
+        public async Task<Object> GetOpenPOLineItemDetails(int PO_id , int Limit)
+        {
 
+            dynamic OpenPoLineItemDetails = new ExpandoObject();
+            string sQuery = "";
+            if (Limit > 0)
+            {
+                sQuery = "SELECT A.* , B.value AS \"Color\" FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\"  FROM productdb.purchase_order_line_items , product ,product_attributes,attributes where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id)) AS A join  attribute_values   AS B on A.product_id = B.product_id where (B.attribute_id =1) limit " + Limit + ";";
+            }
+            else
+            {
+                sQuery = "SELECT A.* , B.value AS \"Color\" FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\"  FROM productdb.purchase_order_line_items , product ,product_attributes,attributes where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id)) AS A join  attribute_values   AS B on A.product_id = B.product_id where (B.attribute_id =1) ";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> purchaseOrdersInfo = await conn.QueryAsync<object>(sQuery);
+                OpenPoLineItemDetails.LineItemDetails = purchaseOrdersInfo;
+            }
+            return OpenPoLineItemDetails;
+        }
         public async Task<object> GetPurchaseOrdersPageList(int limit)
         {
 
@@ -120,11 +141,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (limit > 0)
             {
-                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id order by a.po_id asc limit " + limit + ";";
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.total_styles, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 order by a.po_id asc limit " + limit + ";";
             }
             else
             {
-                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id order by a.po_id asc";
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.total_styles, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id a.po_status != 2 order by a.po_id asc";
             }
 
             using (IDbConnection conn = Connection)
