@@ -18,7 +18,7 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PhotoshootsController : ControllerBase
     {
-        private readonly IPhotoshootRepository _PhotoshootRepo;
+        private IPhotoshootRepository _PhotoshootRepo;
         ILoggerFactory _loggerFactory;
 
         public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory)
@@ -51,7 +51,7 @@ namespace badgerApi.Controllers
             dynamic ToReturn = new object();
             try
             {
-                return await _PhotoshootsRepo.GetInprogressPhotoshoot(0);
+                return await _PhotoshootRepo.GetInprogressPhotoshoot(0);
             }
             catch (Exception ex)
             {
