@@ -294,11 +294,11 @@ $(document).on('click', "#EditPurhaseOrder", function () {
                 $('#modaladdinvoice').modal('hide');
 
                 console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
-                $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+                $("#view_adjustment").append("Adjustment -- Credit - " + i.credit + " Debit- " + i.debit + " - " + i.description + " <br>");
 
 
                 $("#ledger_form").attr("data-adjustment", i.transaction_id);
-                if (i.credit >= 0) {
+                if (i.credit > 0) {
                     $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
                     $("#ledger_amount").val(i.credit);
                 } else {
@@ -315,6 +315,8 @@ $(document).on('click', "#EditPurhaseOrder", function () {
                 jsonData["debit"] = i.debit;
                 jsonData["description"] = i.description;
                 window.adjustment = jsonData;
+
+                $("#ledger_submit").attr("id", "update_ledger_submit");
             })
         }
 
@@ -329,7 +331,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
                 $('#modaladddiscount').modal('hide');
 
                 console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
-                $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+                $("#view_discount").append("Discount  -- " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
 
                 $("#discount_form").attr("data-discount", i.po_discount_id);
 
@@ -343,6 +345,8 @@ $(document).on('click', "#EditPurhaseOrder", function () {
                 jsonData["discount_note"] = i.discount_note;
                 jsonData["completed_status"] = i.completed_status;
                 window.discount = jsonData;
+
+                $("#discount_submit").attr("id", "update_discount_submit");
             })
         }
 
@@ -381,7 +385,7 @@ $(document).on("click", "#discount_submit", function () {
             $('#modaladddiscount').modal('hide');
 
             console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
-            $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+            $("#view_discount").append("Discount  -- " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
 
             $("#discount_form").attr("data-discount", i.po_discount_id);
 
@@ -428,7 +432,7 @@ $(document).on("click", "#update_discount_submit", function () {
             $('#modaladddiscount').modal('hide');
 
             console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
-            $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+            $("#view_discount").append("Discount  -- " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
 
             $("#discount_form").attr("data-discount", i.po_discount_id);
 
@@ -473,11 +477,11 @@ $(document).on("click", "#ledger_submit", function () {
             $('#modaladdinvoice').modal('hide');
 
             console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
-            $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+            $("#view_adjustment").append("Adjustment -- Credit - " + i.credit + " Debit - " + i.debit + " - " + i.description + " <br>");
 
             $("#ledger_form").attr("data-adjustment", i.transaction_id);
 
-            if (i.credit >= 0) {
+            if (i.credit > 0) {
                 $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
                 $("#ledger_amount").val(i.credit);
             } else {
@@ -524,11 +528,11 @@ $(document).on("click", "#update_ledger_submit", function () {
             $('#modaladdinvoice').modal('hide');
 
             console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
-            $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+            $("#view_adjustment").append("Adjustment -- Credit - " + i.credit + " Debit - " + i.debit + " - " + i.description + " <br>");
 
             $("#ledger_form").attr("data-adjustment", i.transaction_id);
 
-            if (i.credit >= 0) {
+            if (i.credit > 0) {
                 $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
                 $("#ledger_amount").val(i.credit);
             } else {
