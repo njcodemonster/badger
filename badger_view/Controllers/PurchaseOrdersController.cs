@@ -265,14 +265,20 @@ namespace badger_view.Controllers
 
             if (newPurchaseOrderID == "Success") {
 
-                /*if (json.Value<string>("note") != "")
+                if (json.Value<string>("old_note") != "")
                 {
-                    JObject purchaseOrderNote = new JObject();
-                    purchaseOrderNote.Add("ref_id", id);
-                    purchaseOrderNote.Add("note", json.Value<string>("note"));
+                    if (json.Value<string>("old_note") == json.Value<string>("note")) {
+                    }
+                    else
+                    {
+                        JObject purchaseOrderNote = new JObject();
+                        purchaseOrderNote.Add("ref_id", id);
+                        purchaseOrderNote.Add("note", json.Value<string>("note"));
 
-                    await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/noteupdate");
-                }*/
+                        await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+                    }
+                    
+                }
 
                 JObject allData = JObject.Parse(json.ToString());
                 JArray trackings = (JArray)allData["tracking"];
@@ -301,16 +307,6 @@ namespace badger_view.Controllers
                     }
                 }
 
-                /*if (json.Value<string>("ledger_adjustment") != "")
-                {
-                    JObject PurchaseOrdersLedger = new JObject();
-                    PurchaseOrdersLedger.Add("po_id", id);
-                    PurchaseOrdersLedger.Add("description", json.Value<string>("ledger_note"));
-                    PurchaseOrdersLedger.Add(json.Value<string>("ledger_adjustment"), json.Value<string>("ledger_amount"));
-                    PurchaseOrdersLedger.Add("created_by", 1);
-                    PurchaseOrdersLedger.Add("created_at", _common.GetTimeStemp());
-                    await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersLedger.ToString(Formatting.None), "/purchaseordersledger/create");
-                }*/
             }
 
             return newPurchaseOrderID;

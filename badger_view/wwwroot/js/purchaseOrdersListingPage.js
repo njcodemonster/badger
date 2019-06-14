@@ -202,6 +202,9 @@ function timeToDateConvert(timeinseconds) {
 
 $(document).on('click', "#EditPurhaseOrder", function () {
 
+    $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
+    $('.poTracking, #poNotes').val("");
+
     $('.po_section').removeClass('d-none');
 
     $("#modalPurchaseOrder #purchaseOrderModalLongTitle").text("Edit Purhase Order");
@@ -246,11 +249,11 @@ $(document).on('click', "#EditPurhaseOrder", function () {
             $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
         }
-
+        window.notes = "";
         var note = data['notes'];
         if (note.length > 0) {
             note = data['notes'][0].note;
-
+            window.notes = note;
             $("#newPurchaseOrderForm #poNotes").val(note);
         }
 
@@ -586,6 +589,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
     jsonData["updated_by"] = 2;
 
+    jsonData["old_note"] = window.notes;
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
     jsonData['tracking'] = [];
@@ -644,6 +648,8 @@ $(document).on('click', ".model_purchase_order", function () {
     $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Add");
     $('.po_section').addClass('d-none');
 
+    $('#view_adjustment,#view_discount, #wrapper_tracking, .po_doc_section').empty().html("");
+    $('.poTracking, #poNotes').val("");
 });
 
 
@@ -654,5 +660,11 @@ $(document).on('click', ".add_tracking", function () {
 
 
 $(document).on('click', ".remove_tracking", function () {
+
+    var track_id = $(this).parent().children().attr("id");
+    var track_number = $(this).parent().children().attr("value");
+
+    console.log(track_id + track_number);
+
     $(this).parent().remove();
 });

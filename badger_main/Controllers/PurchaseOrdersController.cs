@@ -22,10 +22,15 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
+        private IEventRepo _eventRepo;
         private int note_type = 4;
+        private int event_type_id = 2;
+        private string tableName = "purchase_order_events";
+        private string event_description = "New Purchase Order Create";
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
             _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
             _loggerFactory = loggerFactory;
@@ -112,6 +117,8 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_id, 0, event_description, 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
@@ -216,6 +223,9 @@ namespace badgerApi.Controllers
                 PurchaseOrders PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 PurchaseOrdersToUpdate.po_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, "Update Purchase Order", 1, _common.GetTimeStemp(), tableName);
+
             }
             catch (Exception ex)
             {
@@ -322,6 +332,9 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
+
+
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, "Update Specific Purchase Order", 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
