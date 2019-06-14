@@ -6,10 +6,6 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Dynamic;
-using badgerApi.Helper;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 
 namespace badgerApi.Controllers
 {
@@ -17,20 +13,12 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PurchaseOrdersLedgerController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly IPurchaseOrdersLedgerRepository _PurchaseOrdersLedgerRepo;
         ILoggerFactory _loggerFactory;
-        private INotesAndDocHelper _NotesAndDoc;
-        private IItemServiceHelper _ItemsHelper;
-        private int note_type = 4;
-        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersLedgerController(IPurchaseOrdersLedgerRepository PurchaseOrdersLedgerRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
+        public PurchaseOrdersLedgerController(IPurchaseOrdersLedgerRepository PurchaseOrdersLedgerRepo, ILoggerFactory loggerFactory)
         {
-            _config = config;
             _PurchaseOrdersLedgerRepo = PurchaseOrdersLedgerRepo;
             _loggerFactory = loggerFactory;
-            _NotesAndDoc = NotesAndDoc;
-            _ItemsHelper = ItemsHelper;
         }
 
         // GET: api/purchaseordersledger/list
@@ -45,13 +33,13 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseordersledger list get all with message" + ex.Message);
                 return ToReturn;
             }
 
         }
 
-        // GET: api/purchaseorders/list/1
+        // GET: api/purchaseordersledger/list/1
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrderLedger>> GetAsync(int id)
         {
@@ -64,13 +52,13 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseordersledger list by id with message" + ex.Message);
 
             }
             return ToReturn;
         }
 
-        // GET: api/purchaseorders/getledger/10
+        // GET: api/purchaseordersledger/getledger/10
         [HttpGet("getledger/{id}")]
         public async Task<object> GetLedger(int id)
         {
@@ -82,7 +70,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseordersledger getledger with message" + ex.Message);
 
             }
 
@@ -90,7 +78,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseorders/count
+        // GET: api/purchaseordersledger/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
@@ -98,7 +86,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/purchaseorders/create
+        // POST: api/purchaseordersledger/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -111,12 +99,12 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new purchaseordersledger create with message" + ex.Message);
             }
             return NewInsertionID;
         }
 
-        // PUT: api/purchaseorders/update/5
+        // PUT: api/purchaseordersledger/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -132,7 +120,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating purchaseordersledger with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -143,7 +131,7 @@ namespace badgerApi.Controllers
         }
 
 
-        // PUT: api/purchaseorders/updatespecific/1
+        // PUT: api/purchaseordersledger/updatespecific/1
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -154,7 +142,22 @@ namespace badgerApi.Controllers
                 PurchaseOrdersToUpdate.transaction_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
 
-                
+                if (PurchaseOrdersToUpdate.po_id != 0)
+                {
+                    ValuesToUpdate.Add("po_id", PurchaseOrdersToUpdate.po_id.ToString());
+                }
+                if (PurchaseOrdersToUpdate.description != null)
+                {
+                    ValuesToUpdate.Add("description", PurchaseOrdersToUpdate.description.ToString());
+                }
+                if (PurchaseOrdersToUpdate.credit != 0)
+                {
+                    ValuesToUpdate.Add("credit", PurchaseOrdersToUpdate.credit.ToString());
+                }
+                if (PurchaseOrdersToUpdate.debit != 0)
+                {
+                    ValuesToUpdate.Add("debit", PurchaseOrdersToUpdate.debit.ToString());
+                }               
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -172,12 +175,12 @@ namespace badgerApi.Controllers
                     ValuesToUpdate.Add("updated_at", PurchaseOrdersToUpdate.updated_at.ToString());
                 }
 
-                await _PurchaseOrdersLedgerRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
+                await _PurchaseOrdersLedgerRepo.UpdateSpecific(ValuesToUpdate, "transaction_id=" + id);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating updatespecific purchaseordersledger with message" + ex.Message);
                 UpdateResult = "Failed";
             }
 

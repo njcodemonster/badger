@@ -6,7 +6,6 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Dynamic;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
@@ -46,7 +45,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders list with message" + ex.Message);
                 return ToReturn;
             }
 
@@ -65,7 +64,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders List by id with message" + ex.Message);
 
             }
             return ToReturn;
@@ -96,7 +95,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
 
             }
 
@@ -117,7 +116,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new purchaseorders create with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -160,7 +159,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new Purchase Order Document with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new Purchase Order Document create with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -177,7 +176,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get Note with message" + ex.Message);
 
             }
 
@@ -197,7 +196,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get documents with message" + ex.Message);
 
             }
 
@@ -221,7 +220,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating purchaseorders with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -327,7 +326,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating new updatespecific purchaseorders with message" + ex.Message);
                 UpdateResult = "Failed";
             }
 
