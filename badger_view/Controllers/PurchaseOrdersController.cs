@@ -280,7 +280,7 @@ namespace badger_view.Controllers
                 {
                     if (track.Value<string>("track") != "")
                     {
-                        if (track.Value<string>("id") == "") {
+                        if (track.Value<string>("id") == null) {
                             JObject PurchaseOrdersTracking = new JObject();
                             PurchaseOrdersTracking.Add("po_id", id);
                             PurchaseOrdersTracking.Add("tracking_number", track.Value<string>("track"));
@@ -294,8 +294,8 @@ namespace badger_view.Controllers
                             PurchaseOrdersTracking.Add("po_id", id);
                             PurchaseOrdersTracking.Add("tracking_number", track.Value<string>("track"));
                             PurchaseOrdersTracking.Add("updated_by", 1);
-                            PurchaseOrdersTracking.Add("updated_at", _common.GetTimeStemp());
-                            await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersTracking.ToString(Formatting.None), "/purchaseorderstracking/update/"+ track.Value<string>("id").ToString());
+                            PurchaseOrdersTracking.Add("updated_at", _common.GetTimeStemp());                                                       
+                            await _BadgerApiHelper.GenericPutAsyncString<String>(PurchaseOrdersTracking.ToString(Formatting.None), "/purchaseorderstracking/update/"+ track.Value<string>("id").ToString());
                         }
                         
                     }
@@ -321,7 +321,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            String newPurchaseLedgerID = "0";
+            String newPurchaseDiscountID = "0";
 
             if (json.Value<string>("po_id") != "")
             {
@@ -334,20 +334,49 @@ namespace badger_view.Controllers
                 PurchaseOrdersDiscount.Add("created_by", 1);
                 PurchaseOrdersDiscount.Add("created_at", _common.GetTimeStemp());
 
-                newPurchaseLedgerID = await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersDiscount.ToString(Formatting.None), "/purchaseordersdiscounts/create");
+                newPurchaseDiscountID = await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersDiscount.ToString(Formatting.None), "/purchaseordersdiscounts/create");
             }
 
-            if (newPurchaseLedgerID != "0")
+            if (newPurchaseDiscountID != "0")
             {
-                dynamic purchaseOrdersLedgerData = new ExpandoObject();
-
-                dynamic GetDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/list/" + newPurchaseLedgerID.ToString());
+                dynamic GetDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/list/" + newPurchaseDiscountID.ToString());
 
                 return JsonConvert.SerializeObject(GetDiscount);
             }
             else
             {
-                return newPurchaseLedgerID;
+                return newPurchaseDiscountID;
+            }
+        }
+
+        [HttpPost("purchaseorders/discountupdate/{id}")]
+        public async Task<String> DiscountUpdate(int id,[FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            String updatePurchaseDiscountID = "0";
+
+                JObject PurchaseOrdersDiscount = new JObject();
+
+                PurchaseOrdersDiscount.Add("po_id", json.Value<string>("po_id"));
+                PurchaseOrdersDiscount.Add("discount_percentage", json.Value<string>("discount_percentage"));
+                PurchaseOrdersDiscount.Add("discount_note", json.Value<string>("discount_note"));
+                PurchaseOrdersDiscount.Add("completed_status", json.Value<string>("completed_status"));
+                PurchaseOrdersDiscount.Add("updated_by", 1);
+                PurchaseOrdersDiscount.Add("updated_at", _common.GetTimeStemp());
+
+            updatePurchaseDiscountID = await _BadgerApiHelper.GenericPutAsyncString<String>(PurchaseOrdersDiscount.ToString(Formatting.None), "/purchaseordersdiscounts/update/"+id.ToString());
+            
+
+            if (updatePurchaseDiscountID == "Success")
+            {
+                dynamic GetDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/list/" + id.ToString());
+
+                return JsonConvert.SerializeObject(GetDiscount);
+            }
+            else
+            {
+                return updatePurchaseDiscountID;
             }
         }
 
@@ -372,7 +401,6 @@ namespace badger_view.Controllers
             }
 
             if (newPurchaseLedgerID != "0") {
-                dynamic purchaseOrdersLedgerData = new ExpandoObject();
 
                 dynamic GetLedger = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersledger/list/" + newPurchaseLedgerID.ToString());
 
@@ -383,6 +411,36 @@ namespace badger_view.Controllers
                 return newPurchaseLedgerID;
             }  
         }
+
+        [HttpPost("purchaseorders/ledgerupdate/{id}")]
+        public async Task<String> LedgerUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            String updatePurchaseLedgerID = "0";
+
+                JObject PurchaseOrdersLedger = new JObject();
+
+                PurchaseOrdersLedger.Add("po_id", json.Value<string>("po_id"));
+                PurchaseOrdersLedger.Add("description", json.Value<string>("ledger_note"));
+                PurchaseOrdersLedger.Add(json.Value<string>("ledger_adjustment"), json.Value<string>("ledger_amount"));
+                PurchaseOrdersLedger.Add("created_by", 1);
+                PurchaseOrdersLedger.Add("created_at", _common.GetTimeStemp());
+
+               updatePurchaseLedgerID = await _BadgerApiHelper.GenericPutAsyncString<String>(PurchaseOrdersLedger.ToString(Formatting.None), "/purchaseordersledger/update/"+id.ToString());
+
+            if (updatePurchaseLedgerID == "Success")
+            {
+                dynamic GetLedger = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersledger/list/" + id.ToString());
+
+                return JsonConvert.SerializeObject(GetLedger);
+            }
+            else
+            {
+                return updatePurchaseLedgerID;
+            }
+        }
+
         public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();

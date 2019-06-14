@@ -283,6 +283,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
             });
         }
 
+        window.adjustment = "";
         var ledger = data['ledger'];
         if (ledger.length > 0) {
 
@@ -294,10 +295,31 @@ $(document).on('click', "#EditPurhaseOrder", function () {
 
                 console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
                 $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+
+
+                $("#ledger_form").attr("data-adjustment", i.transaction_id);
+                if (i.credit >= 0) {
+                    $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
+                    $("#ledger_amount").val(i.credit);
+                } else {
+                    $('#ledger_adjustment option[value=debit]').attr('selected', 'selected');
+                    $("#ledger_amount").val(i.debit);
+                }
+
+                $("#ledger_note").val(i.description);
+
+                var jsonData = {};
+                jsonData["transaction_id"] = i.transaction_id;
+                jsonData["po_id"] = i.po_id;
+                jsonData["credit"] = i.credit;
+                jsonData["debit"] = i.debit;
+                jsonData["description"] = i.description;
+                window.adjustment = jsonData;
             })
         }
 
-        var discount = data['discount'];
+        window.discount = "";
+        var discount = data['discount'];        
         if (discount.length > 0) {
 
             $("#view_discount").empty();
@@ -308,6 +330,19 @@ $(document).on('click', "#EditPurhaseOrder", function () {
 
                 console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
                 $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+
+                $("#discount_form").attr("data-discount", i.po_discount_id);
+
+                $("#discount_percentage").val(i.discount_percentage);
+                $("#discount_note").val(i.discount_note);
+
+                var jsonData = {};
+                jsonData["po_discount_id"] = i.po_discount_id;
+                jsonData["po_id"] = i.po_id;
+                jsonData["discount_percentage"] = i.discount_percentage;
+                jsonData["discount_note"] = i.discount_note;
+                jsonData["completed_status"] = i.completed_status;
+                window.discount = jsonData;
             })
         }
 
@@ -318,6 +353,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
 
 });
 
+window.discount = "";
 $(document).on("click", "#discount_submit", function () {
 
     var jsonData = {};
@@ -346,11 +382,70 @@ $(document).on("click", "#discount_submit", function () {
 
             console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
             $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+
+            $("#discount_form").attr("data-discount", i.po_discount_id);
+
+            $("#discount_percentage").val(i.discount_percentage);
+            $("#discount_note").val(i.discount_note);
+
+            jsonData["po_discount_id"] = i.po_discount_id;
+
+            window.discount = jsonData;
+
+            $("#discount_submit").attr("id", "update_discount_submit");
         })
     });
 
 });
 
+window.discount = "";
+$(document).on("click", "#update_discount_submit", function () {
+
+    var jsonData = {};
+
+    var id = $("#discount_form").attr("data-discount");
+
+    jsonData["po_id"] = $("#newPurchaseOrderForm").attr("data-currentid");
+    jsonData["discount_percentage"] = $("#discount_percentage").val();
+    jsonData["discount_note"] = $("#discount_note").val();
+    jsonData["completed_status"] = 1;
+
+    console.log(jsonData);
+
+    $.ajax({
+        url: '/purchaseorders/discountupdate/'+id,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        $("#view_discount").empty();
+        $(data).each(function (e, i) {
+
+            $('#discount_form')[0].reset();
+            $('#modaladddiscount').modal('hide');
+
+            console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+            $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+
+            $("#discount_form").attr("data-discount", i.po_discount_id);
+
+            $("#discount_percentage").val(i.discount_percentage);
+            $("#discount_note").val(i.discount_note);
+
+            jsonData["po_discount_id"] = i.po_discount_id;
+
+            window.discount = jsonData;
+
+            $("#discount_submit").attr("id", "update_discount_submit");
+        })
+    });
+
+});
+
+window.adjustment = "";
 $(document).on("click", "#ledger_submit", function () {
 
     var jsonData = {};
@@ -378,7 +473,72 @@ $(document).on("click", "#ledger_submit", function () {
             $('#modaladdinvoice').modal('hide');
 
             console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
-            $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description+" <br>");
+            $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+
+            $("#ledger_form").attr("data-adjustment", i.transaction_id);
+
+            if (i.credit >= 0) {
+                $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
+                $("#ledger_amount").val(i.credit);
+            } else {
+                $('#ledger_adjustment option[value=debit]').attr('selected', 'selected');
+                $("#ledger_amount").val(i.debit);
+            }
+            
+            $("#ledger_note").val(i.description);
+            
+            window.adjustment = jsonData;
+
+            $("#ledger_submit").attr("id", "update_ledger_submit");
+        })
+    });
+
+});
+
+$(document).on("click", "#update_ledger_submit", function () {
+
+    var jsonData = {};
+
+    var id = $("#ledger_form").attr("data-adjustment");
+
+    jsonData["po_id"] = $("#newPurchaseOrderForm").attr("data-currentid");
+    jsonData["ledger_adjustment"] = $("#ledger_adjustment").val();
+    jsonData["ledger_amount"] = $("#ledger_amount").val();
+    jsonData["ledger_note"] = $("#ledger_note").val()
+
+    console.log(jsonData);
+
+    $.ajax({
+        url: '/purchaseorders/ledgerupdate/'+id,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        $("#view_adjustment").empty();
+        $(data).each(function (e, i) {
+
+            $('#ledger_form')[0].reset();
+            $('#modaladdinvoice').modal('hide');
+
+            console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
+            $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+
+            $("#ledger_form").attr("data-adjustment", i.transaction_id);
+
+            if (i.credit >= 0) {
+                $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
+                $("#ledger_amount").val(i.credit);
+            } else {
+                $('#ledger_adjustment option[value=debit]').attr('selected', 'selected');
+                $("#ledger_amount").val(i.debit);
+            }
+
+            $("#ledger_note").val(i.description);
+
+            window.adjustment = jsonData;
         })
     });
 
@@ -430,8 +590,12 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         var tracking_json = {};
 
         tracking_json['track'] = $(this).val();
-        tracking_json['id'] = $(this).attr("id");
-
+        if ($(this).attr("id") == "undefined") {
+            tracking_json['id'] = "";
+        } else {
+            tracking_json['id'] = $(this).attr("id");
+        }
+        
         jsonData['tracking'].push(tracking_json);
     });
 
@@ -470,7 +634,8 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 $(document).on('click', ".model_purchase_order", function () {
     $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "NewPurchaseOrderButton");
     $("#model_purchase_order #purchaseOrderModalLongTitle").text("Add New Purchase Order");
-    $("#newPurchaseOrderForm input").val("");
+    $("#newPurchaseOrderForm input, #newPurchaseOrderForm #poNotes").val("");
+    $(".po_doc_section").empty().html();
     $("#newPurchaseOrderForm").attr("data-currentid", "");
     $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Add");
     $('.po_section').addClass('d-none');
