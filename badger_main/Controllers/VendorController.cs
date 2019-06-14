@@ -114,14 +114,18 @@ namespace badgerApi.Controllers
             dynamic vendor = new ExpandoObject();
             dynamic vendor_address = new ExpandoObject();
             dynamic vendor_Rep = new ExpandoObject();
+            dynamic vendor_Note = new ExpandoObject();
             try
             {
                 vendor = await _VendorRepo.GetById(id);
                 vendor_address = await _VendorRepo.GetVendorDetailsAddress(id);
                 vendor_Rep = await _VendorRepo.GetVendorDetailsRep(id);
+                vendor_Note = await _VendorRepo.GetVendorNotes(id);
                 AdressAndrepDetails.Vendor = vendor;
                 AdressAndrepDetails.Addresses = vendor_address;
                 AdressAndrepDetails.Reps = vendor_Rep;
+                AdressAndrepDetails.Notes = vendor_Note;
+
             }
             catch (Exception ex)
             {
@@ -210,6 +214,47 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        // POST: api/vendor/note/create
+        [HttpPost("note/create")]
+        public async Task<string> NoteCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic newVendorNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = newVendorNote.ref_id;
+                string note = newVendorNote.note;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, 1, created_at);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
+            }
+            return newNoteID;
+        }
+
+        // POST: api/vendor/documentcreate
+        [HttpPost("documentcreate")]
+        public async Task<string> DocumentCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic newVendorNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = newVendorNote.ref_id;
+                string url = newVendorNote.url;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, url, "", 1, 1);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
+            }
+            return newNoteID;
+        }
         // PUT: api/vendor/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
