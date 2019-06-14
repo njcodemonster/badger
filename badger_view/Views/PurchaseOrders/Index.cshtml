@@ -118,7 +118,7 @@
 @section page_popup_area{
 
     <!-- Modal PO -->
-    <div class="modal fade" id="modalPurchaseOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalPurchaseOrder" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -197,10 +197,14 @@
 
                                 </div>
                                 <div class="col-md-6 text-right">
-                                        <br />
-                                        <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
-                                        <br />
-                                        <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+                                    <br />
+                                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
+                                    <br />
+                                    <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+
+                                    <div id="view_adjustment"></div>
+                                    <div id="view_discount"></div>
+
                                 </div>
                             </div>
                             <div class="form-row">
@@ -228,7 +232,7 @@
     </div>
 
     <!-- Modal Vendor -->
-    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -338,7 +342,7 @@
         </div>
     </div>
     <!-- Modal Add Invoice -->
-    <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -349,11 +353,11 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form>
+                        <form id="ledger_form">
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Adjustment</label>
-                                    <select id="inputState" class="form-control">
+                                    <select id="ledger_adjustment" name="ledger_adjustment" class="form-control">
                                         <option selected>Choose...</option>
                                         <option value="credit">Credit</option>
                                         <option value="debit">Debit</option>
@@ -361,25 +365,25 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label>Amount</label>
-                                    <input type="text" class="form-control" placeholder="$">
+                                    <input type="text" class="form-control" id="ledger_amount" name="ledger_amount" placeholder="$">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label>Note</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control" id="ledger_note" name="ledger_note">
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+                    <button type="button" class="btn btn-primary" id="ledger_submit" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Add Discount -->
-    <div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -390,15 +394,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form>
+                        <form id="discount_form">
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Discount</label>
-                                    <input type="text" class="form-control" placeholder="%">
+                                    <input type="text" class="form-control" id="discount_percentage" name="discount" placeholder="%">
                                 </div>
                                 <div class="form-group col-md-8">
                                     <label>Note</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control" id="discount_note" name="discount_note" >
                                 </div>
                             </div>
                             <div class="text-center w-100">
@@ -408,14 +412,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+                    <button type="button" class="btn btn-primary" id="discount_submit"  style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Check-in -->
-    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">

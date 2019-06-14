@@ -154,7 +154,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
             }
             $('#purchaseorderlists').DataTable().row.add([
                 $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text()
-                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", 1, '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data +'" class="btn btn-light btn-sm">Edit</button>', '<a href="#"><i class="fa fa-edit h3"></i></a>', '<a href="#"><i class="fa fa-upload h3"></i></a>', '<a href="#">Claim</a>', '<a href="#">Claim</a>'
+                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data +'" class="btn btn-light btn-sm">Edit</button>', '<a href="#"><i class="fa fa-edit h3"></i></a>', '<a href="#"><i class="fa fa-upload h3"></i></a>', '<a href="#">Claim</a>', '<a href="#">Claim</a>'
             ]).draw();
 
             table.page('last').draw('page');
@@ -216,8 +216,6 @@ $(document).on('click', "#EditPurhaseOrder", function () {
         dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
-
-
     }).always(function (data) {
 
         console.log(data);
@@ -261,7 +259,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append((e + 1) + " - <a href="+i.url+">" + i.url+"</a> <br>");
+                $(".po_doc_section").append("File "+(e + 1) + ": <a href="+i.url+">" + i.url+"</a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -270,15 +268,118 @@ $(document).on('click', "#EditPurhaseOrder", function () {
             $(".po_doc_section").addClass('d-none');
         }
 
+        $(".poTracking").val("");
+        $("#wrapper_tracking").empty().html("");
+
+        var track = data['tracking'];
+        if (track.length > 0) {
+            $(track).each(function (e, i) {
+                if (e == 0) {
+                    $(".poTracking").val(track[e].tracking_number);
+                    $(".poTracking").attr("id",track[e].po_tracking_id);
+                } else {
+                    $("#wrapper_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" id="'+track[e].po_tracking_id+'" value="' + track[e].tracking_number + '" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
+                }
+            });
+        }
+
+        var ledger = data['ledger'];
+        if (ledger.length > 0) {
+
+            $("#view_adjustment").empty();
+            $(ledger).each(function (e, i) {
+
+                $('#ledger_form')[0].reset();
+                $('#modaladdinvoice').modal('hide');
+
+                console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
+                $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description + " <br>");
+            })
+        }
+
+        var discount = data['discount'];
+        if (discount.length > 0) {
+
+            $("#view_discount").empty();
+            $(discount).each(function (e, i) {
+
+                $('#discount_form')[0].reset();
+                $('#modaladddiscount').modal('hide');
+
+                console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+                $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+            })
+        }
+
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Update");
         $('#modalPurchaseOrder input').removeAttr("disabled");
+    });
 
+});
 
-        //$("#newPurchaseOrderForm #poTracking").val(podata.);
-        
+$(document).on("click", "#discount_submit", function () {
 
+    var jsonData = {};
 
+    jsonData["po_id"] = $("#newPurchaseOrderForm").attr("data-currentid");
+    jsonData["discount_percentage"] = $("#discount_percentage").val();
+    jsonData["discount_note"] = $("#discount_note").val();
+    jsonData["completed_status"] = 1;
+
+    console.log(jsonData);
+
+    $.ajax({
+        url: '/purchaseorders/discountcreate',
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        $("#view_discount").empty();
+        $(data).each(function (e, i) {
+
+            $('#discount_form')[0].reset();
+            $('#modaladddiscount').modal('hide');
+
+            console.log(e + " -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+            $("#view_discount").append("Discount  -- " + i.po_id + " - " + i.discount_percentage + " - " + i.discount_note + " - " + i.completed_status);
+        })
+    });
+
+});
+
+$(document).on("click", "#ledger_submit", function () {
+
+    var jsonData = {};
+
+    jsonData["po_id"] = $("#newPurchaseOrderForm").attr("data-currentid");
+    jsonData["ledger_adjustment"] = $("#ledger_adjustment").val();
+    jsonData["ledger_amount"] = $("#ledger_amount").val();
+    jsonData["ledger_note"] = $("#ledger_note").val()
+
+    console.log(jsonData);
+
+    $.ajax({
+        url: '/purchaseorders/ledgercreate',
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        $("#view_adjustment").empty();
+        $(data).each(function (e, i) {
+
+            $('#ledger_form')[0].reset();            
+            $('#modaladdinvoice').modal('hide');
+
+            console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
+            $("#view_adjustment").append("Adjustment -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description+" <br>");
+        })
     });
 
 });
@@ -327,7 +428,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     $('.poTracking').each(function () {
         var tracking_json = {};
+
         tracking_json['track'] = $(this).val();
+        tracking_json['id'] = $(this).attr("id");
 
         jsonData['tracking'].push(tracking_json);
     });
