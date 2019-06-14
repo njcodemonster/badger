@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "itemService_entity", "serialService\itemService_entity.csproj", "{B7848661-107E-4F8F-82F1-2B63D2EC987F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "itemService_entity", "serialService\itemService_entity.csproj", "{B7848661-107E-4F8F-82F1-2B63D2EC987F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "badgerApi", "badger_main\badgerApi.csproj", "{D00DF533-2648-478A-9042-63A3EAD8506A}"
 EndProject
@@ -22,7 +22,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B7848661-107E-4F8F-82F1-2B63D2EC987F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7848661-107E-4F8F-82F1-2B63D2EC987F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7848661-107E-4F8F-82F1-2B63D2EC987F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7848661-107E-4F8F-82F1-2B63D2EC987F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D00DF533-2648-478A-9042-63A3EAD8506A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -42,7 +41,6 @@ Global
 		{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56AAEBDF-A40E-4A94-88C2-2282DFEBE48B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
@@ -51,5 +49,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B73545A-30B7-4C3B-AA08-A777306ED0A2}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$0.VersionControlPolicy = $2
 	EndGlobalSection
 EndGlobal

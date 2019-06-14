@@ -142,6 +142,23 @@ header {
     height: 60px;
     line-height: 60px; /* Vertically center the text there */
 }
+.venderRepoBox {
+    /*border: 1px solid;*/
+    padding: 20px;
+    position: relative;
+}
+.repoCloseBtn {
+    position: absolute;
+    right: 5px;
+    cursor:pointer
+}
+.red_color{
+    color:#ff0000;
+ }
+ 
+ .tracking_add_more_box{
+     padding: 5px 0;
+ }
 
 .porep .btn-group {
     border: 1px solid #ced4da;
