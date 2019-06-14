@@ -56,10 +56,12 @@ namespace badger_view.Controllers
             return View("ShootInProgress", photoshootInProgressModal);
         }
 
+        [HttpGet("photoshoots/getPhotoshootInProgressProducts/{photoshootId}")]
         public async Task<IActionResult> getPhotoshootInProgressProducts(int photoshootId)
         {
             SetBadgerHelper();
-            ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>("/Photoshoots/listpageview/10");
+            string callUrl = "/Photoshoots/GetPhotoshootsProducts/" + photoshootId;
+            ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>(callUrl);
             dynamic ProductPhotoshootModal = new ExpandoObject();
             ProductPhotoshootModal.Lists = photoshootPagerList.photoshootsInfo;
             return View("InProgressPhotoshootProductsViewAjax", ProductPhotoshootModal);
@@ -84,7 +86,6 @@ namespace badger_view.Controllers
         public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
         {
             SetBadgerHelper();
-           
 
             JObject assignPhotoshoot = new JObject();
             assignPhotoshoot.Add("photoshoot_id", photoshoot_id);
@@ -95,6 +96,17 @@ namespace badger_view.Controllers
             String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/assignProductPhotoshoot/" + product_id);
 
             return AssignPhotoshootStatus;
+        }
+
+        [HttpGet("photoshoots/PhotoshootProductSendToEditor/{product_id}")]
+        public async Task<string> PhotoshootProductSendToEditor(int product_id)
+        {
+            SetBadgerHelper();
+            JObject photoshoot = new JObject();
+            photoshoot.Add("photoshoot_status_id", 2);
+
+            string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(photoshoot.ToString(Formatting.None), "/Photoshoots/productSendToEditor/" + product_id);
+            return returnStatus;
         }
 
         [HttpPost("photoshoots/addNewPhotoshoot")]
@@ -129,5 +141,5 @@ namespace badger_view.Controllers
             return AssignPhotoshootStatus;
         }
 
-        }
+    }
 }

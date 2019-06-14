@@ -3,10 +3,16 @@
 $('.card-header').click(function () {
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
-    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
-
     if ($("#collapse_" + photoshootId).is(":hidden")) {
+        getPhotoshootProducts(photoshootId); 
+    } else {
+        $("#collapse_" + photoshootId).html("");
+    }
+});
 
+
+function getPhotoshootProducts(photoshootId) {
+    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
         $.ajax({
             url: '/photoshoots/getPhotoshootInProgressProducts/' + photoshootId,
             type: 'GET',
@@ -17,13 +23,10 @@ $('.card-header').click(function () {
                 columnDefs: [
                     { targets: 'no-sort', orderable: false }
                 ]
-            }); 
-        }) 
-    } else {
-        $("#collapse_" + photoshootId).html("");
-    }
-});
-
+            });
+        })
+    
+}
 /**********************************************************/
 
 
@@ -208,4 +211,25 @@ function moveSelectedToPhotoshoot() {
 
     }
     
+}
+
+function updatephotoshootStatus(productId, photoshoot_id) {
+    $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
+    $.ajax({
+        url: '/photoshoots/PhotoshootProductSendToEditor/' + productId,
+        dataType: 'html',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+        //alert(photoshoot_id);
+        //$("#collapse_" + photoshoot_id).collapse("hide");
+        setTimeout(function () {
+            getPhotoshootProducts(photoshoot_id);
+            $("#collapse_" + photoshoot_id).collapse("show");
+        }, 1000);
+        
+    });
+
 }

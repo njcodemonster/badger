@@ -108,6 +108,27 @@ namespace badgerApi.Controllers
             return vPageList;
 
         }
+        
+        [HttpGet("GetPhotoshootsProducts/{photoshootId}")]
+        public async Task<object> GetPhotoshootsProducts(int photoshootId)
+        {
+            dynamic vPageList = new object();
+            try
+            {
+                vPageList = await _PhotoshootRepo.GetPhotoshootProducts(photoshootId);
+                //string vPageCount = await _PhotoshootsRepo.Count();
+                //vPageList.Count = vPageCount;
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vPageList;
+
+        }
 
 
         [HttpGet("photoshootsAndModels")]
@@ -149,6 +170,29 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+
+        
+        [HttpPut("productSendToEditor/{productId}")]
+        public async Task<string> productSendToEditor(int productId, [FromBody]   string value)
+        {
+            string UpdateResult = "Success";
+            try
+            {
+                await _PhotoshootRepo.photoshootProductSendToEditor(productId);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in product Send To Editor with message" + ex.Message);
+                UpdateResult = "Failed";
+            }
+
+            return UpdateResult;
+        }
+
+
+
         [HttpPost("assignProductPhotoshoot/{productId}")]
         public async Task<string> assignProductPhotoshoot(string productId, [FromBody]   string value)
         {
