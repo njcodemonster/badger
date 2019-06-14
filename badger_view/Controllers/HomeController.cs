@@ -35,6 +35,7 @@ namespace badger_view.Controllers
         public async Task<IActionResult> DoLogin()
         {
 
+<<<<<<< HEAD
             if (await _LoginHelper.DoLogin("x", "y"))
             {
                 return View("index");
@@ -43,6 +44,10 @@ namespace badger_view.Controllers
             {
                 return View("Login");
             }
+=======
+            return View("Login");
+
+>>>>>>> 8f80d4376a1ced64542ac95324c850798a1c3150
         }
         public IActionResult About()
         {
