@@ -99,14 +99,24 @@ namespace badger_view.Controllers
         }
 
         [HttpGet("purchaseorders/details/{id}")]
-        public async Task<String> GetDetails(Int32 id)
+        public async Task<string> GetDetails(Int32 id)
         {
             SetBadgerHelper();
-            Object poDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
 
-            Object poNoteDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+            dynamic purchaseOrdersData = new ExpandoObject();
 
-            return poDetails.ToString();
+            dynamic purchaseOrder = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
+
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
+
+            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+
+
+            purchaseOrdersData.purchase_order = purchaseOrder;
+            purchaseOrdersData.notes = purchaseOrderNote;
+            purchaseOrdersData.documents = purchaseOrderDocs;
+
+            return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
         public IActionResult Single()
@@ -216,7 +226,7 @@ namespace badger_view.Controllers
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
         {
             SetBadgerHelper();
-            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/" + id);
+            String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(json.ToString(Formatting.None), "/purchaseorders/update/"+id);
             return newPurchaseOrderID;
         }
 
