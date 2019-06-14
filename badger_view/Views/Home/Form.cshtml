@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "Form";
+}
+
+<h1>Form</h1>
+
+<form>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label>Link to existing product</label>
+            <select id="inputState" class="form-control">
+                <option selected>Choose...</option>
+                <option>...</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label>Style Name</label>
+            <input type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Color Name</label>
+            <input type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label>Unit Cost</label>
+            <input type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Retail</label>
+            <input type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label>Type</label>
+            <select id="inputState" class="form-control">
+                <option selected>Choose...</option>
+                <option>...</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label>Subtype</label>
+            <select id="inputState" class="form-control">
+                <option selected>Choose...</option>
+                <option>...</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-8 pt-4">
+            <div class="input_fields_wrap pb-2">
+                <div class="pb-2">
+                    <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Size">
+                    <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                    <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                </div>
+            </div>
+            <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-8">
+            <label>Vendor Notes</label>
+            <textarea class="form-control"></textarea>
+        </div>
+        <div class="form-group col-md-4 text-center">
+            <button type="button" class="btn btn-success btn-sm">Add another style</button><br />
+            <button type="button" class="btn btn-primary btn-sm mt-2">Add and view P.O.</button><br />
+            <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-8">
+            <label>Upload Files</label>
+            <input type="file" class="form-control" />
+        </div>
+    </div>
+</form>
+
+

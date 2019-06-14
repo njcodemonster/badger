@@ -37,7 +37,7 @@ namespace badger_view.Controllers
             }
             else
             {
-                return View("/Login");
+                return RedirectToAction("Dologin", "Auth");
             }
 
         }
