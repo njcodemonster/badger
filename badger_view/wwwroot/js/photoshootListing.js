@@ -1,4 +1,33 @@
-﻿$('#photoshootDate').datepicker();
+﻿// Photoshoots/shootInProgress page accordian code here...
+
+$('.card-header').click(function () {
+    var thisPhotoshoot = $(this);
+    var photoshootId = thisPhotoshoot.attr("data-photoshootId");
+    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;">< div class= "spinner-border text-light" role = "status" style = "margin-top: 20%; margin-left: 48%;" ><span class="sr-only">Loading...</span></div ></div >');
+
+    if ($("#collapse_" + photoshootId).is(":hidden")) {
+
+        $.ajax({
+            url: '/photoshoots/getPhotoshootInProgressProducts/' + photoshootId,
+            type: 'GET',
+            dataType: "html",
+        }).always(function (data) {
+            $("#collapse_" + photoshootId).html(data);
+            var PhotoshootInProgressProductsList = $("#collapse_" + photoshootId + " .datatable_js_ps ").DataTable({
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ]
+            }); 
+        }) 
+    } else {
+        $("#collapse_" + photoshootId).html("");
+    }
+});
+
+/**********************************************************/
+
+
+$('#photoshootDate').datepicker();
 var datatable_js_ps = $('.datatable_js_ps').DataTable();
 
 function selectAllCheckbox() {

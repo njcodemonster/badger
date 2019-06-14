@@ -44,17 +44,31 @@ namespace badger_view.Controllers
 
         public IActionResult inProgress()
         {
-            return View("inprogress");
+           return View("InProgress");
         }
 
-        public IActionResult shootInProgress(int photoshootId)
+        public async Task<IActionResult> shootInProgress()
         {
-            return View("shootInProgress");
+            SetBadgerHelper();
+            ProductPhotoshootInProgressPagerList photoshootInProgress         = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootInProgressPagerList>("/Photoshoots/inprogress/");
+            dynamic photoshootInProgressModal   = new ExpandoObject();
+            photoshootInProgressModal.Lists     = photoshootInProgress.photoshootsInprogress;
+            return View("ShootInProgress", photoshootInProgressModal);
         }
+
+        public async Task<IActionResult> getPhotoshootInProgressProducts(int photoshootId)
+        {
+            SetBadgerHelper();
+            ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>("/Photoshoots/listpageview/10");
+            dynamic ProductPhotoshootModal = new ExpandoObject();
+            ProductPhotoshootModal.Lists = photoshootPagerList.photoshootsInfo;
+            return View("InProgressPhotoshootProductsViewAjax", ProductPhotoshootModal);
+        }
+
 
         public IActionResult sendToEditor(int photoshootId)
         {
-            return View("sendToEditor");
+            return View("SendToEditor");
         }
 
         [HttpGet("photoshoots/getPhotoshootAndModels/")]
