@@ -17,6 +17,7 @@ namespace badgerApi.Interfaces
     public interface IVendorAddress
     {
         Task<string> Create(VendorAddress NewVendorAddress);
+        Task<Boolean> Update(VendorAddress VendorToUpdate);
     }
     public class VendorAddressRepo : IVendorAddress
     {
@@ -44,6 +45,16 @@ namespace badgerApi.Interfaces
                 var result = await conn.InsertAsync<VendorAddress>(NewVendor);
                 return result.ToString();
             }
+        }
+        public async Task<Boolean> Update(VendorAddress VendorToUpdate)
+        {
+
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<VendorAddress>(VendorToUpdate);
+                return result;
+            }
+
         }
     }
 }

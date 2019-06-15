@@ -10,5 +10,6 @@ namespace badger_view.Models
         public Vendor vendor { get; set; }
         public IEnumerable<VendorAddress> Addresses { get; set; }
         public IEnumerable<VendorContactPerson> Reps { get; set; }
+        public IEnumerable<VendorNote> Notes { get; set; }
     }
 }

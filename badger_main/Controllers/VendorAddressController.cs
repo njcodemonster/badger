@@ -49,17 +49,37 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
-
-        // PUT: api/VendorAddress/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT: api/VendorAddress/update/5
+        [HttpPut("update/{id}")]
+        public async Task<string> Update(int id, [FromBody] string value)
         {
-        }
 
+            string UpdateResult = "Success";
+            bool UpdateProcessOutput = false;
+            try
+            {
+                VendorAddress VendorToUpdate = JsonConvert.DeserializeObject<VendorAddress>(value);
+                VendorToUpdate.vendor_address_id = id;
+                UpdateProcessOutput = await _VendorAddressRepo.Update(VendorToUpdate);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating  vendor with message" + ex.Message);
+                UpdateResult = "Failed";
+            }
+            if (!UpdateProcessOutput)
+            {
+                UpdateResult = "Creation failed due to reason: No specific reson";
+            }
+            return UpdateResult;
+        }
+       
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
         }
     }
+
 }
