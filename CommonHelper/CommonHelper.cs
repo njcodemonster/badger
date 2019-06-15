@@ -21,7 +21,11 @@ namespace CommonHelper
             if (date != "") {
                 string[] DateList = date.Split("/");
 
-                DateTime newDateTime = new DateTime(Int32.Parse(DateList[2]), Int32.Parse(DateList[0]), Int32.Parse(DateList[1]), 0, 0, 0, DateTimeKind.Utc);
+                 int month = Int32.Parse(DateList[0]);
+                   int day = Int32.Parse(DateList[1]);
+                  int year = Int32.Parse(DateList[2]);
+                
+                DateTime newDateTime = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
                 DateTime secondsTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 TotalSeconds = (double)(newDateTime - secondsTime).TotalSeconds;
             }

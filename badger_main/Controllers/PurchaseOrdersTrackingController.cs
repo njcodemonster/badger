@@ -16,9 +16,19 @@ namespace badgerApi.Controllers
     {
         private readonly IPurchaseOrdersTrackingRepository _PurchaseOrdersTrackingRepo;
         ILoggerFactory _loggerFactory;
-       
-        public PurchaseOrdersTrackingController(IPurchaseOrdersTrackingRepository PurchaseOrdersTrackingRepo, ILoggerFactory loggerFactory)
+
+        private IEventRepo _eventRepo;
+        private int event_type_id = 4;
+        private string tableName = "purchase_order_events";
+
+        private string event_create_purchase_orders_tracking = "New Purchase Order Create Tracking";
+        private string event_update_purchase_orders_tracking = "Update Purchase Order Tracking";
+        private string event_updatespecific_purchase_orders_tracking = "Update Specific Purchase Order Tracking";
+
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        public PurchaseOrdersTrackingController(IPurchaseOrdersTrackingRepository PurchaseOrdersTrackingRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
             _PurchaseOrdersTrackingRepo = PurchaseOrdersTrackingRepo;
             _loggerFactory = loggerFactory;
         }
@@ -52,6 +62,9 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrdersTracking newPurchaseOrderTracking = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
                 NewInsertionID = await _PurchaseOrdersTrackingRepo.Create(newPurchaseOrderTracking);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrderTracking.po_id, event_type_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_tracking, 1, _common.GetTimeStemp(), tableName);
+
             }
             catch (Exception ex)
             {
@@ -73,6 +86,9 @@ namespace badgerApi.Controllers
                 PurchaseOrdersTracking PurchaseOrdersTrackingToUpdate = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
                 PurchaseOrdersTrackingToUpdate.po_tracking_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersTrackingRepo.Update(PurchaseOrdersTrackingToUpdate);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersTrackingToUpdate.po_id, event_type_id, id, event_update_purchase_orders_tracking , 1, _common.GetTimeStemp(), tableName);
+
             }
             catch (Exception ex)
             {
@@ -127,6 +143,8 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersTrackingRepo.UpdateSpecific(ValuesToUpdate, "po_tracking_id=" + id);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_id, id, event_updatespecific_purchase_orders_tracking , 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {

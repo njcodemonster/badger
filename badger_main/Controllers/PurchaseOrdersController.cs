@@ -26,7 +26,13 @@ namespace badgerApi.Controllers
         private int note_type = 4;
         private int event_type_id = 2;
         private string tableName = "purchase_order_events";
-        private string event_description = "New Purchase Order Create";
+
+        private string event_create_purchase_orders = "New Purchase Order Create";
+        private string event_create_purchase_orders_notecreate = "Purchase Order Note Create";
+        private string event_create_purchase_orders_documentcreate = "Purchase Order Document Create";
+        private string event_update_purchase_orders = "Update Purchase Order";
+        private string event_updatespecific_purchase_orders = "Update Specific Purchase Order";
+        
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
@@ -118,7 +124,7 @@ namespace badgerApi.Controllers
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_id, 0, event_description, 1, _common.GetTimeStemp(), tableName);
+                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_id, 0, event_create_purchase_orders, 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
@@ -140,6 +146,10 @@ namespace badgerApi.Controllers
                 string note = newPurchaseOrderNote.note;
                 double created_at = _common.GetTimeStemp();
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, 1, created_at);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, 1, _common.GetTimeStemp(), tableName);
+
+
             }
             catch (Exception ex)
             {
@@ -162,6 +172,9 @@ namespace badgerApi.Controllers
                 string document_url = PurchaseOrdersToUpdate.url;
                 double created_at = _common.GetTimeStemp();
                 NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", 1, created_at);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, 1, _common.GetTimeStemp(), tableName);
+
             }
             catch (Exception ex)
             {
@@ -224,7 +237,7 @@ namespace badgerApi.Controllers
                 PurchaseOrdersToUpdate.po_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, "Update Purchase Order", 1, _common.GetTimeStemp(), tableName);
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, event_update_purchase_orders , 1, _common.GetTimeStemp(), tableName);
 
             }
             catch (Exception ex)
@@ -334,7 +347,7 @@ namespace badgerApi.Controllers
                 await _PurchaseOrdersRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
 
 
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, "Update Specific Purchase Order", 1, _common.GetTimeStemp(), tableName);
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, event_updatespecific_purchase_orders, 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {

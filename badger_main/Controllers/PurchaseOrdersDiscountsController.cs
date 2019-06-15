@@ -19,8 +19,19 @@ namespace badgerApi.Controllers
     {
         private readonly IPurchaseOrdersDiscountsRepository _PurchaseOrdersDiscountsRepo;
         ILoggerFactory _loggerFactory;
-        public PurchaseOrdersDiscountsController(IPurchaseOrdersDiscountsRepository PurchaseOrdersDiscountsRepo, ILoggerFactory loggerFactory)
+
+        private IEventRepo _eventRepo;
+        private int event_type_id = 5;
+        private string tableName = "purchase_order_events";
+
+        private string event_create_purchase_orders_discount = "New Purchase Order Create Discount";
+        private string event_update_purchase_orders_discount = "Update Purchase Order Discount";
+        private string event_updatespecific_purchase_orders_discount = "Update Specific Purchase Order Discount";
+
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        public PurchaseOrdersDiscountsController(IPurchaseOrdersDiscountsRepository PurchaseOrdersDiscountsRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
             _PurchaseOrdersDiscountsRepo = PurchaseOrdersDiscountsRepo;
             _loggerFactory = loggerFactory;
         }
@@ -99,6 +110,9 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrderDiscounts newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrderDiscounts>(value);
                 NewInsertionID = await _PurchaseOrdersDiscountsRepo.Create(newPurchaseOrder);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrder.po_id, event_type_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_discount, 1, _common.GetTimeStemp(), tableName);
+
             }
             catch (Exception ex)
             {
@@ -120,6 +134,8 @@ namespace badgerApi.Controllers
                 PurchaseOrderDiscounts PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrderDiscounts>(value);
                 PurchaseOrdersToUpdate.po_discount_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersDiscountsRepo.Update(PurchaseOrdersToUpdate);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_id, id, event_update_purchase_orders_discount, 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
@@ -180,6 +196,8 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersDiscountsRepo.UpdateSpecific(ValuesToUpdate, "po_discount_id=" + id);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_id, id, event_updatespecific_purchase_orders_discount, 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
