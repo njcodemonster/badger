@@ -185,6 +185,26 @@ namespace badgerApi.Controllers
 
         }
 
+        // GET: api/purchaseorders/getdocuments/ref_id
+        [HttpGet("getdocuments/{ref_id}/{limit}")]
+        public async Task<List<Documents>> GetDocumentsViewAsync(int ref_id, int limit)
+        {
+            List<Documents> documents = new List<Documents>();
+            try
+            {
+                documents = await _NotesAndDoc.GenericGetDocAsync<Documents>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+
+            }
+
+            return documents;
+
+        }
+
         // PUT: api/purchaseorders/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
