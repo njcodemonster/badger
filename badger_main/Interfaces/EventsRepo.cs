@@ -61,7 +61,7 @@ namespace badgerApi.Interfaces
             {
                 using (IDbConnection conn = Connection)
                 {
-                    String DInsertQuery = "insert into " + tableName + " values (null," + po_id.ToString() + "," + event_type_id.ToString() + "," + reffrence_id.ToString() + "," + description.ToString() + "," + userID.ToString() + "," + createdat.ToString() + ")";
+                    String DInsertQuery = "insert into " + tableName + " values (null," + po_id.ToString() + "," + event_type_id.ToString() + "," + reffrence_id.ToString() + ",\"" + description.ToString() + "\"," + userID.ToString() + "," + createdat.ToString() + ")";
                     var vendorDetails = await conn.QueryAsync<object>(DInsertQuery);
                     res = true;
                 }
