@@ -18,7 +18,7 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PhotoshootsController : ControllerBase
     {
-        private readonly IPhotoshootRepository _PhotoshootRepo;
+        private IPhotoshootRepository _PhotoshootRepo;
         ILoggerFactory _loggerFactory;
 
         public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory)

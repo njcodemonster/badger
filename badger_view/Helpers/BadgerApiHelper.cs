@@ -78,6 +78,15 @@ namespace badger_view.Helpers
             return data.ToString();
 
         }
+        public async Task<T> ForceConvert<T>(String data)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return  JsonConvert.DeserializeObject<T>(data, settings);
+        }
 
     }
 }
