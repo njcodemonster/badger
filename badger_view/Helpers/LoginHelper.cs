@@ -51,6 +51,8 @@ namespace badger_view.Helpers
        
         Task<Boolean> CheckLogin();
         Task<Boolean> DoLogin(badger_view.Models.LogiDetails logiDetails);
+        Task<string> GetLoginUserId();
+        Task<string> GetLoginUserFirstName();
     }
     public class LoginHelper : ILoginHelper
     {
@@ -80,11 +82,35 @@ namespace badger_view.Helpers
             
             return  isLoedIn;
         }
+        public async Task<string> GetLoginUserId()
+        {
+            string id = "0";
+            try
+            {
+                 id =  _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "PrimaryID").Value;
+            }
+            catch(Exception ex)
+            {
+                return "0";
+            }
+            return id;
+        }
+        public async Task<string> GetLoginUserFirstName()
+        {
+            string id = "0";
+            try
+            {
+                id = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "FirstName").Value;
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+            return id;
+        }
 
         public async Task<bool> DoLogin(badger_view.Models.LogiDetails logiDetails)
         {
-            // HttpContext httpContext = new HttpContext();
-            //HttpContext.Session.SetInt32("logedIn", 1);
             SetBadgerHelper();
             Boolean isLoedIn = false;
             JObject LoginInfo = new JObject();
@@ -98,7 +124,8 @@ namespace badger_view.Helpers
                
                 var claim = new List < Claim >{
                         new Claim(ClaimTypes.NameIdentifier, AuthUser.email),
-                        new Claim(ClaimTypes.Name,AuthUser.first_name),
+                        new Claim("FirstName", AuthUser.first_name),
+                        new Claim(ClaimTypes.Name,AuthUser.full_name),
                         new Claim(ClaimTypes.Role,AuthUser.access_level_id.ToString()),
                         new Claim("PrimaryID",AuthUser.user_id.ToString()),
                 };
