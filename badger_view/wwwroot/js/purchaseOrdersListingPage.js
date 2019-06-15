@@ -664,7 +664,7 @@ $(document).on('click', ".remove_tracking", function () {
     var track_id = $(this).parent().children().attr("id");
     var track_number = $(this).parent().children().attr("value");
 
-    console.log(track_id + track_number);
+    console.log(track_id +" - "+ track_number);
 
     $(this).parent().remove();
 });
