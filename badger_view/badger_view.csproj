@@ -14,4 +14,7 @@
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\VendorNote.cs" />
+  </ItemGroup>
 </Project>

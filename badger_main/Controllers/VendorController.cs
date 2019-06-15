@@ -120,11 +120,9 @@ namespace badgerApi.Controllers
                 vendor = await _VendorRepo.GetById(id);
                 vendor_address = await _VendorRepo.GetVendorDetailsAddress(id);
                 vendor_Rep = await _VendorRepo.GetVendorDetailsRep(id);
-                vendor_Note = await _VendorRepo.GetVendorNotes(id);
                 AdressAndrepDetails.Vendor = vendor;
                 AdressAndrepDetails.Addresses = vendor_address;
                 AdressAndrepDetails.Reps = vendor_Rep;
-                AdressAndrepDetails.Notes = vendor_Note;
 
             }
             catch (Exception ex)
@@ -137,6 +135,29 @@ namespace badgerApi.Controllers
             return AdressAndrepDetails;
 
         }
+
+        //GET: api/vendor/getnoteanddoc/103
+        [HttpGet("getnoteanddoc/{id}")]
+        public async Task<object> DetailsNotesAndDoc(int id)
+        {
+            dynamic vendorNoteAndDoc = new ExpandoObject();
+            try
+            {
+                vendorNoteAndDoc.note = await _NotesAndDoc.GenericNote<Notes>(id, note_type, 1);
+                vendorNoteAndDoc.doc = await _NotesAndDoc.GenericGetDocAsync<Documents>(id, note_type, 1);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorNoteAndDoc;
+
+        }
+
         //GET: api/vendor/detailsaddress/103
         [HttpGet("detailsaddress/{id}")]
         public async Task<List<object>> DetailsAddress(int id)

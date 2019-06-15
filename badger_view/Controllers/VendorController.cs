@@ -54,11 +54,15 @@ namespace badger_view.Controllers
             return View("Index",VendorPageModal);
         }
         [HttpGet("vendor/details/{id}")]
-        public async Task<VenderAdressandRep> GetDetails(Int32 id)
+        public async Task<Object> GetDetails(Int32 id)
         {
+            dynamic vendorDetails = new ExpandoObject();
             SetBadgerHelper();
-            VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/vendor/detailsaddressandrep/"+id.ToString());
-            return venderAdressandRep;
+            VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/vendor/detailsaddressandrep/" + id.ToString());
+            dynamic venderDocAndNotes = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/getnoteanddoc/" + id.ToString());
+            vendorDetails.venderAdressandRep = venderAdressandRep;
+            vendorDetails.venderDocAndNotes = venderDocAndNotes;
+            return JsonConvert.SerializeObject(vendorDetails);
         }
         [HttpPost("vendor/newvendor_doc")]
         public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
@@ -220,10 +224,21 @@ namespace badger_view.Controllers
                     vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
                     vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
                     vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
-                    //vendor_rep.Add("repo_id", vendor_reps_data[i].Value<string>("repo_id"));
-                    vendor_rep.Add("updated_by", 2);
-                    vendor_rep.Add("updated_at", _common.GetTimeStemp());
-                    String newVendorRepID = await _BadgerApiHelper.GenericPutAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/update/"+ vendor_reps_data[i].Value<string>("repo_id").ToString());
+                    string repo_id =  vendor_reps_data[i].Value<string>("repo_id");
+                    if(repo_id == "0")
+                    {
+                        vendor_rep.Add("created_by", 2);
+                        vendor_rep.Add("created_at", _common.GetTimeStemp());
+                        String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
+
+                    }
+                    else
+                    {
+                        vendor_rep.Add("updated_by", 2);
+                        vendor_rep.Add("updated_at", _common.GetTimeStemp());
+                        String newVendorRepID = await _BadgerApiHelper.GenericPutAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/update/" + repo_id.ToString());
+
+                    }
                 }
                 string vendor_notes = json.Value<string>("vendor_notes");
                 if (vendor_notes != "")
@@ -231,12 +246,13 @@ namespace badger_view.Controllers
                     JObject vendorNotes = new JObject();
                     vendorNotes.Add("ref_id", id);
                     vendorNotes.Add("note", vendor_notes);
-                    String newNoteID = await _BadgerApiHelper.GenericPutAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/update");
+                    String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
 
                 }
-            }
-            return vendorStatus;
 
+            }
+
+            return vendorStatus;
 
         }
     }

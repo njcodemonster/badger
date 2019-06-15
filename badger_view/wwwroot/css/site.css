@@ -182,3 +182,9 @@ header {
 [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
     display: none;
 }
+.errorFeild{
+    border:1px solid red;
+}
+#newVendorForm .phone {
+    text-align: center
+}
