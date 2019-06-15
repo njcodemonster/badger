@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using CommonHelper;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace badger_view.Controllers
 {
@@ -43,7 +44,7 @@ namespace badger_view.Controllers
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
@@ -97,7 +98,7 @@ namespace badger_view.Controllers
 
             return View("Index", PurchaseOrdersPageModal);
         }
-
+        [Authorize]
         [HttpGet("purchaseorders/details/{id}")]
         public async Task<string> GetDetails(Int32 id)
         {
@@ -126,12 +127,12 @@ namespace badger_view.Controllers
 
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
-
+        [Authorize]
         public IActionResult Single()
         {
             return View();
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/newpurchaseorder")]
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
@@ -180,7 +181,7 @@ namespace badger_view.Controllers
 
             return newPurchaseOrderID;
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/purchaseorder_doc")]
         public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
         {
@@ -229,7 +230,7 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/updatepurchaseorder/{id}")]
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
         {
@@ -311,7 +312,7 @@ namespace badger_view.Controllers
 
             return newPurchaseOrderID;
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/discountcreate")]
         public async Task<String> DiscountCreate([FromBody] JObject json)
         {
@@ -344,7 +345,7 @@ namespace badger_view.Controllers
                 return newPurchaseDiscountID;
             }
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/discountupdate/{id}")]
         public async Task<String> DiscountUpdate(int id,[FromBody] JObject json)
         {
@@ -375,7 +376,7 @@ namespace badger_view.Controllers
                 return updatePurchaseDiscountID;
             }
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/ledgercreate")]
         public async Task<String> LedgerCreate([FromBody] JObject json)
         {
@@ -407,7 +408,7 @@ namespace badger_view.Controllers
                 return newPurchaseLedgerID;
             }  
         }
-
+        [Authorize]
         [HttpPost("purchaseorders/ledgerupdate/{id}")]
         public async Task<String> LedgerUpdate(int id, [FromBody] JObject json)
         {
@@ -436,7 +437,6 @@ namespace badger_view.Controllers
                 return updatePurchaseLedgerID;
             }
         }
-
         public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
