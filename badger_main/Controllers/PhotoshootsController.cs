@@ -189,25 +189,6 @@ namespace badgerApi.Controllers
         }
 
 
-        
-        [HttpPut("productSendToEditor/{productId}")]
-        public async Task<string> productSendToEditor(int productId, [FromBody]   string value)
-        {
-            string UpdateResult = "Success";
-            try
-            {
-                await _PhotoshootRepo.photoshootProductSendToEditor(productId);
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in product Send To Editor with message" + ex.Message);
-                UpdateResult = "Failed";
-            }
-
-            return UpdateResult;
-        }
-
         [HttpPut("UpdatePhotoshootProductStatus/{productId}")]
         public async Task<string> UpdatePhotoshootProductStatus(int productId, [FromBody]   string value)
         {
@@ -217,6 +198,9 @@ namespace badgerApi.Controllers
                 ProductPhotoshootStatusUpdate PhotoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshootStatusUpdate>(value);
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
                 ValuesToUpdate.Add("product_shoot_status_id", PhotoshootToUpdate.product_shoot_status_id.ToString());
+                ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
+                ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
+
                 await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id = " + productId);
             }
             catch (Exception ex)

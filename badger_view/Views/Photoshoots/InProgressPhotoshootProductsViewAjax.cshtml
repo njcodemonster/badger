@@ -41,7 +41,7 @@
                     <td><b>@photoshoot.sku_family</b></td>
                     <td>@photoshoot.username</td>
                     <td id="shootRow_@photoshoot.product_id">
-                        <select class="browser-default custom-select" onchange="updatephotoshootStatus(@photoshoot.product_id,@photoshoot.photoshoot_id)">
+                        <select class="browser-default custom-select" onchange="updatephotoshootStatus(@photoshoot.product_id,@photoshoot.photoshoot_id, this.value)">
                             <option value="0">Shoot not started</option>
                             <option value="1" selected>Shoot in-progress</option>
                             <option value="2">Send to editor</option>

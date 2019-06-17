@@ -20,5 +20,8 @@ namespace badgerApi.Models
     public partial class ProductPhotoshootStatusUpdate
     {
         public int product_shoot_status_id { get; set; }
+        public int updated_by { get; set; }
+        public int updated_at { get; set; }
+        
     }
 }

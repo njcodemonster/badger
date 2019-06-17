@@ -226,8 +226,32 @@ function moveSelectedToPhotoshoot() {
     
 }
 
-function updatephotoshootStatus(productId, photoshoot_id) {
+function updatephotoshootStatus(productId, photoshoot_id, status) {
+    alert(status);
     $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
+
+    var statusUpdate = "";
+    if (status == 0) {
+        statusUpdate = "NotStarted";
+    } else if (status == 2) {
+        statusUpdate = "SendToEditor";
+    }
+
+    $.ajax({
+        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + statusUpdate,
+        dataType: 'html',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+
+        setTimeout(function () {
+            getPhotoshootProducts(photoshoot_id);
+            $("#collapse_" + photoshoot_id).collapse("show");
+        }, 1000);
+    });
+    /*
     $.ajax({
         url: '/photoshoots/PhotoshootProductSendToEditor/' + productId,
         dataType: 'html',
@@ -238,12 +262,7 @@ function updatephotoshootStatus(productId, photoshoot_id) {
     }).always(function (data) {
         //alert(photoshoot_id);
         //$("#collapse_" + photoshoot_id).collapse("hide");
-        setTimeout(function () {
-            getPhotoshootProducts(photoshoot_id);
-            $("#collapse_" + photoshoot_id).collapse("show");
-        }, 1000);
-        
-    });
+    }); */
 
 }
 

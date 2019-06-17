@@ -23,7 +23,6 @@ namespace badgerApi.Interfaces
         Task<Boolean> Update(Photoshoots PhotoshootToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<Object> GetPhotoshootDetailsRep(Int32 id);
-        Task photoshootProductSendToEditor(Int32 product_id);
         Task<Object> GetPhotoshootProducts(Int32 photoshootId);
         Task<Object> GetAllPhotoshoots(Int32 id);
         Task<Object> GetAllPhotoshootsModels(Int32 limit);
@@ -151,7 +150,7 @@ namespace badgerApi.Interfaces
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
-            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, u.name AS username FROM users u ,product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " AND p.`vendor_id` = v.`vendor_id` AND ps.created_by = u.user_id AND ps.product_shoot_status_id = 1; ";
+            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, u.name AS username FROM users u ,product_photoshoots ps  , product p, vendor v, photoshoots sh WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " AND p.`vendor_id` = v.`vendor_id` AND sh.created_by = u.user_id AND ps.product_shoot_status_id = 1 AND sh.photoshoot_id = ps.photoshoot_id; ";
             
 
             using (IDbConnection conn = Connection)
@@ -256,20 +255,6 @@ namespace badgerApi.Interfaces
             }
             return photoshootsDetails;
         }
-
-        public async Task photoshootProductSendToEditor( int product_id )
-        {
-            string sQuery = "";
-            sQuery = "update product_photoshoots set `product_shoot_status_id` = 2 where product_id = "+product_id;
-            using (IDbConnection conn = Connection)
-            {
-                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
-                 
-            }
-
-        }
-
-
 
     }
 }
