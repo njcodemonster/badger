@@ -56,6 +56,7 @@ namespace badger_view.Controllers
             return View("ShootInProgress", photoshootInProgressModal);
         }
 
+
         [HttpGet("photoshoots/getPhotoshootInProgressProducts/{photoshootId}")]
         public async Task<IActionResult> getPhotoshootInProgressProducts(int photoshootId)
         {
@@ -68,9 +69,16 @@ namespace badger_view.Controllers
         }
 
 
-        public IActionResult sendToEditor(int photoshootId)
+        public async Task<IActionResult> sendToEditor()
         {
-            return View("SendToEditor");
+            SetBadgerHelper();
+            ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SendToEditorPhotoshoot/");
+            dynamic photoshootSendToEditorModal = new ExpandoObject();
+            photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
+            return View("SendToEditor", photoshootSendToEditorModal);
+
+
+            //return View("SendToEditor");
         }
 
         [HttpGet("photoshoots/getPhotoshootAndModels/")]
@@ -108,6 +116,28 @@ namespace badger_view.Controllers
             string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(photoshoot.ToString(Formatting.None), "/Photoshoots/productSendToEditor/" + product_id);
             return returnStatus;
         }
+
+        [HttpGet("photoshoots/UpdatePhotoshootProductStatus/{product_id}/{status}")]
+        public async Task<string> UpdatePhotoshootProductStatus(int product_id, string status)
+        {
+            SetBadgerHelper();
+            string status_id = "";
+            if (status == "NotStarted")
+            {
+                status_id = "0";
+            }
+            else if (status == "InProgress")
+            {
+                status_id = "1";
+            } 
+
+            JObject photoshoot = new JObject();
+            photoshoot.Add("product_shoot_status_id", status_id);
+
+            string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(photoshoot.ToString(Formatting.None), "/Photoshoots/UpdatePhotoshootProductStatus/" + product_id);
+            return returnStatus;
+        }
+
 
         [HttpPost("photoshoots/addNewPhotoshoot")]
         public async Task<String> addNewPhotoshoot([FromBody]   JObject json)

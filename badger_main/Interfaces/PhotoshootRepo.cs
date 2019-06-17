@@ -26,8 +26,11 @@ namespace badgerApi.Interfaces
         Task photoshootProductSendToEditor(Int32 product_id);
         Task<Object> GetPhotoshootProducts(Int32 photoshootId);
         Task<Object> GetAllPhotoshoots(Int32 id);
-        Task<Object> GetAllPhotoshootsModels(Int32 id);
-        Task<Object> GetInprogressPhotoshoot(Int32 id);
+        Task<Object> GetAllPhotoshootsModels(Int32 limit);
+        Task<Object> GetInprogressPhotoshoot(Int32 limit);
+        Task<Object> GetSendToEditorPhotoshoot(Int32 limit);
+        
+
     }
     public class PhotoshootRepo : IPhotoshootRepository
     {
@@ -76,12 +79,12 @@ namespace badgerApi.Interfaces
                 IEnumerable<Photoshoots> result = new List<Photoshoots>();
                 if(Limit > 0)
                 {
-                    result = await conn.QueryAsync<Photoshoots>("Select * from "+TableName+ " where photoshoot_id = 0 Limit " + Limit.ToString() + ";");
+                    result = await conn.QueryAsync<Photoshoots>("Select * from "+TableName+ " where photoshoot_id = 0 OR product_shoot_status_id = 0  Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
                     //result = await conn.GetAllAsync<Photoshoots>();
-                    result = await conn.QueryAsync<Photoshoots>("Select * from " + TableName + " where photoshoot_id = 0;");
+                    result = await conn.QueryAsync<Photoshoots>("Select * from " + TableName + " where photoshoot_id = 0 OR product_shoot_status_id = 0 ;");
                 }
                 return result.ToList();
             }
@@ -127,11 +130,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                 sQuery = "  SELECT  ps.product_shoot_status_id , p.product_id, p.product_vendor_image, p.product_name, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = 0 AND p.`vendor_id` = v.`vendor_id` Limit " + Limit.ToString() + " ;";
+                 sQuery = "  SELECT  ps.product_shoot_status_id , p.product_id, p.product_vendor_image, p.product_name, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0 )  AND p.`vendor_id` = v.`vendor_id` Limit " + Limit.ToString() + " ;";
             }
             else
             {
-                 sQuery = "SELECT  ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = 0 AND p.`vendor_id` = v.`vendor_id`; ";
+                 sQuery = "SELECT  ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0 ) AND p.`vendor_id` = v.`vendor_id`; ";
             }
 
             using (IDbConnection conn = Connection)
@@ -148,7 +151,7 @@ namespace badgerApi.Interfaces
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
-            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " AND p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 1; ";
+            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, u.name AS username FROM users u ,product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " AND p.`vendor_id` = v.`vendor_id` AND ps.created_by = u.user_id AND ps.product_shoot_status_id = 1; ";
             
 
             using (IDbConnection conn = Connection)
@@ -229,6 +232,27 @@ namespace badgerApi.Interfaces
             {
                 IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
                 photoshootsDetails.photoshootsInprogress = photoshootsModelList;
+            }
+            return photoshootsDetails;
+        }
+
+        public async Task<Object> GetSendToEditorPhotoshoot(Int32 Limit)
+        {
+            dynamic photoshootsDetails = new ExpandoObject();
+            string sQuery = "";
+            if (Limit > 0)
+            {
+                sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND  p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 2 Limit " + Limit.ToString(); 
+            }
+            else
+            {
+                sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND  p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 2 ";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
+                photoshootsDetails.photoshootSendToEditor = photoshootsModelList;
             }
             return photoshootsDetails;
         }

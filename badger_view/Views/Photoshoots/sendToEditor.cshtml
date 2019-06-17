@@ -1,6 +1,10 @@
 ﻿
 @{
-    ViewData["Title"] = "In-Progress Photoshoots";
+    ViewData["Title"] = "Send to editor Photoshoots";
+}
+@model dynamic
+@section Scripts {
+    <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
 }
 <style>
     .th-dropdown {
@@ -15,6 +19,7 @@
         text-align: left;
         vertical-align: middle;
     }
+
     .add-on .input-group-btn > .btn {
         border-left-width: 0;
         left: -2px;
@@ -27,12 +32,13 @@
         -webkit-box-shadow: none;
         border-color: #cccccc;
     }
+
     .shoot-dropdown {
         background: none !important;
-        color:#000;
-        border:1px #ccc solid;
-        padding:5px 15px;
-        border-radius:5px;
+        color: #000;
+        border: 1px #ccc solid;
+        padding: 5px 15px;
+        border-radius: 5px;
     }
 </style>
 <div class="row">
@@ -42,7 +48,7 @@
 </div>
 
 <div class="table-responsive pt-5">
-    <table id="openphotoshot" class="table table-bordered datatable_js" style="width:100%">
+    <table id="openphotoshot" class="table table-bordered datatable_js_ps" style="width:100%">
         <thead>
             <tr>
                 <th style="width:50px;"> </th>
@@ -52,8 +58,8 @@
                             Actions
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select all</a>
-                            <a class="dropdown-item" href="#">Mark selected as "Shoot not started"</a>
+                            <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
+                            <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
                         </div>
                     </div>
                 </th>
@@ -66,42 +72,29 @@
             </tr>
         </thead>
         <tbody>
-            <tr style="">
-                <td class="text-center">
-                    <input type="checkbox" class="select-box">
-                </td>
-                <td><img style="width:85px;" src="https://cdn.shopify.com/s/files/1/1952/2795/products/sonix-ace-sunglasses-FashionPass-1.jpg?v=1522084606"></td>
-                <td>Free People</td>
-                <td>Drive You Mad Blouse</td>
-                <td><b>Sea Foam</b></td>
-                <td><b>JS112</b></td>
-                <td>Expected 3/10-3/20</td>
-                <td>
-                    <select class="browser-default custom-select col-sm-6">
-                        <option selected>Shoot not started</option>
-                        <option>Sent to editor</option>
-                    </select>
-                </td>
-            </tr>
+            @foreach (ProductPhotoshootRep photoshoot in Model.Lists)
+            {
 
-            <tr style="">
-                <td class="text-center">
-                    <input type="checkbox" class="select-box">
-                </td>
-                <td><img style="width:85px;" src="https://cdn.shopify.com/s/files/1/1952/2795/products/sonix-ace-sunglasses-FashionPass-1.jpg?v=1522084606"></td>
-                <td>Free People</td>
-                <td>Drive You Mad Blouse</td>
-                <td><b>Sea Foam</b></td>
-                <td><b>JS112</b></td>
-                <td>Expected 3/10-3/20</td>
-                <td>
-                    <select class="browser-default custom-select col-sm-6">
-                        <option selected>Shoot not started</option>
-                        <option>Sent to editor</option>
-                    </select>
-                </td>
-            </tr>
-
+                <tr style="">
+                    <td class="text-center">
+                        <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
+                    </td>
+                    <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
+                    <td>@photoshoot.vendor_name</td>
+                    <td>@photoshoot.product_name</td>
+                    <td><b>-</b></td>
+                    <td><b>@photoshoot.sku_family</b></td>
+                    <td></td>
+                    <td id="shootRow_@photoshoot.product_id">
+                        <select class="browser-default custom-select" onchange="changeShootStatusOnSendToEditor(@photoshoot.product_id, this.value)">
+                            <option value="0">Shoot not started</option>
+                            <option value="1">Shoot in-progress</option>
+                            <option value="2" selected>Sent to editor</option>
+                            
+                        </select>
+                    </td>
+                </tr>
+            }
 
         </tbody>
     </table>
@@ -115,77 +108,4 @@
     function addNewPhotoshoot() {
         $("#modalAddNewPhotoshoot").modal('show');
     }
-</script>
-<!-- Modal PO -->
-<div class="modal fade" id="modalAddNewPhotoshoot" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add to photoshoot</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form>
-                        <div class="form-row">
-                            <div> Select which photoshoot to add to:</div>
-                            <div class="form-group col-md-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked="">
-                                    <label class="form-check-label" for="gridRadios1">
-                                        Alexis Parker - 4/5/19
-                                    </label>
-                                </div>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked="">
-                                    <label class="form-check-label" for="gridRadios1">
-                                        Liberty Muttal - 4/5/19
-                                    </label>
-                                </div>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked="">
-                                    <label class="form-check-label" for="gridRadios1">
-                                        Amanda Stanton- 4/5/19
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <input type="button" class="btn btn-primary" value="Add">
-                            </div>
-                        </div>
-                        <div> Or, create a new photoshoot:</div>
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <select class="custom-select">
-                                    <option selected></option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <div class="input-group add-on date datepicker" data-date-format="yyyy-mm-dd">
-                                    <input name="name" value="" type="text" class="form-control date-picker" data-date-format="yyyy-mm-dd">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <input type="button" class="btn btn-primary" value="Add">
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-             
-        </div>
-    </div>
-</div>
+</script> 

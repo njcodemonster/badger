@@ -13,7 +13,8 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
+                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Send to editor"</a>
+                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
                 </th>
@@ -21,7 +22,7 @@
                 <th>Style Name</th>
                 <th>Color</th>
                 <th>SKU</th>
-                <th>Item Status</th>
+                <th>Added by</th>
                 <th> Photoshoot Status </th>
             </tr>
         </thead>
@@ -38,7 +39,7 @@
                     <td>@photoshoot.product_name</td>
                     <td><b>-</b></td>
                     <td><b>@photoshoot.sku_family</b></td>
-                    <td></td>
+                    <td>@photoshoot.username</td>
                     <td id="shootRow_@photoshoot.product_id">
                         <select class="browser-default custom-select" onchange="updatephotoshootStatus(@photoshoot.product_id,@photoshoot.photoshoot_id)">
                             <option value="0">Shoot not started</option>

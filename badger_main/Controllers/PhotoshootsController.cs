@@ -138,9 +138,6 @@ namespace badgerApi.Controllers
             try
             {
                 photoshootsAndModels  = await _PhotoshootRepo.GetAllPhotoshoots(0);
-              //  var photoshootsModels = await _PhotoshootsRepo.GetAllPhotoshootsModels(0);
-             //   photoshootsAndModels.photoshootsModels = photoshootsModels;
-
             }
             catch (Exception ex)
             {
@@ -152,6 +149,26 @@ namespace badgerApi.Controllers
             return photoshootsAndModels;
 
         }
+
+        [HttpGet("SendToEditorPhotoshoot")]
+        public async Task<object> SendToEditorPhotoshoot()
+        {
+            dynamic SendToEditorProduct = new object();
+            try
+            {
+                SendToEditorProduct = await _PhotoshootRepo.GetSendToEditorPhotoshoot(0);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for SendToEditor Product with message" + ex.Message);
+
+            }
+
+            return SendToEditorProduct;
+
+        }
+
 
         // POST: api/photoshoots/create
         [HttpPost("create")]
@@ -191,7 +208,26 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
+        [HttpPut("UpdatePhotoshootProductStatus/{productId}")]
+        public async Task<string> UpdatePhotoshootProductStatus(int productId, [FromBody]   string value)
+        {
+            string UpdateResult = "Success";
+            try
+            {
+                ProductPhotoshootStatusUpdate PhotoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshootStatusUpdate>(value);
+                Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+                ValuesToUpdate.Add("product_shoot_status_id", PhotoshootToUpdate.product_shoot_status_id.ToString());
+                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id = " + productId);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in product Send To Editor with message" + ex.Message);
+                UpdateResult = "Failed";
+            }
 
+            return UpdateResult;
+        }
 
         [HttpPost("assignProductPhotoshoot/{productId}")]
         public async Task<string> assignProductPhotoshoot(string productId, [FromBody]   string value)

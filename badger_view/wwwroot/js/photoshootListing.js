@@ -34,8 +34,20 @@ $('#photoshootDate').datepicker();
 var datatable_js_ps = $('.datatable_js_ps').DataTable();
 
 function selectAllCheckbox() {
+
+    $(".select_menu").hide();
+    $(".unselect_menu").show();
     $(".select-box").attr("checked", true);
+
 }
+function unselectAllCheckbox() {
+
+    $(".select_menu").show();
+    $(".unselect_menu").hide();
+    $(".select-box").attr("checked", false);
+
+}
+
 
 function addNewPhotoshoot() {
     $("#modalAddNewPhotoshoot").modal('show');
@@ -175,6 +187,7 @@ function AddToNewPhotoshoot() {
         $(".newShootError").removeClass("d-none");
     }
 }
+
 function moveSelectedToPhotoshoot() {
     var productAddToShoot = [];
     $.each($("input[name='productAddToShoot']:checked"), function () {
@@ -231,5 +244,35 @@ function updatephotoshootStatus(productId, photoshoot_id) {
         }, 1000);
         
     });
+
+}
+
+function changeShootStatusOnSendToEditor(productId, status) {
+    var statusUpdate = "";
+    if (status == 0) {
+        statusUpdate = "NotStarted";
+    } else if (status == 1) {
+        statusUpdate = "InProgress";
+    }
+
+    $.ajax({
+        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + statusUpdate,
+        dataType: 'html',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+
+        datatable_js_ps
+            .row($("#shootRow_" + productId).parents('tr'))
+            .remove()
+            .draw();
+    });
+
+}
+
+function changeShootStatusToInProgress(productId) {
+
 
 }
