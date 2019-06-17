@@ -6,10 +6,6 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Dynamic;
-using badgerApi.Helper;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 
 
 namespace badgerApi.Controllers
@@ -18,21 +14,14 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PurchaseOrdersTrackingController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly IPurchaseOrdersTrackingRepository _PurchaseOrdersTrackingRepo;
         ILoggerFactory _loggerFactory;
-        private INotesAndDocHelper _NotesAndDoc;
-        private IItemServiceHelper _ItemsHelper;
-        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersTrackingController(IPurchaseOrdersTrackingRepository PurchaseOrdersTrackingRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
+       
+        public PurchaseOrdersTrackingController(IPurchaseOrdersTrackingRepository PurchaseOrdersTrackingRepo, ILoggerFactory loggerFactory)
         {
-            _config = config;
             _PurchaseOrdersTrackingRepo = PurchaseOrdersTrackingRepo;
             _loggerFactory = loggerFactory;
-            _NotesAndDoc = NotesAndDoc;
-            _ItemsHelper = ItemsHelper;
         }
-
 
         // GET: api/purchaseorderstracking/gettracking/10
         [HttpGet("gettracking/{id}")]
@@ -46,7 +35,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
              {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for gettracking with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorderstracking gettracking with message" + ex.Message);
 
             }
 
@@ -67,7 +56,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new new Purchase Order Tracking with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new new Purchase Order Tracking create with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -82,13 +71,13 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrdersTracking PurchaseOrdersTrackingToUpdate = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
-                PurchaseOrdersTrackingToUpdate.po_id = id;
+                PurchaseOrdersTrackingToUpdate.po_tracking_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersTrackingRepo.Update(PurchaseOrdersTrackingToUpdate);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating  purchaseorderstracking with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -109,10 +98,17 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrdersTracking PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
-                PurchaseOrdersToUpdate.po_id = id;
+                PurchaseOrdersToUpdate.po_tracking_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-
-               
+    
+                if (PurchaseOrdersToUpdate.po_id != 0)
+                {
+                    ValuesToUpdate.Add("po_id", PurchaseOrdersToUpdate.po_id.ToString());
+                }
+                if (PurchaseOrdersToUpdate.tracking_number != 0)
+                {
+                    ValuesToUpdate.Add("tracking_number", PurchaseOrdersToUpdate.tracking_number.ToString());
+                }
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -130,12 +126,12 @@ namespace badgerApi.Controllers
                     ValuesToUpdate.Add("updated_at", PurchaseOrdersToUpdate.updated_at.ToString());
                 }
 
-                await _PurchaseOrdersTrackingRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
+                await _PurchaseOrdersTrackingRepo.UpdateSpecific(ValuesToUpdate, "po_tracking_id=" + id);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating new updatespecific purchaseorderstracking with message" + ex.Message);
                 UpdateResult = "Failed";
             }
 

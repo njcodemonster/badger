@@ -6,7 +6,6 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Dynamic;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
@@ -23,10 +22,15 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
+        private IEventRepo _eventRepo;
         private int note_type = 4;
+        private int event_type_id = 2;
+        private string tableName = "purchase_order_events";
+        private string event_description = "New Purchase Order Create";
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
             _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
             _loggerFactory = loggerFactory;
@@ -46,7 +50,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders list with message" + ex.Message);
                 return ToReturn;
             }
 
@@ -65,7 +69,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders List by id with message" + ex.Message);
 
             }
             return ToReturn;
@@ -96,7 +100,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
 
             }
 
@@ -113,11 +117,13 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_id, 0, event_description, 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new purchaseorders create with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -160,7 +166,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new Purchase Order Document with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new Purchase Order Document create with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -177,7 +183,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get Note with message" + ex.Message);
 
             }
 
@@ -197,7 +203,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for Get Note with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get documents with message" + ex.Message);
 
             }
 
@@ -217,11 +223,14 @@ namespace badgerApi.Controllers
                 PurchaseOrders PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 PurchaseOrdersToUpdate.po_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, "Update Purchase Order", 1, _common.GetTimeStemp(), tableName);
+
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating purchaseorders with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -323,11 +332,14 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
+
+
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, "Update Specific Purchase Order", 1, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating new updatespecific purchaseorders with message" + ex.Message);
                 UpdateResult = "Failed";
             }
 

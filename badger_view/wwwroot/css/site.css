@@ -220,3 +220,14 @@ header {
 .unselect_menu {
     display:none;
 }
+
+
+
+.red_color {
+    color:#ff0000;
+}
+
+.tracking_add_more_box {
+    padding: 5px 0;
+}
+
