@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
 using badgerApi.Models;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 
 namespace badgerApi.Controllers
@@ -35,7 +32,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorderstatus list get all with message" + ex.Message);
                 return ToReturn;
             }
 
@@ -55,7 +52,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorderstatus lis by id with message" + ex.Message);
 
             }
             return ToReturn;
@@ -73,7 +70,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorderstatus list by name with message" + ex.Message);
 
             }
 

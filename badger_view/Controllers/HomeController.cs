@@ -21,15 +21,7 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            // Int32? test =  HttpContext.Session.GetInt32("isLogin");
-            // if ( await _LoginHelper.CheckLogin())
-            // {
             return View();
-            // }
-            // else
-            //  {
-            //      return View("Login");
-            // }
         }
         [HttpPost("Dologin")]
         public async Task<IActionResult> DoLogin()
@@ -38,20 +30,20 @@ namespace badger_view.Controllers
             return View("Login");
 
         }
+        [Authorize]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
-
+            
             return View();
         }
-
+        [Authorize]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
-
             return View();
         }
-
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

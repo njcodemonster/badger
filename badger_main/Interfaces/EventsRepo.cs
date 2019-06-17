@@ -14,6 +14,8 @@ namespace badgerApi.Interfaces
     public interface IEventRepo
     {
         Task<bool> AddEventAsync(int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
+
+        Task<bool> AddPurchaseOrdersEventAsync(int po_id, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName);
     }
     public class EventsRepo : IEventRepo
     {
@@ -46,6 +48,25 @@ namespace badgerApi.Interfaces
                 }
             }
             catch(Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public async Task<bool> AddPurchaseOrdersEventAsync(int po_id, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DInsertQuery = "insert into " + tableName + " values (null," + po_id.ToString() + "," + event_type_id.ToString() + "," + reffrence_id.ToString() + ",\"" + description.ToString() + "\"," + userID.ToString() + "," + createdat.ToString() + ")";
+                    var vendorDetails = await conn.QueryAsync<object>(DInsertQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
             {
 
             }

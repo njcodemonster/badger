@@ -25,7 +25,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetPhotoshootDetailsRep(Int32 id);
         Task<Object> GetAllPhotoshoots(Int32 id);
         Task<Object> GetAllPhotoshootsModels(Int32 id);
-
+        Task<Object> GetInprogressPhotoshoot(Int32 id);
     }
     public class PhotoshootRepo : IPhotoshootRepository
     {
@@ -178,11 +178,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                sQuery = "  SELECT  model_id, model_name FROM photoshoot_models Limit " + Limit.ToString() + " ;";
+                sQuery = "SELECT model_id, model_name FROM photoshoot_models Limit " + Limit.ToString() + " ;";
             }
             else
             {
-                sQuery = "SELECT  model_id, model_name FROM photoshoot_models ";
+                sQuery = "SELECT model_id, model_name FROM photoshoot_models ";
             }
 
             using (IDbConnection conn = Connection)
@@ -193,7 +193,28 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
-        
+        public async Task<Object> GetInprogressPhotoshoot(Int32 Limit)
+        {
+            dynamic photoshootsDetails = new ExpandoObject();
+            string sQuery = "";
+            if (Limit > 0)
+            {
+                sQuery = "SELECT photoshoots.photoshoot_name, `product_photoshoots`.`photoshoot_id` FROM photoshoots, `product_photoshoots` WHERE `product_photoshoots`.photoshoot_id = photoshoots.`photoshoot_id` AND  product_photoshoots.product_shoot_status_id = 1 GROUP BY photoshoots.`photoshoot_id` Limit " + Limit.ToString();
+            }
+            else
+            {
+                sQuery = "SELECT photoshoots.photoshoot_name, `product_photoshoots`.`photoshoot_id` FROM photoshoots, `product_photoshoots` WHERE `product_photoshoots`.photoshoot_id = photoshoots.`photoshoot_id` AND  product_photoshoots.product_shoot_status_id = 1 GROUP BY photoshoots.`photoshoot_id`";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
+                photoshootsDetails.photoshootsInprogress = photoshootsModelList;
+            }
+            return photoshootsDetails;
+        }
+
+
 
     }
 }

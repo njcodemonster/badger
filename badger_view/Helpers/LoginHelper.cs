@@ -8,6 +8,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using badger_view.Models;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
 namespace badger_view.Models
 {
     [Table("users")]
@@ -46,13 +51,25 @@ namespace badger_view.Helpers
        
         Task<Boolean> CheckLogin();
         Task<Boolean> DoLogin(badger_view.Models.LogiDetails logiDetails);
+        Task<string> GetLoginUserId();
+        Task<string> GetLoginUserFirstName();
     }
     public class LoginHelper : ILoginHelper
     {
+        private BadgerApiHelper _BadgerApiHelper;
+        private readonly IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public LoginHelper(IHttpContextAccessor httpContextAccessor)
+        public LoginHelper(IHttpContextAccessor httpContextAccessor, IConfiguration config)
         {
+            _config = config;
             _httpContextAccessor = httpContextAccessor;
+        }
+        private void SetBadgerHelper()
+        {
+            if (_BadgerApiHelper == null)
+            {
+                _BadgerApiHelper = new BadgerApiHelper(_config);
+            }
         }
         public async Task<Boolean> CheckLogin()
         {
@@ -65,18 +82,52 @@ namespace badger_view.Helpers
             
             return  isLoedIn;
         }
+        public async Task<string> GetLoginUserId()
+        {
+            string id = "0";
+            try
+            {
+                 id =  _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "PrimaryID").Value;
+            }
+            catch(Exception ex)
+            {
+                return "0";
+            }
+            return id;
+        }
+        public async Task<string> GetLoginUserFirstName()
+        {
+            string id = "0";
+            try
+            {
+                id = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "FirstName").Value;
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+            return id;
+        }
 
         public async Task<bool> DoLogin(badger_view.Models.LogiDetails logiDetails)
         {
-            // HttpContext httpContext = new HttpContext();
-            //HttpContext.Session.SetInt32("logedIn", 1);
+            SetBadgerHelper();
             Boolean isLoedIn = false;
-            if (logiDetails.UserIdentity == "Testing@test.com" && logiDetails.UserPass == "Testing")
+            JObject LoginInfo = new JObject();
+            LoginInfo.Add("UserIdentity",logiDetails.UserIdentity);
+            LoginInfo.Add("UserPass", logiDetails.UserPass);
+            String AuthenticatedUser = await _BadgerApiHelper.GenericPostAsyncString<String>(LoginInfo.ToString(Formatting.None), "/user/Authenticate");
+            Users AuthUser = await _BadgerApiHelper.ForceConvert<Users>(AuthenticatedUser);
+
+            if (AuthUser.user_id != 0)
             {
                
                 var claim = new List < Claim >{
-                        new Claim(ClaimTypes.NameIdentifier, logiDetails.UserIdentity),
-                        new Claim(ClaimTypes.Name,"tester"),
+                        new Claim(ClaimTypes.NameIdentifier, AuthUser.email),
+                        new Claim("FirstName", AuthUser.first_name),
+                        new Claim(ClaimTypes.Name,AuthUser.full_name),
+                        new Claim(ClaimTypes.Role,AuthUser.access_level_id.ToString()),
+                        new Claim("PrimaryID",AuthUser.user_id.ToString()),
                 };
                 var identity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
