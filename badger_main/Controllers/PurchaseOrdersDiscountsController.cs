@@ -21,12 +21,16 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
 
         private IEventRepo _eventRepo;
-        private int event_type_id = 5;
+
+        private int event_type_discount_id = 5;
+        private int event_type_discount_update_id = 12;
+        private int event_type_discount_specificupdate_id = 13;
+
         private string tableName = "purchase_order_events";
 
-        private string event_create_purchase_orders_discount = "New Purchase Order Create Discount";
-        private string event_update_purchase_orders_discount = "Update Purchase Order Discount";
-        private string event_updatespecific_purchase_orders_discount = "Update Specific Purchase Order Discount";
+        private string event_create_purchase_orders_discount = "Purchase order discount created by user =%%userid%% with purchase order discount id= %%discountid%%";
+        private string event_update_purchase_orders_discount = "Purchase order discount updated by user =%%userid%% with purchase order discount id= %%discountid%%";
+        private string event_updatespecific_purchase_orders_discount = "Purchase order discount specific updated by user =%%userid%% with purchase order discount id= %%discountid%%";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersDiscountsController(IPurchaseOrdersDiscountsRepository PurchaseOrdersDiscountsRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
@@ -111,7 +115,9 @@ namespace badgerApi.Controllers
                 PurchaseOrderDiscounts newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrderDiscounts>(value);
                 NewInsertionID = await _PurchaseOrdersDiscountsRepo.Create(newPurchaseOrder);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrder.po_id, event_type_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_discount, 1, _common.GetTimeStemp(), tableName);
+                event_create_purchase_orders_discount = event_create_purchase_orders_discount.Replace("%%userid%%", newPurchaseOrder.created_by.ToString()).Replace("%%discountid%%", NewInsertionID);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrder.po_id, event_type_discount_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_discount, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
 
             }
             catch (Exception ex)
@@ -135,7 +141,9 @@ namespace badgerApi.Controllers
                 PurchaseOrdersToUpdate.po_discount_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersDiscountsRepo.Update(PurchaseOrdersToUpdate);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_id, id, event_update_purchase_orders_discount, 1, _common.GetTimeStemp(), tableName);
+                event_update_purchase_orders_discount = event_update_purchase_orders_discount.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%discountid%%", id.ToString());
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_discount_update_id, id, event_update_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {
@@ -197,7 +205,9 @@ namespace badgerApi.Controllers
 
                 await _PurchaseOrdersDiscountsRepo.UpdateSpecific(ValuesToUpdate, "po_discount_id=" + id);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_id, id, event_updatespecific_purchase_orders_discount, 1, _common.GetTimeStemp(), tableName);
+                event_updatespecific_purchase_orders_discount = event_updatespecific_purchase_orders_discount.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%discountid%%", id.ToString());
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_discount_specificupdate_id, id, event_updatespecific_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
             }
             catch (Exception ex)
             {

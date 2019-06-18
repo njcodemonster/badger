@@ -17,12 +17,16 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
 
         private IEventRepo _eventRepo;
-        private int event_type_id = 3;
+        private int event_type_ledger_id = 3;
+        private int event_type_ledger_update_id = 10;
+        private int event_type_ledger_specificupdate_id = 11;
+
+
         private string tableName = "purchase_order_events";
 
-        private string event_create_purchase_orders_ledger = "New Purchase Order Create Ledger";
-        private string event_update_purchase_orders_ledger = "Update Purchase Order Ledger";
-        private string event_updatespecific_purchase_orders_ledger = "Update Specific Purchase Order Ledger";
+        private string event_create_purchase_orders_ledger = "Purchase order ledger created by user =%%userid%% with purchase order ledger id= %%ledgerid%%";
+        private string event_update_purchase_orders_ledger = "Purchase order ledger updated by user =%%userid%% with purchase order ledger id= %%ledgerid%%";
+        private string event_updatespecific_purchase_orders_ledger = "Purchase order ledger specific updated by user =%%userid%% with purchase order ledger id= %%ledgerid%%";
          
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersLedgerController(IPurchaseOrdersLedgerRepository PurchaseOrdersLedgerRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
@@ -107,7 +111,9 @@ namespace badgerApi.Controllers
                 PurchaseOrderLedger newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrderLedger>(value);
                 NewInsertionID = await _PurchaseOrdersLedgerRepo.Create(newPurchaseOrder);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_id, newPurchaseOrder.po_id, event_create_purchase_orders_ledger, 1, _common.GetTimeStemp(), tableName);
+                event_create_purchase_orders_ledger = event_create_purchase_orders_ledger.Replace("%%userid%%", newPurchaseOrder.created_by.ToString()).Replace("%%ledgerid%%", NewInsertionID);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrder.po_id, event_type_ledger_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_ledger, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
 
             }
             catch (Exception ex)
@@ -131,7 +137,9 @@ namespace badgerApi.Controllers
                 PurchaseOrdersToUpdate.transaction_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersLedgerRepo.Update(PurchaseOrdersToUpdate);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, event_update_purchase_orders_ledger, 1, _common.GetTimeStemp(), tableName);
+                event_update_purchase_orders_ledger = event_update_purchase_orders_ledger.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%ledgerid%%", id.ToString());
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_ledger_update_id, id, event_update_purchase_orders_ledger, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
             }
             catch (Exception ex)
@@ -194,7 +202,9 @@ namespace badgerApi.Controllers
 
                 await _PurchaseOrdersLedgerRepo.UpdateSpecific(ValuesToUpdate, "transaction_id=" + id);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_id, id, event_updatespecific_purchase_orders_ledger, 1, _common.GetTimeStemp(), tableName);
+                event_updatespecific_purchase_orders_ledger = event_updatespecific_purchase_orders_ledger.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%ledgerid%%", id.ToString());
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_ledger_specificupdate_id, id, event_updatespecific_purchase_orders_ledger, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
             }
             catch (Exception ex)
