@@ -552,6 +552,38 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         console.log(data);
 
         if (data.responseText == "Success") {
+
+            var fileLength = $("#poUploadImage")[0].files.length;
+            if (fileLength != 0) {
+
+                var files = $("#poUploadImage")[0].files;
+
+                var formData = new FormData();
+
+                formData.append('po_id', id);
+
+                for (var i = 0; i != files.length; i++) {
+                    formData.append("purchaseOrderDocuments", files[i]);
+                }
+
+                $.ajax({
+                    url: "/purchaseorders/purchaseorder_doc",
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                }).always(function (data) {
+                    console.log(data);
+                    if (data == "0") {
+                        console.log("Exception Error");
+                    } else {
+                        console.log(data.responseText);
+                    }
+                });
+            }
+
+
             if (window.purchaseorderrownumber >= 0) {
 
                 $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", 1, '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id +'" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);

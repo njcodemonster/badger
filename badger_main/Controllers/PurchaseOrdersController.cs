@@ -23,8 +23,7 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
         IEventRepo _eventRepo;
-        IUserEventsRepo _userEventsRepo;
-
+        
         private int note_type = 4;
 
         private int event_type_po_id = 2;
@@ -33,6 +32,7 @@ namespace badgerApi.Controllers
         private int event_type_po_update_id = 8;
         private int event_type_po_specific_update_id = 9;
 
+        private string userEventTableName = "user_events";
         private string tableName = "purchase_order_events";
 
         private string event_create_purchase_orders = "Purchase order created by user =%%userid%% with purchase order id= %%poid%%";
@@ -42,9 +42,8 @@ namespace badgerApi.Controllers
         private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
         
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo, IUserEventsRepo userEventsRepo)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
-            _userEventsRepo = userEventsRepo;
             _eventRepo = eventRepo;
             _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
@@ -137,7 +136,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_po_id, 0, event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_po_id, Int32.Parse(NewInsertionID), event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_po_id, newPurchaseOrder.created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -165,7 +164,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_po_note_create_id, created_by, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -195,7 +194,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_po_document_create_id, created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -262,7 +261,7 @@ namespace badgerApi.Controllers
                 
                 _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders ,PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_po_update_id, id, event_update_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_po_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -374,7 +373,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_po_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
