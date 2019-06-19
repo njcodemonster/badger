@@ -17,13 +17,12 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
 
         IEventRepo _eventRepo;
-        IUserEventsRepo _userEventsRepo;
 
         private int event_type_ledger_id = 3;
         private int event_type_ledger_update_id = 10;
         private int event_type_ledger_specificupdate_id = 11;
 
-
+        private string userEventTableName = "user_events";
         private string tableName = "purchase_order_events";
 
         private string event_create_purchase_orders_ledger = "Purchase order ledger created by user =%%userid%% with purchase order ledger id= %%ledgerid%%";
@@ -31,9 +30,8 @@ namespace badgerApi.Controllers
         private string event_updatespecific_purchase_orders_ledger = "Purchase order ledger specific updated by user =%%userid%% with purchase order ledger id= %%ledgerid%%";
          
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersLedgerController(IPurchaseOrdersLedgerRepository PurchaseOrdersLedgerRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IUserEventsRepo userEventsRepo)
+        public PurchaseOrdersLedgerController(IPurchaseOrdersLedgerRepository PurchaseOrdersLedgerRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
         {
-            _userEventsRepo = userEventsRepo;
             _eventRepo = eventRepo;
             _PurchaseOrdersLedgerRepo = PurchaseOrdersLedgerRepo;
             _loggerFactory = loggerFactory;
@@ -118,7 +116,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrder.po_id, event_type_ledger_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_ledger, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_ledger_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_ledger, newPurchaseOrder.created_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_ledger_id, newPurchaseOrder.created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders_ledger, _common.GetTimeStemp(), userEventTableName);
 
             }
             catch (Exception ex)
@@ -146,7 +144,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_ledger_update_id, id, event_update_purchase_orders_ledger, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_ledger_update_id, id, event_update_purchase_orders_ledger, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_ledger_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders_ledger,  _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -212,7 +210,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_ledger_specificupdate_id, id, event_updatespecific_purchase_orders_ledger, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
-                _userEventsRepo.AddUserEventAsync(event_type_ledger_specificupdate_id, id, event_updatespecific_purchase_orders_ledger, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
+                _eventRepo.AddEventAsync(event_type_ledger_specificupdate_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders_ledger, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
