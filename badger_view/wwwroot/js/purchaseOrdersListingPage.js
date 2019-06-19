@@ -79,7 +79,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     $(".error").remove();
 
     if ($("#newPurchaseOrderForm #poVendor").val() == "Choose...") {
-        $('#poVendor').next().after('<span class="error">This field is required</span>');
+        $('#poVendor').next().after('<br><span class="error">This field is required</span>');
         errorNumber++;
     }
     if ($("#newPurchaseOrderForm #poDelieveryRange").val().length < 1) {
@@ -253,7 +253,7 @@ function timeToDateConvert(timeinseconds) {
 
 
 $(document).on('click', "#EditPurhaseOrder", function () {
-
+    $(".error").remove();
     $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
     $('.poTracking, #poNotes').val("");
 
@@ -569,6 +569,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 });
 
 $(document).on('click', ".model_purchase_order", function () {
+
+    $("#newPurchaseOrderForm .error").remove();
+
     $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "NewPurchaseOrderButton");
     $("#model_purchase_order #purchaseOrderModalLongTitle").text("Add New Purchase Order");
     $("#newPurchaseOrderForm input, #newPurchaseOrderForm #poNotes").val("");
@@ -622,9 +625,6 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
         }
         $("#modaladdnote").modal("show");
     });
-
-   
-
 });
 
 $(document).on("click", "#note_submit", function () {
