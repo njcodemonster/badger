@@ -20,7 +20,8 @@ namespace badgerApi.Controllers
         private readonly IPurchaseOrdersDiscountsRepository _PurchaseOrdersDiscountsRepo;
         ILoggerFactory _loggerFactory;
 
-        private IEventRepo _eventRepo;
+        IEventRepo _eventRepo;
+        IUserEventsRepo _userEventsRepo;
 
         private int event_type_discount_id = 5;
         private int event_type_discount_update_id = 12;
@@ -33,8 +34,9 @@ namespace badgerApi.Controllers
         private string event_updatespecific_purchase_orders_discount = "Purchase order discount specific updated by user =%%userid%% with purchase order discount id= %%discountid%%";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersDiscountsController(IPurchaseOrdersDiscountsRepository PurchaseOrdersDiscountsRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
+        public PurchaseOrdersDiscountsController(IPurchaseOrdersDiscountsRepository PurchaseOrdersDiscountsRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IUserEventsRepo userEventsRepo)
         {
+            _userEventsRepo = userEventsRepo;
             _eventRepo = eventRepo;
             _PurchaseOrdersDiscountsRepo = PurchaseOrdersDiscountsRepo;
             _loggerFactory = loggerFactory;
@@ -119,6 +121,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrder.po_id, event_type_discount_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_discount, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
 
+                _userEventsRepo.AddUserEventAsync(event_type_discount_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_discount, newPurchaseOrder.created_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
@@ -144,6 +147,8 @@ namespace badgerApi.Controllers
                 event_update_purchase_orders_discount = event_update_purchase_orders_discount.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%discountid%%", id.ToString());
 
                 _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_discount_update_id, id, event_update_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _userEventsRepo.AddUserEventAsync(event_type_discount_update_id, id, event_update_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
@@ -208,6 +213,9 @@ namespace badgerApi.Controllers
                 event_updatespecific_purchase_orders_discount = event_updatespecific_purchase_orders_discount.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%discountid%%", id.ToString());
 
                 _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_discount_specificupdate_id, id, event_updatespecific_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _userEventsRepo.AddUserEventAsync(event_type_discount_specificupdate_id, id, event_updatespecific_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
+
             }
             catch (Exception ex)
             {

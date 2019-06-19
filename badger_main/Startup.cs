@@ -30,6 +30,7 @@ namespace badgerApi
             services.AddTransient<INotesAndDocHelper,NotesAndDocHelper>();
             services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
             services.AddTransient<IEventRepo, EventsRepo>();
+            services.AddTransient<IUserEventsRepo, UserEventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
             services.AddTransient<IProductRepository, ProductRepo>();
             services.AddTransient<IPurchaseOrderStatusRepository, PurchaseOrderStatusRepo>();

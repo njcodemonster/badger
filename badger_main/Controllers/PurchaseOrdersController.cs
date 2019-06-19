@@ -22,7 +22,9 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
-        private IEventRepo _eventRepo;
+        IEventRepo _eventRepo;
+        IUserEventsRepo _userEventsRepo;
+
         private int note_type = 4;
 
         private int event_type_po_id = 2;
@@ -40,8 +42,9 @@ namespace badgerApi.Controllers
         private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
         
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo, IUserEventsRepo userEventsRepo)
         {
+            _userEventsRepo = userEventsRepo;
             _eventRepo = eventRepo;
             _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
@@ -133,6 +136,8 @@ namespace badgerApi.Controllers
                 event_create_purchase_orders = event_create_purchase_orders.Replace("%%userid%%", newPurchaseOrder.created_by.ToString()).Replace("%%poid%%", NewInsertionID);
 
                 _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_po_id, 0, event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
+
+                _userEventsRepo.AddUserEventAsync(event_type_po_id, Int32.Parse(NewInsertionID), event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
@@ -160,7 +165,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp(), tableName);
 
-
+                _userEventsRepo.AddUserEventAsync(event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
@@ -190,6 +195,7 @@ namespace badgerApi.Controllers
 
                 _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp(), tableName);
 
+                _userEventsRepo.AddUserEventAsync(event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
@@ -256,6 +262,7 @@ namespace badgerApi.Controllers
                 
                 _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders ,PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
+                _userEventsRepo.AddUserEventAsync(event_type_po_update_id, id, event_update_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
@@ -366,6 +373,8 @@ namespace badgerApi.Controllers
                 event_updatespecific_purchase_orders = event_updatespecific_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
 
                 _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _userEventsRepo.AddUserEventAsync(event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp());
             }
             catch (Exception ex)
             {
