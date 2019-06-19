@@ -562,8 +562,6 @@ namespace badger_view.Controllers
             purchaseOrdersTrackingData.Add("created_by", Int32.Parse(loginUserId));
 
             return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrdersTrackingData.ToString(Formatting.None), "/purchaseorderstracking/delete/" + id.ToString());
-            
-            //return await _BadgerApiHelper.GenericDeleteAsyncString<string>("/purchaseorderstracking/delete/" + id.ToString());
         }
 
     }
