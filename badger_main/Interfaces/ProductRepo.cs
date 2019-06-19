@@ -17,7 +17,7 @@ namespace badgerApi.Interfaces
     {
         Task<Product> GetByIdAsync(int id);
         Task<List<Product>> GetAll(Int32 Limit);
-        Task<Product> Create(Product NewProduct);
+        Task<String> Create(Product NewProduct);
         Task<bool> UpdateAsync(Product ProductToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
     }
@@ -42,9 +42,13 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public Task<Product> Create(Product NewProduct)
+        public async Task<string> Create(Product NewProduct)
         {
-            throw new NotImplementedException();
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<Product>(NewProduct);
+                return result.ToString();
+            }
         }
 
         public async Task<List<Product>> GetAll(int Limit)
@@ -86,10 +90,18 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public Task UpdateSpecific(Dictionary<string, string> ValuePairs, string where)
+        public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
-            throw new NotImplementedException();
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
+            }
+
         }
+
     }
 }
 
