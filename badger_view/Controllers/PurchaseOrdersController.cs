@@ -29,8 +29,12 @@ namespace badger_view.Controllers
         private String UploadPath = "";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersController(IConfiguration config)
+
+        private ILoginHelper _LoginHelper;
+
+        public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper)
         {
+            _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
 
@@ -44,12 +48,15 @@ namespace badger_view.Controllers
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
         }
+
         [Authorize]
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
 
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/50/true");
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
+            
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
 
@@ -128,8 +135,9 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
         [Authorize]
-        public IActionResult Single()
+        public async Task<IActionResult> Single()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
         [Authorize]
@@ -137,6 +145,8 @@ namespace badger_view.Controllers
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
             SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
 
             JObject purchaseOrder = new JObject();
 
@@ -161,7 +171,7 @@ namespace badger_view.Controllers
             purchaseOrder.Add("delivery_window_end", _common.DateConvertToTimeStamp(endDate));
             purchaseOrder.Add("po_status", json.Value<string>("po_status"));
             purchaseOrder.Add("deleted", 0);
-            purchaseOrder.Add("created_by", 2);
+            purchaseOrder.Add("created_by", Int32.Parse(loginUserId));
             purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
             purchaseOrder.Add("created_at", _common.GetTimeStemp());
 
@@ -169,11 +179,12 @@ namespace badger_view.Controllers
 
             if (newPurchaseOrderID != "0")
             {
-                if (json.Value<string>("note") != "")
+                if (json.Value<string>("note") != null)
                 {
                     JObject purchaseOrderNote = new JObject();
                     purchaseOrderNote.Add("ref_id", newPurchaseOrderID);
                     purchaseOrderNote.Add("note", json.Value<string>("note"));
+                    purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
                 }
@@ -186,6 +197,9 @@ namespace badger_view.Controllers
         public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
         {
             SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
             string messageDocuments = "";
             string messageAlreadyDocuments = "";
             try
@@ -214,6 +228,7 @@ namespace badger_view.Controllers
                                 JObject purchaseOrderDocuments = new JObject();
                                 purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
                                 purchaseOrderDocuments.Add("url", Fill_path);
+                                purchaseOrderDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
 
@@ -235,6 +250,8 @@ namespace badger_view.Controllers
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
         {
             SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
 
             JObject purchaseOrder = new JObject();
 
@@ -258,7 +275,7 @@ namespace badger_view.Controllers
             purchaseOrder.Add("delivery_window_start", _common.DateConvertToTimeStamp(startDate));
             purchaseOrder.Add("delivery_window_end", _common.DateConvertToTimeStamp(endDate));
             purchaseOrder.Add("po_status", json.Value<string>("po_status"));
-            purchaseOrder.Add("updated_by", json.Value<string>("updated_by"));
+            purchaseOrder.Add("updated_by", Int32.Parse(loginUserId));
             purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
             purchaseOrder.Add("updated_at", _common.GetTimeStemp());
 
@@ -275,6 +292,7 @@ namespace badger_view.Controllers
                         JObject purchaseOrderNote = new JObject();
                         purchaseOrderNote.Add("ref_id", id);
                         purchaseOrderNote.Add("note", json.Value<string>("note"));
+                        purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
 
                         await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
                     }
@@ -291,7 +309,7 @@ namespace badger_view.Controllers
                             JObject PurchaseOrdersTracking = new JObject();
                             PurchaseOrdersTracking.Add("po_id", id);
                             PurchaseOrdersTracking.Add("tracking_number", track.Value<string>("track"));
-                            PurchaseOrdersTracking.Add("created_by", 1);
+                            PurchaseOrdersTracking.Add("created_by", Int32.Parse(loginUserId));
                             PurchaseOrdersTracking.Add("created_at", _common.GetTimeStemp());
                             await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersTracking.ToString(Formatting.None), "/purchaseorderstracking/create");
                         }
@@ -300,7 +318,7 @@ namespace badger_view.Controllers
                             JObject PurchaseOrdersTracking = new JObject();
                             PurchaseOrdersTracking.Add("po_id", id);
                             PurchaseOrdersTracking.Add("tracking_number", track.Value<string>("track"));
-                            PurchaseOrdersTracking.Add("updated_by", 1);
+                            PurchaseOrdersTracking.Add("updated_by", Int32.Parse(loginUserId));
                             PurchaseOrdersTracking.Add("updated_at", _common.GetTimeStemp());                                                       
                             await _BadgerApiHelper.GenericPutAsyncString<String>(PurchaseOrdersTracking.ToString(Formatting.None), "/purchaseorderstracking/update/"+ track.Value<string>("id").ToString());
                         }
@@ -318,6 +336,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
             String newPurchaseDiscountID = "0";
 
             if (json.Value<string>("po_id") != "")
@@ -328,7 +348,7 @@ namespace badger_view.Controllers
                 PurchaseOrdersDiscount.Add("discount_percentage", json.Value<string>("discount_percentage"));
                 PurchaseOrdersDiscount.Add("discount_note", json.Value<string>("discount_note"));
                 PurchaseOrdersDiscount.Add("completed_status", json.Value<string>("completed_status"));                
-                PurchaseOrdersDiscount.Add("created_by", 1);
+                PurchaseOrdersDiscount.Add("created_by", Int32.Parse(loginUserId));
                 PurchaseOrdersDiscount.Add("created_at", _common.GetTimeStemp());
 
                 newPurchaseDiscountID = await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersDiscount.ToString(Formatting.None), "/purchaseordersdiscounts/create");
@@ -351,6 +371,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
             String updatePurchaseDiscountID = "0";
 
                 JObject PurchaseOrdersDiscount = new JObject();
@@ -359,7 +381,7 @@ namespace badger_view.Controllers
                 PurchaseOrdersDiscount.Add("discount_percentage", json.Value<string>("discount_percentage"));
                 PurchaseOrdersDiscount.Add("discount_note", json.Value<string>("discount_note"));
                 PurchaseOrdersDiscount.Add("completed_status", json.Value<string>("completed_status"));
-                PurchaseOrdersDiscount.Add("updated_by", 1);
+                PurchaseOrdersDiscount.Add("updated_by", Int32.Parse(loginUserId));
                 PurchaseOrdersDiscount.Add("updated_at", _common.GetTimeStemp());
 
             updatePurchaseDiscountID = await _BadgerApiHelper.GenericPutAsyncString<String>(PurchaseOrdersDiscount.ToString(Formatting.None), "/purchaseordersdiscounts/update/"+id.ToString());
@@ -382,6 +404,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
             String newPurchaseLedgerID = "0";
 
             if (json.Value<string>("ledger_adjustment") != "")
@@ -391,7 +415,7 @@ namespace badger_view.Controllers
                 PurchaseOrdersLedger.Add("po_id", json.Value<string>("po_id"));
                 PurchaseOrdersLedger.Add("description", json.Value<string>("ledger_note"));
                 PurchaseOrdersLedger.Add(json.Value<string>("ledger_adjustment"), json.Value<string>("ledger_amount"));
-                PurchaseOrdersLedger.Add("created_by", 1);
+                PurchaseOrdersLedger.Add("created_by", Int32.Parse(loginUserId));
                 PurchaseOrdersLedger.Add("created_at", _common.GetTimeStemp());
 
                 newPurchaseLedgerID = await _BadgerApiHelper.GenericPostAsyncString<String>(PurchaseOrdersLedger.ToString(Formatting.None), "/purchaseordersledger/create");
@@ -414,6 +438,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
             String updatePurchaseLedgerID = "0";
 
                 JObject PurchaseOrdersLedger = new JObject();
@@ -421,7 +447,7 @@ namespace badger_view.Controllers
                 PurchaseOrdersLedger.Add("po_id", json.Value<string>("po_id"));
                 PurchaseOrdersLedger.Add("description", json.Value<string>("ledger_note"));
                 PurchaseOrdersLedger.Add(json.Value<string>("ledger_adjustment"), json.Value<string>("ledger_amount"));
-                PurchaseOrdersLedger.Add("created_by", 1);
+                PurchaseOrdersLedger.Add("created_by", Int32.Parse(loginUserId));
                 PurchaseOrdersLedger.Add("created_at", _common.GetTimeStemp());
 
                updatePurchaseLedgerID = await _BadgerApiHelper.GenericPutAsyncString<String>(PurchaseOrdersLedger.ToString(Formatting.None), "/purchaseordersledger/update/"+id.ToString());
@@ -440,6 +466,9 @@ namespace badger_view.Controllers
         public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
+
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
+
             dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
             return LineItemsDetails;
@@ -447,6 +476,8 @@ namespace badger_view.Controllers
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
             SetBadgerHelper();
+
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
@@ -456,15 +487,69 @@ namespace badger_view.Controllers
 
             return View("PurchaseOrdersManagement", PageModal);
         }
-        public IActionResult EditAttributes()
+        public async Task<IActionResult> EditAttributes()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
-        public IActionResult InventoryReporting()
+        public async Task<IActionResult> InventoryReporting()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
+
+        [Authorize]
+        [HttpPost("purchaseorders/notecreate")]
+        public async Task<String> NoteCreate([FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            String newPurchaseLedgerID = "0";
+
+            if (json.Value<string>("po_notes") != null)
+            {
+                JObject purchaseOrderNote = new JObject();
+                purchaseOrderNote.Add("ref_id", json.Value<string>("po_id"));
+                purchaseOrderNote.Add("note", json.Value<string>("po_notes"));
+                purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
+
+                newPurchaseLedgerID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+            }
+
+            return newPurchaseLedgerID;
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getnote/{id}")]
+        public async Task<String> GetNote(int id)
+        {
+            SetBadgerHelper();
+
+            dynamic purchaseOrdersData = new ExpandoObject();
+         
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+            purchaseOrdersData.notes = purchaseOrderNote;
+
+            return JsonConvert.SerializeObject(purchaseOrdersData);
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getdocument/{id}")]
+        public async Task<String> GetDocument(int id)
+        {
+            SetBadgerHelper();
+
+            dynamic purchaseOrdersData = new ExpandoObject();
+
+            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+            purchaseOrdersData.documents = purchaseOrderDocs;
+
+            return JsonConvert.SerializeObject(purchaseOrdersData);
+        }
+
+        
+
     }
-
-
 }
