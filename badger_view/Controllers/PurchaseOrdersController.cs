@@ -549,7 +549,22 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
-        
+        [Authorize]
+        [HttpPost("purchaseorders/trackingdelete/{id}")]
+        public async Task<string> TrackingDelete(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            JObject purchaseOrdersTrackingData = new JObject();
+            purchaseOrdersTrackingData.Add("po_id", json.Value<string>("po_id"));
+            purchaseOrdersTrackingData.Add("created_by", Int32.Parse(loginUserId));
+
+            return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrdersTrackingData.ToString(Formatting.None), "/purchaseorderstracking/delete/" + id.ToString());
+            
+            //return await _BadgerApiHelper.GenericDeleteAsyncString<string>("/purchaseorderstracking/delete/" + id.ToString());
+        }
 
     }
 }

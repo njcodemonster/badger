@@ -460,7 +460,7 @@ $(document).on("click", "#ledger_submit", function () {
             console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
             $("#view_adjustment").append("Adjustment -- Credit - " + i.credit + " Debit - " + i.debit + " - " + i.description + " <br>");
 
-            $("#ledger_form").attr("data-adjustment", i.transaction_id);
+            /*$("#ledger_form").attr("data-adjustment", i.transaction_id);
 
             if (i.credit > 0) {
                 $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
@@ -470,11 +470,11 @@ $(document).on("click", "#ledger_submit", function () {
                 $("#ledger_amount").val(i.debit);
             }
             
-            $("#ledger_note").val(i.description);
+            $("#ledger_note").val(i.description);*/
             
             window.adjustment = jsonData;
 
-            $("#ledger_submit").attr("id", "update_ledger_submit");
+            //$("#ledger_submit").attr("id", "update_ledger_submit");
         })
     });
 
@@ -586,7 +586,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", 1, '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id +'" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id +'" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
@@ -622,18 +622,34 @@ $(document).on('click', ".add_tracking", function () {
     $("#wrapper_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
 });
 
-
 $(document).on('click', ".remove_tracking", function () {
-
     var track_id = $(this).parent().children().attr("id");
     var track_number = $(this).parent().children().attr("value");
 
-    console.log(track_id +" - "+ track_number);
+    console.log(track_id + " - " + track_number);
 
-    $(this).parent().remove();
+    if (typeof track_id !== "undefined" && track_id) {
+
+        var jsonData = {};
+        jsonData["po_id"] = $("#newPurchaseOrderForm").data("currentid");
+
+        $.ajax({
+            url: '/purchaseorders/trackingdelete/' + track_id,
+            dataType: 'json',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false
+        }).always(function (data) {
+            console.log(data);
+            if (data == true) {
+                $(".poTracking#" + track_id).parent().remove();
+            }
+        });
+    } else {
+                $(this).parent().remove();
+    }    
 });
-
-
 
 $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#note_form #po_notes").val("");
@@ -679,12 +695,9 @@ $(document).on("click", "#note_submit", function () {
         console.log(data);
         $("#modaladdnote").modal("hide");
     });
-
 });
 
-
 $(document).on("click", "#EditPurhaseOrderDocument", function () {
-
     $('#document_form')[0].reset();
     $("#document_form #po_document").val("");
     $("#document_form").attr("data-documentid", "");
@@ -713,20 +726,14 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         }
         $("#modaladddocument").modal("show");        
     });
-
-
-
 });
 
 $(document).on("click", "#document_submit", function () {
-
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
-
         var files = $("#poUploadImages")[0].files;
 
         var formData = new FormData();
-
         formData.append('po_id', $('#document_form').attr("data-documentid"));
 
         for (var i = 0; i != files.length; i++) {
