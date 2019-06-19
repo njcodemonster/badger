@@ -30,7 +30,9 @@ function getPhotoshootProducts(photoshootId) {
 /**********************************************************/
 
 
-$('#photoshootDate').datepicker();
+$('#photoshootDate').datepicker({
+    format: 'm/d/yyyy'
+});
 var datatable_js_ps = $('.datatable_js_ps').DataTable();
 
 function selectAllCheckbox() {

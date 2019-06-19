@@ -255,7 +255,6 @@ namespace badgerApi.Interfaces
             }
             return photoshootsDetails;
         }
-
     }
 }
 

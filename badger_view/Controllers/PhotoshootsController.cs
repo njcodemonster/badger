@@ -159,10 +159,12 @@ namespace badger_view.Controllers
             photoshoot.Add("created_by", user_id);
             photoshoot.Add("updated_by", 0);
             photoshoot.Add("created_at", _common.GetTimeStemp());
-            photoshoot.Add("updated_at", _common.GetTimeStemp());
-            String newPhotoshootID = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshoot.ToString(Formatting.None), "/photoshoots/create");
-            
+            photoshoot.Add("updated_at", 0);
+
             string productId = json.Value<string>("product_id");
+
+            String newPhotoshootID = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshoot.ToString(Formatting.None), "/photoshoots/create/"+ productId);
+            
 
             JObject assignPhotoshoot = new JObject();
             //assignPhotoshoot.Add("product_id", productId);

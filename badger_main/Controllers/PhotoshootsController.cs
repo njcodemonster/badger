@@ -20,10 +20,30 @@ namespace badgerApi.Controllers
     {
         private IPhotoshootRepository _PhotoshootRepo;
         ILoggerFactory _loggerFactory;
+        private IEventRepo _eventRepo;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        string table_name = "product_events";
 
-        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory)
+        string event_create_photoshoot = "Photoshoot created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot
+        int event_photoshoot_created_id = 16;
+
+        string event_photoshoot_started = "Photoshoot started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
+        int event_photoshoot_started_id = 17;
+
+        string event_photoshoot_not_started = "Photoshoot not started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
+        int event_photoshoot_not_started_id = 18;
+
+        string event_photoshoot_sent_to_editor = "Photoshoot sent to editor by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
+        int event_photoshoot_sent_to_editor_id = 19;
+
+        string user_event_create_photoshoot = "Photoshoot created with photoshoot id = %%pid%%"; 
+        string user_event_photoshoot_started = "Photoshoot started product id = %%pid%%"; 
+        string user_event_photoshoot_not_started = "Photoshoot not started with product id = %%pid%%"; 
+        string user_event_photoshoot_sent_to_editor = "Photoshoot sent to editor with product id = %%pid%%";
+        
+        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
         {
-
+            _eventRepo = eventRepo;
             _PhotoshootRepo = PhotoshootRepo;
             _loggerFactory = loggerFactory;
         }
@@ -171,14 +191,20 @@ namespace badgerApi.Controllers
 
 
         // POST: api/photoshoots/create
-        [HttpPost("create")]
-        public async Task<string> PostAsync([FromBody]   string value)
+        [HttpPost("create/{productId}")]
+        public async Task<string> PostAsync([FromBody]   string value, int productId)
         {
             string NewInsertionID = "0";
             try
             {
                 Photoshoots newPhotoshoots = JsonConvert.DeserializeObject<Photoshoots>(value);
                 NewInsertionID = await _PhotoshootRepo.Create(newPhotoshoots);
+                int userId = newPhotoshoots.created_by;
+                event_create_photoshoot = event_create_photoshoot.Replace("%%userid%%", userId.ToString());
+                event_create_photoshoot = event_create_photoshoot.Replace("%%pid%%", NewInsertionID.ToString());
+                await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
+                 
+
             }
             catch (Exception ex)
             {
@@ -200,8 +226,29 @@ namespace badgerApi.Controllers
                 ValuesToUpdate.Add("product_shoot_status_id", PhotoshootToUpdate.product_shoot_status_id.ToString());
                 ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
                 ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
-
+                int userId = PhotoshootToUpdate.updated_by;
                 await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id = " + productId);
+                string PhotoshootStatus = PhotoshootToUpdate.product_shoot_status_id.ToString();
+
+                if (PhotoshootStatus == "1")
+                {
+                    event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
+                    event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
+                    await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_started_id, productId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                }
+                else if (PhotoshootStatus == "2")
+                {
+                    event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
+                    event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
+                    await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_sent_to_editor_id, productId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
+                }
+                else if (PhotoshootStatus == "0")
+                {
+                    event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
+                    event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", productId.ToString());
+                    await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_not_started_id, productId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
+                }
+
             }
             catch (Exception ex)
             {
@@ -229,6 +276,14 @@ namespace badgerApi.Controllers
                 ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
 
                 await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + productId + ")");
+
+                int userId = PhotoshootToUpdate.updated_by;
+                int photoshootId = PhotoshootToUpdate.photoshoot_id;
+
+                event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
+                event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
+                await _eventRepo.AddPhotoshootAsync(Int32.Parse(productId), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+
             }
             catch (Exception ex)
             {
