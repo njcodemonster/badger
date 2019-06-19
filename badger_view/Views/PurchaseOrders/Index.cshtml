@@ -61,11 +61,12 @@
                     <td>@purchaseOrders.custom_delivery_window_start_end</td>
                     <td>@purchaseOrders.num_of_days</td>
                     <td>
-                        @if(@purchaseOrders.po_status == 1){
+                        @if (@purchaseOrders.po_status == 1)
+                        {
                             <span>Open</span>
                         }
 
-                        @if(@purchaseOrders.po_status == 3)
+                        @if (@purchaseOrders.po_status == 3)
                         {
                             <span>In Process</span>
                         }
@@ -77,10 +78,10 @@
                         <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="#"><i class="fa fa-edit h3"></i></a>
+                        <a href="#" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>
                     </td>
                     <td>
-                        <a href="#"><i class="fa fa-upload h3"></i></a>
+                        <a href="#" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>
                     </td>
                     <td>
                         <a href="#">Claim</a>
@@ -207,7 +208,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Upload Images</label>
-                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple >
+                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
 
                                     <div class="po_doc_section d-none"></div>
                                 </div>
@@ -343,7 +344,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add an Invoice Adjustment</h5>
+                    <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -384,7 +385,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add Discount %</h5>
+                    <h5 class="modal-title" id="discountModalLongTitle">Add Discount %</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -399,7 +400,7 @@
                                 </div>
                                 <div class="form-group col-md-8">
                                     <label>Note</label>
-                                    <input type="text" class="form-control" id="discount_note" name="discount_note" >
+                                    <input type="text" class="form-control" id="discount_note" name="discount_note">
                                 </div>
                             </div>
                             <div class="text-center w-100">
@@ -409,7 +410,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="discount_submit"  style="margin: 0 auto;">Submit</button>
+                    <button type="button" class="btn btn-primary" id="discount_submit" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>
@@ -475,6 +476,68 @@
                     <button type="button" class="btn btn-success">Check-in</button>
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Add Note -->
+    <div class="modal fade" id="modaladdnote" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLongTitle">Notes Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="note_form" data-noteid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Note</label>
+                                    <textarea type="text" class="form-control" id="po_notes" name="po_notes"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="note_submit" style="margin: 0 auto;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Document -->
+    <div class="modal fade" id="modaladddocument" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentModalLongTitle">Documents Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="document_form" data-documentid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Document</label>
+                                    <input type="file" class="form-control" id="poUploadImages" name="poUploadImages" multiple>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="document_submit" style="margin: 0 auto;">Submit</button>
+                </div>
+
+                <div class="po_doc_section d-none" style="padding: 10px;"></div>
+
             </div>
         </div>
     </div>

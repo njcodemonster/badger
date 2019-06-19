@@ -1,4 +1,28 @@
-﻿
+﻿/*$(document).ready(function () {
+    //called when key is pressed in textbox
+    $("#poTotalStyles, #poOrderNumber").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            //display error message
+            $(this).css('border-color', 'red');
+            return false;
+        } 
+    });
+    
+    $("#poNumber,#poInvoiceNumber").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && (e.which < 97 || e.which > 122)) {
+            //display error message
+            //$("#errmsg").html("Digits And Letters Only").show().fadeOut("slow");
+            $(this).css('border-color', 'red');
+            return false;
+        }
+    });
+
+
+});*/
+
+
 var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
 
 window.purchaseorderrownumber = "";
@@ -77,6 +101,54 @@ $('#poDelieveryRange').daterangepicker({
 });
 
 $(document).on('click', "#NewPurchaseOrderButton", function () {
+
+    var errorNumber = 0;
+    $(".error").remove();
+
+    if ($("#newPurchaseOrderForm #poVendor").val() == "Choose...") {
+        $('#poVendor').next().after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poDelieveryRange").val().length < 1) {
+        $('#poDelieveryRange').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poNumber").val().length < 1) {
+        $('#poNumber').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poTotalStyles").val().length < 1) {
+        $('#poTotalStyles').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poInvoiceNumber").val().length < 1) {
+        $('#poInvoiceNumber').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poTotalQuantity").val().length < 1) {
+        $('#poTotalQuantity').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poOrderNumber").val().length < 1) {
+        $('#poOrderNumber').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poSubtotal").val().length < 1) {
+        $('#poSubtotal').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poOrderDate").val().length < 1) {
+        $('#poOrderDate').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+    if ($("#newPurchaseOrderForm #poShipping").val().length < 1) {
+        $('#poShipping').after('<span class="error">This field is required</span>');
+        errorNumber++;
+    }
+
+    if (errorNumber > 0) {
+        return false;
+    }
 
     var jsonData = {};
 
@@ -551,4 +623,128 @@ $(document).on('click', ".remove_tracking", function () {
     console.log(track_id +" - "+ track_number);
 
     $(this).parent().remove();
+});
+
+
+
+$(document).on("click", "#EditPurhaseOrderNote", function () {
+    $("#note_form #po_notes").val("");
+    $("#note_form").attr("data-noteid", "");
+    var id = $(this).attr("data-id");
+
+    $.ajax({
+        url: '/purchaseorders/getnote/' + id,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+        
+        var note = data['notes'];
+        if (note.length > 0) {
+            note = data['notes'][0].note;
+            
+            $("#note_form").attr("data-noteid", id);
+            $("#note_form #po_notes").val(note);
+        }
+        $("#modaladdnote").modal("show");
+    });
+
+   
+
+});
+
+$(document).on("click", "#note_submit", function () {
+
+    var jsonData = {};
+
+    jsonData["po_id"] = $("#note_form").attr("data-noteid");
+    jsonData["po_notes"] = $("#po_notes").val();
+
+    console.log(jsonData);
+
+    $.ajax({
+        url: '/purchaseorders/notecreate',
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        $("#modaladdnote").modal("hide");
+    });
+
+});
+
+
+$(document).on("click", "#EditPurhaseOrderDocument", function () {
+
+    $('#document_form')[0].reset();
+    $("#document_form #po_document").val("");
+    $("#document_form").attr("data-documentid", "");
+    var id = $(this).attr("data-id");
+    $("#document_form").attr("data-documentid", id);
+    $.ajax({
+        url: '/purchaseorders/getdocument/' + id,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+
+        var docs = data['documents'];
+        $(".po_doc_section").empty();
+        if (docs.length > 0) {
+
+            $(docs).each(function (e, i) {
+                $(".po_doc_section").append("File " + (e + 1) + ": <a href=" + i.url + ">" + i.url + "</a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        } else {
+            $(".po_doc_section").addClass('d-none');
+        }
+        $("#modaladddocument").modal("show");        
+    });
+
+
+
+});
+
+$(document).on("click", "#document_submit", function () {
+
+    var fileLength = $("#poUploadImages")[0].files.length;
+    if (fileLength != 0) {
+
+        var files = $("#poUploadImages")[0].files;
+
+        var formData = new FormData();
+
+        formData.append('po_id', $('#document_form').attr("data-documentid"));
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("purchaseOrderDocuments", files[i]);
+        }
+
+        $.ajax({
+            url: "/purchaseorders/purchaseorder_doc",
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+        }).always(function (data) {
+            console.log(data);
+            if (data == "0") {
+                console.log("Exception Error");
+            } else {
+                console.log(data.responseText);
+                $("#modaladddocument").modal("hide");
+            }
+        });
+    }
+
+
 });

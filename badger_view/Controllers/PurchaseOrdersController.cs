@@ -54,6 +54,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
+            
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
@@ -133,8 +135,9 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
         [Authorize]
-        public IActionResult Single()
+        public async Task<IActionResult> Single()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
         [Authorize]
@@ -463,6 +466,9 @@ namespace badger_view.Controllers
         public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
+
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
+
             dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
             return LineItemsDetails;
@@ -470,6 +476,8 @@ namespace badger_view.Controllers
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
             SetBadgerHelper();
+
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
@@ -479,15 +487,69 @@ namespace badger_view.Controllers
 
             return View("PurchaseOrdersManagement", PageModal);
         }
-        public IActionResult EditAttributes()
+        public async Task<IActionResult> EditAttributes()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
-        public IActionResult InventoryReporting()
+        public async Task<IActionResult> InventoryReporting()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
+
+        [Authorize]
+        [HttpPost("purchaseorders/notecreate")]
+        public async Task<String> NoteCreate([FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            String newPurchaseLedgerID = "0";
+
+            if (json.Value<string>("po_notes") != null)
+            {
+                JObject purchaseOrderNote = new JObject();
+                purchaseOrderNote.Add("ref_id", json.Value<string>("po_id"));
+                purchaseOrderNote.Add("note", json.Value<string>("po_notes"));
+                purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
+
+                newPurchaseLedgerID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+            }
+
+            return newPurchaseLedgerID;
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getnote/{id}")]
+        public async Task<String> GetNote(int id)
+        {
+            SetBadgerHelper();
+
+            dynamic purchaseOrdersData = new ExpandoObject();
+         
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+            purchaseOrdersData.notes = purchaseOrderNote;
+
+            return JsonConvert.SerializeObject(purchaseOrdersData);
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getdocument/{id}")]
+        public async Task<String> GetDocument(int id)
+        {
+            SetBadgerHelper();
+
+            dynamic purchaseOrdersData = new ExpandoObject();
+
+            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+            purchaseOrdersData.documents = purchaseOrderDocs;
+
+            return JsonConvert.SerializeObject(purchaseOrdersData);
+        }
+
+        
+
     }
-
-
 }
