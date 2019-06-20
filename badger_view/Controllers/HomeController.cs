@@ -21,39 +21,35 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            // Int32? test =  HttpContext.Session.GetInt32("isLogin");
-            // if ( await _LoginHelper.CheckLogin())
-            // {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
-            // }
-            // else
-            //  {
-            //      return View("Login");
-            // }
         }
         [HttpPost("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
-
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View("Login");
 
         }
-        public IActionResult About()
+        [Authorize]
+        public async Task<IActionResult> About()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             ViewData["Message"] = "Your application description page.";
-
+            
             return View();
         }
-
-        public IActionResult Contact()
+        [Authorize]
+        public async Task<IActionResult> Contact()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             ViewData["Message"] = "Your contact page.";
-
             return View();
         }
-
-        public IActionResult Privacy()
+        [Authorize]
+        public async Task<IActionResult> Privacy()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
 
@@ -63,8 +59,9 @@ namespace badger_view.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Form()
+        public async Task<IActionResult> Form()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
     }

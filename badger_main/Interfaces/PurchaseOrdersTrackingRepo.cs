@@ -50,8 +50,7 @@ namespace badgerApi.Interfaces
            
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<object> purchaseOrdersTracking = await conn.QueryAsync<object>(sQuery);
-                poPageList.purchaseOrdersTracking = purchaseOrdersTracking;
+               poPageList = await conn.QueryAsync<object>(sQuery);
             }
             return poPageList;
 

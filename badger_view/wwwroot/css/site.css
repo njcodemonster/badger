@@ -216,6 +216,22 @@ header {
     padding: 5px 15px;
     border-radius: 5px;
 }
+.red_color {
+    color:#ff0000;
+}
+
+.tracking_add_more_box {
+    padding: 5px 0;
+}
+
+.error {
+    color: red;
+    margin-left: 5px;
+}
+
+label.error {
+    display: inline;
+}
 .errorFeild{
     border:1px solid red;
 }

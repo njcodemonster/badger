@@ -61,11 +61,12 @@
                     <td>@purchaseOrders.custom_delivery_window_start_end</td>
                     <td>@purchaseOrders.num_of_days</td>
                     <td>
-                        @if(@purchaseOrders.po_status == 1){
+                        @if (@purchaseOrders.po_status == 1)
+                        {
                             <span>Open</span>
                         }
 
-                        @if(@purchaseOrders.po_status == 3)
+                        @if (@purchaseOrders.po_status == 3)
                         {
                             <span>In Process</span>
                         }
@@ -77,16 +78,16 @@
                         <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="#"><i class="fa fa-edit h3"></i></a>
+                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>
                     </td>
                     <td>
-                        <a href="#"><i class="fa fa-upload h3"></i></a>
+                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>
                     </td>
                     <td>
-                        <a href="#">Claim</a>
+                        <a href="javascript:void(0)">Claim</a>
                     </td>
                     <td>
-                        <a href="#">Claim</a>
+                        <a href="javascript:void(0)">Claim</a>
                     </td>
                 </tr>
             }
@@ -118,7 +119,7 @@
 @section page_popup_area{
 
     <!-- Modal PO -->
-    <div class="modal fade" id="modalPurchaseOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalPurchaseOrder" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -197,16 +198,17 @@
 
                                 </div>
                                 <div class="col-md-6 text-right">
-                                        <br />
-                                        <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
-                                        <br />
-                                        <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+                                    <br />
+                                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
+                                    <br />
+                                    <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Upload Images</label>
-                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple >
+                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
 
                                     <div class="po_doc_section d-none"></div>
                                 </div>
@@ -228,7 +230,7 @@
     </div>
 
     <!-- Modal Vendor -->
-    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -338,22 +340,22 @@
         </div>
     </div>
     <!-- Modal Add Invoice -->
-    <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add an Invoice Adjustment</h5>
+                    <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form>
+                        <form id="ledger_form" data-adjustment="">
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Adjustment</label>
-                                    <select id="inputState" class="form-control">
+                                    <select id="ledger_adjustment" name="ledger_adjustment" class="form-control">
                                         <option selected>Choose...</option>
                                         <option value="credit">Credit</option>
                                         <option value="debit">Debit</option>
@@ -361,44 +363,44 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label>Amount</label>
-                                    <input type="text" class="form-control" placeholder="$">
+                                    <input type="text" class="form-control" id="ledger_amount" name="ledger_amount" placeholder="$">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label>Note</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control" id="ledger_note" name="ledger_note">
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+                    <button type="button" class="btn btn-primary" id="ledger_submit" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Add Discount -->
-    <div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add Discount %</h5>
+                    <h5 class="modal-title" id="discountModalLongTitle">Add Discount %</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form>
+                        <form id="discount_form" data-discount="">
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Discount</label>
-                                    <input type="text" class="form-control" placeholder="%">
+                                    <input type="text" class="form-control" id="discount_percentage" name="discount" placeholder="%">
                                 </div>
                                 <div class="form-group col-md-8">
                                     <label>Note</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control" id="discount_note" name="discount_note">
                                 </div>
                             </div>
                             <div class="text-center w-100">
@@ -408,14 +410,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" style="margin: 0 auto;">Submit</button>
+                    <button type="button" class="btn btn-primary" id="discount_submit" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Check-in -->
-    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -474,6 +476,68 @@
                     <button type="button" class="btn btn-success">Check-in</button>
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Add Note -->
+    <div class="modal fade" id="modaladdnote" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLongTitle">Notes Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="note_form" data-noteid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Note</label>
+                                    <textarea type="text" class="form-control" id="po_notes" name="po_notes"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="note_submit" style="margin: 0 auto;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Document -->
+    <div class="modal fade" id="modaladddocument" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentModalLongTitle">Documents Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="document_form" data-documentid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Document</label>
+                                    <input type="file" class="form-control" id="poUploadImages" name="poUploadImages" multiple>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="document_submit" style="margin: 0 auto;">Submit</button>
+                </div>
+
+                <div class="po_doc_section d-none" style="padding: 10px;"></div>
+
             </div>
         </div>
     </div>

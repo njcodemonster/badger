@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +7,9 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Dynamic;
-using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-
+using MySql.Data.MySqlClient;
+using Dapper;
 
 namespace badgerApi.Controllers
 {
@@ -18,21 +17,42 @@ namespace badgerApi.Controllers
     [ApiController]
     public class PurchaseOrdersTrackingController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly IPurchaseOrdersTrackingRepository _PurchaseOrdersTrackingRepo;
         ILoggerFactory _loggerFactory;
-        private INotesAndDocHelper _NotesAndDoc;
-        private IItemServiceHelper _ItemsHelper;
+
+        IEventRepo _eventRepo;
+
+        private int event_type_tracking_id = 4;
+        private int event_type_tracking_update_id = 14;
+        private int event_type_tracking_specific_update_id = 15;
+        private int event_type_tracking_delete_id = 20;
+
+        private string userEventTableName = "user_events";
+        private string tableName = "purchase_order_events";
+
+        private string event_create_purchase_orders_tracking = "Purchase order tracking created by user =%%userid%% with purchase order tracking id= %%trackingid%%";
+        private string event_update_purchase_orders_tracking = "Purchase order tracking updated by user =%%userid%% with purchase order tracking id= %%trackingid%%";
+        private string event_updatespecific_purchase_orders_tracking = "Purchase order tracking specific updated by user =%%userid%% with purchase order tracking id= %%trackingid%%";
+        private string event_delete_purchase_orders_tracking = "Purchase order tracking deleted by user =%%userid%% with purchase order tracking id= %%trackingid%%";
+
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PurchaseOrdersTrackingController(IPurchaseOrdersTrackingRepository PurchaseOrdersTrackingRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper)
+
+        private readonly IConfiguration _config;
+        public IDbConnection Connection
         {
-            _config = config;
-            _PurchaseOrdersTrackingRepo = PurchaseOrdersTrackingRepo;
-            _loggerFactory = loggerFactory;
-            _NotesAndDoc = NotesAndDoc;
-            _ItemsHelper = ItemsHelper;
+            get
+            {
+                return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
+            }
         }
 
+        public PurchaseOrdersTrackingController(IPurchaseOrdersTrackingRepository PurchaseOrdersTrackingRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IConfiguration config)
+        {
+            _config = config;
+            _eventRepo = eventRepo;
+            _PurchaseOrdersTrackingRepo = PurchaseOrdersTrackingRepo;
+            _loggerFactory = loggerFactory;
+        }
 
         // GET: api/purchaseorderstracking/gettracking/10
         [HttpGet("gettracking/{id}")]
@@ -46,7 +66,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
              {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for gettracking with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorderstracking gettracking with message" + ex.Message);
 
             }
 
@@ -63,11 +83,17 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrdersTracking newPurchaseOrderTracking = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
                 NewInsertionID = await _PurchaseOrdersTrackingRepo.Create(newPurchaseOrderTracking);
+
+                event_create_purchase_orders_tracking = event_create_purchase_orders_tracking.Replace("%%userid%%", newPurchaseOrderTracking.created_by.ToString()).Replace("%%trackingid%%", NewInsertionID);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(newPurchaseOrderTracking.po_id, event_type_tracking_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_tracking, newPurchaseOrderTracking.created_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddEventAsync(event_type_tracking_id, newPurchaseOrderTracking.created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders_tracking, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new new Purchase Order Tracking with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new new Purchase Order Tracking create with message" + ex.Message);
             }
             return NewInsertionID;
         }
@@ -82,13 +108,19 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrdersTracking PurchaseOrdersTrackingToUpdate = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
-                PurchaseOrdersTrackingToUpdate.po_id = id;
+                PurchaseOrdersTrackingToUpdate.po_tracking_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersTrackingRepo.Update(PurchaseOrdersTrackingToUpdate);
+
+                event_update_purchase_orders_tracking = event_update_purchase_orders_tracking.Replace("%%userid%%", PurchaseOrdersTrackingToUpdate.updated_by.ToString()).Replace("%%trackingid%%", id.ToString());
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersTrackingToUpdate.po_id, event_type_tracking_update_id, id, event_update_purchase_orders_tracking , PurchaseOrdersTrackingToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddEventAsync(event_type_tracking_update_id, PurchaseOrdersTrackingToUpdate.updated_by, id, event_update_purchase_orders_tracking, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating  purchaseorderstracking with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -109,10 +141,17 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrdersTracking PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
-                PurchaseOrdersToUpdate.po_id = id;
+                PurchaseOrdersToUpdate.po_tracking_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-
-               
+    
+                if (PurchaseOrdersToUpdate.po_id != 0)
+                {
+                    ValuesToUpdate.Add("po_id", PurchaseOrdersToUpdate.po_id.ToString());
+                }
+                if (PurchaseOrdersToUpdate.tracking_number != 0)
+                {
+                    ValuesToUpdate.Add("tracking_number", PurchaseOrdersToUpdate.tracking_number.ToString());
+                }
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -130,22 +169,53 @@ namespace badgerApi.Controllers
                     ValuesToUpdate.Add("updated_at", PurchaseOrdersToUpdate.updated_at.ToString());
                 }
 
-                await _PurchaseOrdersTrackingRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
+                await _PurchaseOrdersTrackingRepo.UpdateSpecific(ValuesToUpdate, "po_tracking_id=" + id);
+
+                event_updatespecific_purchase_orders_tracking = event_updatespecific_purchase_orders_tracking.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%trackingid%%", id.ToString());
+
+                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_tracking_specific_update_id, id, event_updatespecific_purchase_orders_tracking , PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddEventAsync(event_type_tracking_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders_tracking, _common.GetTimeStemp(), userEventTableName);
+
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating new updatespecific purchaseorderstracking with message" + ex.Message);
                 UpdateResult = "Failed";
             }
 
             return UpdateResult;
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST: api/purchaseorderstracking/delete/5
+        [HttpPost("delete/{id}")]
+        public async Task<bool> Delete(int id, [FromBody] string value)
         {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DeleteQuery = "Delete From purchase_order_tracking WHERE po_tracking_id ="+id.ToString();
+                    var vendorDetails = await conn.QueryAsync<object>(DeleteQuery);
+                    res = true;
+
+                    PurchaseOrdersTracking PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrdersTracking>(value);
+
+                    event_delete_purchase_orders_tracking = event_updatespecific_purchase_orders_tracking.Replace("%%userid%%", PurchaseOrdersToUpdate.created_by.ToString()).Replace("%%trackingid%%", id.ToString());
+
+                    _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_tracking_delete_id, id, event_delete_purchase_orders_tracking, PurchaseOrdersToUpdate.created_by, _common.GetTimeStemp(), tableName);
+
+                    _eventRepo.AddEventAsync(event_type_tracking_delete_id, PurchaseOrdersToUpdate.created_by, id, event_delete_purchase_orders_tracking, _common.GetTimeStemp(), userEventTableName);
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
         }
     }
 }
