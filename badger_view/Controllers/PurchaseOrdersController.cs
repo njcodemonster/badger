@@ -57,8 +57,6 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
-            
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
@@ -140,7 +138,6 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Single()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
         [Authorize]
@@ -470,8 +467,6 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
-
             dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
             return LineItemsDetails;
@@ -479,8 +474,6 @@ namespace badger_view.Controllers
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
             SetBadgerHelper();
-
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
