@@ -23,6 +23,8 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 3;
         private IEventRepo _eventRepo;
+        private int event_vendor_id = 1;
+        private string event_create_vendor = "";
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo)
         {
@@ -226,6 +228,7 @@ namespace badgerApi.Controllers
             {
                 Vendor newVendor = JsonConvert.DeserializeObject<Vendor>(value);
                 NewInsertionID = await _VendorRepo.Create(newVendor);
+                await _eventRepo.AddVendorEvents()
             }
             catch(Exception ex)
             {

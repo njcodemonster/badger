@@ -142,7 +142,7 @@ $(document).on('click', "#EditVendor", function () {
         if (documents.length > 0) {
             for (var i = 0; i < documents.length; i++) {
                 var html = '';
-                html += '<a class="documentsLink" href="">'+documents[i].url+'</a><br>';
+                html += '<a class="documentsLink" data-val="'+documents[i].url+'" href="">'+documents[i].url+'</a><br>';
             }
             $('#vendorDocument').parent('div').append(html)
         }
@@ -207,7 +207,40 @@ $(document).on('click', "#EditVendorButton", function () {
         data: JSON.stringify(jsonData),
         processData: false,
 
-    }).always(function (data) { console.log(data); alert('update') });
+        }).always(function (data) { 
+            console.log(data); 
+            if (data != "0") {
+                console.log("Vender updated");
+                alert("vendor created . uploading files");
+                var formData = new FormData();
+                formData.append('Vendor_id', id);
+                var files = $("#newVendorForm #vendorDocument")[0].files;
+
+                    for (var i = 0; i != files.length; i++) {
+                        if ($('#documentsLink').attr('data-val')) {
+                            if($('#documentsLink').attr('data-val').indexOf(files[i].name) == -1)
+                                formData.append("vendorDocuments", files[i]);
+                        } else {
+                            formData.append("vendorDocuments", files[i]);
+                        }
+                         //formData.append("vendorDocuments", files[i]);
+                    }
+                    $.ajax({
+                        url: "/vendor/newvendor_doc",
+                        type: 'POST',
+                        data: formData,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                    }).always(function (data) {
+                        console.log(data);
+                    });
+                
+
+            }
+            alert('update') 
+        
+        });
 });
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton");
