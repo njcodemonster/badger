@@ -14,6 +14,7 @@ using CommonHelper;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace badger_view.Controllers
 {
@@ -32,12 +33,14 @@ namespace badger_view.Controllers
 
         private ILoginHelper _LoginHelper;
 
-        public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper)
+        ILoggerFactory _loggerFactory;
+
+        public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
-
+            _loggerFactory = loggerFactory;
         }
         private BadgerApiHelper _BadgerApiHelper;
 
@@ -54,8 +57,6 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
-            
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/true");
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
@@ -137,7 +138,6 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Single()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
         [Authorize]
@@ -467,8 +467,6 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
-
             dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
             return LineItemsDetails;
@@ -477,13 +475,11 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
-
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(601, 0);
-
+            PageModal.AllItemStatus =  await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
 
             return View("PurchaseOrdersManagement", PageModal);
         }
@@ -549,7 +545,48 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
-        
+        [Authorize]
+        [HttpPost("purchaseorders/trackingdelete/{id}")]
+        public async Task<string> TrackingDelete(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            JObject purchaseOrdersTrackingData = new JObject();
+            purchaseOrdersTrackingData.Add("po_id", json.Value<string>("po_id"));
+            purchaseOrdersTrackingData.Add("created_by", Int32.Parse(loginUserId));
+
+            return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrdersTrackingData.ToString(Formatting.None), "/purchaseorderstracking/delete/" + id.ToString());
+        }
+
+        [Authorize]
+        [HttpPost("purchaseorders/delete/{id}")]
+        public async Task<string> PurchaseOrdersDelete(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string updatePurchaseOrderID = "0";
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+            try
+            {
+                JObject purchaseOrdersData = new JObject();
+                purchaseOrdersData.Add("po_id", id);
+                purchaseOrdersData.Add("po_status", 4);
+                purchaseOrdersData.Add("updated_by", Int32.Parse(loginUserId));
+
+                updatePurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrdersData.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id.ToString());
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
+                updatePurchaseOrderID = "Failed";
+            }
+            return updatePurchaseOrderID;
+        }
+
 
     }
 }

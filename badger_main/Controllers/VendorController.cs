@@ -23,6 +23,26 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 3;
         private IEventRepo _eventRepo;
+
+
+
+        private int event_vendor_id = 1;
+        private int event_vendor_note_create_id = 22;
+        private int event_type_vendor_document_create_id = 21;
+        private int event_type_vendor_update_id = 23;
+        private string userEventTableName = "user_events";
+        private string vendorEventTableName = "vendor_events";
+
+        private string event_create_vendor= "Vendor created by user =%%userid%% with vendor id= %%vendorid%%";
+        private string event_create_vendor_notecreate = "Vendor note created by user =%%userid%% with note id= %%noteid%%";
+        private string event_create_vendor_documentcreate = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
+        private string event_update_vendor = "Vendor updated by user =%%userid%% with vendor id= %%vendorid%%";
+
+
+
+
+
+
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo)
         {
@@ -120,11 +140,9 @@ namespace badgerApi.Controllers
                 vendor = await _VendorRepo.GetById(id);
                 vendor_address = await _VendorRepo.GetVendorDetailsAddress(id);
                 vendor_Rep = await _VendorRepo.GetVendorDetailsRep(id);
-                vendor_Note = await _VendorRepo.GetVendorNotes(id);
                 AdressAndrepDetails.Vendor = vendor;
                 AdressAndrepDetails.Addresses = vendor_address;
                 AdressAndrepDetails.Reps = vendor_Rep;
-                AdressAndrepDetails.Notes = vendor_Note;
 
             }
             catch (Exception ex)
@@ -137,6 +155,29 @@ namespace badgerApi.Controllers
             return AdressAndrepDetails;
 
         }
+
+        //GET: api/vendor/getnoteanddoc/103
+        [HttpGet("getnoteanddoc/{id}")]
+        public async Task<object> DetailsNotesAndDoc(int id)
+        {
+            dynamic vendorNoteAndDoc = new ExpandoObject();
+            try
+            {
+                vendorNoteAndDoc.note = await _NotesAndDoc.GenericNote<Notes>(id, note_type, 1);
+                vendorNoteAndDoc.doc = await _NotesAndDoc.GenericGetDocAsync<Documents>(id, note_type, 1);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorNoteAndDoc;
+
+        }
+
         //GET: api/vendor/detailsaddress/103
         [HttpGet("detailsaddress/{id}")]
         public async Task<List<object>> DetailsAddress(int id)
@@ -205,6 +246,12 @@ namespace badgerApi.Controllers
             {
                 Vendor newVendor = JsonConvert.DeserializeObject<Vendor>(value);
                 NewInsertionID = await _VendorRepo.Create(newVendor);
+
+                event_create_vendor = event_create_vendor.Replace("%%userid%%", newVendor.created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
+
+                _eventRepo.AddVendorEventAsync(Int32.Parse(NewInsertionID), event_vendor_id, 0, newVendor.created_by, event_create_vendor, _common.GetTimeStemp(), vendorEventTableName);
+
+                _eventRepo.AddEventAsync(event_vendor_id, newVendor.created_by, Int32.Parse(NewInsertionID), event_create_vendor, _common.GetTimeStemp(), userEventTableName);
             }
             catch(Exception ex)
             {
@@ -225,7 +272,14 @@ namespace badgerApi.Controllers
                 int ref_id = newVendorNote.ref_id;
                 string note = newVendorNote.note;
                 double created_at = _common.GetTimeStemp();
-                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, 1, created_at);
+                int created_by = newVendorNote.created_by;
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
+                event_create_vendor_notecreate = event_create_vendor_notecreate.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
+
+                _eventRepo.AddVendorEventAsync(ref_id, event_vendor_note_create_id, Int32.Parse(newNoteID), created_by, event_create_vendor_notecreate, _common.GetTimeStemp(), vendorEventTableName);
+
+                _eventRepo.AddEventAsync(event_vendor_note_create_id, created_by, Int32.Parse(newNoteID), event_create_vendor_notecreate, _common.GetTimeStemp(), userEventTableName);
+
             }
             catch (Exception ex)
             {
@@ -239,21 +293,28 @@ namespace badgerApi.Controllers
         [HttpPost("documentcreate")]
         public async Task<string> DocumentCreate([FromBody]   string value)
         {
-            string newNoteID = "0";
+            string newDocID = "0";
             try
             {
-                dynamic newVendorNote = JsonConvert.DeserializeObject<Object>(value);
-                int ref_id = newVendorNote.ref_id;
-                string url = newVendorNote.url;
+                dynamic newVendorDoc = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = newVendorDoc.ref_id;
+                string url = newVendorDoc.url;
                 double created_at = _common.GetTimeStemp();
-                newNoteID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, url, "", 1, 1);
+                int created_by = newVendorDoc.created_by;
+                newDocID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, url, "", created_by, created_at);
+                event_create_vendor_documentcreate = event_create_vendor_documentcreate.Replace("%%userid%%", newVendorDoc.created_by.ToString()).Replace("%%documentid%%", newDocID);
+
+                _eventRepo.AddVendorEventAsync(ref_id, event_type_vendor_document_create_id, Int32.Parse(newDocID), created_by, event_create_vendor_documentcreate, _common.GetTimeStemp(), vendorEventTableName);
+
+                _eventRepo.AddEventAsync(event_type_vendor_document_create_id, created_by, Int32.Parse(newDocID), event_create_vendor_documentcreate, _common.GetTimeStemp(), userEventTableName);
+
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
             }
-            return newNoteID;
+            return newDocID;
         }
         // PUT: api/vendor/update/5
         [HttpPut("update/{id}")]
@@ -267,6 +328,13 @@ namespace badgerApi.Controllers
                 Vendor VendorToUpdate = JsonConvert.DeserializeObject<Vendor>(value);
                 VendorToUpdate.vendor_id = id;
                 UpdateProcessOutput = await _VendorRepo.Update(VendorToUpdate);
+                event_update_vendor = event_update_vendor.Replace("%%userid%%", VendorToUpdate.updated_by.ToString()).Replace("%%vendorid%%", id.ToString());
+
+                _eventRepo.AddVendorEventAsync(id, event_type_vendor_update_id, id, VendorToUpdate.updated_by, event_update_vendor, _common.GetTimeStemp(), vendorEventTableName);
+
+                _eventRepo.AddEventAsync(event_type_vendor_update_id, id, VendorToUpdate.updated_by, event_update_vendor, _common.GetTimeStemp(), userEventTableName);
+
+
             }
             catch (Exception ex)
             {

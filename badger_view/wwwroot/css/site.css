@@ -239,3 +239,9 @@ header {
 label.error {
     display: inline;
 }
+.errorFeild{
+    border:1px solid red;
+}
+#newVendorForm .phone {
+    text-align: center
+}

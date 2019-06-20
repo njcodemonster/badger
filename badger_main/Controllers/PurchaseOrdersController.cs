@@ -9,6 +9,10 @@ using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using System.Data;
+using Dapper;
+using MySql.Data.MySqlClient;
+
 
 
 namespace badgerApi.Controllers
@@ -31,6 +35,7 @@ namespace badgerApi.Controllers
         private int event_type_po_document_create_id = 7;
         private int event_type_po_update_id = 8;
         private int event_type_po_specific_update_id = 9;
+        private int event_type_po_delete_id = 24;
 
         private string userEventTableName = "user_events";
         private string tableName = "purchase_order_events";
@@ -40,8 +45,18 @@ namespace badgerApi.Controllers
         private string event_create_purchase_orders_documentcreate = "Purchase order document created by user =%%userid%% with document id= %%documentid%%";
         private string event_update_purchase_orders = "Purchase order updated by user =%%userid%% with purchase order id= %%poid%%";
         private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
-        
+        private string event_delete_purchase_orders = "Purchase order deleted by user =%%userid%% with purchase order id= %%poid%%";
+
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
+            }
+        }
+
         public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
             _eventRepo = eventRepo;
@@ -369,11 +384,21 @@ namespace badgerApi.Controllers
 
                 await _PurchaseOrdersRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
 
-                event_updatespecific_purchase_orders = event_updatespecific_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+                if (PurchaseOrdersToUpdate.po_status == 4) {
+                    event_delete_purchase_orders = event_delete_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
 
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_delete_id, id, event_delete_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
-                _eventRepo.AddEventAsync(event_type_po_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                    _eventRepo.AddEventAsync(event_type_po_delete_id, PurchaseOrdersToUpdate.updated_by, id, event_delete_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                }
+                else
+                {
+                    event_updatespecific_purchase_orders = event_updatespecific_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+
+                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                    _eventRepo.AddEventAsync(event_type_po_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                }
             }
             catch (Exception ex)
             {
@@ -385,10 +410,6 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

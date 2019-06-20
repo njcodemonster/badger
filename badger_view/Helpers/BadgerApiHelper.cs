@@ -87,6 +87,5 @@ namespace badger_view.Helpers
             };
             return  JsonConvert.DeserializeObject<T>(data, settings);
         }
-
     }
 }
