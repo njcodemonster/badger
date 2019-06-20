@@ -21,31 +21,35 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
         [HttpPost("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
-
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View("Login");
 
         }
         [Authorize]
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             ViewData["Message"] = "Your application description page.";
             
             return View();
         }
         [Authorize]
-        public IActionResult Contact()
+        public async Task<IActionResult> Contact()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             ViewData["Message"] = "Your contact page.";
             return View();
         }
         [Authorize]
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
 
@@ -55,8 +59,9 @@ namespace badger_view.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Form()
+        public async Task<IActionResult> Form()
         {
+            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
     }

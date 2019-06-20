@@ -12,6 +12,7 @@ namespace badgerApi.Models
         public int user_event_type { get; set; }
         public int reference_id { get; set; }
         public string event_description { get; set; }
-        public int created_at { get; set; }
+        public int user_id { get; set; }
+        public double created_at { get; set; }
     }
 }

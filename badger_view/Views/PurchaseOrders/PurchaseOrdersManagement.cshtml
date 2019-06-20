@@ -104,7 +104,7 @@
                                     </tr>
                                 </thead>
                                 @:<tbody>
-                                }
+}
 
 
                 int i = 0;
@@ -115,6 +115,7 @@
                 @while (i < DisplayTimes)
                 {
                     i++;
+                    @*LineItem.EndItems[i - 1].barcode*@
 
 
                     <tr data-prductid="@LineItem.product_id" data-sku="@LineItem.sku" >
