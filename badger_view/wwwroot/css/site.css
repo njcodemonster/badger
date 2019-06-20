@@ -216,6 +216,13 @@ header {
     padding: 5px 15px;
     border-radius: 5px;
 }
+
+.unselect_menu {
+    display:none;
+}
+
+
+
 .red_color {
     color:#ff0000;
 }
