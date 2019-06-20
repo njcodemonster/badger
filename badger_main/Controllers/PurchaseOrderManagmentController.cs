@@ -44,6 +44,22 @@ namespace badgerApi.Controllers
             }
             return index;
         }
+        [HttpGet("ListAllItemStatus")]
+        public async Task<object> ListAllItemStatus()
+        {
+            dynamic AllItemStatus = new object();
+            try
+            {
+                AllItemStatus = await _ItemsHelper.GetAllStatus();
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for all Item status from Item service with message" + ex.Message);
+            }
+            return AllItemStatus;
+
+        }
         [HttpGet("GetLineItemDetails/{PO_id}/{limit}")]
         public async Task<object> GetLineItemsDetails(int PO_id, int limit)
         {

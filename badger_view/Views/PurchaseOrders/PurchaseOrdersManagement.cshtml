@@ -115,15 +115,26 @@
                 @while (i < DisplayTimes)
                 {
                     i++;
-                    @*LineItem.EndItems[i - 1].barcode*@
-
-                    <tr>
-
-                        <td>@LineItem.Size</td>
+                    <tr data-prductid="@LineItem.product_id" data-sku="@LineItem.sku" >
+                       
+                        <td>@LineItem.Size<input type="hidden" value="@LineItem.EndItems[i - 1]" /></td>
                         <td>
                             <select class="form-control">
-                                <option selected>Choose...</option>
-                                <option>...</option>
+                                @foreach (dynamic _status in Model.AllItemStatus)
+                                {
+                                    if (@_status.item_status_id == @LineItem.EndItems[i - 1].item_status_id)
+                                    {
+                                        <option selected>@_status.description</option>
+                                    }
+                                    else
+                                    {
+                                        if (_status.item_status_id != 5)
+                                        {
+                                            <option>@_status.description</option>
+                                        }
+                                    }
+
+                                }
                             </select>
                         </td>
                         <td>
@@ -133,13 +144,13 @@
                             <a href="#"><i class="fa fa-upload h3"></i></a>
                         </td>
                         <td>
-                            <input type="text" class="form-control" />
+                            <input type="text"  value="@LineItem.weight" class="form-control" />
                         </td>
                         <td>
-                            <input type="text" class="form-control" />
+                            <input type="text" value="@LineItem.sku" class="form-control" />
                         </td>
                         <td>
-                            <input type="text" class="form-control" />
+                            <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control" value="@LineItem.EndItems[i-1].barcode"/>
                         </td>
                         <td>
                             <button type="button" class="btn btn-success btn-sm">Publish</button>
