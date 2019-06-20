@@ -46,7 +46,7 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
+           
             VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/200");
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
@@ -61,7 +61,7 @@ namespace badger_view.Controllers
         {
             dynamic vendorDetails = new ExpandoObject();
             SetBadgerHelper();
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
+            
             VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/vendor/detailsaddressandrep/" + id.ToString());
             dynamic venderDocAndNotes = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/getnoteanddoc/" + id.ToString());
             vendorDetails.venderAdressandRep = venderAdressandRep;

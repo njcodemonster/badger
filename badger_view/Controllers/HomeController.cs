@@ -21,20 +21,17 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
         [HttpPost("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View("Login");
 
         }
         [Authorize]
         public async Task<IActionResult> About()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             ViewData["Message"] = "Your application description page.";
             
             return View();
@@ -42,14 +39,12 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Contact()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             ViewData["Message"] = "Your contact page.";
             return View();
         }
         [Authorize]
         public async Task<IActionResult> Privacy()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
 
@@ -61,7 +56,6 @@ namespace badger_view.Controllers
 
         public async Task<IActionResult> Form()
         {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
             return View();
         }
     }
