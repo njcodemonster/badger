@@ -216,8 +216,6 @@ header {
     padding: 5px 15px;
     border-radius: 5px;
 }
-
-
 .red_color {
     color:#ff0000;
 }
@@ -233,4 +231,10 @@ header {
 
 label.error {
     display: inline;
+}
+.errorFeild{
+    border:1px solid red;
+}
+#newVendorForm .phone {
+    text-align: center
 }
