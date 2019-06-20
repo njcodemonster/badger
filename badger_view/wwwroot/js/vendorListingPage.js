@@ -1,7 +1,7 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
     var notvalid = false;
     $('#newVendorForm input').each(function (){
-        if($(this).val() == ''){
+        if($(this).val() == '' && $(this).attr('type') == 'input'){
             notvalid = true;
             //$(this).parents('.form-group').append('<span>this field is required</span>');
             $(this).addClass('errorFeild');
@@ -19,7 +19,8 @@
     jsonData["statement_name"] = $('#vendorStatmentName').val();
     jsonData["vendor_code"] = $('#vendorCode').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
-    jsonData["vendor_suite_number"] =$('#vendorUnitNumber').val();
+    jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
+    jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
     jsonData["vendor_state"] = $('#vendorState').val();
@@ -340,14 +341,14 @@ function repsHtml(data) {
                                             '<label>Phone Number 1</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input maxlength="3" value="'+phone1.substring(0,3)+'" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input maxlength="3" value="'+phone1.substring(0,3)+'" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                   ' <input type="tel" class="form-control phone" maxlength="3" value="'+phone1.substring(3, 6)+'" id="vendorRepPhone12">'+
+                                                   ' <input type="tel" class="form-control phone" maxlength="3" value="'+phone1.substring(3, 6)+'" data-type="number" id="vendorRepPhone12">'+
                                                 '</div>'+
 
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone" maxlength="4" value="'+phone1.substring(6, 10)+'" id="vendorRepPhone13">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="4" value="'+phone1.substring(6, 10)+'" data-type="number" id="vendorRepPhone13">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -361,13 +362,13 @@ function repsHtml(data) {
                                            '<label>Phone Number 2</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" value="'+phone2.substring(0,3)+'" maxlength="3" class="phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input type="tel" value="'+phone2.substring(0,3)+'" data-type="number" maxlength="3" class="phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+'" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+' data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone" maxlength="4" value="'+phone2.substring(6,10)+'" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
