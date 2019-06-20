@@ -64,9 +64,14 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             @{ 
-                                var loginUserFirstName = Context.User.Claims.FirstOrDefault(x => x.Type == "FirstName").Value;
+                                string loginUserFirstName = "" ;
+                                try
+                                {
+                                    loginUserFirstName = Context.User.Claims.FirstOrDefault(x => x.Type == "FirstName").Value;
+                                }
+                                catch (Exception e) { }
                             }
-                            @if (loginUserFirstName != null)
+                            @if (loginUserFirstName != "")
                             {
                                 @loginUserFirstName;
                             }
