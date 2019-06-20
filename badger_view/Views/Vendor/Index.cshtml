@@ -63,7 +63,7 @@
 @section page_popup_area{
 
     <!-- Modal Vendor -->
-    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -74,7 +74,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form id="newVendorForm" data-currentid="">
+                        <form id="newVendorForm" data-currentid="" enctype="multipart/form-data">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
@@ -118,50 +118,78 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Zip Code</label>
-                                    <input type="text" class="form-control" id="vendorZip">
+                                    <input type="text" maxlength="5" data-type="number" class="form-control" id="vendorZip">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>State</label>
                                     <input type="text" class="form-control" id="vendorState">
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Rep Name</label>
-                                    <input type="text" class="form-control" id="vendorRepName"><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Email</label>
-                                    <input type="email" class="form-control" id="vendorRepEmail">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Phone Number</label>
-                                    <div class="row">
-                                        <div class="col-md-3 p-0">
-                                            <span class="d-inline">(</span> <input type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
+                                <div class="venderRepo">
+                                    <div class="venderRepoBox">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label>Rep First Name</label>
+                                                <input type="text" class="form-control" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Rep Full Name</label>
+                                                <span class="firstRep">
+                                                    <input type="text" class="form-control" id="vendorFullRepName" style="width:90%">
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div class="col-md-4 p-0">
-                                            <input type="tel" class="form-control" id="vendorRepPhone12">
-                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label>Phone Number 1</label>
+                                                <div class="row">
+                                                    <div class="col-md-3 p-0">
+                                                        <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
+                                                    </div>
+                                                    <div class="col-md-3 p-0">
+                                                        <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone12">
+                                                    </div>
 
-                                        <div class="col-md-5">
-                                            <input type="tel" class="form-control" id="vendorRepPhone13">
+                                                    <div class="col-md-5">
+                                                        <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone13">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Email</label>
+                                                <input type="email" class="form-control" style="width:90%" id="vendorRepEmail">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label>Phone Number 2</label>
+                                                <div class="row">
+                                                    <div class="col-md-3 p-0">
+                                                        <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone" id="vendorRepPhone14"> <span class="d-inline">)</span>
+                                                    </div>
+                                                    <div class="col-md-3 p-0">
+                                                        <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone15">
+                                                    </div>
+
+                                                    <div class="col-md-5">
+                                                        <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone16">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label>Upload</label>
-                                    <input type="file" class="form-control" id="vendorDocument">
+                                <a href="#" id="AddMoreReps" class="" style="text-decoration:underline">+ add rep</a>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Vendor Notes</label>
+                                        <textarea class="form-control" id="vendorNotes"></textarea>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Upload</label>
+                                        <input type="file" class="form-control" id="vendorDocument" multiple>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-12">
-                                    <label>Vendor Notes</label>
-                                    <textarea class="form-control" id="vendorNotes"></textarea>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>

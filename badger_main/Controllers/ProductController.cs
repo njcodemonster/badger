@@ -119,5 +119,42 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
+
+        // POST: api/product/create
+        [HttpPost("createProductAttribute")]
+        public async Task<string> PostAsyncAttribute([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                ProductAttributes newProductAttributes = JsonConvert.DeserializeObject<ProductAttributes>(value);
+                NewInsertionID = await _ProductRepo.CreateProductAttribute(newProductAttributes);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
+        // POST: api/product/create
+        [HttpPost("createAttributesValues")]
+        public async Task<string> PostAsyncAttributesValues([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                ProductAttributeValues newProductAttributeValues = JsonConvert.DeserializeObject<ProductAttributeValues>(value);
+                NewInsertionID = await _ProductRepo.CreateAttributeValues(newProductAttributeValues);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
     }
 }

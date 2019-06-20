@@ -13,6 +13,7 @@ namespace badgerApi.Models
         public int? defected { get; set; }
         public int? good_condition { get; set; }
         public decimal? total_quantity { get; set; }
+        public int? total_styles { get; set; }
         public decimal? subtotal { get; set; }
         public decimal? shipping { get; set; }
         public double? delivery_window_start { get; set; }

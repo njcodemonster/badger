@@ -6,10 +6,13 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Dynamic;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using System.Data;
+using Dapper;
+using MySql.Data.MySqlClient;
+
 
 
 namespace badgerApi.Controllers
@@ -22,17 +25,49 @@ namespace badgerApi.Controllers
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
+        private IItemServiceHelper _ItemsHelper;
+        IEventRepo _eventRepo;
+        
         private int note_type = 4;
 
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config)
+        private int event_type_po_id = 2;
+        private int event_type_po_note_create_id = 6;
+        private int event_type_po_document_create_id = 7;
+        private int event_type_po_update_id = 8;
+        private int event_type_po_specific_update_id = 9;
+        private int event_type_po_delete_id = 24;
+
+        private string userEventTableName = "user_events";
+        private string tableName = "purchase_order_events";
+
+        private string event_create_purchase_orders = "Purchase order created by user =%%userid%% with purchase order id= %%poid%%";
+        private string event_create_purchase_orders_notecreate = "Purchase order note created by user =%%userid%% with note id= %%noteid%%";
+        private string event_create_purchase_orders_documentcreate = "Purchase order document created by user =%%userid%% with document id= %%documentid%%";
+        private string event_update_purchase_orders = "Purchase order updated by user =%%userid%% with purchase order id= %%poid%%";
+        private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
+        private string event_delete_purchase_orders = "Purchase order deleted by user =%%userid%% with purchase order id= %%poid%%";
+
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+
+        public IDbConnection Connection
         {
+            get
+            {
+                return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
+            }
+        }
+
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
+        {
+            _eventRepo = eventRepo;
             _config = config;
             _PurchaseOrdersRepo = PurchaseOrdersRepo;
             _loggerFactory = loggerFactory;
             _NotesAndDoc = NotesAndDoc;
+            _ItemsHelper = ItemsHelper;
         }
 
-        // GET: api/attributes/list
+        // GET: api/purchaseorders/list
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrders>>> GetAsync()
         {
@@ -44,13 +79,13 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders list with message" + ex.Message);
                 return ToReturn;
             }
 
         }
 
-        // GET: api/attributes/list/1
+        // GET: api/purchaseorders/list/1
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrders>> GetAsync(int id)
         {
@@ -63,21 +98,21 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders List by id with message" + ex.Message);
 
             }
             return ToReturn;
         }
 
-        // GET: api/vendor/count
+        // GET: api/purchaseorders/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
             return await _PurchaseOrdersRepo.Count();
 
         }
-      
-        // GET: api/vendor/listpageview/10
+
+        // GET: api/purchaseorders/listpageview/10/boolean
         [HttpGet("listpageview/{limit}/{countNeeded}")]
         public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
         {
@@ -94,7 +129,7 @@ namespace badgerApi.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
 
             }
 
@@ -102,7 +137,7 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/attributes/create
+        // POST: api/purchaseorders/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -112,28 +147,119 @@ namespace badgerApi.Controllers
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
 
-                JObject jsonParsePurchaseOrder = JObject.Parse(value);
+                event_create_purchase_orders = event_create_purchase_orders.Replace("%%userid%%", newPurchaseOrder.created_by.ToString()).Replace("%%poid%%", NewInsertionID);
 
-                string note = jsonParsePurchaseOrder.Value<string>("note");
+                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_po_id, 0, event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
 
-                if (note != "") {
-                    double created_at = jsonParsePurchaseOrder.Value<double>("created_at");
-                    string newNoteID = await _NotesAndDoc.GenericPostNote<string>(Int32.Parse(NewInsertionID), note_type, note, 1, created_at);
-                }
-                
-
-                jsonParsePurchaseOrder.RemoveAll();
-
+                _eventRepo.AddEventAsync(event_type_po_id, newPurchaseOrder.created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new purchaseorders create with message" + ex.Message);
             }
             return NewInsertionID;
         }
 
-        // PUT: api/attributes/update/5
+        // POST: api/purchaseorders/notecreate
+        [HttpPost("notecreate")]
+        public async Task<string> NoteCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic newPurchaseOrderNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = newPurchaseOrderNote.ref_id;
+                string note = newPurchaseOrderNote.note;
+                int created_by = newPurchaseOrderNote.created_by;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
+
+                event_create_purchase_orders_notecreate = event_create_purchase_orders_notecreate.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddEventAsync(event_type_po_note_create_id, created_by, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, _common.GetTimeStemp(), userEventTableName);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Purchase Order Note with message" + ex.Message);
+            }
+            return newNoteID;
+        }
+
+        // POST: api/purchaseorders/documentcreate
+        [HttpPost("documentcreate")]
+        public async Task<string> DocumentCreate([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                dynamic PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<JObject>(value);
+
+                int ref_id = PurchaseOrdersToUpdate.ref_id;
+                string document_url = PurchaseOrdersToUpdate.url;
+                int created_by = PurchaseOrdersToUpdate.created_by;
+                double created_at = _common.GetTimeStemp();
+
+                NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
+
+                event_create_purchase_orders_documentcreate = event_create_purchase_orders_documentcreate.Replace("%%userid%%", created_by.ToString()).Replace("%%documentid%%", NewInsertionID);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddEventAsync(event_type_po_document_create_id, created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, _common.GetTimeStemp(), userEventTableName);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Purchase Order Document create with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
+        // GET: api/purchaseorders/getnote/ref_id
+        [HttpGet("getnote/{ref_id}/{limit}")]
+        public async Task<List<Notes>> GetNoteViewAsync(int ref_id, int limit)
+        {
+            List<Notes> notes = new List<Notes>();
+            try
+            {
+                 notes = await _NotesAndDoc.GenericNote<Notes>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get Note with message" + ex.Message);
+
+            }
+
+            return notes;
+
+        }
+
+        // GET: api/purchaseorders/getdocuments/ref_id
+        [HttpGet("getdocuments/{ref_id}/{limit}")]
+        public async Task<List<Documents>> GetDocumentsViewAsync(int ref_id, int limit)
+        {
+            List<Documents> documents = new List<Documents>();
+            try
+            {
+                documents = await _NotesAndDoc.GenericGetDocAsync<Documents>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get documents with message" + ex.Message);
+
+            }
+
+            return documents;
+
+        }
+
+        // PUT: api/purchaseorders/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -145,11 +271,17 @@ namespace badgerApi.Controllers
                 PurchaseOrders PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 PurchaseOrdersToUpdate.po_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
+
+                event_update_purchase_orders = event_update_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+                
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders ,PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddEventAsync(event_type_po_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating  attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating purchaseorders with message" + ex.Message);
                 UpdateResult = "Failed";
             }
             if (!UpdateProcessOutput)
@@ -160,7 +292,7 @@ namespace badgerApi.Controllers
         }
 
 
-        // PUT: api/attributes/updatespecific/1
+        // PUT: api/purchaseorders/updatespecific/1
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -251,21 +383,33 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
+
+                if (PurchaseOrdersToUpdate.po_status == 4) {
+                    event_delete_purchase_orders = event_delete_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+
+                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_delete_id, id, event_delete_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                    _eventRepo.AddEventAsync(event_type_po_delete_id, PurchaseOrdersToUpdate.updated_by, id, event_delete_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                }
+                else
+                {
+                    event_updatespecific_purchase_orders = event_updatespecific_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+
+                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                    _eventRepo.AddEventAsync(event_type_po_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                }
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in updating new attribute with message" + ex.Message);
+                logger.LogInformation("Problem happened in updating new updatespecific purchaseorders with message" + ex.Message);
                 UpdateResult = "Failed";
             }
 
             return UpdateResult;
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

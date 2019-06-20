@@ -6,42 +6,7 @@
 @section Scripts {
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
 }
-
-<style>
-    .th-dropdown {
-        color: #000;
-    }
-
-    #openphotoshot td {
-        min-height: 50px;
-    }
-
-    #openphotoshot td {
-        text-align: left;
-        vertical-align: middle;
-    }
-
-    .add-on .input-group-btn > .btn {
-        border-left-width: 0;
-        left: -2px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    }
-    /* stop the glowing blue shadow */
-    .add-on .form-control:focus {
-        box-shadow: none;
-        -webkit-box-shadow: none;
-        border-color: #cccccc;
-    }
-
-    .shoot-dropdown {
-        background: none !important;
-        color: #000;
-        border: 1px #ccc solid;
-        padding: 5px 15px;
-        border-radius: 5px;
-    }
-</style>
+ 
 <div class="row">
     <div class="col-md-8 col-sm-12">
         <h4 class="">Photo Management - Shoot not started <!-- (5 styles) --></h4>
@@ -59,7 +24,8 @@
                             Actions
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
+                            <a class="dropdown-item select_menu" href="#" onclick="selectAllCheckbox()">Select All</a>
+                            <a class="dropdown-item unselect_menu" href="#" onclick="unselectAllCheckbox()">Unselect All</a>
                             <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
                         </div>
                     </div>
@@ -82,7 +48,7 @@
                     </td>
                     <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
                     <td>@photoshoot.vendor_name</td>
-                    <td></td>
+                    <td>@photoshoot.product_name</td>
                     <td><b>-</b></td>
                     <td><b>@photoshoot.sku_family</b></td>
                     <td></td>

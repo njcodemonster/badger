@@ -78,7 +78,10 @@ namespace badger_view.Controllers
 
             string product_name = json.Value<string>("product_name");
 
-            
+
+            String sku_family = json.Value<string>("style_size").Split('-')[0];
+
+
             product.Add("product_name", product_name);
             product.Add("vendor_color_name", json.Value<string>("vendor_color_name"));
             product.Add("product_cost", json.Value<string>("product_cost"));
@@ -87,7 +90,7 @@ namespace badger_view.Controllers
             product.Add("product_type_id", json.Value<string>("product_type_id"));
 
             product.Add("product_description", "");
-            product.Add("sku_family", "");
+            product.Add("sku_family", sku_family);
             product.Add("size_and_fit_id",0);
             product.Add("wash_type_id", 0);
             product.Add("product_discount", 20);

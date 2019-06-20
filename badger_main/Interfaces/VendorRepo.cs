@@ -183,6 +183,7 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
+       
     }
 }
 

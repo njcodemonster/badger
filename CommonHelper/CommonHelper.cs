@@ -13,10 +13,29 @@ namespace CommonHelper
         {
             return (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
+
+        public double DateConvertToTimeStamp(string date)
+        {
+            Double TotalSeconds = 0;
+
+            if (date != "") {
+                string[] DateList = date.Split("/");
+
+                 int month = Int32.Parse(DateList[0]);
+                   int day = Int32.Parse(DateList[1]);
+                  int year = Int32.Parse(DateList[2]);
+                
+                DateTime newDateTime = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
+                DateTime secondsTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                TotalSeconds = (double)(newDateTime - secondsTime).TotalSeconds;
+            }
+            
+            return TotalSeconds;
+        }
         public string ConvertToDate(double unixtime)
         {
             return (new DateTime(1970, 1, 1).AddSeconds(unixtime)).ToString("M/d/yyyy");
-        }
+        } 
 
         public string MultiDatePickerFormat(double starttime, double endtime)
         {
@@ -25,14 +44,17 @@ namespace CommonHelper
 
         public string NumberOfDays(double timestamp)
         {
+            string NumOfDate = "0";
+            if (timestamp > 0)
+            {
+                double TimeNow = (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-            double TimeNow = (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                DateTime StartDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(TimeNow);
+                DateTime EndDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(timestamp);
 
-            DateTime StartDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(TimeNow);
-            DateTime EndDateTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(timestamp);
-
-            string NumOfDate = (StartDateTime - EndDateTime).Days.ToString();
-
+                NumOfDate = (StartDateTime - EndDateTime).Days.ToString();
+            }
+            
             string TheDays = "Day";
 
             if (NumOfDate == "0" || NumOfDate == "1")

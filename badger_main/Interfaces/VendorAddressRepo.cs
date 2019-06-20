@@ -14,16 +14,17 @@ using System.Dynamic;
 
 namespace badgerApi.Interfaces
 {
-    public interface IVendorAdress
+    public interface IVendorAddress
     {
-        Task<string> Create(VendorAddress NewVendorAdress);
+        Task<string> Create(VendorAddress NewVendorAddress);
+        Task<Boolean> Update(VendorAddress VendorToUpdate);
     }
-    public class VendorAdressRepo : IVendorAdress
+    public class VendorAddressRepo : IVendorAddress
     {
         private readonly IConfiguration _config;
         private string TableName = "vendor";
         private string selectlimit = "30";
-        public VendorAdressRepo(IConfiguration config)
+        public VendorAddressRepo(IConfiguration config)
         {
 
             _config = config;
@@ -44,6 +45,16 @@ namespace badgerApi.Interfaces
                 var result = await conn.InsertAsync<VendorAddress>(NewVendor);
                 return result.ToString();
             }
+        }
+        public async Task<Boolean> Update(VendorAddress VendorToUpdate)
+        {
+
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<VendorAddress>(VendorToUpdate);
+                return result;
+            }
+
         }
     }
 }

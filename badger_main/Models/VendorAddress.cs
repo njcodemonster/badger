@@ -13,7 +13,7 @@ namespace badgerApi.Models
         public string vendor_street { get; set; }
         public string vendor_suite_number { get; set; }
         public string vendor_city { get; set; }
-        public long vendor_zip { get; set; }
+        public int vendor_zip { get; set; }
         public string vendor_state { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }

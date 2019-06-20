@@ -1,0 +1,55 @@
+﻿@{
+    Layout = null;
+}
+<div class="table-responsive card-body ">
+    <table id="openphotoshot" class="table table-bordered datatable_js_ps" style="width:100%">
+        <thead>
+            <tr>
+                <th style="width:50px;" class="no-sort"> </th>
+                <th style="width:90px;" class="no-sort">
+                    <div class="dropdown">
+                        <a class="th-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
+                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Send to editor"</a>
+                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Shoot not started"</a>
+                        </div>
+                    </div>
+                </th>
+                <th>Vendor</th>
+                <th>Style Name</th>
+                <th>Color</th>
+                <th>SKU</th>
+                <th>Added by</th>
+                <th> Photoshoot Status </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ProductPhotoshootRep photoshoot in Model.Lists)
+            {
+
+                <tr style="">
+                    <td class="text-center">
+                        <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
+                    </td>
+                    <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
+                    <td>@photoshoot.vendor_name</td>
+                    <td>@photoshoot.product_name</td>
+                    <td><b>-</b></td>
+                    <td><b>@photoshoot.sku_family</b></td>
+                    <td>@photoshoot.username</td>
+                    <td id="shootRow_@photoshoot.product_id">
+                        <select class="browser-default custom-select" onchange="updatephotoshootStatus(@photoshoot.product_id,@photoshoot.photoshoot_id, this.value)">
+                            <option value="0">Shoot not started</option>
+                            <option value="1" selected>Shoot in-progress</option>
+                            <option value="2">Send to editor</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+ 
