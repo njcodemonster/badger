@@ -23,6 +23,7 @@ namespace badgerApi.Controllers
         private IEventRepo _eventRepo;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         string table_name = "product_events";
+        string user_event_table_name = "user_events";
 
         string event_create_photoshoot = "Photoshoot created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_created_id = 16;
@@ -192,7 +193,7 @@ namespace badgerApi.Controllers
 
         // POST: api/photoshoots/create
         [HttpPost("create/{productId}")]
-        public async Task<string> PostAsync([FromBody]   string value, int productId)
+        public async Task<string> PostAsync([FromBody]   string value, string productId)
         {
             string NewInsertionID = "0";
             try
@@ -202,9 +203,16 @@ namespace badgerApi.Controllers
                 int userId = newPhotoshoots.created_by;
                 event_create_photoshoot = event_create_photoshoot.Replace("%%userid%%", userId.ToString());
                 event_create_photoshoot = event_create_photoshoot.Replace("%%pid%%", NewInsertionID.ToString());
-                await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
-                 
-
+                int countComma = productId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    var ids = productId.Split(","); //yields an array containing { "A", "B", "C" }
+                    foreach (var product_id in ids)
+                    {
+                        await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
+                        await _eventRepo.AddEventAsync(event_photoshoot_created_id, userId, Int32.Parse(product_id), event_create_photoshoot, _common.GetTimeStemp(), user_event_table_name);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -235,18 +243,21 @@ namespace badgerApi.Controllers
                     event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
                     event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
                     await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_started_id, productId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                    await _eventRepo.AddEventAsync(event_photoshoot_started_id, userId, productId, event_photoshoot_started, _common.GetTimeStemp(), user_event_table_name);
                 }
                 else if (PhotoshootStatus == "2")
                 {
                     event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
                     event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
                     await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_sent_to_editor_id, productId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
+                    await _eventRepo.AddEventAsync(event_photoshoot_sent_to_editor_id, userId, productId, event_photoshoot_sent_to_editor, _common.GetTimeStemp(), user_event_table_name);
                 }
                 else if (PhotoshootStatus == "0")
                 {
                     event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
                     event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", productId.ToString());
                     await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_not_started_id, productId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
+                    await _eventRepo.AddEventAsync(event_photoshoot_not_started_id, userId, productId,  event_photoshoot_not_started, _common.GetTimeStemp(), user_event_table_name);
                 }
 
             }
@@ -282,7 +293,17 @@ namespace badgerApi.Controllers
 
                 event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
                 event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
-                await _eventRepo.AddPhotoshootAsync(Int32.Parse(productId), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+
+                int countComma = productId.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    var ids = productId.Split(","); //yields an array containing { "A", "B", "C" }
+                    foreach (var product_id in ids)
+                    {
+                        await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                    }
+                }
+                
 
             }
             catch (Exception ex)

@@ -42,6 +42,7 @@ function selectAllCheckbox() {
     $(".select-box").attr("checked", true);
 
 }
+
 function unselectAllCheckbox() {
 
     $(".select_menu").show();
@@ -49,7 +50,6 @@ function unselectAllCheckbox() {
     $(".select-box").attr("checked", false);
 
 }
-
 
 function addNewPhotoshoot() {
     $("#modalAddNewPhotoshoot").modal('show');
@@ -81,9 +81,8 @@ function AddToShootSingle(shootRowId, selectValue) {
             $(jsonPhotoshootsModelsList).each(function (i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
-        });
-
-        $("#modalAddNewPhotoshoot").modal('show');
+            $("#modalAddNewPhotoshoot").modal('show');
+        }); 
     }
 }
 
@@ -220,16 +219,14 @@ function moveSelectedToPhotoshoot() {
             $(jsonPhotoshootsModelsList).each(function (i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
+            $("#modalAddNewPhotoshoot").modal('show');
         });
-
-        $("#modalAddNewPhotoshoot").modal('show');
-
     }
     
 }
 
 function updatephotoshootStatus(productId, photoshoot_id, status) {
-    alert(status);
+    
     $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
 
     var statusUpdate = "";
@@ -252,19 +249,7 @@ function updatephotoshootStatus(productId, photoshoot_id, status) {
             getPhotoshootProducts(photoshoot_id);
             $("#collapse_" + photoshoot_id).collapse("show");
         }, 1000);
-    });
-    /*
-    $.ajax({
-        url: '/photoshoots/PhotoshootProductSendToEditor/' + productId,
-        dataType: 'html',
-        type: 'GET',
-        contentType: 'application/json',
-        processData: false,
-
-    }).always(function (data) {
-        //alert(photoshoot_id);
-        //$("#collapse_" + photoshoot_id).collapse("hide");
-    }); */
+    }); 
 
 }
 
@@ -293,7 +278,13 @@ function changeShootStatusOnSendToEditor(productId, status) {
 
 }
 
-function changeShootStatusToInProgress(productId) {
-
-
+function moveSelectedToShootNotStarted() {
+    var productAddToShootNotStarted = [];
+    $.each($("input[name='productAddToShootNotStarted']:checked"), function () {
+        productAddToShootNotStarted.push($(this).val());
+    });
+    if (productAddToShootNotStarted.length > 0) {
+        var product_ids = productAddToShootNotStarted.join(","); 
+        console.log(product_ids);
+    }
 }
