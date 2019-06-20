@@ -226,3 +226,11 @@ header {
     padding: 5px 0;
 }
 
+.error {
+    color: red;
+    margin-left: 5px;
+}
+
+label.error {
+    display: inline;
+}
