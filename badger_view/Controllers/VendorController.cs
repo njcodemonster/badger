@@ -145,7 +145,8 @@ namespace badger_view.Controllers
             vendor.Add("corp_name", json.Value<string>("corp_name"));
             vendor.Add("statement_name", json.Value<string>("statement_name"));
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
-            vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
+            vendor.Add("our_customer_number", json.Value<string>("our_customer_number")); 
+            vendor.Add("vendor_description", json.Value<string>("vendor_description")); 
             vendor.Add("created_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("created_at", _common.GetTimeStemp());
@@ -204,6 +205,7 @@ namespace badger_view.Controllers
             vendor.Add("statement_name", json.Value<string>("statement_name"));
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
+            vendor.Add("vendor_description", json.Value<string>("vendor_description"));
             vendor.Add("updated_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("updated_at", _common.GetTimeStemp());

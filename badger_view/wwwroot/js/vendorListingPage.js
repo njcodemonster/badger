@@ -21,6 +21,7 @@
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
     jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
+    jsonData["vendor_description"] = $('#vendorDec').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
     jsonData["vendor_state"] = $('#vendorState').val();
@@ -104,6 +105,7 @@ $(document).on('click', "#EditVendor", function () {
     $('#modalvendor input').prop("disabled","true");
     $('#modalvendor').modal('show');
     var id = $(this).data("id");
+
     $.ajax({
 
         url: '/vendor/details/'+id,
@@ -111,7 +113,7 @@ $(document).on('click', "#EditVendor", function () {
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
-        $("#NewVendorButton,#EditVendorButton").attr("id", "EditVendorButton");
+        $("#NewVendorButton,#EditVendorButton").attr("id", "EditVendorButton").text('Update');
         $('#modalvendor input').removeAttr("disabled");
         var vendorData = data.venderAdressandRep;
         var vendorNoteAndDoc = data.venderDocAndNotes;
@@ -244,7 +246,7 @@ $(document).on('click', "#EditVendorButton", function () {
         });
 });
 $(document).on('click', "#AddNewVendorButton", function () {
-    $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton");
+    $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#modalvendor #vendorModalLongTitle").text("Add a New Vendor Profile");
     $("#newVendorForm input").val("");
     $("#newVendorForm").data("currentID","");
