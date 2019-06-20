@@ -7,8 +7,21 @@
     jsonData["product_cost"] = $(newVendorForm[2]).val();
     jsonData["product_retail"] = $(newVendorForm[3]).val();
     jsonData["product_type_id"] = $('#StyleType option:selected').val();
-    
+
+    jsonData["product_type_id"] = $('#StyleType option:selected').val();
+
    
+
+    jsonData["style_size"] = $(newVendorForm[4]).val();
+    jsonData["style_vendor_size"] = $(newVendorForm[5]).val();
+    jsonData["style_sku"] = $(newVendorForm[6]).val();
+    jsonData["style_qty"] = $(newVendorForm[7]).val();
+    
+
+
+
+    //csize  vendorcsize csku cqty
+ 
    // jsonData["Rep_phone1"] = $(newVendorForm[13]).val() + $(newVendorForm[14]).val() + $(newVendorForm[15]).val();
    // jsonData["Rep_phone2"] = $(newVendorForm[13]).val() + $(newVendorForm[14]).val() + $(newVendorForm[15]).val();
     $.ajax({

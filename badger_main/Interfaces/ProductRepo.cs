@@ -20,6 +20,8 @@ namespace badgerApi.Interfaces
         Task<String> Create(Product NewProduct);
         Task<bool> UpdateAsync(Product ProductToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task<String> CreateProductAttribute(ProductAttributes NewProductAttribute);
+        Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
     }
     public class ProductRepo : IProductRepository
     {
@@ -98,6 +100,23 @@ namespace badgerApi.Interfaces
             {
                 var result = await conn.QueryAsync(UpdateQuery);
 
+            }
+
+        }
+        public async Task<string> CreateProductAttribute(ProductAttributes NewProductAttributes)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<ProductAttributes>(NewProductAttributes);
+                return result.ToString();
+            }
+        }
+        public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<ProductAttributeValues>(NewProductAttributeValues);
+                return result.ToString();
             }
 
         }

@@ -98,18 +98,44 @@ namespace badger_view.Controllers
             product.Add("created_by", 2);
             product.Add("created_at", _common.GetTimeStemp());
             String product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
-           
-          //  JObject vendor_rep = new JObject();
-          //  vendor_rep.Add("vendor_id", newVendorID);
-          //  vendor_rep.Add("first_name", json.Value<string>("Rep_first_name"));
-          //  vendor_rep.Add("full_name", json.Value<string>("Rep_first_name"));
-          //  vendor_rep.Add("phone1", json.Value<string>("Rep_phone1"));
-           // vendor_rep.Add("phone2", json.Value<string>("Rep_phone2"));
-           // vendor_rep.Add("email", json.Value<string>("Rep_email"));
-           // vendor_rep.Add("main", 1);
-          //  vendor_rep.Add("created_by", 2);
-          //  vendor_rep.Add("created_at", _common.GetTimeStemp());
-          //  String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
+
+            JObject product_attr = new JObject();
+            Int16 size_char = 3;
+            if (json.Value<string>("style_size") == "Extra") { size_char = 3; }
+            if (json.Value<string>("style_size") == "Small") { size_char = 4; }
+            if (json.Value<string>("style_size") == "Medium") { size_char = 5; }
+            if (json.Value<string>("style_size") == "Large") { size_char = 6; }
+
+
+            product_attr.Add("attribute_id", size_char);
+            product_attr.Add("product_id", Int32.Parse( product_id));
+            product_attr.Add("value", json.Value<string>("style_size"));
+
+            product_attr.Add("created_by", 2);
+            product_attr.Add("created_at", _common.GetTimeStemp());
+            String attr_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr.ToString(Formatting.None), "/attributevalues/create");
+
+
+
+            // style_attr.Add("abc", "a ");
+            // style_attr.Add("style_size", json.Value<string>("style_size"));
+            // style_attr.Add("style_vendor_size", json.Value<string>("style_vendor_size"));
+            // style_attr.Add("style_sku", json.Value<string>("style_sku"));
+            // style_attr.Add("style_qty", json.Value<string>("style_qty"));
+
+
+
+            //  JObject vendor_rep = new JObject();
+            //  vendor_rep.Add("vendor_id", newVendorID);
+            //  vendor_rep.Add("first_name", json.Value<string>("Rep_first_name"));
+            //  vendor_rep.Add("full_name", json.Value<string>("Rep_first_name"));
+            //  vendor_rep.Add("phone1", json.Value<string>("Rep_phone1"));
+            // vendor_rep.Add("phone2", json.Value<string>("Rep_phone2"));
+            // vendor_rep.Add("email", json.Value<string>("Rep_email"));
+            // vendor_rep.Add("main", 1);
+            //  vendor_rep.Add("created_by", 2);
+            //  vendor_rep.Add("created_at", _common.GetTimeStemp());
+            //  String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
 
             return product_id;
            
