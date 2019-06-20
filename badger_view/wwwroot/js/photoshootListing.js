@@ -3,10 +3,16 @@
 $('.card-header').click(function () {
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
-    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;">< div class= "spinner-border text-light" role = "status" style = "margin-top: 20%; margin-left: 48%;" ><span class="sr-only">Loading...</span></div ></div >');
-
     if ($("#collapse_" + photoshootId).is(":hidden")) {
+        getPhotoshootProducts(photoshootId); 
+    } else {
+        $("#collapse_" + photoshootId).html("");
+    }
+});
 
+
+function getPhotoshootProducts(photoshootId) {
+    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
         $.ajax({
             url: '/photoshoots/getPhotoshootInProgressProducts/' + photoshootId,
             type: 'GET',
@@ -17,22 +23,33 @@ $('.card-header').click(function () {
                 columnDefs: [
                     { targets: 'no-sort', orderable: false }
                 ]
-            }); 
-        }) 
-    } else {
-        $("#collapse_" + photoshootId).html("");
-    }
-});
-
+            });
+        })
+    
+}
 /**********************************************************/
 
 
-$('#photoshootDate').datepicker();
+$('#photoshootDate').datepicker({
+    format: 'm/d/yyyy'
+});
 var datatable_js_ps = $('.datatable_js_ps').DataTable();
 
 function selectAllCheckbox() {
+
+    $(".select_menu").hide();
+    $(".unselect_menu").show();
     $(".select-box").attr("checked", true);
+
 }
+function unselectAllCheckbox() {
+
+    $(".select_menu").show();
+    $(".unselect_menu").hide();
+    $(".select-box").attr("checked", false);
+
+}
+
 
 function addNewPhotoshoot() {
     $("#modalAddNewPhotoshoot").modal('show');
@@ -172,6 +189,7 @@ function AddToNewPhotoshoot() {
         $(".newShootError").removeClass("d-none");
     }
 }
+
 function moveSelectedToPhotoshoot() {
     var productAddToShoot = [];
     $.each($("input[name='productAddToShoot']:checked"), function () {
@@ -208,4 +226,74 @@ function moveSelectedToPhotoshoot() {
 
     }
     
+}
+
+function updatephotoshootStatus(productId, photoshoot_id, status) {
+    alert(status);
+    $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
+
+    var statusUpdate = "";
+    if (status == 0) {
+        statusUpdate = "NotStarted";
+    } else if (status == 2) {
+        statusUpdate = "SendToEditor";
+    }
+
+    $.ajax({
+        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + statusUpdate,
+        dataType: 'html',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+
+        setTimeout(function () {
+            getPhotoshootProducts(photoshoot_id);
+            $("#collapse_" + photoshoot_id).collapse("show");
+        }, 1000);
+    });
+    /*
+    $.ajax({
+        url: '/photoshoots/PhotoshootProductSendToEditor/' + productId,
+        dataType: 'html',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+        //alert(photoshoot_id);
+        //$("#collapse_" + photoshoot_id).collapse("hide");
+    }); */
+
+}
+
+function changeShootStatusOnSendToEditor(productId, status) {
+    var statusUpdate = "";
+    if (status == 0) {
+        statusUpdate = "NotStarted";
+    } else if (status == 1) {
+        statusUpdate = "InProgress";
+    }
+
+    $.ajax({
+        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + statusUpdate,
+        dataType: 'html',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+
+        datatable_js_ps
+            .row($("#shootRow_" + productId).parents('tr'))
+            .remove()
+            .draw();
+    });
+
+}
+
+function changeShootStatusToInProgress(productId) {
+
+
 }

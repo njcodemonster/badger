@@ -13,7 +13,8 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
+                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Send to editor"</a>
+                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
                 </th>
@@ -21,7 +22,7 @@
                 <th>Style Name</th>
                 <th>Color</th>
                 <th>SKU</th>
-                <th>Item Status</th>
+                <th>Added by</th>
                 <th> Photoshoot Status </th>
             </tr>
         </thead>
@@ -35,14 +36,15 @@
                     </td>
                     <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
                     <td>@photoshoot.vendor_name</td>
-                    <td></td>
+                    <td>@photoshoot.product_name</td>
                     <td><b>-</b></td>
                     <td><b>@photoshoot.sku_family</b></td>
-                    <td></td>
+                    <td>@photoshoot.username</td>
                     <td id="shootRow_@photoshoot.product_id">
-                        <select class="browser-default custom-select" onchange="AddToShootSingle(@photoshoot.product_id, this.value)">
-                            <option value="0" selected>Shoot not started</option>
-                            <option value="1">Add to photoshoot</option>
+                        <select class="browser-default custom-select" onchange="updatephotoshootStatus(@photoshoot.product_id,@photoshoot.photoshoot_id, this.value)">
+                            <option value="0">Shoot not started</option>
+                            <option value="1" selected>Shoot in-progress</option>
+                            <option value="2">Send to editor</option>
                         </select>
                     </td>
                 </tr>
