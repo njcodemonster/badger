@@ -167,6 +167,7 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["vendor_code"] = $('#vendorCode').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
+    jsonData["vendor_description"] = $('#vendorDec').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
     jsonData["vendor_state"] = $('#vendorState').val();
@@ -248,7 +249,7 @@ $(document).on('click', "#EditVendorButton", function () {
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#modalvendor #vendorModalLongTitle").text("Add a New Vendor Profile");
-    $("#newVendorForm input").val("");
+    $("#newVendorForm input,textarea").val("");
     $("#newVendorForm").data("currentID","");
 });
 $(document).on('click', "#AddMoreReps", function () {
