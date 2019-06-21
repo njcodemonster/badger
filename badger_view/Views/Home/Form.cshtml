@@ -5,23 +5,41 @@
 
 <h1>Form Validation</h1>
 
-<form action="#">
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label>Name</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="form-group col-md-6">
-            <label>Email</label>
-            <input class="form-control" placeholder="Contact's email"
-                   name="contact_email" id="contact_email" type="email"
-                   title="Contact's email (format: xxx@xxx.xxx)"
-                   pattern="[a-zA-Z0-9!#$%&amp;'*+\/=?^_`{|}~.-]+[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*" required>
-        </div>
+<form>
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" name="name" class="name" placeholder="Ola Nordmann" pattern="^[( )a-zA-Z]+$" required />
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <input type="button" value="Submit" />
-        </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" name="password" class="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" pattern="(?=^.{8,}$)((?=.*d)|(?=.*W+))(?![.n])(?=.*[A-Z])
+(?=.*[a-z]).*" required />
+    </div>
+    <div>
+        <label for="mail">Mail:</label>
+        <input type="email" name="mail" class="mail" placeholder="ola@nordmann.no" pattern="^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$" required />
+    </div>
+    <div>
+        <label for="phone">Number:</label>
+        <input type="tel" name="phone" placeholder="+4700000000" pattern="^\+?(?:[0-9]??).{5,14}[0-9]$" required />
+    </div>
+    <div>
+        <label for="website">Website:</label>
+        <input type="url" name="website" placeholder="https://google.com" pattern="(http|https)://.+" required />
+    </div>
+    <div>
+        <label for="date">Date:</label>
+        <input type="date" name="date" min="2013-01-01" max="2019-12-31" required />
+    </div>
+    <div>
+        <label for="onechar">Min one char:</label>
+        <input type="text" name="onechar" placeholder="x" pattern="[ÆØÅæøåa-zA-Z]+" required />
+    </div>
+    <div>
+        <label for="onechar">Four digit num:</label>
+        <input type="text" name="onechar" placeholder="0000" pattern="^[0-9]{4}" required />
+    </div>
+    <div>
+        <input type="submit" />
     </div>
 </form>
