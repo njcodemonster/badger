@@ -1,4 +1,36 @@
-﻿var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
+﻿$(document).ready(function () {
+
+    $("#poTotalQuantity,#poSubtotal,#poShipping").on("keypress keyup blur", function (event) {
+        $(this).val($(this).val().replace(/[^0-9\.]/g, ''));
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+    $("#poTotalStyles,#poOrderNumber").on("keypress keyup blur", function (event) {
+        $(this).val($(this).val().replace(/[^\d].+/, ""));
+        if ((event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+    $("#poNumber,#poInvoiceNumber").on("keypress keyup blur", function (event) {
+        $(this).val($(this).val().replace(/[^A-Za-z0-9]/gi, ''));
+        if ((event.which < 48 || event.which > 57) && (event.which < 97 || event.which > 122) && (event.which < 65 || event.which > 90)) {
+            event.preventDefault();
+        }
+    });
+
+    $("#poOrderDate, #poDelieveryRange").on("keypress keyup blur", function (event) {
+        $(this).val($(this).val().replace(/[^0-9- \/ ]/g, ''));
+        if ((event.which != 32 || $(this).val().indexOf('/') != -1) && (event.which < 45 || event.which > 57)) {
+            event.preventDefault();
+        }
+       
+    });
+})
+
+var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
 
 window.purchaseorderrownumber = "";
 $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
@@ -757,6 +789,26 @@ $(document).on("click", "#document_submit", function () {
             }
         });
     }
+});
 
 
+$(document).on('click', "#poDelete", function () {
+
+    var id = $("#newPurchaseOrderForm").data("currentid");
+    
+        $.ajax({
+            url: '/purchaseorders/delete/' + id,
+            dataType: 'json',
+            type: 'POST',
+            contentType: 'application/json',
+        }).always(function (data) {
+            console.log(data);
+
+            if (data.responseText == "Success") {
+                var table = $('#purchaseorderlists').DataTable();
+                table.row(window.purchaseorderrownumber).remove().draw(false);
+                $("#modalPurchaseOrder").modal("hide");
+            }
+           
+        });
 });

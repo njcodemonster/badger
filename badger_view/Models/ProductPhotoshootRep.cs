@@ -14,6 +14,9 @@ namespace badger_view.Models
         public string product_vendor_image { get; set; }
         public string sku_family { get; set; }
         public string vendor_name { get; set; }
+        public string product_name { get; set; }
+        public string photoshoot_id { get; set; }
+        public string username { get; set; }
     }
     public class ProductPhotoshootPagerList
     {
@@ -30,4 +33,13 @@ namespace badger_view.Models
     {
         public IEnumerable<ProductPhotoshootInProgressRep> photoshootsInprogress { get; set; }
     }
+    public class ProductPhotoshootSendToEditorPagerList
+    {
+        public IEnumerable<ProductPhotoshootRep> photoshootSendToEditor { get; set; }
+    }
+
+
+    
+
+
 }

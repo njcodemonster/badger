@@ -1,5 +1,17 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
-    debugger;
+    var notvalid = false;
+    $('#newVendorForm input').each(function (){
+        if($(this).val() == '' && $(this).attr('type') == 'input'){
+            notvalid = true;
+            //$(this).parents('.form-group').append('<span>this field is required</span>');
+            $(this).addClass('errorFeild');
+        } else {
+            $(this).removeClass('errorFeild');
+        }
+    });
+    if (notvalid) {
+        return false;
+    }
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
     jsonData["vendor_name"] = $('#vendorName').val();
@@ -7,7 +19,8 @@
     jsonData["statement_name"] = $('#vendorStatmentName').val();
     jsonData["vendor_code"] = $('#vendorCode').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
-    jsonData["vendor_suite_number"] =$('#vendorUnitNumber').val();
+    jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
+    jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
     jsonData["vendor_state"] = $('#vendorState').val();
@@ -60,10 +73,32 @@
             });
         }
     });
-   
-
-
 });
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+function blockspecialcharacter(e) {
+    var key= document.all ? key= e.keyCode : key= e.which;
+    return ((key > 64 && key < 91) || (key> 96 && key< 123) || key== 8 || key== 32 || (key>= 48 && key<= 57));
+}
+$(document).on('keydown', "#newVendorForm input", function (e) {
+    $(this).removeClass('errorFeild');
+    if ($(this).attr('data-type') == 'number') {
+        return isNumber(e)
+    } else {
+        return blockspecialcharacter(e);
+    }
+});
+$(document).on('keyup', "#newVendorForm input.phone", function (e) {
+    if($(this).val().length == $(this).attr('maxlength')){
+        $(this).parent('div').next().find('input').focus();
+    }
+})
 $(document).on('click', "#EditVendor", function () {
     $("#modalvendor #vendorModalLongTitle").text("Edit Vendor");
     $('#modalvendor input').prop("disabled","true");
@@ -75,18 +110,20 @@ $(document).on('click', "#EditVendor", function () {
         dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
-       
-
     }).always(function (data) {
         $("#NewVendorButton,#EditVendorButton").attr("id", "EditVendorButton");
         $('#modalvendor input').removeAttr("disabled");
-        var vendor = data.vendor;
-        var addresses = data.addresses;
-        var reps = data.reps;
-        var notes = data.notes;
+        var vendorData = data.venderAdressandRep;
+        var vendorNoteAndDoc = data.venderDocAndNotes;
+        var vendor = vendorData.vendor;
+        var addresses = vendorData.Addresses;
+        var reps = vendorData.Reps;
+        var notes = vendorNoteAndDoc.note;
+        var documents = vendorNoteAndDoc.doc;
         $("#newVendorForm").data("currentID",vendor.vendor_id);
         $("#modalvendor #vendorModalLongTitle").text("Edit Vendor:" + vendor.vendor_name);
-        $('#vendorNotes').val(notes[0].note);
+        if(notes.length > 0)
+        $('#vendorNotes').val(notes[notes.length-1].note).attr('data-value',notes[notes.length-1].note);
         $('#vendorName').val(vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);
         $('#vendorStatmentName').val(vendor.statement_name);
@@ -102,25 +139,17 @@ $(document).on('click', "#EditVendor", function () {
             $('#vendorState').val(add1.vendor_state);
             $('#newVendorForm').attr('data-address-id',add1.vendor_address_id);
         }
-        if (reps.length > 0) {
-            /*rep1 = reps[0];
-            $('.venderRepoBox').attr('data-id',rep1.contact_id)
-            $('#vendorRepName').val(rep1.first_name);
-            $('#vendorFullRepName').val(rep1.full_name);
-            $('#vendorRepEmail').val(rep1.email);
-            $('#vendorRepPhone11').val(rep1.phone1[0]+rep1.phone1[1]+rep1.phone1[2]);
-            $('#vendorRepPhone12').val(rep1.phone1[3]+rep1.phone1[4]+rep1.phone1[5]);
-            $('#vendorRepPhone13').val(rep1.phone1[6]+rep1.phone1[7]+rep1.phone1[8]+rep1.phone1[9]);
-            $('#vendorRepPhone14').val(rep1.phone2[0]+rep1.phone2[1]+rep1.phone2[2]);
-            $('#vendorRepPhone15').val(rep1.phone2[3]+rep1.phone2[4]+rep1.phone2[5]);
-            $('#vendorRepPhone16').val(rep1.phone2[6]+rep1.phone2[7]+rep1.phone2[8]+rep1.phone2[9]);
-            if (rep1.main) {
-                $('#vendorRepIsPrimary'). prop("checked", true);
-            }*/
-            if (reps.length > 0) {
-                $('.venderRepoBox').remove();
-                repsHtml(reps);
+        $('.documentsLink').remove();
+        if (documents.length > 0) {
+            for (var i = 0; i < documents.length; i++) {
+                var html = '';
+                html += '<a class="documentsLink" data-val="'+documents[i].url+'" href="">'+documents[i].url+'</a><br>';
             }
+            $('#vendorDocument').parent('div').append(html)
+        }
+        if (reps.length > 0) {
+            $('.venderRepoBox').remove();
+            repsHtml(reps);
         }
         
         
@@ -141,12 +170,25 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["vendor_state"] = $('#vendorState').val();
     jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
     jsonData["address_id"] = $('#newVendorForm').attr('data-address-id');
+     if($('#vendorNotes').val() != $('#vendorNotes').attr('data-value')) {
+         jsonData["vendor_notes"] = $('#vendorNotes').val();
+         $('#vendorNotes').attr('data-value',$('#vendorNotes').val())
+       } else {
+         jsonData["vendor_notes"] = '';
+
+       }
+
     jsonData["vendor_reps"] = [];
     $('.venderRepoBox').each(function (){
         var vendor_rep = {};
         vendor_rep["Rep_first_name"] = $(this).find('#vendorRepName').val();
         vendor_rep["Rep_full_name"] = $(this).find('#vendorFullRepName').val();
-        vendor_rep["repo_id"] = $(this).attr('data-id');
+        if ($(this).attr('data-id') != undefined) {
+            vendor_rep["repo_id"] = $(this).attr('data-id');
+        } else {
+            vendor_rep["repo_id"] = '0';
+        }
+
         if ($(this).find('#vendorRepIsPrimary').is(':checked')) {
              vendor_rep["main"] = 1;
         } else {
@@ -166,7 +208,40 @@ $(document).on('click', "#EditVendorButton", function () {
         data: JSON.stringify(jsonData),
         processData: false,
 
-    }).always(function (data) { console.log(data); });
+        }).always(function (data) { 
+            console.log(data); 
+            if (data != "0") {
+                console.log("Vender updated");
+                alert("vendor created . uploading files");
+                var formData = new FormData();
+                formData.append('Vendor_id', id);
+                var files = $("#newVendorForm #vendorDocument")[0].files;
+
+                    for (var i = 0; i != files.length; i++) {
+                        if ($('#documentsLink').attr('data-val')) {
+                            if($('#documentsLink').attr('data-val').indexOf(files[i].name) == -1)
+                                formData.append("vendorDocuments", files[i]);
+                        } else {
+                            formData.append("vendorDocuments", files[i]);
+                        }
+                         //formData.append("vendorDocuments", files[i]);
+                    }
+                    $.ajax({
+                        url: "/vendor/newvendor_doc",
+                        type: 'POST',
+                        data: formData,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                    }).always(function (data) {
+                        console.log(data);
+                    });
+                
+
+            }
+            alert('update') 
+        
+        });
 });
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton");
@@ -177,7 +252,7 @@ $(document).on('click', "#AddNewVendorButton", function () {
 $(document).on('click', "#AddMoreReps", function () {
     //var html = '<span><input type="text" class="form-control d-inline-block" id="vendorRepName" style="width:90%"> <a href="#" id="removeCurrentRep" class="h4">-</a><br><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small></span>'
     //$('.firstRep').append(html);
-                    var html  = '<div class="venderRepoBox"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
+                    var html  = '<div class="venderRepoBox" style="border: 1px solid"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
                                             '<label>Rep First Name</label>'+
@@ -195,14 +270,14 @@ $(document).on('click', "#AddMoreReps", function () {
                                             '<label>Phone Number 1</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input maxlength="3" type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
                                                 '</div>'+
-                                                '<div class="col-md-4 p-0">'+
-                                                   ' <input type="tel" class="form-control" maxlength="3" id="vendorRepPhone12">'+
+                                                '<div class="col-md-3 p-0">'+
+                                                   ' <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone12">'+
                                                 '</div>'+
 
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control" maxlength="4" id="vendorRepPhone13">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="4" data-type="number"  id="vendorRepPhone13">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -216,13 +291,13 @@ $(document).on('click', "#AddMoreReps", function () {
                                            '<label>Phone Number 2</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" maxlength="3" class="form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input type="tel" data-type="number" maxlength="3" class="phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
-                                                '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control" maxlength="3" id="vendorRepPhone15">'+
+                                                '<div class="col-md-3 p-0">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control" maxlength="4" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -266,14 +341,14 @@ function repsHtml(data) {
                                             '<label>Phone Number 1</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input maxlength="3" value="'+phone1.substring(0,3)+'" type="tel" class="form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input maxlength="3" value="'+phone1.substring(0,3)+'" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                   ' <input type="tel" class="form-control" maxlength="3" value="'+phone1.substring(3, 6)+'" id="vendorRepPhone12">'+
+                                                   ' <input type="tel" class="form-control phone" maxlength="3" value="'+phone1.substring(3, 6)+'" data-type="number" id="vendorRepPhone12">'+
                                                 '</div>'+
 
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control" maxlength="4" value="'+phone1.substring(6, 10)+'" id="vendorRepPhone13">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="4" value="'+phone1.substring(6, 10)+'" data-type="number" id="vendorRepPhone13">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -287,13 +362,13 @@ function repsHtml(data) {
                                            '<label>Phone Number 2</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" value="'+phone2.substring(0,3)+'" maxlength="3" class="form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input type="tel" value="'+phone2.substring(0,3)+'" data-type="number" maxlength="3" class="phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control" maxlength="3" value="'+phone2.substring(3,6)+'" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+' data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control" maxlength="4" value="'+phone2.substring(6,10)+'" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+

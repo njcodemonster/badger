@@ -26,7 +26,6 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorDetailsAdressRep(Int32 id);
         Task<Object> GetVendorDetailsRep(Int32 id);
         Task<Object> GetVendorDetailsAddress(Int32 id);
-        Task<Object> GetVendorNotes(Int32 id);
         Task<Object> GetVendorsNameAndID();
     }
     public class VendorRepo : IVendorRepository
@@ -184,17 +183,7 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
-        public async Task<Object> GetVendorNotes(Int32 id)
-        {
-            dynamic vendorDetails = new ExpandoObject();
-            string sQuery = "select * from notes where(notes.ref_id=" + id.ToString() + ")";
-            using (IDbConnection conn = Connection)
-            {
-                vendorDetails = await conn.QueryAsync<object>(sQuery);
-
-            }
-            return vendorDetails;
-        }
+       
     }
 }
 

@@ -38,10 +38,12 @@ namespace badgerApi.Helper
     public interface IItemServiceHelper
     {
         Task<List<Items>> GetItemsByOrder(int PO_id);
+        Task<Object> GetAllStatus();
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
         private String ItemApiUrl = "";
+
         private readonly IConfiguration _config;
         public ItemsServiceHelper(IConfiguration config)
         {
@@ -63,6 +65,15 @@ namespace badgerApi.Helper
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
             return JsonConvert.DeserializeObject<List<Items>>(data, settings);
+        }
+
+        public async Task<object> GetAllStatus()
+        {
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/status/list", HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
         }
     }
 }
