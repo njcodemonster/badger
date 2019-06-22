@@ -414,6 +414,7 @@ System.IO.IOException: Failed to bind to address http://127.0.0.1:44301: address
 2019-06-20T18:07:45.6035950+05:00 0HLNLFTBQPD8R:00000001 [INF] Executing ObjectResult, writing value of type '"System.Dynamic.ExpandoObject"'. (8a1b66c8)
 2019-06-20T18:07:45.6095170+05:00 0HLNLFTBQPD8R:00000001 [INF] Executed action "badgerApi.Controllers.VendorController.listpageviewAsync (badgerApi)" in 1827.9384ms (afa2e885)
 2019-06-20T18:07:45.6237640+05:00 0HLNLFTBQPD8R:00000001 [INF] Request finished in 1890.8829ms 200 application/json; charset=utf-8 (791a596a)
+<<<<<<< HEAD
 >>>>>>> 70e6d6188fc3201accc8562f9915090d3befef7c
 2019-06-20T22:00:55.0531351+05:00 0HLNLK3DOUMBL:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:44301/api/values   (ca22a1cb)
 2019-06-20T22:00:55.0530357+05:00 0HLNLK3DOUMBM:00000001 [INF] Request starting HTTP/1.1 DEBUG http://localhost:62169/  0 (ca22a1cb)
@@ -440,3 +441,5 @@ System.IO.IOException: Failed to bind to address http://127.0.0.1:44301: address
 2019-06-20T22:20:19.5909689+05:00 0HLNLKCF0QG9N:00000001 [INF] Executing ObjectResult, writing value of type '"badgerApi.Models.Users"'. (8a1b66c8)
 2019-06-20T22:20:19.6052883+05:00 0HLNLKCF0QG9N:00000001 [INF] Executed action "badgerApi.Controllers.UserController.Authenticate (badgerApi)" in 5108.6521ms (afa2e885)
 2019-06-20T22:20:19.6082944+05:00 0HLNLKCF0QG9N:00000001 [INF] Request finished in 5146.4139ms 200 application/json; charset=utf-8 (791a596a)
+=======
+>>>>>>> a36f767540de9ad70040a2a5bc3c67af735a3cf4
