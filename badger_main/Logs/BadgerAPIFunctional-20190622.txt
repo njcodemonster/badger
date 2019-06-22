@@ -38,3 +38,7 @@
 2019-06-22T15:01:38.3777825+05:00 0HLNMV28BGC2Q:00000002 [INF] Executing ObjectResult, writing value of type '"badgerApi.Models.Users"'. (8a1b66c8)
 2019-06-22T15:01:38.3896071+05:00 0HLNMV28BGC2Q:00000002 [INF] Executed action "badgerApi.Controllers.UserController.Authenticate (badgerApi)" in 5165.6818ms (afa2e885)
 2019-06-22T15:01:38.3937301+05:00 0HLNMV28BGC2Q:00000002 [INF] Request finished in 5199.8197ms 200 application/json; charset=utf-8 (791a596a)
+2019-06-22T18:46:53.0762717+05:00 0HLNN30AMEF8I:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:44301/api   (ca22a1cb)
+2019-06-22T18:46:53.2860473+05:00 0HLNN30AMEF8I:00000001 [INF] Request finished in 214.8214ms 404  (791a596a)
+2019-06-22T18:46:53.3016191+05:00 0HLNN30AMEF8I:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:44301/api   (ca22a1cb)
+2019-06-22T18:46:53.3022378+05:00 0HLNN30AMEF8I:00000002 [INF] Request finished in 0.6151ms 404  (791a596a)
