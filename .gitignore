@@ -260,6 +260,7 @@ paket-files/
 __pycache__/
 *.pyc
 /badger_main/aws-beanstalk-tools-defaults.json
+/badger_main/*.json
 
 # custom git ignore file here
 
