@@ -26,7 +26,7 @@
    // jsonData["Rep_phone2"] = $(newVendorForm[13]).val() + $(newVendorForm[14]).val() + $(newVendorForm[15]).val();
     $.ajax({
         
-        url: '/addstyle/newstyle',
+        url: 'styles/create',
         dataType: 'json',
         type: 'post',
         contentType: 'application/json',
@@ -43,7 +43,7 @@
             formData.append('product_id', data);
             formData.append('StyleImage', $('#newAddStyleForm #StyleImage')[0].files[0]);
             $.ajax({
-                url: "/addstyle/newstyle_doc",
+                url: "/styles/newdoc",
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
