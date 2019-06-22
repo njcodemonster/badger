@@ -17,9 +17,11 @@ namespace badgerApi.Interfaces
     {
         Task<Product> GetByIdAsync(int id);
         Task<List<Product>> GetAll(Int32 Limit);
-        Task<Product> Create(Product NewProduct);
+        Task<String> Create(Product NewProduct);
         Task<bool> UpdateAsync(Product ProductToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task<String> CreateProductAttribute(ProductAttributes NewProductAttribute);
+        Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
     }
     public class ProductRepo : IProductRepository
     {
@@ -42,9 +44,13 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public Task<Product> Create(Product NewProduct)
+        public async Task<string> Create(Product NewProduct)
         {
-            throw new NotImplementedException();
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<Product>(NewProduct);
+                return result.ToString();
+            }
         }
 
         public async Task<List<Product>> GetAll(int Limit)
@@ -86,10 +92,35 @@ namespace badgerApi.Interfaces
             }
         }
 
-        public Task UpdateSpecific(Dictionary<string, string> ValuePairs, string where)
+        public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
-            throw new NotImplementedException();
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
+            }
+
         }
+        public async Task<string> CreateProductAttribute(ProductAttributes NewProductAttributes)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<ProductAttributes>(NewProductAttributes);
+                return result.ToString();
+            }
+        }
+        public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<ProductAttributeValues>(NewProductAttributeValues);
+                return result.ToString();
+            }
+
+        }
+
     }
 }
 
