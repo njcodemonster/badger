@@ -13,8 +13,8 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Send to editor"</a>
-                            <a class="dropdown-item" href="#" onclick="">Mark selected as "Shoot not started"</a>
+                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatus(@Model.PhotoshootID, 'SendToEditor');">Mark selected as "Send to editor"</a>
+                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatus(@Model.PhotoshootID, 'NotStarted');">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
                 </th>
@@ -32,7 +32,7 @@
 
                 <tr style="">
                     <td class="text-center">
-                        <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
+                        <input type="checkbox" name="productCheckBox" value="@photoshoot.product_id" class="select-box">
                     </td>
                     <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
                     <td>@photoshoot.vendor_name</td>

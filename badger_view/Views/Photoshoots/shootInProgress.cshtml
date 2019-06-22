@@ -9,24 +9,31 @@
 
 <div class="">
     <div class="accordion" id="accordionpomgmt">
+        @if (Model.count > 0)
+        {
+            @foreach (ProductPhotoshootInProgressRep inProgress in Model.Lists)
+            {
+                <div class="card">
+                    <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id">
+                        <h2 class="mb-0">
+                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@inProgress.photoshoot_id">
+                                <i class="fa fa-plus"></i>
+                                <span class="text-dark font-weight-bold h5">@inProgress.photoshoot_name</span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionpomgmt">
 
-        @foreach (ProductPhotoshootInProgressRep inProgress in Model.Lists)
+                    </div>
+                </div>
+            }
+        }
+        else
         {
             <div class="card">
-                <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id" >
-                    <h2 class="mb-0">
-                        <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@inProgress.photoshoot_id">
-                            <i class="fa fa-plus"></i>
-                            <span class="text-dark font-weight-bold h5">@inProgress.photoshoot_name</span>
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionpomgmt">
-                    
-                </div>
+                    <h2 class="mb-0"> No result found.</h2>
+                
             </div>
         }
-
-
     </div>
 </div>

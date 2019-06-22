@@ -224,7 +224,7 @@ namespace badgerApi.Controllers
 
 
         [HttpPut("UpdatePhotoshootProductStatus/{productId}")]
-        public async Task<string> UpdatePhotoshootProductStatus(int productId, [FromBody]   string value)
+        public async Task<string> UpdatePhotoshootProductStatus(string productId, [FromBody]   string value)
         {
             string UpdateResult = "Success";
             try
@@ -235,29 +235,67 @@ namespace badgerApi.Controllers
                 ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
                 ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
                 int userId = PhotoshootToUpdate.updated_by;
-                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id = " + productId);
-                string PhotoshootStatus = PhotoshootToUpdate.product_shoot_status_id.ToString();
+                string PhotoshootStatus;
 
-                if (PhotoshootStatus == "1")
+                int countComma = productId.Count(c => c == ',');
+                if (countComma > 0)
                 {
-                    event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
-                    event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
-                    await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_started_id, productId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
-                    await _eventRepo.AddEventAsync(event_photoshoot_started_id, userId, productId, event_photoshoot_started, _common.GetTimeStemp(), user_event_table_name);
+                    await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id IN ( " + productId + " ) ");
+                    PhotoshootStatus = PhotoshootToUpdate.product_shoot_status_id.ToString();
+                    var ids = productId.Split(",");
+                    foreach (var product_id in ids)
+                    {
+                        int ProductId = Int32.Parse(product_id);
+                        if (PhotoshootStatus == "1")
+                        {
+                            event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
+                            event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
+                            await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_started_id, ProductId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                            await _eventRepo.AddEventAsync(event_photoshoot_started_id, userId, ProductId, event_photoshoot_started, _common.GetTimeStemp(), user_event_table_name);
+                        }
+                        else if (PhotoshootStatus == "2")
+                        {
+                            event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
+                            event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
+                            await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_sent_to_editor_id, ProductId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
+                            await _eventRepo.AddEventAsync(event_photoshoot_sent_to_editor_id, userId, ProductId, event_photoshoot_sent_to_editor, _common.GetTimeStemp(), user_event_table_name);
+                        }
+                        else if (PhotoshootStatus == "0")
+                        {
+                            event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
+                            event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", ProductId.ToString());
+                            await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_not_started_id, ProductId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
+                            await _eventRepo.AddEventAsync(event_photoshoot_not_started_id, userId, ProductId, event_photoshoot_not_started, _common.GetTimeStemp(), user_event_table_name);
+                        }
+                    }
                 }
-                else if (PhotoshootStatus == "2")
+
+                else
                 {
-                    event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
-                    event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
-                    await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_sent_to_editor_id, productId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
-                    await _eventRepo.AddEventAsync(event_photoshoot_sent_to_editor_id, userId, productId, event_photoshoot_sent_to_editor, _common.GetTimeStemp(), user_event_table_name);
-                }
-                else if (PhotoshootStatus == "0")
-                {
-                    event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
-                    event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", productId.ToString());
-                    await _eventRepo.AddPhotoshootAsync(productId, event_photoshoot_not_started_id, productId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
-                    await _eventRepo.AddEventAsync(event_photoshoot_not_started_id, userId, productId,  event_photoshoot_not_started, _common.GetTimeStemp(), user_event_table_name);
+                    await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id = " + productId);
+                    PhotoshootStatus = PhotoshootToUpdate.product_shoot_status_id.ToString();
+                    int ProductId = Int32.Parse(productId);
+                    if (PhotoshootStatus == "1")
+                    {
+                        event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
+                        event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
+                        await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_started_id, ProductId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                        await _eventRepo.AddEventAsync(event_photoshoot_started_id, userId, ProductId, event_photoshoot_started, _common.GetTimeStemp(), user_event_table_name);
+                    }
+                    else if (PhotoshootStatus == "2")
+                    {
+                        event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
+                        event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
+                        await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_sent_to_editor_id, ProductId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
+                        await _eventRepo.AddEventAsync(event_photoshoot_sent_to_editor_id, userId, ProductId, event_photoshoot_sent_to_editor, _common.GetTimeStemp(), user_event_table_name);
+                    }
+                    else if (PhotoshootStatus == "0")
+                    {
+                        event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
+                        event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", ProductId.ToString());
+                        await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_not_started_id, ProductId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
+                        await _eventRepo.AddEventAsync(event_photoshoot_not_started_id, userId, ProductId, event_photoshoot_not_started, _common.GetTimeStemp(), user_event_table_name);
+                    }
                 }
 
             }

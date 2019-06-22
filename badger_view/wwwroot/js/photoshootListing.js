@@ -146,11 +146,6 @@ function AddToNewPhotoshoot() {
     jsonData["product_id"] = ProductId;
     jsonData["shoot_start_date"] = shoot_date_seconds;
     jsonData["shoot_end_date"] = 0;
-    jsonData["active_status"] = 0;
-    jsonData["created_by"] = 2;
-    jsonData["updated_by"] = 1;
-    jsonData["created_at"] = (new Date().getTime()) / 1000;
-    jsonData["updated_at"] = (new Date().getTime()) / 1000;
 
     if (typeof ProductId !== "undefined" && PhotoshootDate != "" && PhotoshootModelId != "") {
         $("#_modal_loader").fadeIn(200);
@@ -278,13 +273,41 @@ function changeShootStatusOnSendToEditor(productId, status) {
 
 }
 
-function moveSelectedToShootNotStarted() {
+function updateMultipleProductStatus(PhotoshootId, Status) {
+    $("#collapse_" + PhotoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
     var productAddToShootNotStarted = [];
-    $.each($("input[name='productAddToShootNotStarted']:checked"), function () {
+    $(".select-box:checked").each(function () {
+        console.log($(this).val())
         productAddToShootNotStarted.push($(this).val());
-    });
+    }) 
+
+    console.log((productAddToShootNotStarted));
     if (productAddToShootNotStarted.length > 0) {
-        var product_ids = productAddToShootNotStarted.join(","); 
+        var product_ids = productAddToShootNotStarted.join(",");
         console.log(product_ids);
+        var jsonData = {};
+        jsonData["product_id"] = product_ids;
+        jsonData["status"] = Status;
+
+        $.ajax({
+            url: '/Photoshoots/updateMultiplePhotoshootStatus/',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+
+        }).always(function (data) {
+            if (data == "Success") {
+
+                getPhotoshootProducts(PhotoshootId);
+
+            } else {
+                alert(data)
+            }
+        });
+        console.log(product_ids);
+    } else {
+        getPhotoshootProducts(PhotoshootId);
     }
+    
 }
