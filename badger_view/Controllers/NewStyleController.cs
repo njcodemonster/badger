@@ -42,23 +42,25 @@ namespace badger_view.Controllers
         }
 
         [HttpPost("/addstyle/newstyle_doc")]
-        public async Task<String> CreateNewStyleDoc(NewStyleFileData test)
+        public async Task<String> CreateNewStyleDoc(NewStyleFileData StyleFileData)
         {
             try
-            { string product_id = test.product_id;
-
+            {
+                string product_id = StyleFileData.product_id;
+                SetBadgerHelper();
                 
 
-                string Fill_path = test.StyleImage.FileName;
+                string Fill_path = StyleFileData.StyleImage.FileName;
                 Fill_path = UploadPath + Fill_path;
                 using (var stream = new FileStream(Fill_path, FileMode.Create))
                 {
-                    await test.StyleImage.CopyToAsync(stream);
+                    await StyleFileData.StyleImage.CopyToAsync(stream);
                 }
-                JObject product = new JObject();
-                product.Add("product_id", product_id);
-                product.Add("product_vendor_image", Fill_path);
-                product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
+                JObject product_doc = new JObject();
+                
+                product_doc.Add("product_vendor_image", StyleFileData.StyleImage.FileName);
+                
+                product_id = await _BadgerApiHelper.GenericPutAsyncString<String>(product_doc.ToString(Formatting.None), "/product/updatespecific/"+ product_id); 
 
 
                 return Fill_path;
@@ -79,7 +81,7 @@ namespace badger_view.Controllers
             string product_name = json.Value<string>("product_name");
 
 
-            String sku_family = json.Value<string>("style_size").Split('-')[0];
+            String sku_family = json.Value<string>("style_sku").Split('-')[0];
 
 
             product.Add("product_name", product_name);
@@ -103,14 +105,14 @@ namespace badger_view.Controllers
             String product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
 
             JObject product_attr = new JObject();
-            Int16 size_char = 3;
-            if (json.Value<string>("style_size") == "Extra") { size_char = 3; }
-            if (json.Value<string>("style_size") == "Small") { size_char = 4; }
-            if (json.Value<string>("style_size") == "Medium") { size_char = 5; }
-            if (json.Value<string>("style_size") == "Large") { size_char = 6; }
+            Int16 attribute_id = 3;
+            if (json.Value<string>("style_size") == "Extra") { attribute_id = 3; }
+            if (json.Value<string>("style_size") == "Small") { attribute_id = 4; }
+            if (json.Value<string>("style_size") == "Medium") { attribute_id = 5; }
+            if (json.Value<string>("style_size") == "Large") { attribute_id = 6; }
 
 
-            product_attr.Add("attribute_id", size_char);
+            product_attr.Add("attribute_id", attribute_id);
             product_attr.Add("product_id", Int32.Parse( product_id));
             product_attr.Add("value", json.Value<string>("style_size"));
 
@@ -119,6 +121,29 @@ namespace badger_view.Controllers
             String attr_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr.ToString(Formatting.None), "/attributevalues/create");
 
 
+            JObject product_attr_value = new JObject();
+            product_attr_value.Add("product_id", Int32.Parse(product_id));
+            product_attr_value.Add("attribute_id", attribute_id);
+            product_attr_value.Add("value_id", attr_value_id);
+
+            product_attr_value.Add("created_by", 2);
+            // product_attr_value.Add("created_at", _common.GetTimeStemp()); need to create in DB
+            String product_attribute_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr_value.ToString(Formatting.None), "/product/createAttributesValues");
+
+            JObject product_attribute_obj = new JObject();
+            product_attribute_obj.Add("product_id", Int32.Parse(product_id));
+            product_attribute_obj.Add("attribute_id", attribute_id);
+            product_attribute_obj.Add("sku", sku_family);
+
+            product_attribute_obj.Add("created_by", 2);
+            //product_attribute_obj.Add("created_at", _common.GetTimeStemp()); need to create in DB
+            String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
+
+
+
+
+            //createAttributesValues
+            //createProductAttribute
 
             // style_attr.Add("abc", "a ");
             // style_attr.Add("style_size", json.Value<string>("style_size"));

@@ -12,8 +12,8 @@
 
    
 
-    jsonData["style_size"] = $(newVendorForm[4]).val();
-    jsonData["style_vendor_size"] = $(newVendorForm[5]).val();
+    jsonData["style_sizestyle_vendor_size"] = $(newVendorForm[4]).val();
+    jsonData["style_size"] = $(newVendorForm[5]).val();
     jsonData["style_sku"] = $(newVendorForm[6]).val();
     jsonData["style_qty"] = $(newVendorForm[7]).val();
     
@@ -37,7 +37,7 @@
         console.log(data);
         if (data != "0") {
             console.log("New style Added");
-            //alert("style created . uploading files");
+            alert("style created . uploading files");
             var formData = new FormData();
 
             formData.append('product_id', data);
@@ -51,7 +51,7 @@
                 contentType: false,
             }).always(function (data) {
                 console.log(data);
-
+                alert("files Uploded");
 
             });
         }
