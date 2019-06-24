@@ -381,7 +381,7 @@ function repsHtml(data) {
                                                     '<span class="d-inline">(</span> <input type="tel" value="'+phone2.substring(0,3)+'" data-type="number" maxlength="3" class="phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+' data-type="number" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+'" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
                                                     '<input type="tel" class="form-control phone" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
@@ -394,15 +394,36 @@ function repsHtml(data) {
     }
 }
 function getVendoeNote(id) {
+
     if (id != undefined) {
         $.ajax({
             url: '/vendor/getvendornoteanddoc/' + id,
             dataType: 'json',
             type: 'Get',
             contentType: 'application/json',
-        }).always(function (data) { })
+        }).always(function (data) {
+            console.log(data);
+            if (data.note && data.note.length > 0) {
+                $('#vendorNote').attr('data-value',data.note[data.note.length-1].note).val(data.note[data.note.length-1].note);
+            }
+
+        })
     }
 }
 $(document).on('click', "#addVendorNote", function () {
-    alert();
+    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
+        var id = 
+         $.ajax({
+            url: '/vendor/getvendornoteanddoc/' + id,
+            dataType: 'json',
+            type: 'Get',
+            contentType: 'application/json',
+        }).always(function (data) {
+            console.log(data);
+            if (data.note && data.note.length > 0) {
+                $('#vendorNote').attr('data-value',data.note[data.note.length-1].note).val(data.note[data.note.length-1].note);
+            }
+
+        })
+    }
 });
