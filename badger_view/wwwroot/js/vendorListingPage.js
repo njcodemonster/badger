@@ -1,12 +1,16 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
     var notvalid = false;
+    $('.errorMsg').remove();
+    $(this).removeClass('errorFeild');
     $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio'){
+        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = true;
-            //$(this).parents('.form-group').append('<span>this field is required</span>');
             $(this).addClass('errorFeild');
-        } else {
-            $(this).removeClass('errorFeild');
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        }
+        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
+            notvalid = true;
         }
     });
     if (notvalid) {
@@ -75,24 +79,17 @@
         }
     });
 });
-function isNumber(evt) {
-    evt = (evt) ? evt : window.event;
-    var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
-    }
-    return true;
-}
-function blockspecialcharacter(e) {
-    var key= document.all ? key= e.keyCode : key= e.which;
-    return ((key > 64 && key < 91) || (key> 96 && key< 123) || key== 8 || key== 32 || (key>= 48 && key<= 57));
-}
+
+
 $(document).on('keydown', "#newVendorForm input", function (e) {
     $(this).removeClass('errorFeild');
+   $(this).parents('.form-group').find('.errorMsg').remove();
     if ($(this).attr('data-type') == 'number') {
         return isNumber(e)
     } else {
-        return blockspecialcharacter(e);
+        if ($(this).attr('type') != 'email') {
+            return blockspecialcharacter(e);
+        }
     }
 });
 $(document).on('keyup', "#newVendorForm input.phone", function (e) {
@@ -129,6 +126,7 @@ $(document).on('click', "#EditVendor", function () {
         $('#vendorName').val(vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);
         $('#vendorStatmentName').val(vendor.statement_name);
+        $('#vendorDec').val(vendor.vendor_description);
         $('#vendorCode').val(vendor.vendor_code);
         $('#vendorourCustomerNumber').val(vendor.our_customer_number);
         // $('#vendorourCustomerNumber').val(vendor.vendor_name);
@@ -161,13 +159,17 @@ $(document).on('click', "#EditVendor", function () {
 $(document).on('click', "#EditVendorButton", function () {
     var jsonData = {};
      var notvalid = false;
+    $('.errorMsg').remove();
+    $(this).removeClass('errorFeild');
     $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio'){
+        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = true;
-            //$(this).parents('.form-group').append('<span>this field is required</span>');
             $(this).addClass('errorFeild');
-        } else {
-            $(this).removeClass('errorFeild');
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        }
+        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
+            notvalid = true;
         }
     });
     if (notvalid) {
@@ -394,7 +396,7 @@ function repsHtml(data) {
     }
 }
 function getVendoeNote(id) {
-
+    $('#modaladdnote').attr('data-id', id);
     if (id != undefined) {
         $.ajax({
             url: '/vendor/getvendornoteanddoc/' + id,
@@ -412,18 +414,19 @@ function getVendoeNote(id) {
 }
 $(document).on('click', "#addVendorNote", function () {
     if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
-        var id = 
+        var id = $('#modaladdnote').attr('data-id');
+        var jsonData = {};
+        jsonData["vendor_notes"] = $('#vendorNote').val();
          $.ajax({
-            url: '/vendor/getvendornoteanddoc/' + id,
+            url: '/vendor/insertvendornote/' + id,
             dataType: 'json',
-            type: 'Get',
+            type: 'post',
             contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
         }).always(function (data) {
             console.log(data);
-            if (data.note && data.note.length > 0) {
-                $('#vendorNote').attr('data-value',data.note[data.note.length-1].note).val(data.note[data.note.length-1].note);
-            }
-
+           
         })
     }
 });

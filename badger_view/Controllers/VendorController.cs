@@ -275,5 +275,24 @@ namespace badger_view.Controllers
        
             return JsonConvert.SerializeObject(venderDocAndNotes);
         }
-    }
+        [HttpPost("vendor/insertvendornote/{id}")]
+        public async Task<String> InsertVendorNote(int id, [FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+            string vendor_notes = json.Value<string>("vendor_notes");
+            String newNoteID = "0";
+            if (vendor_notes != "")
+            {
+                JObject vendorNotes = new JObject();
+                vendorNotes.Add("ref_id", id);
+                vendorNotes.Add("note", vendor_notes);
+                vendorNotes.Add("created_by", Int32.Parse(loginUserId));
+                 newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+           
+            }
+            return newNoteID;
+        }
+           
+}
 }
