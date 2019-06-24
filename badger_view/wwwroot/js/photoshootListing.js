@@ -249,6 +249,7 @@ function updatephotoshootStatus(productId, photoshoot_id, status) {
 }
 
 function changeShootStatusOnSendToEditor(productId, status) {
+    $(".loading-box").css("visibility", "visible");
     var statusUpdate = "";
     if (status == 0) {
         statusUpdate = "NotStarted";
@@ -269,18 +270,18 @@ function changeShootStatusOnSendToEditor(productId, status) {
             .row($("#shootRow_" + productId).parents('tr'))
             .remove()
             .draw();
+        $(".loading-box").css("visibility", "hidden");
     });
 
 }
 
-function updateMultipleProductStatus(PhotoshootId, Status) {
-    $("#collapse_" + PhotoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
+function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
     var productAddToShootNotStarted = [];
     $(".select-box:checked").each(function () {
         console.log($(this).val())
         productAddToShootNotStarted.push($(this).val());
     }) 
-
+    $("#collapse_" + PhotoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
     console.log((productAddToShootNotStarted));
     if (productAddToShootNotStarted.length > 0) {
         var product_ids = productAddToShootNotStarted.join(",");
@@ -310,4 +311,54 @@ function updateMultipleProductStatus(PhotoshootId, Status) {
         getPhotoshootProducts(PhotoshootId);
     }
     
+}
+
+function updateMultipleProductStatusOnSentToEditor(Status) {
+    var productAddToShootNotStarted = [];
+    $(".select-box:checked").each(function () {
+        console.log($(this).val())
+        productAddToShootNotStarted.push($(this).val());
+    })
+    if (productAddToShootNotStarted.length > 0) {
+        $(".loading-box").css("visibility", "visible");
+        var product_ids = productAddToShootNotStarted.join(",");
+        console.log(product_ids);
+        var jsonData = {};
+        jsonData["product_id"] = product_ids;
+        jsonData["status"] = Status;
+
+        $.ajax({
+            url: '/Photoshoots/updateMultiplePhotoshootStatus/',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+
+        }).always(function (data) {
+            if (data == "Success") {
+
+                if (product_ids.indexOf(',') == -1) {
+                    datatable_js_ps
+                        .row($("#shootRow_" + product_ids).parents('tr'))
+                        .remove()
+                        .draw();
+                } else {
+                    var arrayProductId = product_ids.split(",");
+                    $.each(arrayProductId, function (i) {
+                        datatable_js_ps
+                            .row($("#shootRow_" + arrayProductId[i]).parents('tr'))
+                            .remove()
+                            .draw();
+                    });
+                }
+
+            } else {
+                
+            }
+            $(".loading-box").css("visibility", "hidden");
+        });
+        console.log(product_ids);
+    } else {
+        
+    }
 }

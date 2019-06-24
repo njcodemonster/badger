@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Send to editor Photoshoots";
+    ViewData["Title"] = "Sent to editor Photoshoots";
 }
 @model dynamic
 @section Scripts {
@@ -59,7 +59,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="moveSelectedToShootNotStarted()">Mark selected as "Shoot not started"</a>
+                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnSentToEditor('NotStarted')">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
                 </th>
@@ -98,6 +98,9 @@
     </table>
 </div>
 
+<div class="loading-box">
+    <div class="inner-loading"><div class="spinner-border  text-light" role="status" style=" "><span class="sr-only">Loading...</span></div></div>
+</div>
 <script>
     function selectAllCheckbox() {
         $(".select-box").attr("checked", true);

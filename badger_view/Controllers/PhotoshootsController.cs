@@ -62,10 +62,6 @@ namespace badger_view.Controllers
             dynamic photoshootInProgressModal   = new ExpandoObject();
             photoshootInProgressModal.Lists     = photoshootInProgress.photoshootsInprogress;
 
-
-            dynamic input = JsonConvert.DeserializeObject(photoshootInProgressModal);
-            dynamic output = new List<dynamic>();
-
             return View("ShootInProgress", photoshootInProgressModal);
         }
 

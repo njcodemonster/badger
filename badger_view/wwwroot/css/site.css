@@ -245,3 +245,23 @@ label.error {
 #newVendorForm .phone {
     text-align: center
 }
+.loading-box {
+    display: table;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    position: fixed;
+    top: 0px;
+    border: 0px;
+    left: 0px;
+    visibility:hidden;
+}
+.inner-loading {
+    width: 100%;
+    height: 100px;
+    z-index: 999;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+   }
