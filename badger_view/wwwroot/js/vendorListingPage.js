@@ -1,7 +1,7 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
     var notvalid = false;
     $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') == 'input'){
+        if($(this).val() == '' && $(this).attr('type') != 'radio'){
             notvalid = true;
             //$(this).parents('.form-group').append('<span>this field is required</span>');
             $(this).addClass('errorFeild');
@@ -160,6 +160,19 @@ $(document).on('click', "#EditVendor", function () {
 });
 $(document).on('click', "#EditVendorButton", function () {
     var jsonData = {};
+     var notvalid = false;
+    $('#newVendorForm input').each(function (){
+        if($(this).val() == '' && $(this).attr('type') != 'radio'){
+            notvalid = true;
+            //$(this).parents('.form-group').append('<span>this field is required</span>');
+            $(this).addClass('errorFeild');
+        } else {
+            $(this).removeClass('errorFeild');
+        }
+    });
+    if (notvalid) {
+        return false;
+    }
     var id = $("#newVendorForm").data("currentID");
     jsonData["vendor_name"] = $('#vendorName').val();
     jsonData["corp_name"] = $('#vendorCorpName').val();
@@ -380,3 +393,16 @@ function repsHtml(data) {
         $('.venderRepo').append(html); 
     }
 }
+function getVendoeNote(id) {
+    if (id != undefined) {
+        $.ajax({
+            url: '/vendor/getvendornoteanddoc/' + id,
+            dataType: 'json',
+            type: 'Get',
+            contentType: 'application/json',
+        }).always(function (data) { })
+    }
+}
+$(document).on('click', "#addVendorNote", function () {
+    alert();
+});

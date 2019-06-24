@@ -267,5 +267,13 @@ namespace badger_view.Controllers
             return vendorStatus;
 
         }
+        [HttpGet("vendor/getvendornoteanddoc/{id}")]
+        public async Task<Object> GetNotesAndDoc(Int32 id)
+        {
+            SetBadgerHelper();
+            dynamic venderDocAndNotes = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/getnoteanddoc/" + id.ToString());
+       
+            return JsonConvert.SerializeObject(venderDocAndNotes);
+        }
     }
 }
