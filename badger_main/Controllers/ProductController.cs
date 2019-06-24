@@ -8,6 +8,7 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Dynamic;
 
 namespace badgerApi.Controllers
 {
@@ -42,8 +43,17 @@ namespace badgerApi.Controllers
 
 
         }
+        // GET: api/Product/detailpage/1
+        [HttpGet("detailpage/{id}")]
+        public async Task<ProductDetailsPageData> GetProductDetailPage(string id)
+        {
+            ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
+            productDetailsPageData.productProperties = await _ProductRepo.GetProductProperties(id);
+            
+            return productDetailsPageData;
 
-        // GET: api/vendor/list/1
+        }
+        // GET: api/Product/list/1
         [HttpGet("list/{id}")]
         public async Task<List<Product>> GetAsync(int id)
         {

@@ -23,6 +23,7 @@ namespace badgerApi.Interfaces
         Task<String> CreateProductAttribute(ProductAttributes NewProductAttribute);
         Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
         Task<List<Product>> GetProductsByVendorId(String Vendor_id);
+        Task<IEnumerable<ProductProperties>> GetProductProperties(string id);
     }
     public class ProductRepo : IProductRepository
     {
@@ -121,6 +122,17 @@ namespace badgerApi.Interfaces
                 var result = await conn.InsertAsync<ProductAttributes>(NewProductAttributes);
                 return result.ToString();
             }
+        }
+        public async Task<IEnumerable<ProductProperties>> GetProductProperties (string id)
+        {
+            IEnumerable<ProductProperties> productProperties;
+            using (IDbConnection conn = Connection)
+            {
+                 productProperties = await conn.QueryAsync<ProductProperties>("select A.attribute_id,A.sku,A.product_id,C.attribute_type_id,C.attribute,C.attribute_display_name from product_attributes as A  , attributes as C  where (A.product_id = "+id+" and A.attribute_id= C.attribute_id ) ");
+                
+            }
+            return productProperties;
+
         }
         public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
         {

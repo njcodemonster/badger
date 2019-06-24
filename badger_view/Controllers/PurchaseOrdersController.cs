@@ -497,7 +497,7 @@ namespace badger_view.Controllers
             // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
 
             //VendorPageModal.Reps = venderAdressandRep.Reps;
-            return View("Index", VendorPageModal);
+            return View("Index");
         }
         public async Task<IActionResult> InventoryReporting()
         {
