@@ -265,5 +265,13 @@ namespace badger_view.Controllers
             return vendorStatus;
 
         }
+        [HttpGet("vendor/products/{id}")]
+        public async Task<Object> GetVendorProducts(Int32 id)
+        {
+            SetBadgerHelper();
+            dynamic vendorProducts = new ExpandoObject();
+            vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
+            return JsonConvert.SerializeObject(vendorProducts);
+        }
     }
 }

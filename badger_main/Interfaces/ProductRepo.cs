@@ -22,6 +22,7 @@ namespace badgerApi.Interfaces
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<String> CreateProductAttribute(ProductAttributes NewProductAttribute);
         Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
+        Task<List<Product>> GetProductsByVendorId(String Vendor_id);
     }
     public class ProductRepo : IProductRepository
     {
@@ -102,6 +103,16 @@ namespace badgerApi.Interfaces
 
             }
 
+        }
+        public async Task<List<Product>> GetProductsByVendorId(String Vendor_id)
+        {
+            IEnumerable<Product> toReturn;
+            //List<Product> toReturn = new List<Product>();
+            using(IDbConnection conn = Connection)
+            {
+                toReturn = await conn.QueryAsync<Product>("Select * from product where vendor_id=" + Vendor_id);
+            }
+            return toReturn.ToList();
         }
         public async Task<string> CreateProductAttribute(ProductAttributes NewProductAttributes)
         {

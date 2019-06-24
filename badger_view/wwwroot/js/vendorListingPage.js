@@ -250,8 +250,6 @@ $(document).on('click', "#AddNewVendorButton", function () {
     $("#newVendorForm").data("currentID","");
 });
 $(document).on('click', "#AddMoreReps", function () {
-    //var html = '<span><input type="text" class="form-control d-inline-block" id="vendorRepName" style="width:90%"> <a href="#" id="removeCurrentRep" class="h4">-</a><br><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small></span>'
-    //$('.firstRep').append(html);
                     var html  = '<div class="venderRepoBox" style="border: 1px solid"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
