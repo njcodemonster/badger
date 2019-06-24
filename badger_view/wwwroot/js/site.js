@@ -27,7 +27,7 @@ $(document).ready(function () {
         e.preventDefault();
         if (x < max_fields) { //max input box allowed
             x++; //text box increment
-            $(wrapper).append('<div class="pb-2"> <input type="text" class="form-control d-inline w-24" name="csize[' + x + ']" placeholder="Size" /> <input type="text" class="form-control d-inline w-24" name="vendorcsize[' + x + ']" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-24" name="csku[' + x + ']" placeholder="SKU" /> <input type="text" class="form-control d-inline w-24" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+            $(wrapper).append('<div class="pb-2"> <input type="text" class="form-control d-inline w-24" name="vendorcsize[' + x + ']" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-24" name="csize[' + x + ']" placeholder="Size" /> <input type="text" class="form-control d-inline w-24" name="csku[' + x + ']" placeholder="SKU" /> <input type="text" class="form-control d-inline w-24" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
         }
     });
 
