@@ -16,7 +16,7 @@ namespace notesService.Interfaces
         Task<Notes> GetByID(int id);
         Task<List<Notes>> GetAllByReff(int reff,int type,int Limit);
         Task<String> Create(Notes NewNote);
-
+        Task<List<Notes>> GetAllNotesByReffs(string reffs, int note_type);
     }
     public class NotesRepo : INotesRepository
     {
@@ -59,6 +59,18 @@ namespace notesService.Interfaces
                 {
                     result = await conn.QueryAsync<Notes>("Select * from " + TableName + " where (ref_id=" + reff.ToString() + " and note_type_id = " + note_type.ToString() + " ) order by note_id DESC Limit " + selectlimit + ";");
                 }
+                return result.ToList();
+            }
+        }
+
+        public async Task<List<Notes>> GetAllNotesByReffs(string reffs, int note_type)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Notes> result = new List<Notes>();
+               
+                result = await conn.QueryAsync<Notes>("SELECT * from " + TableName + " where note_id IN(SELECT MAX(note_id) FROM " + TableName + " where (ref_id IN (" + reffs.ToString() + ") and note_type_id = " + note_type.ToString() + " ) group by ref_id) order by note_id DESC ");
+                
                 return result.ToList();
             }
         }

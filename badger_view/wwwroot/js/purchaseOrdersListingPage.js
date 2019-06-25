@@ -696,9 +696,9 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
     }).always(function (data) {
         console.log(data);
         
-        var note = data['notes'];
-        if (note.length > 0) {
-            note = data['notes'][0].note;
+        //var note = data['notes'];
+        if (data.length > 0) {
+            note = data[0].note;
             
             $("#note_form").attr("data-noteid", id);
             $("#note_form #po_notes").val(note);

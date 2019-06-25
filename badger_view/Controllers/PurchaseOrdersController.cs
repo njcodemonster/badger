@@ -478,7 +478,7 @@ namespace badger_view.Controllers
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(601, 0);
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(643, 0);
             PageModal.AllItemStatus =  await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
 
             return View("PurchaseOrdersManagement", PageModal);
@@ -518,17 +518,48 @@ namespace badger_view.Controllers
         }
 
         [Authorize]
-        [HttpGet("purchaseorders/getnote/{id}")]
-        public async Task<String> GetNote(int id)
+        [HttpPost("purchaseorders/itemnotecreate")]
+        public async Task<String> ItemNoteCreate([FromBody] JObject json)
         {
             SetBadgerHelper();
 
-            dynamic purchaseOrdersData = new ExpandoObject();
-         
-            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
-            purchaseOrdersData.notes = purchaseOrderNote;
+            string loginUserId = await _LoginHelper.GetLoginUserId();
 
-            return JsonConvert.SerializeObject(purchaseOrdersData);
+            String newItemID = "0";
+
+            if (json.Value<string>("item_note") != null)
+            {
+                JObject ItemNotes = new JObject();
+                ItemNotes.Add("ref_id", json.Value<string>("item_id"));
+                ItemNotes.Add("note", json.Value<string>("item_note"));
+                ItemNotes.Add("created_by", Int32.Parse(loginUserId));
+
+                newItemID = await _BadgerApiHelper.GenericPostAsyncString<String>(ItemNotes.ToString(Formatting.None), "/purchaseordermanagement/notecreate");
+            }
+
+            return newItemID;
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getnote/{id}")]
+        public async Task<String> GetNote(string id)
+        {
+            SetBadgerHelper();
+
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+
+            return JsonConvert.SerializeObject(purchaseOrderNote);
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getitemnotes/{ids}")]
+        public async Task<String> GetItemNotes(string ids)
+        {
+            SetBadgerHelper();
+                     
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemnotes/" + ids.ToString());
+
+            return JsonConvert.SerializeObject(purchaseOrderNote);
         }
 
         [Authorize]
@@ -544,6 +575,19 @@ namespace badger_view.Controllers
 
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
+
+        [Authorize]
+        [HttpGet("purchaseorders/getitemdocument/{id}")]
+        public async Task<String> GetItemDocument(int id)
+        {
+            SetBadgerHelper();
+            
+            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemdocuments/" + id.ToString() + "/1");
+        
+            return JsonConvert.SerializeObject(purchaseOrderDocs);
+        }
+
+
 
         [Authorize]
         [HttpPost("purchaseorders/trackingdelete/{id}")]
@@ -587,6 +631,133 @@ namespace badger_view.Controllers
             return updatePurchaseOrderID;
         }
 
+        [Authorize]
+        [HttpPost("purchaseorders/itemdocumentcreate")]
+        public async Task<String> CreateNewItemDoc(purchaseOrderFileData purchaseorderfile)
+        {
+            SetBadgerHelper();
 
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string messageDocuments = "";
+            string messageAlreadyDocuments = "";
+            try
+            {
+                List<IFormFile> files = purchaseorderfile.purchaseOrderDocuments;
+
+                foreach (var formFile in files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        string Fill_path = formFile.FileName;
+                        Fill_path = UploadPath + Fill_path;
+
+                        if (System.IO.File.Exists(Fill_path))
+                        {
+                            messageAlreadyDocuments += "File Already Exists: " + Fill_path + " \r\n";
+                        }
+                        else
+                        {
+                            using (var stream = new FileStream(Fill_path, FileMode.Create))
+                            {
+                                messageDocuments += Fill_path + " \r\n";
+
+                                await formFile.CopyToAsync(stream);
+
+                                JObject itemDocuments = new JObject();
+                                itemDocuments.Add("ref_id", purchaseorderfile.po_id);
+                                itemDocuments.Add("url", Fill_path);
+                                itemDocuments.Add("created_by", Int32.Parse(loginUserId));
+                                await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocuments.ToString(Formatting.None), "/purchaseordermanagement/documentcreate");
+
+
+                            }
+                        }
+                    }
+                }
+
+                return messageDocuments + " \r\n " + messageAlreadyDocuments;
+
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+        }
+
+        [Authorize]
+        [HttpPost("purchaseorders/itemupdate/{id}")]
+        public async Task<string> ItemStatusUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+            string updateItemID = "0";
+            try
+            {
+                updateItemID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/" + id.ToString());
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
+                updateItemID = "Failed";
+            }
+            return updateItemID;
+        }
+
+        [Authorize]
+        [HttpPost("purchaseorders/skuweightupdate/{id}")]
+        public async Task<string> SkuWeightUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string updateSkuID = "0";
+            try
+            {
+                JObject skuUpdate = new JObject();
+                skuUpdate.Add("sku_id", json.Value<string>("sku_id"));
+                skuUpdate.Add("weight", json.Value<string>("weight"));
+                skuUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                skuUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(skuUpdate.ToString(Formatting.None), "/sku/updatespecific/" + id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
+                updateSkuID = "Failed";
+            }
+            return updateSkuID;
+        }
+
+        [Authorize]
+        [HttpPost("purchaseorders/polineitemupdate/{id}")]
+        public async Task<string> POLineItemUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string updatePOLineItemID = "0";
+            try
+            {
+                JObject poLineItemUpdate = new JObject();
+                poLineItemUpdate.Add("line_item_id", json.Value<string>("line_item_id"));
+                poLineItemUpdate.Add("line_item_ordered_quantity", json.Value<string>("line_item_ordered_quantity"));
+                poLineItemUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                poLineItemUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updatePOLineItemID = await _BadgerApiHelper.GenericPutAsyncString<String>(poLineItemUpdate.ToString(Formatting.None), "/purchaseorderslineitems/updatespecific/" + id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
+                updatePOLineItemID = "Failed";
+            }
+            return updatePOLineItemID;
+        }
     }
 }

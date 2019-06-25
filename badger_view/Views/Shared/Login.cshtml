@@ -4,10 +4,31 @@
     Layout = null;
 }
 
-<form action="/auth/trylogin" method="post">
-    <input id="UserIdentity" name="UserIdentity" type="text" />
-    <input id="UserPass" name="UserPass" type="text" />
-    <input value="Login" type="submit" />
-</form>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center"> <img src="~/images/badgerlogosmall.jpg" /></h5>
+                        <form action="/auth/trylogin" method="post">
+                            <div class="form-label-group">
+                                <label for="inputEmail">Email Address</label>
+                                <input type="text" id="UserIdentity" name="UserIdentity" class="form-control" placeholder="Email address" required autofocus>
+                            </div>
+                            <br />
+                            <div class="form-label-group">
+                                <label for="inputPassword">Password</label>
+                                <input type="password" id="UserPass" name="UserPass" class="form-control" placeholder="Password" required>
+                            </div>
+                            <br />
 
-
+                            <button class="btn btn-lg btn-primary btn-block text-uppercase" value="Login" type="submit">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

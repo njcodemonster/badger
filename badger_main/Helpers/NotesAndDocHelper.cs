@@ -44,6 +44,7 @@ namespace badgerApi.Helper
         Task<String> GenericPostNote<T>(int reffId, int noteType,string note, int createdBy, Double createdAt);
         Task<String> GenericPostDoc<T>(int reffId,int docType,string URL ,string notes  ,int createdBy, Double createdAt);
         Task<List<Documents>> GenericGetDocAsync<T>(int Reff ,int doc_type, int Limit);
+        Task<List<Notes>> GenericNotes<T>(string Reffs, int note_type);
     }
     public class NotesAndDocHelper:INotesAndDocHelper
     {
@@ -88,11 +89,17 @@ namespace badgerApi.Helper
 
         }
 
-       
+        public async Task<List<Notes>> GenericNotes<T>(string Reffs, int note_type)
+        {
+            List<Notes> notes = new List<Notes>();
+            notes = await GenericGetAsync<List<Notes>>("notes/reff/" + Reffs + "/" + note_type.ToString());
+            return notes;
+        }
+
         public async Task<List<Notes>> GenericNote<T>(int Reff,int note_type, int Limit)
         {
             List<Notes> notes = new List<Notes>();
-            notes = await GenericGetAsync<List<Notes>>("/notes/reff/" + Reff.ToString() + "/"+note_type.ToString()+"/"+Limit.ToString());
+            notes = await GenericGetAsync<List<Notes>>("notes/reff/" + Reff.ToString() + "/"+note_type.ToString()+"/"+Limit.ToString());
             return notes;
         }
 
@@ -104,7 +111,7 @@ namespace badgerApi.Helper
             newNote.Add("note", note);
             newNote.Add("created_by", createdBy);
             newNote.Add("created_at", createdAt);
-            return await GenericPostAsync<string>(newNote.ToString(Formatting.None), "/notes/create");
+            return await GenericPostAsync<string>(newNote.ToString(Formatting.None), "notes/create");
         }
 
         public async Task<string> GenericPostDoc<T>(int reffId, int docType, string URL, string notes, int createdBy, Double createdAt)
@@ -116,13 +123,13 @@ namespace badgerApi.Helper
             newDoc.Add("note", notes);
             newDoc.Add("created_by", createdBy);
             newDoc.Add("created_at", createdAt);
-            return await GenericPostAsync<string>(newDoc.ToString(Formatting.None), "/documents/create");
+            return await GenericPostAsync<string>(newDoc.ToString(Formatting.None), "documents/create");
         }
 
         public async Task<List<Documents>> GenericGetDocAsync<T>(int Reff, int doc_type,int Limit)
         {
             List<Documents> Docs = new List<Documents>();
-            Docs = await GenericGetAsync<List<Documents>>("/documents/reff/" + Reff.ToString() + "/" + doc_type.ToString() + "/" + Limit.ToString());
+            Docs = await GenericGetAsync<List<Documents>>("documents/reff/" + Reff.ToString() + "/" + doc_type.ToString() + "/" + Limit.ToString());
             return Docs;
         }
     }
