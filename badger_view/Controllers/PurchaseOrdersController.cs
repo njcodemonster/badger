@@ -138,7 +138,13 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Single()
         {
-            return View();
+            SetBadgerHelper();
+            List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
+
+            dynamic vendor = new ExpandoObject();
+            vendor.GetVendorsNameAndId = getVendorsNameAndId;
+
+            return View("Single", vendor);
         }
         [Authorize]
         [HttpPost("purchaseorders/newpurchaseorder")]
