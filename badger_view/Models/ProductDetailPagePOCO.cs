@@ -30,6 +30,19 @@ namespace badger_view.Models
         public String product_Image_url { get; set; }
         public int product_image_type_id { get; set; }
     }
+    public partial class ProductDetails
+    {
+
+        public Int64 product_page_detail_id { get; set; }
+        public Int64 product_id { get; set; }
+        public Int64 product_detail_type { get; set; }
+        public Int64 product_detail_value { get; set; }
+        public Int64 created_by { get; set; }
+        public Int64 updated_by { get; set; }
+        public double created_at { get; set; }
+        public double updated_at { get; set; }
+
+    }
     public partial class ProductDetailsPageData
     {
         public Product Product { get; set; }
