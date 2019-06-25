@@ -333,7 +333,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
             $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
         }
-        window.notes = "";
+        window.notes = "0";
         var note = data['notes'];
         if (note.length > 0) {
             note = data['notes'][0].note;
@@ -685,9 +685,8 @@ $(document).on('click', ".remove_tracking", function () {
 
 $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#note_form #po_notes").val("");
-    $("#note_form").attr("data-noteid", "");
     var id = $(this).attr("data-id");
-
+    $("#note_form").attr("data-noteid", id);
     $.ajax({
         url: '/purchaseorders/getnote/' + id,
         dataType: 'json',

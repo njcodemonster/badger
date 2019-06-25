@@ -295,8 +295,16 @@ namespace badger_view.Controllers
                         purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
 
                         await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
-                    }
-                    
+                    }                    
+                }
+
+                if (json.Value<string>("old_note") == "0" && json.Value<string>("note") != null) {
+                    JObject purchaseOrderNote = new JObject();
+                    purchaseOrderNote.Add("ref_id", id);
+                    purchaseOrderNote.Add("note", json.Value<string>("note"));
+                    purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
+
+                    await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
                 }
 
                 JObject allData = JObject.Parse(json.ToString());
