@@ -27,7 +27,7 @@ $(document).ready(function () {
         e.preventDefault();
         if (x < max_fields) { //max input box allowed
             x++; //text box increment
-            $(wrapper).append('<div class="pb-2"> <input type="text" class="form-control d-inline w-25" name="csize[' + x + ']" placeholder="Size" /> <input type="text" class="form-control d-inline w-25" name="csku[' + x + ']" placeholder="SKU" /> <input type="text" class="form-control d-inline w-25" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+            $(wrapper).append('<div class="pb-2"> <input type="text" class="form-control d-inline w-25" name="csize[' + x + ']" placeholder="Size" /> <input type="text" class="form-control d-inline w-25" name="vendorcsize[' + x + ']" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-25" name="csku[' + x + ']" placeholder="SKU" /> <input type="text" class="form-control d-inline w-25" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
         }
     });
 
@@ -63,7 +63,7 @@ $(document).ready(function () {
         $(this).next().select();
     });
 
-
+   
     $('input.edittitlet[type="text"]').blur(function () {
         if ($.trim(this.value) == '') {
             this.value = (this.defaultValue ? this.defaultValue : '');
@@ -135,7 +135,7 @@ $('#size').multiselect({
         container.find('input[type=checkbox]').addClass('d-none');
     }
 });
-$('#status').multiselect({
+$('#status,#size').multiselect({
     nonSelectedText: 'Select Status',
     enableFiltering: true,
     templates: {

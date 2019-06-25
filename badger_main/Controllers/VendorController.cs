@@ -23,7 +23,7 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 3;
         private IEventRepo _eventRepo;
-
+        private IProductRepository _productRepository;
 
 
         private int event_vendor_id = 1;
@@ -44,8 +44,9 @@ namespace badgerApi.Controllers
 
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo)
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository)
         {
+            _productRepository = productRepository;
             _eventRepo = eventRepo;
             _config = config;
             _VendorRepo = VendorRepo;
@@ -73,6 +74,28 @@ namespace badgerApi.Controllers
                 return ToReturn;
             }
            
+
+        }
+        // GET: api/vendor/list
+        [HttpGet("list/products/{id}")]
+        public async Task<List<Product>> ListVendorProducts(string id)
+        {
+            // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
+            // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
+
+            List<Product> ToReturn = new List<Product>();
+            try
+            {
+                ToReturn = await _productRepository.GetProductsByVendorId(id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                return ToReturn;
+            }
+            return ToReturn;
+
 
         }
         // GET: api/vendor/count

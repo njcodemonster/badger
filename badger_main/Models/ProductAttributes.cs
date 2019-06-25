@@ -11,7 +11,7 @@ namespace badgerApi.Models
         public long product_attribute_id { get; set; }
         public int product_id { get; set; }
         public int attribute_id { get; set; }
-        public int? sku { get; set; }
+        public string sku { get; set; }
         public double created_at { get; set; }
         public double? updated_at { get; set; }
         public int? updated_by { get; set; }

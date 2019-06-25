@@ -69,7 +69,7 @@ namespace badgerApi.Controllers
                 AllItemStatus = await _ItemsHelper.GetAllStatus();
             }
             catch (Exception ex)
-            {
+            {   
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for all Item status from Item service with message" + ex.Message);
             }
