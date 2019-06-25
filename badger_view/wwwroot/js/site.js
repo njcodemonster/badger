@@ -63,7 +63,7 @@ $(document).ready(function () {
         $(this).next().select();
     });
 
-
+   
     $('input.edittitlet[type="text"]').blur(function () {
         if ($.trim(this.value) == '') {
             this.value = (this.defaultValue ? this.defaultValue : '');
@@ -135,7 +135,7 @@ $('#size').multiselect({
         container.find('input[type=checkbox]').addClass('d-none');
     }
 });
-$('#status').multiselect({
+$('#status,#size').multiselect({
     nonSelectedText: 'Select Status',
     enableFiltering: true,
     templates: {
