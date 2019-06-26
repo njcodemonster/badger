@@ -645,7 +645,6 @@ $(document).on('click', "#poDelete", function () {
             contentType: 'application/json',
         }).always(function (data) {
             console.log(data);
-
             if (data.responseText == "Success") {
                 var table = $('#purchaseorderlists').DataTable();
                 table.row(window.purchaseorderrownumber).remove().draw(false);

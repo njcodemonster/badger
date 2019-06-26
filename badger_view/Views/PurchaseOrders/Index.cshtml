@@ -18,7 +18,7 @@
         <button type="button" class="btn btn-success btn-sm model_purchase_order" data-toggle="modal" data-target="#modalPurchaseOrder">
             Add New P.O.
         </button>
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalvendor">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#newVendorModal">
             Add New Vendor
         </button>
     </div>
@@ -143,7 +143,7 @@
                                             <option value="@vendor.vendor_id">@vendor.vendor_name</option>
                                         }
                                     </select>
-                                    <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
+                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Order Delivery Range</label>
@@ -233,7 +233,7 @@
 
     <!-- Modal Vendor -->
     <!-- Modal Vendor -->
-    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">

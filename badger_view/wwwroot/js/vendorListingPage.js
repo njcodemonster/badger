@@ -58,6 +58,7 @@
     }).always(function (data) {
         console.log(data);
         if (data != "0") {
+            var id = data;
             console.log("New Vender Added");
             alert("vendor created . uploading files");
             var formData = new FormData();
@@ -75,7 +76,14 @@
                 contentType: false,
             }).always(function (data) {
                 console.log(data);
-            });
+             });
+            $('#vendorListingArea').DataTable().row.add([
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(),2,0,'<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+            ]).draw();
+            var table = $('#vendorListingArea').DataTable();
+            table.page('last').draw('page');
+
+            $('#newVendorModal').modal('hide'); 
         }
     });
 });
@@ -98,9 +106,9 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     }
 })
 $(document).on('click', "#EditVendor", function () {
-    $("#modalvendor #vendorModalLongTitle").text("Edit Vendor");
-    $('#modalvendor input').prop("disabled","true");
-    $('#modalvendor').modal('show');
+    $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
+    $('#newVendorModal input').prop("disabled","true");
+    $('#newVendorModal').modal('show');
     var id = $(this).data("id");
 
     $.ajax({
@@ -111,7 +119,7 @@ $(document).on('click', "#EditVendor", function () {
         contentType: 'application/json',
     }).always(function (data) {
         $("#NewVendorButton,#EditVendorButton").attr("id", "EditVendorButton").text('Update');
-        $('#modalvendor input').removeAttr("disabled");
+        $('#newVendorModal input').removeAttr("disabled");
         var vendorData = data.venderAdressandRep;
         var vendorNoteAndDoc = data.venderDocAndNotes;
         var vendor = vendorData.vendor;
@@ -120,7 +128,7 @@ $(document).on('click', "#EditVendor", function () {
         var notes = vendorNoteAndDoc.note;
         var documents = vendorNoteAndDoc.doc;
         $("#newVendorForm").data("currentID",vendor.vendor_id);
-        $("#modalvendor #vendorModalLongTitle").text("Edit Vendor:" + vendor.vendor_name);
+        $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor:" + vendor.vendor_name);
         if(notes.length > 0)
         $('#vendorNotes').val(notes[notes.length-1].note).attr('data-value',notes[notes.length-1].note);
         $('#vendorName').val(vendor.vendor_name);
@@ -229,8 +237,7 @@ $(document).on('click', "#EditVendorButton", function () {
         }).always(function (data) { 
             console.log(data); 
             if (data != "0") {
-                console.log("Vender updated");
-                alert("vendor created . uploading files");
+                console.log("vendor created . uploading files");
                 var formData = new FormData();
                 formData.append('Vendor_id', id);
                 var files = $("#newVendorForm #vendorDocument")[0].files;
@@ -254,16 +261,16 @@ $(document).on('click', "#EditVendorButton", function () {
                     }).always(function (data) {
                         console.log(data);
                     });
-                
+                 $('#newVendorModal').modal('hide'); 
 
             }
-            alert('update') 
+          
         
         });
 });
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
-    $("#modalvendor #vendorModalLongTitle").text("Add a New Vendor Profile");
+    $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
     $("#newVendorForm input,textarea").val("");
     $("#newVendorForm").data("currentID","");
 });
@@ -395,7 +402,9 @@ function repsHtml(data) {
         $('.venderRepo').append(html); 
     }
 }
-function getVendoeNote(id) {
+
+$(document).on('click', "#VendorNoteButton", function () {
+    var id = $(this).attr('data-id');
     $('#modaladdnote').attr('data-id', id);
     if (id != undefined) {
         $.ajax({
@@ -411,7 +420,7 @@ function getVendoeNote(id) {
 
         })
     }
-}
+})
 $(document).on('click', "#addVendorNote", function () {
     if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
         var id = $('#modaladdnote').attr('data-id');
