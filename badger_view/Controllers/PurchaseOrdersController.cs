@@ -483,22 +483,7 @@ namespace badger_view.Controllers
 
             return View("PurchaseOrdersManagement", PageModal);
         }
-        public async Task<IActionResult> EditAttributes()
-        {
-            ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();
-
-             
-            SetBadgerHelper();
-            
-            Product Product = await _BadgerApiHelper.GenericGetAsync<Product>("/Product/list/501");
-            dynamic AttributeListDetails = new ExpandoObject();
-          //  VendorPageModal.VendorCount = vendorPagerList.Count;
-          //  VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
-            // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
-
-            //VendorPageModal.Reps = venderAdressandRep.Reps;
-            return View("Index");
-        }
+        
         public async Task<IActionResult> InventoryReporting()
         {
             ViewData["loginUserFirstName"] = await _LoginHelper.GetLoginUserFirstName();

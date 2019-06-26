@@ -8,6 +8,7 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using badgerApi.Helper;
 using System.Dynamic;
 
 namespace badgerApi.Controllers
@@ -19,10 +20,12 @@ namespace badgerApi.Controllers
 
         private readonly IProductRepository _ProductRepo;
         ILoggerFactory _loggerFactory;
-        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory)
+        INotesAndDocHelper _notesAndDocHelper;
+        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper)
         {
             _ProductRepo = ProductRepo;
             _loggerFactory = loggerFactory;
+            _notesAndDocHelper = notesAndDocHelper;
         }
 
         // GET: api/Product
@@ -48,8 +51,22 @@ namespace badgerApi.Controllers
         public async Task<ProductDetailsPageData> GetProductDetailPage(string id)
         {
             ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
-            productDetailsPageData.productProperties = await _ProductRepo.GetProductProperties(id);
-            
+            try
+            {
+                productDetailsPageData.Product = await _ProductRepo.GetByIdAsync(Convert.ToInt32( id));
+                productDetailsPageData.productProperties = await _ProductRepo.GetProductProperties(id);
+                productDetailsPageData.productcolorwiths = await _ProductRepo.GetProductcolorwiths(id);
+                productDetailsPageData.productpairwiths = await _ProductRepo.GetProductpairwiths(id);
+                productDetailsPageData.product_Images = await _ProductRepo.GetProductImages(id);
+                productDetailsPageData.ProductDetails = await _ProductRepo.GetProductDetails(id);
+                productDetailsPageData.Product_Notes =  _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1).Result[0].note;
+                productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
+                productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
+                productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return productDetailsPageData;
 
         }
