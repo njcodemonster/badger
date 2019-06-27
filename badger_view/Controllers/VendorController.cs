@@ -26,6 +26,7 @@ namespace badger_view.Controllers
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        private CommonHelper.awsS3helper awsS3Helper = new CommonHelper.awsS3helper();
         private String UploadPath = "";
         private ILoginHelper _LoginHelper;
         public VendorController(IConfiguration config, ILoginHelper LoginHelper)
@@ -109,7 +110,8 @@ namespace badger_view.Controllers
                             using (var stream = new FileStream(Fill_path, FileMode.Create))
                             {
                                 messageDocuments += Fill_path + " \r\n";
-
+                                
+                                awsS3Helper.UploadToS3("testfile.jpg", formFile.OpenReadStream());
                                 await formFile.CopyToAsync(stream);
 
                                 int ref_id = Int32.Parse(vendorDoc.Vendor_id);

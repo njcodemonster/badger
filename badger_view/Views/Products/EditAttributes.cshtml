@@ -59,7 +59,7 @@
                                 <tr>
                                     <td>
                                         <label>Color</label>
-                                        <input type="text" class="form-control" value="@Model.productProperties.First(X=>X.attribute_type_id==2).value" />
+                                        <input type="text" class="form-control" value="@Model.productProperties.Where(X=>X.attribute_type_id==2).Select(X => X.value).DefaultIfEmpty("None").First()" />
                                     </td>
                                 </tr>
                             </table>
@@ -96,22 +96,22 @@
                     <tr>
                         <td>
                             <label>Product details</label>
-                            <textarea class="form-control" id="main_page_paragraph" >@Model.ProductDetails.First(x=>x.product_detail_type==1).product_detail_value</textarea>
+                            <textarea class="form-control" id="main_page_paragraph" >@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit1" value="@Model.ProductDetails.First(x=>x.product_detail_type==2).product_detail_value" class="form-control" />
+                            <input type="text" id="main_page_bulit1" value="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit2" value="@Model.ProductDetails.First(x=>x.product_detail_type==3).product_detail_value" class="form-control" />
+                            <input type="text" id="main_page_bulit2" value="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit3" value="@Model.ProductDetails.First(x=>x.product_detail_type==4).product_detail_value" class="form-control" />
+                            <input type="text" id="main_page_bulit3" value="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                 </table>
@@ -312,7 +312,7 @@
                     }
                 }
                 <td>
-                    @{ first = true; string itemcolor = @Model.productProperties.First(X => X.attribute_type_id == 2).value; }
+                    @{ first = true; string itemcolor = @Model.productProperties.Where(X=>X.attribute_type_id==2).Select(X => X.value).DefaultIfEmpty("None").First(); }
 
                     @foreach (AllColors allColors in Model.AllColors)
                     {

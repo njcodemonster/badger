@@ -59,7 +59,15 @@ namespace badgerApi.Controllers
                 productDetailsPageData.productpairwiths = await _ProductRepo.GetProductpairwiths(id);
                 productDetailsPageData.product_Images = await _ProductRepo.GetProductImages(id);
                 productDetailsPageData.ProductDetails = await _ProductRepo.GetProductDetails(id);
-                productDetailsPageData.Product_Notes =  _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1).Result[0].note;
+                List<Notes> note = await _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1);
+                if (note.Count > 0) {
+                    productDetailsPageData.Product_Notes = note[0].note;
+                }
+                else
+                {
+                    productDetailsPageData.Product_Notes = "";
+                }
+                
                 productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
