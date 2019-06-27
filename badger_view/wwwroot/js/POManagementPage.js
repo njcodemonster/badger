@@ -295,31 +295,58 @@ $(document).on("click", ".item_row_remove", function () {
 });
 
 $(document).on("change", ".item_sku", function () {
-    var item_id = $(this).attr('data-itemid');
     var sku_id = $(this).attr('id');
     var sku = $(this).val();
-    var jsondata = $("input#" + item_id).val();
-    var itemdata = JSON.parse(jsondata);
-    var id = itemdata.item_id
-    itemdata.sku = sku;
-    itemdata.sku_family = sku;
-    $("input#" + item_id).val(JSON.stringify(itemdata));
-
-    console.log($("input#" + item_id).val());
-
-    $(".item_sku").each(function () {
-        if ($(this).attr('id') == sku_id) {
-            $(this).val(sku);
-        }
-    });
-    /*$.ajax({
-        url: "/purchaseorders/itemupdate/" + id,
+    var polineitem_id = $(this).attr('data-polineitem');
+    var product_id = $(this).attr('data-productid');
+    var product_attribute_id = $(this).attr('data-productattributeid');
+    var jsonData = {};
+    jsonData["sku_id"] = sku_id;
+    jsonData["sku"] = sku;
+    jsonData["line_item_id"] = polineitem_id;
+    jsonData["product_id"] = product_id;
+    jsonData["product_attribute_id"] = product_attribute_id;
+    
+    $.ajax({
+        url: "/purchaseorders/skuupdate/" + sku_id,
         dataType: 'json',
         type: 'post',
         contentType: 'application/json',
-        data: JSON.stringify(itemdata),
+        data: JSON.stringify(jsonData),
         processData: false
     }).always(function (data) {
         console.log(data);
-    });*/
-})
+
+        if (data.responseText == "Success") {
+
+            $(".item_sku").each(function () {
+                if ($(this).attr('id') == sku_id) {
+                    $(this).val(sku);
+
+                    var item_id = $(this).attr('data-itemid');
+
+                    var jsondata = $("input#" + item_id).val();
+                    var itemdata = JSON.parse(jsondata);
+                    var id = itemdata.item_id
+                    itemdata.sku = sku;
+                    itemdata.sku_family = sku;
+                    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                    console.log($("input#" + item_id).val());
+
+                    $.ajax({
+                        url: "/purchaseorders/itemupdate/" + id,
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(itemdata),
+                        processData: false
+                    }).always(function (data) {
+                        console.log(data);
+                    });
+                }
+            });
+        }
+
+    });
+});

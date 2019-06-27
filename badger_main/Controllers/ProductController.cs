@@ -106,11 +106,15 @@ namespace badgerApi.Controllers
                 Product ProductToUpdate = JsonConvert.DeserializeObject<Product>(value);
                 ProductToUpdate.product_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                if (ProductToUpdate.product_vendor_image != "")
+                if (ProductToUpdate.product_vendor_image != null)
                 {
                     ValuesToUpdate.Add("product_vendor_image", ProductToUpdate.product_vendor_image.ToString());
                 }
-                
+                if (ProductToUpdate.sku_family != null)
+                {
+                    ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
+                }
+
                 await _ProductRepo.UpdateSpecific(ValuesToUpdate, "Product_id=" + id);
             }
             catch (Exception ex)
@@ -123,6 +127,36 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
+
+        // PUT: api/Product/attribute/updatespecific/5
+        [HttpPut("attribute/updatespecific/{id}")]
+        public async Task<string> AttributeUpdateSpecific(int id, [FromBody] string value)
+        {
+
+            string UpdateResult = "Success";
+
+            try
+            {
+                ProductAttributes ProductAttributeToUpdate = JsonConvert.DeserializeObject<ProductAttributes>(value);
+                ProductAttributeToUpdate.product_attribute_id = id;
+                Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+                
+                if (ProductAttributeToUpdate.sku != null)
+                {
+                    ValuesToUpdate.Add("sku", ProductAttributeToUpdate.sku.ToString());
+                }
+
+                await _ProductRepo.AttributeUpdateSpecific(ValuesToUpdate, "product_attribute_id=" + id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new Product with message" + ex.Message);
+                UpdateResult = "Failed";
+            }
+
+            return UpdateResult;
+        }
 
         // POST: api/product/create
         [HttpPost("createProductAttribute")]

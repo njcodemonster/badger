@@ -486,7 +486,7 @@ namespace badger_view.Controllers
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(601, 0);
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(643, 0);
             PageModal.AllItemStatus =  await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
 
             return View("PurchaseOrdersManagement", PageModal);
@@ -741,6 +741,62 @@ namespace badger_view.Controllers
                 skuUpdate.Add("updated_at", _common.GetTimeStemp());
 
                 updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(skuUpdate.ToString(Formatting.None), "/sku/updatespecific/" + id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
+                updateSkuID = "Failed";
+            }
+            return updateSkuID;
+        }
+
+        [Authorize]
+        [HttpPost("purchaseorders/skuupdate/{id}")]
+        public async Task<string> SkuUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string updateSkuID = "0";
+            try
+            {
+                JObject skuUpdate = new JObject();
+                skuUpdate.Add("sku_id", json.Value<string>("sku_id"));
+                skuUpdate.Add("sku", json.Value<string>("sku"));
+                skuUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                skuUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(skuUpdate.ToString(Formatting.None), "/sku/updatespecific/" + id);
+
+                JObject productUpdate = new JObject();
+                id = Int32.Parse(json.Value<string>("product_id"));
+                productUpdate.Add("product_id", json.Value<string>("product_id"));
+                productUpdate.Add("sku_family", json.Value<string>("sku"));
+                productUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                productUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(productUpdate.ToString(Formatting.None), "/product/updatespecific/" + id);
+
+                JObject productAttributeUpdate = new JObject();
+                id = Int32.Parse(json.Value<string>("product_attribute_id"));
+                productAttributeUpdate.Add("product_attribute_id", json.Value<string>("product_attribute_id"));
+                productAttributeUpdate.Add("sku", json.Value<string>("sku"));
+                productAttributeUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                productAttributeUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(productAttributeUpdate.ToString(Formatting.None), "/product/attribute/updatespecific/" + id);
+
+                JObject poLineItemUpdate = new JObject();
+                id = Int32.Parse(json.Value<string>("line_item_id"));
+                poLineItemUpdate.Add("line_item_id", json.Value<string>("line_item_id"));
+                poLineItemUpdate.Add("sku", json.Value<string>("sku"));
+                poLineItemUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                poLineItemUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(poLineItemUpdate.ToString(Formatting.None), "/purchaseorderslineitems/updatespecific/" + id);
+
             }
             catch (Exception ex)
             {
