@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
+
 namespace badger_view.Controllers
 {
     
@@ -36,6 +38,24 @@ namespace badger_view.Controllers
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
         }
-       
+        [Authorize]
+        [HttpGet("product/EditAttributes/{id}")]
+        public async Task<IActionResult> EditAttributes(string id)
+        {
+
+            ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
+
+            SetBadgerHelper();
+
+            productDetailsPageData = await _BadgerApiHelper.GenericGetAsync<ProductDetailsPageData>("/Product/detailpage/"+id);
+            //  dynamic AttributeListDetails = new ExpandoObject();
+            //  VendorPageModal.VendorCount = vendorPagerList.Count;
+            //  VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
+            // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
+
+            //VendorPageModal.Reps = venderAdressandRep.Reps;
+            return View("EditAttributes",productDetailsPageData );
+        }
+
     }
 }

@@ -45,6 +45,8 @@ namespace badgerApi
             services.AddTransient<IPhotoshootRepository, PhotoshootRepo>();
             services.AddTransient<IPhotoshootModelRepository, PhotoshootModelRepo>();
             services.AddTransient<IUserRepo, UserRepo>();
+            services.AddTransient<ISkuRepo, SkuRepo>();
+            services.AddTransient<IPurchaseOrdersLineItemsRepo, PurchaseOrdersLineItemsRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

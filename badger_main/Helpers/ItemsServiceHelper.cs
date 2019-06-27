@@ -39,6 +39,8 @@ namespace badgerApi.Helper
     {
         Task<List<Items>> GetItemsByOrder(int PO_id);
         Task<Object> GetAllStatus();
+        Task<string> ItemUpdateById(int id, string json);
+        Task<string> SkuUpdateById(int id, string json);
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
@@ -74,6 +76,28 @@ namespace badgerApi.Helper
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
+        }
+
+        public async Task<string> ItemUpdateById(int id, string json)
+        {
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/update/"+id.ToString(), json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+        }
+
+        public async Task<string> SkuUpdateById(int id, string json)
+        {
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/update/" + id.ToString(), json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
         }
     }
 }
