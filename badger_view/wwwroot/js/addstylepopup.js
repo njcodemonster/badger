@@ -12,18 +12,22 @@
 
    
 
-    jsonData["style_sizestyle_vendor_size"] = $(newVendorForm[4]).val();
-    jsonData["style_size"] = $(newVendorForm[5]).val();
-    jsonData["style_sku"] = $(newVendorForm[6]).val();
-    jsonData["style_qty"] = $(newVendorForm[7]).val();
-    
+    //jsonData["style_sizestyle_vendor_size"] = $(newVendorForm[4]).val();
+    //jsonData["style_size"] = $(newVendorForm[5]).val();
+    //jsonData["style_sku"] = $(newVendorForm[6]).val();
+    //jsonData["style_qty"] = $(newVendorForm[7]).val();
+
+    jsonData["vendor_style_sku"] = [];
+    $('#newAddStyleForm .vendorSkuBox').each(function () {
+        var style_sku = {}; 
+        style_sku["style_vendor_size"] = $(this).find('#styleVendorSize').val();
+        style_sku["style_size"] = $(this).find('#styleSize').val();
+        style_sku["style_sku"] = $(this).find('#styleSku').val();
+        style_sku["style_qty"] = $(this).find('#styleSkuQty').val();
+        jsonData["vendor_style_sku"].push(style_sku);
+    })
 
 
-
-    //csize  vendorcsize csku cqty
- 
-   // jsonData["Rep_phone1"] = $(newVendorForm[13]).val() + $(newVendorForm[14]).val() + $(newVendorForm[15]).val();
-   // jsonData["Rep_phone2"] = $(newVendorForm[13]).val() + $(newVendorForm[14]).val() + $(newVendorForm[15]).val();
     $.ajax({
         
         url: 'styles/create',
@@ -77,5 +81,24 @@ $(document).on('click', "#AddStyleButton", function () {
     }).always(function (data) {
         console.log(data);
     });
+
+});
+$(document).ready(function () {
+    var max_fields = 10; //maximum input boxes allowed
+    var wrapper = $(".input_fields_wrap"); //Fields wrapper
+    var add_button = $(".add_field_button"); //Add button ID
+    $(".vendorSkuBox").remove();
+    var x = 1; //initlal text box count
+    $(add_button).click(function (e) { //on add input button click
+        e.preventDefault();
+        if (x < max_fields) { //max input box allowed
+            x++; //text box increment
+            $(wrapper).append('<div class="pb-2  vendorSkuBox"> <input type="text" class="form-control d-inline w-25" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-25" name="styleSize" id="styleSize" placeholder="Size" /> <input type="text" class="form-control d-inline w-25" name="styleSku" id="styleSku" placeholder="SKU" /> <input type="text" class="form-control d-inline w-25" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+        }
+    });
+
+    $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+        e.preventDefault(); $(this).parent('div').remove(); x--;
+    })
 
 });

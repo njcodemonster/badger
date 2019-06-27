@@ -453,5 +453,28 @@ namespace badgerApi.Controllers
         public void Delete(int id)
         {
         }
+
+        // GET: api/vendor/skufamily/id
+        [HttpGet("list/skufamily/{id}")]
+        public async Task<Object> ListVendorLastSku(string id)
+        {
+            
+            dynamic ToReturn = new object();
+            try
+            {
+                ToReturn = await _VendorRepo.GetVendorLastSku(id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
+                return ToReturn;
+            }
+            return ToReturn;
+
+
+        }
+
+
     }
 }
