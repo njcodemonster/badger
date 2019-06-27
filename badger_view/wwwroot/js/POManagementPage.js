@@ -37,8 +37,10 @@
 
         var sku_sizes = ["","XS", "S", "M", "L"];
         for (x = 1; x < 5; x++) {
-            $(wrapper).append('<div class="pb-2"> <input type="text" class="form-control d-inline w-25" name="csize[' + x + ']" placeholder="Size" value = "' + sku_sizes[x]+'"; /> <input type="text" class="form-control d-inline w-25" name="vendorcsize[' + x + ']" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-25" name="csku[' + x + ']" placeholder="SKU" value = "' + new_sku+'-'+x+'" /> <input type="text" class="form-control d-inline w-25" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
-         }
+           // $(wrapper).append('<div class="pb-2 vendorSkuBox"> <input type="text" class="form-control d-inline w-25" name="csize[' + x + ']" placeholder="Size" value = "' + sku_sizes[x]+'" /> <input type="text" class="form-control d-inline w-25" name="vendorcsize[' + x + ']" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-25" name="csku[' + x + ']" placeholder="SKU" value = "' + new_sku+'-'+x+'" /> <input type="text" class="form-control d-inline w-25" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+            $(wrapper).append('<div class="pb-2  vendorSkuBox"> <input type="text" class="form-control d-inline w-25" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-25" name="styleSize" id="styleSize" placeholder="Size" value = "' + sku_sizes[x] + '" /> <input type="text" class="form-control d-inline w-25" name="styleSku" id="styleSku" placeholder="SKU" value = "' + new_sku + '-' + x +'" /> <input type="text" class="form-control d-inline w-25" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+
+        }
        
         console.log(data);
     });

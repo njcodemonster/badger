@@ -98,14 +98,14 @@ namespace badgerApi.Controllers
         }
 
         // POST: api/product/create/items
-        [HttpPost("create/items")]
-        public async Task<string> PostItemsAsync([FromBody]   string value)
+        [HttpPost("createitems/{qty}")]
+        public async Task<string> PostItemsAsync([FromBody]   string value,int qty)
         {
             string NewInsertionID = "0";
             try
             {
                 
-                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create");
+                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create/"+ qty.ToString());
             }
             catch (Exception ex)
             {
@@ -198,7 +198,7 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
-        // POST: api/product/create
+        // POST: api/product/create   // purchase order line items
         [HttpPost("createLineitems")]
         public async Task<string> PostAsyncLineitem([FromBody]   string value)
         {
