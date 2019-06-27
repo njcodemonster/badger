@@ -245,3 +245,8 @@ label.error {
 #newVendorForm .phone {
     text-align: center
 }
+.vendorAlertMsg {
+    text-align: left;
+    position: relative;
+    width: 100%;
+}

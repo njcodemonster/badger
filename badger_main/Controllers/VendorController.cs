@@ -34,8 +34,8 @@ namespace badgerApi.Controllers
         private string vendorEventTableName = "vendor_events";
 
         private string event_create_vendor= "Vendor created by user =%%userid%% with vendor id= %%vendorid%%";
-        private string event_create_vendor_notecreate = "Vendor note created by user =%%userid%% with note id= %%noteid%%";
-        private string event_create_vendor_documentcreate = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
+        private string event_create_vendor_note = "Vendor note created by user =%%userid%% with note id= %%noteid%%";
+        private string event_create_vendor_document = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
         private string event_update_vendor = "Vendor updated by user =%%userid%% with vendor id= %%vendorid%%";
 
 
@@ -268,13 +268,14 @@ namespace badgerApi.Controllers
             try
             {
                 Vendor newVendor = JsonConvert.DeserializeObject<Vendor>(value);
+                int created_by = newVendor.created_by;
                 NewInsertionID = await _VendorRepo.Create(newVendor);
 
-                event_create_vendor = event_create_vendor.Replace("%%userid%%", newVendor.created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
+                event_create_vendor = event_create_vendor.Replace("%%userid%%", created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
 
-                _eventRepo.AddVendorEventAsync(Int32.Parse(NewInsertionID), event_vendor_id, 0, newVendor.created_by, event_create_vendor, _common.GetTimeStemp(), vendorEventTableName);
+                _eventRepo.AddVendorEventAsync(Int32.Parse(NewInsertionID), event_vendor_id, 0, created_by, event_create_vendor, _common.GetTimeStemp(), vendorEventTableName);
 
-                _eventRepo.AddEventAsync(event_vendor_id, newVendor.created_by, Int32.Parse(NewInsertionID), event_create_vendor, _common.GetTimeStemp(), userEventTableName);
+                _eventRepo.AddEventAsync(event_vendor_id, created_by, Int32.Parse(NewInsertionID), event_create_vendor, _common.GetTimeStemp(), userEventTableName);
             }
             catch(Exception ex)
             {
@@ -297,11 +298,11 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 int created_by = newVendorNote.created_by;
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
-                event_create_vendor_notecreate = event_create_vendor_notecreate.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
+                event_create_vendor_note = event_create_vendor_note.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
 
-                _eventRepo.AddVendorEventAsync(ref_id, event_vendor_note_create_id, Int32.Parse(newNoteID), created_by, event_create_vendor_notecreate, _common.GetTimeStemp(), vendorEventTableName);
+                _eventRepo.AddVendorEventAsync(ref_id, event_vendor_note_create_id, Int32.Parse(newNoteID), created_by, event_create_vendor_note, _common.GetTimeStemp(), vendorEventTableName);
 
-                _eventRepo.AddEventAsync(event_vendor_note_create_id, created_by, Int32.Parse(newNoteID), event_create_vendor_notecreate, _common.GetTimeStemp(), userEventTableName);
+                _eventRepo.AddEventAsync(event_vendor_note_create_id, created_by, Int32.Parse(newNoteID), event_create_vendor_note, _common.GetTimeStemp(), userEventTableName);
 
             }
             catch (Exception ex)
@@ -325,11 +326,11 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 int created_by = newVendorDoc.created_by;
                 newDocID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, url, "", created_by, created_at);
-                event_create_vendor_documentcreate = event_create_vendor_documentcreate.Replace("%%userid%%", newVendorDoc.created_by.ToString()).Replace("%%documentid%%", newDocID);
+                event_create_vendor_document = event_create_vendor_document.Replace("%%userid%%", newVendorDoc.created_by.ToString()).Replace("%%documentid%%", newDocID);
 
-                _eventRepo.AddVendorEventAsync(ref_id, event_type_vendor_document_create_id, Int32.Parse(newDocID), created_by, event_create_vendor_documentcreate, _common.GetTimeStemp(), vendorEventTableName);
+                _eventRepo.AddVendorEventAsync(ref_id, event_type_vendor_document_create_id, Int32.Parse(newDocID), created_by, event_create_vendor_document, _common.GetTimeStemp(), vendorEventTableName);
 
-                _eventRepo.AddEventAsync(event_type_vendor_document_create_id, created_by, Int32.Parse(newDocID), event_create_vendor_documentcreate, _common.GetTimeStemp(), userEventTableName);
+                _eventRepo.AddEventAsync(event_type_vendor_document_create_id, created_by, Int32.Parse(newDocID), event_create_vendor_document, _common.GetTimeStemp(), userEventTableName);
 
             }
             catch (Exception ex)
@@ -350,12 +351,13 @@ namespace badgerApi.Controllers
             {
                 Vendor VendorToUpdate = JsonConvert.DeserializeObject<Vendor>(value);
                 VendorToUpdate.vendor_id = id;
+                int updated_by = VendorToUpdate.updated_by;
                 UpdateProcessOutput = await _VendorRepo.Update(VendorToUpdate);
-                event_update_vendor = event_update_vendor.Replace("%%userid%%", VendorToUpdate.updated_by.ToString()).Replace("%%vendorid%%", id.ToString());
+                event_update_vendor = event_update_vendor.Replace("%%userid%%", updated_by.ToString()).Replace("%%vendorid%%", id.ToString());
 
-                _eventRepo.AddVendorEventAsync(id, event_type_vendor_update_id, id, VendorToUpdate.updated_by, event_update_vendor, _common.GetTimeStemp(), vendorEventTableName);
+                _eventRepo.AddVendorEventAsync(id, event_type_vendor_update_id, id, updated_by, event_update_vendor, _common.GetTimeStemp(), vendorEventTableName);
 
-                _eventRepo.AddEventAsync(event_type_vendor_update_id, id, VendorToUpdate.updated_by, event_update_vendor, _common.GetTimeStemp(), userEventTableName);
+                _eventRepo.AddEventAsync(event_type_vendor_update_id, updated_by, id, event_update_vendor, _common.GetTimeStemp(), userEventTableName);
 
 
             }
