@@ -25,6 +25,7 @@ namespace badger_view.Controllers
         
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
+        //private IItemServiceHelper _itemService
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         private String UploadPath = "";
         public StylesController(IConfiguration config)
@@ -74,14 +75,17 @@ namespace badger_view.Controllers
         public  async Task<String> CreateNewStyle([FromBody]   JObject json)
         {
             SetBadgerHelper();
-           
-            JObject product = new JObject();
+
+            try
+            {
+                JObject product = new JObject();
             List<JObject> style_attr = new List<JObject>();
 
             string product_name = json.Value<string>("product_name");
-
-
-            String sku_family = json.Value<string>("style_sku").Split('-')[0];
+                
+            string style_qty = json.Value<string>("style_qty");
+            string sku = json.Value<string>("style_sku");
+            String sku_family = sku.Split('-')[0];
 
 
             product.Add("product_name", product_name);
@@ -139,10 +143,57 @@ namespace badger_view.Controllers
             //product_attribute_obj.Add("created_at", _common.GetTimeStemp()); need to create in DB
             String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
 
+            JObject Sku_obj = new JObject();
+            Sku_obj.Add("sku", sku);
+            Sku_obj.Add("vendor_id", attribute_id);
+            Sku_obj.Add("product_id", Int32.Parse(product_id));
+            String sku_id = await _BadgerApiHelper.GenericPostAsyncString<String>(Sku_obj.ToString(Formatting.None), "/product/createSku");
+
+
+            JObject lineitem_obj = new JObject();
+            lineitem_obj.Add("po_id", 1);
+            lineitem_obj.Add("vendor_id", 1);
+            lineitem_obj.Add("sku", sku);
+            lineitem_obj.Add("product_id", Int32.Parse(product_id));
+            lineitem_obj.Add("line_item_cost", json.Value<string>("product_cost"));
+            lineitem_obj.Add("line_item_retail", json.Value<string>("product_retail"));
+            lineitem_obj.Add("line_item_type_id",1);
+            lineitem_obj.Add("line_item_ordered_quantity", style_qty);
+            String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/createLineitems");
+
+
+
+
+                JObject items = new JObject();
+            items.Add("barcode", 0);
+            items.Add("slot_number", 0);
+            items.Add("bag_code", 0);
+            items.Add("item_status_id", 1);
+            items.Add("ra_status", 0);
+            items.Add("sku", sku);
+            items.Add("sku_id", sku_id);
+            items.Add("sku_family", sku_family);
+            items.Add("product_id", product_id);
+            items.Add("vendor_id", 0);
+            items.Add("PO_id", 1);
+            items.Add("created_by", 2);
+            items.Add("created_at", _common.GetTimeStemp());
+
+
+            String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/create/items");
+
+
+
+
+
 
 
             return product_id;
-           
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
         }
     }
 }
