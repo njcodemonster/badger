@@ -145,7 +145,8 @@ namespace badger_view.Controllers
             vendor.Add("corp_name", json.Value<string>("corp_name"));
             vendor.Add("statement_name", json.Value<string>("statement_name"));
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
-            vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
+            vendor.Add("our_customer_number", json.Value<string>("our_customer_number")); 
+            vendor.Add("vendor_description", json.Value<string>("vendor_description")); 
             vendor.Add("created_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("created_at", _common.GetTimeStemp());
@@ -204,6 +205,7 @@ namespace badger_view.Controllers
             vendor.Add("statement_name", json.Value<string>("statement_name"));
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
+            vendor.Add("vendor_description", json.Value<string>("vendor_description"));
             vendor.Add("updated_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("updated_at", _common.GetTimeStemp());
@@ -265,6 +267,32 @@ namespace badger_view.Controllers
             return vendorStatus;
 
         }
+        [HttpGet("vendor/getvendornoteanddoc/{id}")]
+        public async Task<Object> GetNotesAndDoc(Int32 id)
+        {
+            SetBadgerHelper();
+            dynamic venderDocAndNotes = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/getnoteanddoc/" + id.ToString());
+       
+            return JsonConvert.SerializeObject(venderDocAndNotes);
+        }
+        [HttpPost("vendor/insertvendornote/{id}")]
+        public async Task<String> InsertVendorNote(int id, [FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+            string vendor_notes = json.Value<string>("vendor_notes");
+            String newNoteID = "0";
+            if (vendor_notes != "")
+            {
+                JObject vendorNotes = new JObject();
+                vendorNotes.Add("ref_id", id);
+                vendorNotes.Add("note", vendor_notes);
+                vendorNotes.Add("created_by", Int32.Parse(loginUserId));
+                 newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+           
+            }
+            return newNoteID;
+        }
         [HttpGet("vendor/products/{id}")]
         public async Task<Object> GetVendorProducts(Int32 id)
         {
@@ -273,5 +301,6 @@ namespace badger_view.Controllers
             vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
             return JsonConvert.SerializeObject(vendorProducts);
         }
+           
     }
 }
