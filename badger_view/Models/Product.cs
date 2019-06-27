@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace badger_view.Models
 {
     public partial class Product
     {

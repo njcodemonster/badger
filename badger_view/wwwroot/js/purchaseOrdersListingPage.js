@@ -1,26 +1,20 @@
 ﻿$(document).ready(function () {
 
-    $("#poTotalQuantity,#poSubtotal,#poShipping").on("keypress keyup blur", function (event) {
-        $(this).val($(this).val().replace(/[^0-9\.]/g, ''));
-        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-            event.preventDefault();
+    $("#poTotalQuantity,#poSubtotal,#poShipping").on("keydown", function (event) {
+        if ($(this).val().indexOf('.') > -1 && event.which == 190) {
+            return false;
         }
+          return onlyNumbersWithDot(event);
     });
 
-    $("#poTotalStyles,#poOrderNumber").on("keypress keyup blur", function (event) {
-        $(this).val($(this).val().replace(/[^\d].+/, ""));
-        if ((event.which < 48 || event.which > 57)) {
-            event.preventDefault();
-        }
+    $("#poTotalStyles,#poOrderNumber").on("keydown", function (event) {
+        return allLetterAllow(event);
     });
-
-    $("#poNumber,#poInvoiceNumber").on("keypress keyup blur", function (event) {
-        $(this).val($(this).val().replace(/[^A-Za-z0-9]/gi, ''));
-        if ((event.which < 48 || event.which > 57) && (event.which < 97 || event.which > 122) && (event.which < 65 || event.which > 90)) {
-            event.preventDefault();
-        }
+    //P.O. Number
+    $("#poNumber,#poInvoiceNumber").on("keydown", function (event) {
+       return blockspecialcharacter(event)
     });
-
+    // Order Date : Order Delivery Range
     $("#poOrderDate, #poDelieveryRange").on("keypress keyup blur", function (event) {
         $(this).val($(this).val().replace(/[^0-9- \/ ]/g, ''));
         if ((event.which != 32 || $(this).val().indexOf('/') != -1) && (event.which < 45 || event.which > 57)) {
@@ -157,8 +151,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         console.log(data);
 
         if (data != 0 && data > 0) {
-            alert('New row created - ' + data);
-
+            console.log('New row created - ' + data);
+            alertBox('vendorAlertMsg', 'green', 'Purchase order inserted successfully.');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -190,13 +184,13 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
             }
             $('#purchaseorderlists').DataTable().row.add([
                 $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text()
-                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data +'" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
+                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
             ]).draw();
 
             table.page('last').draw('page');
-
-            $('#modalPurchaseOrder').modal('hide'); 
-
+            setTimeout(function () {
+               $('#modalPurchaseOrder').modal('hide'); 
+            }, 3000)
             /*window.vendor_options = '';
 
             window.vendor_options = $("#poVendor > option").clone();
@@ -204,6 +198,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
             $('#poVendor').empty().append(window.vendor_options);*/
 
             $('#newPurchaseOrderForm')[0].reset();
+        } else {
+            alertBox('vendorAlertMsg', 'red', 'Purchase order not inserted.');
         }
     });
 });
@@ -426,7 +422,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         console.log(data);
 
         if (data.responseText == "Success") {
-
+            alertBox('vendorAlertMsg', 'green', 'Purchase order is updated');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -460,15 +456,19 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id +'" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
-            
+
 
             $("#newPurchaseOrderForm").attr("data-currentid", "");
-            $('#modalPurchaseOrder').modal('hide');
+            setTimeout(function () {
+                $('#modalPurchaseOrder').modal('hide');
+            }, 3000)
             $('#newPurchaseOrderForm')[0].reset();
+        } else {
+            alertBox('vendorAlertMsg', 'red', 'Purchase order is not updated');
         }
 
     })

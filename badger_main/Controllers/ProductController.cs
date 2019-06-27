@@ -8,6 +8,7 @@ using badgerApi.Interfaces;
 using badgerApi.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Dynamic;
 
 namespace badgerApi.Controllers
 {
@@ -42,6 +43,37 @@ namespace badgerApi.Controllers
 
 
         }
+        // GET: api/Product/detailpage/1
+        [HttpGet("detailpage/{id}")]
+        public async Task<ProductDetailsPageData> GetProductDetailPage(string id)
+        {
+            ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
+            productDetailsPageData.productProperties = await _ProductRepo.GetProductProperties(id);
+            
+            return productDetailsPageData;
+
+        }
+        // GET: api/Product/list/1
+        [HttpGet("list/{id}")]
+        public async Task<List<Product>> GetAsync(int id)
+        {
+            List<Product> ToReturn = new List<Product>();
+            try
+            {
+                Product Res = await _ProductRepo.GetByIdAsync(id);
+                ToReturn.Add(Res);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ToReturn;
+        }
+
+
+
 
         // POST: api/product/create
         [HttpPost("create")]

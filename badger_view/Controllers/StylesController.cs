@@ -15,19 +15,19 @@ using System.IO;
 
 namespace badger_view.Controllers
 {
-    public class NewStyleFileData
+    public class StyleFileData
     {
         public IFormFile StyleImage { get; set; }
         public string product_id { get; set; }
     }
-    public class NewStyleController : Controller
+    public class StylesController : Controller
     {
         
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         private String UploadPath = "";
-        public NewStyleController(IConfiguration config)
+        public StylesController(IConfiguration config)
         {
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
@@ -41,8 +41,8 @@ namespace badger_view.Controllers
             }
         }
 
-        [HttpPost("/addstyle/newstyle_doc")]
-        public async Task<String> CreateNewStyleDoc(NewStyleFileData StyleFileData)
+        [HttpPost("/styles/newdoc")]
+        public async Task<String> CreateNewStyleDoc(StyleFileData StyleFileData)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
-        [HttpPost("addstyle/newstyle")]
+        [HttpPost("/styles/create")]
         public  async Task<String> CreateNewStyle([FromBody]   JObject json)
         {
             SetBadgerHelper();
@@ -140,30 +140,6 @@ namespace badger_view.Controllers
             String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
 
 
-
-
-            //createAttributesValues
-            //createProductAttribute
-
-            // style_attr.Add("abc", "a ");
-            // style_attr.Add("style_size", json.Value<string>("style_size"));
-            // style_attr.Add("style_vendor_size", json.Value<string>("style_vendor_size"));
-            // style_attr.Add("style_sku", json.Value<string>("style_sku"));
-            // style_attr.Add("style_qty", json.Value<string>("style_qty"));
-
-
-
-            //  JObject vendor_rep = new JObject();
-            //  vendor_rep.Add("vendor_id", newVendorID);
-            //  vendor_rep.Add("first_name", json.Value<string>("Rep_first_name"));
-            //  vendor_rep.Add("full_name", json.Value<string>("Rep_first_name"));
-            //  vendor_rep.Add("phone1", json.Value<string>("Rep_phone1"));
-            // vendor_rep.Add("phone2", json.Value<string>("Rep_phone2"));
-            // vendor_rep.Add("email", json.Value<string>("Rep_email"));
-            // vendor_rep.Add("main", 1);
-            //  vendor_rep.Add("created_by", 2);
-            //  vendor_rep.Add("created_at", _common.GetTimeStemp());
-            //  String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
 
             return product_id;
            

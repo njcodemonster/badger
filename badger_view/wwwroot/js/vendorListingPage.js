@@ -65,7 +65,7 @@
             formData.append('Vendor_id', data);
             var files = $("#newVendorForm #vendorDocument")[0].files;
             for (var i = 0; i != files.length; i++) {
-                   formData.append("vendorDocuments", files[i]);
+                formData.append("vendorDocuments", files[i]);
             }
             $.ajax({
                 url: "/vendor/newvendor_doc",
@@ -76,15 +76,20 @@
                 contentType: false,
             }).always(function (data) {
                 console.log(data);
-             });
+            });
             $('#vendorListingArea').DataTable().row.add([
-                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(),2,0,'<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 2, 0, '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
             ]).draw();
             var table = $('#vendorListingArea').DataTable();
             table.page('last').draw('page');
-
-            $('#newVendorModal').modal('hide'); 
+            alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
+            setTimeout(function () {
+               $('#newVendorModal').modal('hide'); 
+            }, 3000)
+        } else {
+            alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
         }
+       
     });
 });
 
@@ -237,6 +242,7 @@ $(document).on('click', "#EditVendorButton", function () {
         }).always(function (data) { 
             console.log(data); 
             if (data != "0") {
+                alertBox('vendorAlertMsg', 'green', 'Vendor updated successfully');
                 console.log("vendor created . uploading files");
                 var formData = new FormData();
                 formData.append('Vendor_id', id);
@@ -260,12 +266,14 @@ $(document).on('click', "#EditVendorButton", function () {
                         contentType: false,
                     }).always(function (data) {
                         console.log(data);
-                    });
-                 $('#newVendorModal').modal('hide'); 
-
+                        });
+                setTimeout(function () {
+                    $('#newVendorModal').modal('hide'); 
+                }, 3000)
+            } else {
+                alertBox('vendorAlertMsg', 'red', 'Vendor is not updated');
             }
-          
-        
+           
         });
 });
 $(document).on('click', "#AddNewVendorButton", function () {
@@ -275,8 +283,6 @@ $(document).on('click', "#AddNewVendorButton", function () {
     $("#newVendorForm").data("currentID","");
 });
 $(document).on('click', "#AddMoreReps", function () {
-    //var html = '<span><input type="text" class="form-control d-inline-block" id="vendorRepName" style="width:90%"> <a href="#" id="removeCurrentRep" class="h4">-</a><br><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small></span>'
-    //$('.firstRep').append(html);
                     var html  = '<div class="venderRepoBox" style="border: 1px solid"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+

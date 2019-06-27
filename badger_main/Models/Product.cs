@@ -31,4 +31,8 @@ namespace badgerApi.Models
         public double updated_at { get; set; }
         public double created_at { get; set; }
     }
+
+
+   
+       
 }
