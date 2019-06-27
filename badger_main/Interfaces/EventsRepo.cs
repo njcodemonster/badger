@@ -15,10 +15,9 @@ namespace badgerApi.Interfaces
     {
         Task<bool> AddEventAsync(int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
         Task<bool> AddPurchaseOrdersEventAsync(int po_id, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName);
-
         Task<bool> AddPhotoshootAsync(int productId, int eventTypeId, int reffrenceId, string eventNotes, int userId, double createdAt, string tableName);
         Task<bool> AddVendorEventAsync(int vendor_id,int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
-
+        Task<bool> AddItemEventAsync(int item_id, int barcode, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName);
     }
     public class EventsRepo : IEventRepo
     {
@@ -104,6 +103,25 @@ namespace badgerApi.Interfaces
                 {
 
                     String DInsertQuery = "insert into " + tableName + " (`product_id`, `event_type_id`, `reference_id`, `event_notes`, `user_id`, `created_at`) values ("+ productId.ToString() + "," + eventTypeId.ToString() + "," + reffrenceId.ToString() + ",\"" + eventNotes.ToString() + "\",\"" + userId.ToString() + "\"," + createdAt.ToString() + ")";
+                    var vendorDetails = await conn.QueryAsync<object>(DInsertQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public async Task<bool> AddItemEventAsync(int item_id, int barcode, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DInsertQuery = "insert into " + tableName + " values (null," + item_id.ToString() + ","+ barcode.ToString() + "," + event_type_id.ToString() + "," + reffrence_id.ToString() + ",\"" + description.ToString() + "\"," + userID.ToString() + "," + createdat.ToString() + ")";
                     var vendorDetails = await conn.QueryAsync<object>(DInsertQuery);
                     res = true;
                 }

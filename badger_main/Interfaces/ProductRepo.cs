@@ -20,6 +20,7 @@ namespace badgerApi.Interfaces
         Task<String> Create(Product NewProduct);
         Task<bool> UpdateAsync(Product ProductToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task AttributeUpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<String> CreateProductAttribute(ProductAttributes NewProductAttribute);
         Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
         Task<List<Product>> GetProductsByVendorId(String Vendor_id);
@@ -37,6 +38,7 @@ namespace badgerApi.Interfaces
 
         private readonly IConfiguration _config;
         private string TableName = "product";
+        private string TableProductAttributes = "product_attributes";
         private string selectlimit = "";
         public ProductRepo(IConfiguration config)
         {
@@ -218,6 +220,18 @@ namespace badgerApi.Interfaces
             {
                 var result = await conn.InsertAsync<ProductAttributeValues>(NewProductAttributeValues);
                 return result.ToString();
+            }
+
+        }
+
+        public async Task AttributeUpdateSpecific(Dictionary<String, String> ValuePairs, String where)
+        {
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableProductAttributes, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
             }
 
         }

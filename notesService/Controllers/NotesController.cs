@@ -28,7 +28,7 @@ namespace notesService.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", "Note" };
         }
 
         // GET: api/Notes/5
@@ -53,6 +53,24 @@ namespace notesService.Controllers
                 logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
             }
            
+            return ToReturn;
+        }
+
+        // GET: api/Notes/Reff/5
+        [HttpGet("Reff/{ids}/{notetype}")]
+        public async Task<List<Notes>> GetAllNotesByReffs(string ids, int notetype)
+        {
+            List<Notes> ToReturn = new List<Notes>();
+            try
+            {
+                ToReturn = await _NotesRepo.GetAllNotesByReffs(ids, notetype);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAllNotesByReffs with message" + ex.Message);
+            }
+
             return ToReturn;
         }
 
