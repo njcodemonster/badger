@@ -41,6 +41,7 @@ namespace badgerApi.Helper
         Task<Object> GetAllStatus();
         Task<string> ItemUpdateById(int id, string json);
         Task<string> SkuUpdateById(int id, string json);
+        Task<T> GenericPostAsync<T>(T json, String _call);
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {

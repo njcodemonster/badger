@@ -28,12 +28,16 @@ namespace badger_view.Controllers
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         private CommonHelper.awsS3helper awsS3Helper = new CommonHelper.awsS3helper();
         private String UploadPath = "";
+        private String S3bucket = "";
+        private String S3folder = "";
         private ILoginHelper _LoginHelper;
         public VendorController(IConfiguration config, ILoginHelper LoginHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
+            S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
+            S3folder = _config.GetValue<string>("S3config:Folder");
 
         }
         private void SetBadgerHelper()
@@ -111,7 +115,7 @@ namespace badger_view.Controllers
                             {
                                 messageDocuments += Fill_path + " \r\n";
                                 
-                                awsS3Helper.UploadToS3("testfile.jpg", formFile.OpenReadStream());
+                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
 
                                 int ref_id = Int32.Parse(vendorDoc.Vendor_id);

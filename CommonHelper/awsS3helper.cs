@@ -33,14 +33,14 @@ namespace CommonHelper
         }
     public class awsS3helper
     {
-        public Boolean UploadToS3(string filename,Stream st)
+        public Boolean UploadToS3(string filename,Stream st,string bucket_name, string bucket_folder)
         {
             Boolean resoult = false;
           
 
             //string name = Path.GetFileName(FileUpload1.FileName);
-            string myBucketName = "fashionpass"; //your s3 bucket name goes here  
-            string s3DirectoryName = "badger_images";
+            string myBucketName = bucket_name; //your s3 bucket name goes here  
+            string s3DirectoryName = bucket_folder;
             string s3FileName = filename;
             bool a;
             AmazonUploader myUploader = new AmazonUploader();
