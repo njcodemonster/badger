@@ -10,15 +10,19 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using System.Collections;
+using badgerApi.Helper;
 
 namespace badgerApi.Controllers
-{ 
+{
 
     [Route("api/[controller]")]
     [ApiController]
     public class PhotoshootsController : ControllerBase
     {
         private IPhotoshootRepository _PhotoshootRepo;
+        private IItemServiceHelper _ItemServiceHelper;
+
         ILoggerFactory _loggerFactory;
         private IEventRepo _eventRepo;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
@@ -37,13 +41,14 @@ namespace badgerApi.Controllers
         string event_photoshoot_sent_to_editor = "Photoshoot sent to editor by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_sent_to_editor_id = 19;
 
-        string user_event_create_photoshoot = "Photoshoot created with photoshoot id = %%pid%%"; 
-        string user_event_photoshoot_started = "Photoshoot started product id = %%pid%%"; 
-        string user_event_photoshoot_not_started = "Photoshoot not started with product id = %%pid%%"; 
+        string user_event_create_photoshoot = "Photoshoot created with photoshoot id = %%pid%%";
+        string user_event_photoshoot_started = "Photoshoot started product id = %%pid%%";
+        string user_event_photoshoot_not_started = "Photoshoot not started with product id = %%pid%%";
         string user_event_photoshoot_sent_to_editor = "Photoshoot sent to editor with product id = %%pid%%";
-        
-        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
+
+        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IItemServiceHelper ItemServiceHelper)
         {
+            _ItemServiceHelper = ItemServiceHelper;
             _eventRepo = eventRepo;
             _PhotoshootRepo = PhotoshootRepo;
             _loggerFactory = loggerFactory;
@@ -89,7 +94,7 @@ namespace badgerApi.Controllers
             return await _PhotoshootRepo.Count();
 
         }
-     
+
         [HttpGet("list/{id}")]
         public async Task<List<Photoshoots>> GetAsync(int id)
         {
@@ -129,7 +134,7 @@ namespace badgerApi.Controllers
             return vPageList;
 
         }
-        
+
         [HttpGet("GetPhotoshootsProducts/{photoshootId}")]
         public async Task<object> GetPhotoshootsProducts(int photoshootId)
         {
@@ -158,7 +163,7 @@ namespace badgerApi.Controllers
             dynamic photoshootsAndModels = new object();
             try
             {
-                photoshootsAndModels  = await _PhotoshootRepo.GetAllPhotoshoots(0);
+                photoshootsAndModels = await _PhotoshootRepo.GetAllPhotoshoots(0);
             }
             catch (Exception ex)
             {
@@ -269,7 +274,6 @@ namespace badgerApi.Controllers
                         }
                     }
                 }
-
                 else
                 {
                     await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, " product_id = " + productId);
@@ -298,6 +302,16 @@ namespace badgerApi.Controllers
                     }
                 }
 
+                if (PhotoshootStatus == "0")
+                {
+                    string photoShootItemStatus = "PhotoshootNotStarted";
+                    await SetProductItemStatusForPhotoshoot(productId, photoShootItemStatus);
+                }
+                else if(PhotoshootStatus == "1")
+                {
+                    string photoShootItemStatus = "SentToPhotoshoot";
+                    await SetProductItemStatusForPhotoshoot(productId, photoShootItemStatus);
+                }
             }
             catch (Exception ex)
             {
@@ -307,6 +321,108 @@ namespace badgerApi.Controllers
             }
 
             return UpdateResult;
+        }
+
+         
+        private async Task<string> SetProductItemStatusForPhotoshoot(string product_id, string status)
+        {
+            dynamic ToReturn = new object();
+            string returnValue = "success";
+            try
+            {
+                string sku;
+                List<int> skuIdReturnList = new List<int>();
+                JObject AllSkuIdsList = new JObject();
+
+                int countComma = product_id.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    var ids = product_id.Split(","); 
+                    foreach (var productID in ids)
+                    {
+                        object SkuList = await _PhotoshootRepo.GetSkuByProduct(productID);
+                        IEnumerable SkuListEnum = SkuList as IEnumerable;
+                        List<string> skuListInt = new List<string>();
+                        IDictionary<string, string> skuSortLink = new Dictionary<string, string>();
+                        if (SkuListEnum != null)
+                        {
+                            foreach (dynamic element in SkuListEnum)
+                            {
+                                sku = element.sku;
+                                int countDash = sku.Count(c => c == '-');
+                                if (countDash > 0)
+                                {
+                                    skuListInt.Add(sku.Split('-').Last().ToString());
+                                    skuSortLink[sku.Split('-').Last()] = element.sku_id.ToString();
+                                }
+                                else
+                                {
+                                    skuListInt.Add(element.sku_id.ToString());
+                                    skuSortLink[sku] = element.sku_id.ToString();
+                                }
+                            }
+                            string[] skuArrayInt = skuListInt.ToArray();
+                            Array.Sort(skuArrayInt);
+
+                            List<int> SortedSkuReturnIds = new List<int>();
+                            foreach (var sku_id in skuArrayInt)
+                            {
+                                string index = sku_id.ToString();
+                                SortedSkuReturnIds.Add(Int32.Parse(skuSortLink[index]));
+                            }
+
+                            var idsAll = string.Join(",", SortedSkuReturnIds.ToArray());
+                            AllSkuIdsList.Add(productID, idsAll.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    object SkuList = await _PhotoshootRepo.GetSkuByProduct(product_id);
+                    IEnumerable SkuListEnum = SkuList as IEnumerable;
+                    List<string> skuListInt = new List<string>();
+                    IDictionary<string, string> skuSortLink = new Dictionary<string, string>();
+                    if (SkuListEnum != null)
+                    {
+                        foreach (dynamic element in SkuListEnum)
+                        {
+                            sku = element.sku;
+                            int countDash = sku.Count(c => c == '-');
+                            if (countDash > 0)
+                            {
+                                skuListInt.Add(sku.Split('-').Last().ToString());
+                                skuSortLink[sku.Split('-').Last()] = element.sku_id.ToString();
+                            }
+                            else
+                            {
+                                skuListInt.Add(element.sku_id.ToString());
+                                skuSortLink[element.sku_id.ToString()] = element.sku_id.ToString();
+                            }
+                        }
+                        string[] skuArraySplited = skuListInt.ToArray();
+                        Array.Sort(skuArraySplited);
+
+                        List<string> SortedSkuReturnIds = new List<string>();
+                        foreach (var sku_id in skuArraySplited)
+                        { string index = sku_id.ToString();
+                            SortedSkuReturnIds.Add(skuSortLink[index].ToString());
+                        }
+                        var ids = string.Join(",", SortedSkuReturnIds.ToArray());
+                        AllSkuIdsList.Add(product_id, ids.ToString());
+                    }
+                }
+
+                returnValue = await _ItemServiceHelper.SetProductItemStatusForPhotoshootAsync(AllSkuIdsList.ToString(Formatting.None), status);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for SKU with message" + ex.Message);
+                returnValue = "Failed";
+                return returnValue;
+            }
+            return returnValue;
         }
 
         [HttpPost("assignProductPhotoshoot/{productId}")]
@@ -332,14 +448,20 @@ namespace badgerApi.Controllers
                 event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
                 event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
 
+                string photoShootStatus = "SentToPhotoshoot";
+                await SetProductItemStatusForPhotoshoot(productId, photoShootStatus);
+
                 int countComma = productId.Count(c => c == ',');
                 if (countComma > 0)
                 {
-                    var ids = productId.Split(","); //yields an array containing { "A", "B", "C" }
+                    var ids = productId.Split(",");
                     foreach (var product_id in ids)
                     {
                         await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
                     }
+                }
+                else {
+                    await _eventRepo.AddPhotoshootAsync(Int32.Parse(productId), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
                 }
                 
 

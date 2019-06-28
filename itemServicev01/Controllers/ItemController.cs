@@ -288,6 +288,22 @@ namespace itemService.Controllers
             }
         }
 
+        [HttpGet("list/ProductItemSentToPhotoshoot/{product_id}")]
+        public async Task<string> ProductItemSentToPhotoshoot(string product_id)
+        {
+            string UpdateResult = "Success";
+            try
+            {
+                await _ItemRepository.SetProductItemSentToPhotoshoot(product_id);
+                return UpdateResult;
+            }
+            catch (Exception skuFamilyException)
+            {
+                return "Failed";
+            }
+        }
+        
+
         [HttpGet("list/beforeDate/{BeforeDate}/{Limit}")]
         public async Task<List<Items>> beforeDate(string BeforeDate, int Limit)
         {
@@ -320,6 +336,46 @@ namespace itemService.Controllers
             }
             return NewInsertionID;
         }
+
+        
+        [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
+        public async Task<string> UpdateProductItemForPhotoshoot([FromBody]   string value, string status)
+        {
+            string toReturn= "success";
+            string response = "";
+            try
+            {
+                dynamic ProductSkuList  = JsonConvert.DeserializeObject(value);
+                foreach (var ExpendJson in ProductSkuList)
+                {
+                    string SkuListString = ExpendJson.ToString();
+                    int splidIds = SkuListString.Count(c => c == ':');
+                    if (splidIds > 0) {
+                        string ids = SkuListString.Split(":").Last();
+                        ids = ids.Replace("\"", "");
+                        var idsList = ids.Split(",");
+                        foreach (var skuid in idsList)
+                        {
+                            int skuIdValue = Int32.Parse(skuid.ToString().Trim());
+                            response = await _ItemRepository.SetProductItemForPhotoshoot(skuIdValue, status);
+                            if (response == "success") {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                toReturn = response;
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Item with message" + ex.Message);
+                toReturn = "failed";
+            }
+            return toReturn;
+        }
+
 
 
         [HttpPut("update/{id}")]
@@ -494,41 +550,6 @@ namespace itemService.Controllers
             }
 
             return UpdateResult;
-        }
-
-
-        /*
-        // GET: api/Items
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        
-        // GET: api/Items/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/Items
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT: api/Items/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }*/
+        } 
     }
 }

@@ -39,6 +39,8 @@ namespace badgerApi.Helper
     {
         Task<List<Items>> GetItemsByOrder(int PO_id);
         Task<Object> GetAllStatus();
+        Task<string> SetProductItemStatusForPhotoshootAsync(string json, string status);
+
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
@@ -75,5 +77,26 @@ namespace badgerApi.Helper
             var data = await response.Content.ReadAsStringAsync();
             return data;
         }
+
+        public async Task<object> GetProductItemsSmallSku(string product_id)
+        {
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/GetProductItemsSmallSku/"+ product_id, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
+        }
+
+        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , string status)
+        {
+            var client = new HttpClient();
+            var response = await client.PostAsJsonAsync(ItemApiUrl + "/item/UpdateProductItemForPhotoshoot/"+ status, json );
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
+        }
+
+
     }
 }

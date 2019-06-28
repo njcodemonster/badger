@@ -28,7 +28,9 @@ namespace badgerApi.Interfaces
         Task<Object> GetAllPhotoshootsModels(Int32 limit);
         Task<Object> GetInprogressPhotoshoot(Int32 limit);
         Task<Object> GetSendToEditorPhotoshoot(Int32 limit);
-        
+
+        Task<Object> GetSkuByProduct(string product_id);
+
 
     }
     public class PhotoshootRepo : IPhotoshootRepository
@@ -231,6 +233,20 @@ namespace badgerApi.Interfaces
             {
                 IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
                 photoshootsDetails.photoshootsInprogress = photoshootsModelList;
+            }
+            return photoshootsDetails;
+        }
+
+        public async Task<Object> GetSkuByProduct(string product_id)
+        {
+            dynamic photoshootsDetails = new ExpandoObject();
+            string sQuery = "";
+            sQuery = "Select * from `sku` where `product_id` IN ("+ product_id + ")";
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
+                photoshootsDetails = photoshootsModelList;
             }
             return photoshootsDetails;
         }
