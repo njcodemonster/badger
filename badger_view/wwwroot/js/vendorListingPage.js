@@ -111,6 +111,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     }
 })
 $(document).on('click', "#EditVendor", function () {
+    $("#newVendorForm input,textarea").val("");
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
