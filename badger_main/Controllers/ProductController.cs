@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
 using System.Dynamic;
+using badgerApi.Helper;
+using itemService_entity.Models;
 
 namespace badgerApi.Controllers
 {
@@ -19,10 +21,12 @@ namespace badgerApi.Controllers
     {
 
         private readonly IProductRepository _ProductRepo;
+        private IItemServiceHelper _ItemsHelper;
         ILoggerFactory _loggerFactory;
         INotesAndDocHelper _notesAndDocHelper;
-        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper)
+        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper , IItemServiceHelper ItemsHelper)
         {
+            _ItemsHelper = ItemsHelper;
             _ProductRepo = ProductRepo;
             _loggerFactory = loggerFactory;
             _notesAndDocHelper = notesAndDocHelper;
@@ -59,7 +63,15 @@ namespace badgerApi.Controllers
                 productDetailsPageData.productpairwiths = await _ProductRepo.GetProductpairwiths(id);
                 productDetailsPageData.product_Images = await _ProductRepo.GetProductImages(id);
                 productDetailsPageData.ProductDetails = await _ProductRepo.GetProductDetails(id);
-                productDetailsPageData.Product_Notes =  _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1).Result[0].note;
+                List<Notes> note = await _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1);
+                if (note.Count > 0) {
+                    productDetailsPageData.Product_Notes = note[0].note;
+                }
+                else
+                {
+                    productDetailsPageData.Product_Notes = "";
+                }
+                
                 productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
@@ -101,6 +113,24 @@ namespace badgerApi.Controllers
             {
                 Product newProduct = JsonConvert.DeserializeObject<Product>(value);
                 NewInsertionID = await _ProductRepo.Create(newProduct);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
+        // POST: api/product/create/items
+        [HttpPost("createitems/{qty}")]
+        public async Task<string> PostItemsAsync([FromBody]   string value,int qty)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                
+                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create/"+ qty.ToString());
             }
             catch (Exception ex)
             {
@@ -210,6 +240,39 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
-
+        // POST: api/product/create
+        [HttpPost("createSku")]
+        public async Task<string> PostAsyncSku([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                Sku newSku = JsonConvert.DeserializeObject<Sku>(value);
+                NewInsertionID = await _ProductRepo.CreateSku(newSku);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Sku with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+        // POST: api/product/create   // purchase order line items
+        [HttpPost("createLineitems")]
+        public async Task<string> PostAsyncLineitem([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
+                NewInsertionID = await _ProductRepo.CreatePOLineitems (newPOlineitems);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
     }
 }

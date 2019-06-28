@@ -26,13 +26,18 @@ namespace badger_view.Controllers
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        private CommonHelper.awsS3helper awsS3Helper = new CommonHelper.awsS3helper();
         private String UploadPath = "";
+        private String S3bucket = "";
+        private String S3folder = "";
         private ILoginHelper _LoginHelper;
         public VendorController(IConfiguration config, ILoginHelper LoginHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
+            S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
+            S3folder = _config.GetValue<string>("S3config:Folder");
 
         }
         private void SetBadgerHelper()
@@ -109,7 +114,8 @@ namespace badger_view.Controllers
                             using (var stream = new FileStream(Fill_path, FileMode.Create))
                             {
                                 messageDocuments += Fill_path + " \r\n";
-
+                                
+                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
 
                                 int ref_id = Int32.Parse(vendorDoc.Vendor_id);
@@ -297,9 +303,13 @@ namespace badger_view.Controllers
         public async Task<Object> GetVendorProducts(Int32 id)
         {
             SetBadgerHelper();
+            dynamic vendorProductsandSku = new ExpandoObject();
             dynamic vendorProducts = new ExpandoObject();
-            vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
-            return JsonConvert.SerializeObject(vendorProducts);
+            dynamic vendorSkufamily = new ExpandoObject();
+            vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
+            vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
+            //vendorProducts.skufamily = vendorSkufamily;
+            return JsonConvert.SerializeObject(vendorProductsandSku);
         }
            
     }

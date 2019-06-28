@@ -41,6 +41,7 @@ namespace badgerApi.Helper
         Task<Object> GetAllStatus();
         Task<string> ItemUpdateById(int id, string json);
         Task<string> SkuUpdateById(int id, string json);
+        Task<T> GenericPostAsync<T>(T json, String _call);
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
@@ -98,6 +99,21 @@ namespace badgerApi.Helper
             var data = await response.Content.ReadAsStringAsync();
 
             return data.ToString();
+        }
+        public async Task<T> GenericPostAsync<T>(T json, String _call)
+        {
+            var client = new HttpClient();
+            var response = await client.PostAsJsonAsync(ItemApiUrl + _call, json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(data, settings);
+
         }
     }
 }

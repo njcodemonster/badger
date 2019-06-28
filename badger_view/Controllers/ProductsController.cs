@@ -57,5 +57,6 @@ namespace badger_view.Controllers
             return View("EditAttributes",productDetailsPageData );
         }
 
+
     }
 }
