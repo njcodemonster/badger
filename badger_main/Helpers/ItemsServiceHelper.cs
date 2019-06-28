@@ -99,5 +99,20 @@ namespace badgerApi.Helper
 
             return data.ToString();
         }
+        public async Task<T> GenericPostAsync<T>(T json, String _call)
+        {
+            var client = new HttpClient();
+            var response = await client.PostAsJsonAsync(ItemApiUrl + _call, json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(data, settings);
+
+        }
     }
 }

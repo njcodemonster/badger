@@ -27,6 +27,8 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorDetailsRep(Int32 id);
         Task<Object> GetVendorDetailsAddress(Int32 id);
         Task<Object> GetVendorsNameAndID();
+        Task<Object> GetVendorLastSku(String id);
+        
     }
     public class VendorRepo : IVendorRepository
     {
@@ -183,7 +185,19 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
-       
+        public async Task<Object> GetVendorLastSku(string id)
+        {
+             dynamic vendorLastSku = new ExpandoObject();
+            string sQuery = "select sku_family from product where vendor_id = "+ id+" order by product_id desc limit 1; ";
+            using (IDbConnection conn = Connection)
+            {
+                vendorLastSku = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorLastSku;
+
+        }
+
     }
 }
 

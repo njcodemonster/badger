@@ -25,6 +25,8 @@ namespace badgerApi.Interfaces
         Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
         Task<List<Product>> GetProductsByVendorId(String Vendor_id);
         Task<IEnumerable<ProductProperties>> GetProductProperties(string id);
+        Task<string> CreateSku(Sku NewSku);
+        Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem);
         Task<IEnumerable<Productpairwith>> GetProductpairwiths(string id);
         Task<IEnumerable<Productcolorwith>> GetProductcolorwiths(string id);
         Task<IEnumerable<ProductImages>> GetProductImages(string id);
@@ -219,6 +221,24 @@ namespace badgerApi.Interfaces
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.InsertAsync<ProductAttributeValues>(NewProductAttributeValues);
+                return result.ToString();
+            }
+
+        }
+        public async Task<string> CreateSku(Sku NewSku)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<Sku>(NewSku);
+                return result.ToString();
+            }
+
+        }
+        public async Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<PurchaseOrderLineItems>(NewLineitem);
                 return result.ToString();
             }
 
