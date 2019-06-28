@@ -2,110 +2,127 @@
 @{
     ViewData["Title"] = "Single P.O.";
 }
-    <div class="row">
-        <div class="col-md-3 col-sm-10  col-xs-10">
-            <h4 class="text-dark">Purchase Order #: <a href="#">35671</a></h4>
-        </div>
-        <div class="col-md-2 col-sm-2 col-xs-2">
-            <button type="button" class="btn btn-light btn-sm">
-                Add an item
-            </button>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12" style="white-space: nowrap">
-            <span class="text-center d-inline-block">
-                <b>Inspect</b><br /><a href="#">Claim</a>
-            </span>
-            <span class="text-center d-inline-block pl-4">
-                <b>Go Live</b><br /><a href="#">Claim</a>
-            </span>
-            <span class="d-inline-block pl-4 align-top pt-2">
-                <b>6 total styles, 5 have photos</b>
-            </span>
-        </div>
-        <div class="col-md-4 col-sm-12 col-xs-12 text-right">
-            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalcheckin">
-                Check-in
-            </button>
-            <button type="button" class="btn btn-danger btn-sm">
-                Delete this P.O.
-            </button>
-        </div>
+@section Scripts {
+    <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
+}
+<div class="row">
+    <div class="col-md-3 col-sm-10  col-xs-10">
+        <h4 class="text-dark">Purchase Order #: <a href="#" class="orderNumber">35671</a></h4>
     </div>
+    <div class="col-md-2 col-sm-2 col-xs-2">
+        <button type="button" class="btn btn-light btn-sm">
+            Add an item
+        </button>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12" style="white-space: nowrap">
+        <span class="text-center d-inline-block">
+            <b>Inspect</b><br /><a href="#">Claim</a>
+        </span>
+        <span class="text-center d-inline-block pl-4">
+            <b>Go Live</b><br /><a href="#">Claim</a>
+        </span>
+        <span class="d-inline-block pl-4 align-top pt-2">
+            <b>6 total styles, 5 have photos</b>
+        </span>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 text-right">
+        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalcheckin">
+            Check-in
+        </button>
+        <button type="button" class="btn btn-danger btn-sm">
+            Delete this P.O.
+        </button>
+    </div>
+</div>
 <div class="row pt-5">
     <div class="col-md-6">
-        <form>
+        <form id="newPurchaseOrderForm" data-currentid="" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Vendor Name</label>
-                    <select id="inputState" class="form-control">
+                    <select id="poVendor" class="form-control d-inline-block" style="width: 90%">
                         <option selected>Choose...</option>
-                        <option>...</option>
+                        @foreach (Vendor vendor in Model.GetVendorsNameAndId)
+                        {
+                            <option value="@vendor.vendor_id">@vendor.vendor_name</option>
+                        }
                     </select>
+                    <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
                 </div>
                 <div class="form-group col-md-6">
                     <label>Order Delivery Range</label>
-                    <input type="date" class="form-control" />
+                    <input type="text" class="form-control" id="poDelieveryRange">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>P.O. Number</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="poNumber">
                 </div>
                 <div class="form-group col-md-6">
                     <label>Total Styles</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="poTotalStyles">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Invoice Number</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="poInvoiceNumber">
                 </div>
                 <div class="form-group col-md-6">
                     <label>Total Quantity</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="poTotalQuantity">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Order Number</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="poOrderNumber">
                 </div>
                 <div class="form-group col-md-6">
-                    <label>Sub Total</label>
-                    <input type="text" class="form-control">
+                    <label>Subtotal</label>
+                    <input type="text" class="form-control" id="poSubtotal">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Order Date</label>
-                    <input type="date" class="form-control" />
+                    <input type="text" class="form-control" id="poOrderDate">
                 </div>
                 <div class="form-group col-md-6">
-                    <label>Shgipping &amp; Handling</label>
-                    <input type="text" class="form-control">
+                    <label>Shipping &amp; Handling</label>
+                    <input type="text" class="form-control" id="poShipping">
+                </div>
+            </div>
+            <div class="form-row po_section">
+                <div class="form-group col-md-6">
+                    <label>Tracking #</label>
+                    <input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%">
+                    <a href="#" class="h4 add_tracking">+</a>
+
+                    <div id="wrapper_tracking"></div>
+
+                </div>
+                <div class="col-md-6 text-right">
+                    <br />
+                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
+                    <br />
+                    <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label>Tracking Number</label>
-                    <input type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label>Upload Image</label>
-                    <input type="file" class="form-control">
+                    <label>Upload Images</label>
+                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
+
+                    <div class="po_doc_section d-none"></div>
                 </div>
                 <div class="form-group col-md-6">
-                    <label>Purchase Notes</label>
-                    <textarea class="form-control"></textarea>
+                    <label>Purchase Order Notes</label>
+                    <textarea class="form-control" id="poNotes"></textarea>
                 </div>
             </div>
-            <button type="button" class="btn btn-success btn-sm">
-                Save
-            </button>        
         </form>
     </div>
 </div>
@@ -149,5 +166,81 @@
                 <td><a href="#" class="h6 text-danger">Remove</a></td>
             </tr>
         </table>
+    </div>
+</div>
+<!-- Modal Add Invoice -->
+<div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="ledger_form" data-adjustment="">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Adjustment</label>
+                                <select id="ledger_adjustment" name="ledger_adjustment" class="form-control">
+                                    <option selected>Choose...</option>
+                                    <option value="credit">Credit</option>
+                                    <option value="debit">Debit</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Amount</label>
+                                <input type="text" class="form-control" id="ledger_amount" name="ledger_amount" placeholder="$">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Note</label>
+                                <input type="text" class="form-control" id="ledger_note" name="ledger_note">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="ledger_submit" style="margin: 0 auto;">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Discount -->
+<div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="discountModalLongTitle">Add Discount %</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="discount_form" data-discount="">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Discount</label>
+                                <input type="text" class="form-control" id="discount_percentage" name="discount" placeholder="%">
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label>Note</label>
+                                <input type="text" class="form-control" id="discount_note" name="discount_note">
+                            </div>
+                        </div>
+                        <div class="text-center w-100">
+                            <span class="text-danger"><b>IMPORTANT:</b> </span>Your unit costs should be inputted with discounts already applied to them.
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="discount_submit" style="margin: 0 auto;">Submit</button>
+            </div>
+        </div>
     </div>
 </div>

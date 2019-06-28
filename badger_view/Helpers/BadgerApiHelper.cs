@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-
+using Amazon.S3;
 namespace badger_view.Helpers
 {
     public class BadgerApiHelper

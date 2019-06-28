@@ -3,6 +3,242 @@
     ViewData["Title"] = "P.O. Check-in";
 }
 @model dynamic
+@section Scripts {
+    <script src="~/js/POManagementPage.js" asp-append-version="true"></script>
+}
+
+@section page_popup_area{
+
+    <!-- Modal Add Style Item Clothing -->
+    <div class="modal fade" id="modaladdstylec" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O. &lt;number&gt;</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="newAddStyleForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Link to existing product</label>
+                                    <select id="ExistingProductSelect" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Style Name</label>
+                                    <input name="StyleName" id="product_tytle" type="text" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Color Name</label>
+                                    <input name="ColorName" id="product_color" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Unit Cost</label>
+                                    <input name="UnitCost" id="product_unit_cost" type="text" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Retail</label>
+                                    <input name="RetailCost" id="product_retail" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Type</label>
+                                    <select id="StyleType" class="form-control">
+
+                                        <option value="1" selected>Colothing</option>
+                                        <option value="2">Accessories</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Subtype</label>
+                                    <select id="StyleSubType" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8 pt-4">
+                                    <div class="input_fields_wrap pb-3">
+                                        <!---<div class="pb-3 vendorSkuBox">
+                                            <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Vendor Size">
+                                            <input type="text" class="form-control d-inline w-25" name="vendorcsize[1]" placeholder="Size">
+                                            <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                                            <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                                        </div>-->
+                                    </div>
+                                    <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    <label>Vendor Notes</label>
+                                    <textarea class="form-control"></textarea>
+                                </div>
+                                <div class="form-group col-md-4 text-center">
+                                    <button type="button" id="AddNewStyleButton" class="btn btn-success btn-sm">Add another style</button><br />
+                                    <button type="button" id="AddStyleButton" class="btn btn-primary btn-sm mt-2">Add and view P.O.</button><br />
+                                    <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    <label>Upload Files</label>
+                                    <input type="file" id="StyleImage" class="form-control" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Style Item Accessories -->
+    <div class="modal fade" id="modaladdstylea" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O. &lt;number&gt;</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Link to existing product</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option> ... </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Style Name</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Color Name</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Unit Cost</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Retail</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Type</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Subtype</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8 pt-4">
+                                    <div class="input_fields_wrap pb-2">
+                                        <div class="pb-2">
+                                            <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Size">
+                                            <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                                            <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                                        </div>
+                                    </div>
+                                    <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    <label>Vendor Notes</label>
+                                    <textarea class="form-control"></textarea>
+                                </div>
+                                <div class="form-group col-md-4 text-center">
+                                    <button type="button" class="btn btn-success btn-sm">Add another style</button><br />
+                                    <button type="button" class="btn btn-primary btn-sm mt-2">Add and view P.O.</button><br />
+                                    <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    <label>Upload Files</label>
+                                    <input type="file" class="form-control" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Document -->
+    <div class="modal fade" id="modaladddocument" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentModalLongTitle">Documents Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="document_form" data-documentid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Document</label>
+                                    <input type="file" class="form-control" id="poUploadImages" name="poUploadImages">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="document_submit" style="margin: 0 auto;">Submit</button>
+                </div>
+
+                <div class="po_doc_section d-none" style="padding: 10px;"></div>
+
+            </div>
+        </div>
+    </div>
+}
 @*<table class="table">
         <tr>
             <td>
@@ -43,7 +279,7 @@
                 <h5>Vendor Name: <a href="#">@purchaseOrder.vendor</a></h5>
             </td>
             <td class="align-middle">
-                <button type="button" class="btn btn-light btn-sm">Add an item</button>
+                <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
             </td>
             <td class="align-middle text-right">
                 <form action="">
@@ -66,17 +302,17 @@
             {
                 @if (Current_product != (String)LineItem.product_id)
                 {
-                Current_product = (String)LineItem.product_id;
-                outputEnd = true;
-                if (First == 2)
-                {
-                    @:</tbody>
-                    @:</table>
+                    Current_product = (String)LineItem.product_id;
+                    outputEnd = true;
+                    if (First == 2)
+                    {
+                        @:</tbody>
+                        @:</table>
                     @:</div>
                     @:</div>
                     @:</div>
                 }
-                if(First == 1)
+                if (First == 1)
                 {
                     First = 2;
                 }
@@ -84,7 +320,7 @@
                     <div class="card-header" id="headingOne">
                         <h2 class="mb-0">
                             <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
-                            <a href="#" class="h5 text-primary">Edit Attribute</a>
+                            <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
                         </h2>
                     </div>
                     @:<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionpomgmt">
@@ -104,33 +340,35 @@
                                     </tr>
                                 </thead>
                                 @:<tbody>
-}
+                                }
 
 
                 int i = 0;
                 int DisplayTimes = 0;
                 DisplayTimes = (int)LineItem.Quantity;
-
+                string currentPOPRoductQuantityid = purchaseOrder.po_id + "-" + @LineItem.product_id;
+                string currentPOProductSkuQantity = currentPOPRoductQuantityid + "-" + @LineItem.sku;
+                <p style=" display:none" id="@currentPOProductSkuQantity" data-orderProduct="@currentPOPRoductQuantityid">@DisplayTimes</p>
 
                 @while (i < DisplayTimes)
                 {
                     i++;
-                    <tr data-prductid="@LineItem.product_id" data-sku="@LineItem.sku" >
-                       
-                        <td>@LineItem.Size<input type="hidden" value="@LineItem.EndItems[i - 1]" /></td>
+                    <tr data-prductid="@LineItem.product_id" data-sku="@LineItem.sku">
+
+                        <td>@LineItem.Size<input type="hidden" id="@LineItem.EndItems[i-1].item_id" value="@LineItem.EndItems[i - 1]" /></td>
                         <td>
-                            <select class="form-control">
+                            <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id">
                                 @foreach (dynamic _status in Model.AllItemStatus)
                                 {
                                     if (@_status.item_status_id == @LineItem.EndItems[i - 1].item_status_id)
                                     {
-                                        <option selected>@_status.description</option>
+                                        <option value="@_status.item_status_id" selected>@_status.description</option>
                                     }
                                     else
                                     {
                                         if (_status.item_status_id != 5)
                                         {
-                                            <option>@_status.description</option>
+                                            <option value="@_status.item_status_id">@_status.description</option>
                                         }
                                     }
 
@@ -138,25 +376,25 @@
                             </select>
                         </td>
                         <td>
-                            <textarea class="form-control" cols="50"></textarea>
+                            <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="50"></textarea>
                         </td>
                         <td>
-                            <a href="#"><i class="fa fa-upload h3"></i></a>
+                            <a href="javscript:void(0)" id="AddDocument" data-itemid="@LineItem.EndItems[i-1].item_id"><i class="fa fa-upload h3"></i></a>
                         </td>
                         <td>
-                            <input type="text"  value="@LineItem.weight" class="form-control" />
+                            <input type="text" value="@LineItem.weight" id="@LineItem.EndItems[i-1].sku_id" class="form-control sku_weight" />
                         </td>
                         <td>
-                            <input type="text" value="@LineItem.sku" class="form-control" />
+                            <input type="text" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" />
                         </td>
                         <td>
-                            <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control" value="@LineItem.EndItems[i-1].barcode"/>
+                            <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" value="@LineItem.EndItems[i-1].barcode" />
                         </td>
                         <td>
                             <button type="button" class="btn btn-success btn-sm">Publish</button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger btn-sm">Remove</button>
+                            <button type="button" data-itemid="@LineItem.EndItems[i-1].item_id" data-polineitem="@LineItem.line_item_id" data-quantity="@DisplayTimes" class="btn btn-danger btn-sm item_row_remove">Remove</button>
                         </td>
                     </tr>
                 }

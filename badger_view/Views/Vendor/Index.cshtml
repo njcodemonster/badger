@@ -6,6 +6,7 @@
 
 @section Scripts {
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
 }
 
 <div class="row">
@@ -13,13 +14,13 @@
         <h4 class="text-info">Vendors (@Model.VendorCount)</h4>
     </div>
     <div class="col-md-10">
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="AddNewVendorButton" data-target="#modalvendor">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="AddNewVendorButton" data-target="#newVendorModal">
             Add New Vendor
         </button>
     </div>
 </div>
 <div class="table-responsive pt-5">
-    <table id="openpo" class="table table-bordered" style="width:100%">
+    <table id="vendorListingArea" class="table table-bordered" style="width:100%">
         <thead>
             <tr>
                 <th>Vendor Name</th>
@@ -42,7 +43,7 @@
                         <button type="button" id="EditVendor" data-ID="@vendor.vendor_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="#"><i class="fa fa-edit h3"></i></a>
+                        <a href="#" data-toggle="modal" data-ID="@vendor.vendor_id" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>
                     </td>
                 </tr>
             }
@@ -63,7 +64,7 @@
 @section page_popup_area{
 
     <!-- Modal Vendor -->
-    <div class="modal fade" id="modalvendor" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -105,97 +106,133 @@
                                     <input type="text" class="form-control" id="vendorStreetAdress">
                                 </div>
                             </div>
+
                             <div class="form-row">
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-3">
+                                    <label>Zip Code</label>
+                                    <input type="text" maxlength="5" data-type="number" class="form-control" id="vendorZip">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>State</label>
+                                    <input type="text" class="form-control" id="vendorState">
+                                </div>
+                                <div class="form-group col-md-3">
                                     <label>Unit Number</label>
                                     <input type="text" class="form-control" id="vendorUnitNumber">
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-3">
                                     <label>City</label>
                                     <input type="text" class="form-control" id="vendorCity">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label>Zip Code</label>
-                                    <input type="text" maxlength="5" data-type="number" class="form-control" id="vendorZip">
+                                    <label>Vendor Notes</label>
+                                    <textarea class="form-control" id="vendorNotes"></textarea>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label>State</label>
-                                    <input type="text" class="form-control" id="vendorState">
+                                    <label>Upload</label>
+                                    <input type="file" class="form-control" id="vendorDocument" multiple>
                                 </div>
                             </div>
-                                <div class="venderRepo">
-                                    <div class="venderRepoBox">
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label>Rep First Name</label>
-                                                <input type="text" class="form-control" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label>Rep Full Name</label>
-                                                <span class="firstRep">
-                                                    <input type="text" class="form-control" id="vendorFullRepName" style="width:90%">
-                                                </span>
-                                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Vendor Description</label>
+                                    <textarea class="form-control" id="vendorDec"></textarea>
+                                </div>
+                            </div>
+                            <div class="venderRepo">
+                                <div class="venderRepoBox">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Rep First Name</label>
+                                            <input type="text" class="form-control" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
                                         </div>
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label>Phone Number 1</label>
-                                                <div class="row">
-                                                    <div class="col-md-3 p-0">
-                                                        <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
-                                                    </div>
-                                                    <div class="col-md-3 p-0">
-                                                        <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone12">
-                                                    </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Rep Full Name</label>
+                                            <span class="firstRep">
+                                                <input type="text" class="form-control" id="vendorFullRepName" style="width:90%">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Phone Number 1</label>
+                                            <div class="row">
+                                                <div class="col-md-3 p-0">
+                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
+                                                </div>
+                                                <div class="col-md-3 p-0">
+                                                    <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone12">
+                                                </div>
 
-                                                    <div class="col-md-5">
-                                                        <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone13">
-                                                    </div>
+                                                <div class="col-md-5">
+                                                    <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone13">
                                                 </div>
                                             </div>
-                                            <div class="form-group col-md-6">
-                                                <label>Email</label>
-                                                <input type="email" class="form-control" style="width:90%" id="vendorRepEmail">
-                                            </div>
                                         </div>
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label>Phone Number 2</label>
-                                                <div class="row">
-                                                    <div class="col-md-3 p-0">
-                                                        <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone" id="vendorRepPhone14"> <span class="d-inline">)</span>
-                                                    </div>
-                                                    <div class="col-md-3 p-0">
-                                                        <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone15">
-                                                    </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Email</label>
+                                            <input type="email" class="form-control" style="width:90%" id="vendorRepEmail">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Phone Number 2</label>
+                                            <div class="row">
+                                                <div class="col-md-3 p-0">
+                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone" id="vendorRepPhone14"> <span class="d-inline">)</span>
+                                                </div>
+                                                <div class="col-md-3 p-0">
+                                                    <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone15">
+                                                </div>
 
-                                                    <div class="col-md-5">
-                                                        <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone16">
-                                                    </div>
+                                                <div class="col-md-5">
+                                                    <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone16">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <a href="#" id="AddMoreReps" class="" style="text-decoration:underline">+ add rep</a>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label>Vendor Notes</label>
-                                        <textarea class="form-control" id="vendorNotes"></textarea>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label>Upload</label>
-                                        <input type="file" class="form-control" id="vendorDocument" multiple>
-                                    </div>
-                                </div>
+                            </div>
+                            <a href="#" id="AddMoreReps" class="" style="text-decoration:underline">+ add rep</a>
+
                         </form>
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <div class="vendorAlertMsg"></div>
                     <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Note -->
+    <div class="modal fade" id="modaladdnote" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLongTitle">Notes Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="note_form" data-noteid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Note</label>
+                                    <textarea type="text" class="form-control" id="vendorNote" name="vendorNote"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="addVendorNote" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>

@@ -1,12 +1,16 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
     var notvalid = false;
+    $('.errorMsg').remove();
+    $(this).removeClass('errorFeild');
     $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') == 'input'){
+        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = true;
-            //$(this).parents('.form-group').append('<span>this field is required</span>');
             $(this).addClass('errorFeild');
-        } else {
-            $(this).removeClass('errorFeild');
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        }
+        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
+            notvalid = true;
         }
     });
     if (notvalid) {
@@ -21,6 +25,7 @@
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
     jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
+    jsonData["vendor_description"] = $('#vendorDec').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
     jsonData["vendor_state"] = $('#vendorState').val();
@@ -53,13 +58,14 @@
     }).always(function (data) {
         console.log(data);
         if (data != "0") {
+            var id = data;
             console.log("New Vender Added");
             alert("vendor created . uploading files");
             var formData = new FormData();
             formData.append('Vendor_id', data);
             var files = $("#newVendorForm #vendorDocument")[0].files;
             for (var i = 0; i != files.length; i++) {
-                   formData.append("vendorDocuments", files[i]);
+                formData.append("vendorDocuments", files[i]);
             }
             $.ajax({
                 url: "/vendor/newvendor_doc",
@@ -71,27 +77,32 @@
             }).always(function (data) {
                 console.log(data);
             });
+            $('#vendorListingArea').DataTable().row.add([
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 2, 0, '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+            ]).draw();
+            var table = $('#vendorListingArea').DataTable();
+            table.page('last').draw('page');
+            alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
+            setTimeout(function () {
+               $('#newVendorModal').modal('hide'); 
+            }, 3000)
+        } else {
+            alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
         }
+       
     });
 });
-function isNumber(evt) {
-    evt = (evt) ? evt : window.event;
-    var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
-    }
-    return true;
-}
-function blockspecialcharacter(e) {
-    var key= document.all ? key= e.keyCode : key= e.which;
-    return ((key > 64 && key < 91) || (key> 96 && key< 123) || key== 8 || key== 32 || (key>= 48 && key<= 57));
-}
+
+
 $(document).on('keydown', "#newVendorForm input", function (e) {
     $(this).removeClass('errorFeild');
+   $(this).parents('.form-group').find('.errorMsg').remove();
     if ($(this).attr('data-type') == 'number') {
         return isNumber(e)
     } else {
-        return blockspecialcharacter(e);
+        if ($(this).attr('type') != 'email') {
+            return blockspecialcharacter(e);
+        }
     }
 });
 $(document).on('keyup', "#newVendorForm input.phone", function (e) {
@@ -100,10 +111,11 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     }
 })
 $(document).on('click', "#EditVendor", function () {
-    $("#modalvendor #vendorModalLongTitle").text("Edit Vendor");
-    $('#modalvendor input').prop("disabled","true");
-    $('#modalvendor').modal('show');
+    $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
+    $('#newVendorModal input').prop("disabled","true");
+    $('#newVendorModal').modal('show');
     var id = $(this).data("id");
+
     $.ajax({
 
         url: '/vendor/details/'+id,
@@ -111,8 +123,8 @@ $(document).on('click', "#EditVendor", function () {
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
-        $("#NewVendorButton,#EditVendorButton").attr("id", "EditVendorButton");
-        $('#modalvendor input').removeAttr("disabled");
+        $("#NewVendorButton,#EditVendorButton").attr("id", "EditVendorButton").text('Update');
+        $('#newVendorModal input').removeAttr("disabled");
         var vendorData = data.venderAdressandRep;
         var vendorNoteAndDoc = data.venderDocAndNotes;
         var vendor = vendorData.vendor;
@@ -121,12 +133,13 @@ $(document).on('click', "#EditVendor", function () {
         var notes = vendorNoteAndDoc.note;
         var documents = vendorNoteAndDoc.doc;
         $("#newVendorForm").data("currentID",vendor.vendor_id);
-        $("#modalvendor #vendorModalLongTitle").text("Edit Vendor:" + vendor.vendor_name);
+        $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor:" + vendor.vendor_name);
         if(notes.length > 0)
         $('#vendorNotes').val(notes[notes.length-1].note).attr('data-value',notes[notes.length-1].note);
         $('#vendorName').val(vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);
         $('#vendorStatmentName').val(vendor.statement_name);
+        $('#vendorDec').val(vendor.vendor_description);
         $('#vendorCode').val(vendor.vendor_code);
         $('#vendorourCustomerNumber').val(vendor.our_customer_number);
         // $('#vendorourCustomerNumber').val(vendor.vendor_name);
@@ -158,6 +171,23 @@ $(document).on('click', "#EditVendor", function () {
 });
 $(document).on('click', "#EditVendorButton", function () {
     var jsonData = {};
+     var notvalid = false;
+    $('.errorMsg').remove();
+    $(this).removeClass('errorFeild');
+    $('#newVendorForm input').each(function (){
+        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
+            notvalid = true;
+            $(this).addClass('errorFeild');
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        }
+        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
+            notvalid = true;
+        }
+    });
+    if (notvalid) {
+        return false;
+    }
     var id = $("#newVendorForm").data("currentID");
     jsonData["vendor_name"] = $('#vendorName').val();
     jsonData["corp_name"] = $('#vendorCorpName').val();
@@ -165,6 +195,7 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["vendor_code"] = $('#vendorCode').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
+    jsonData["vendor_description"] = $('#vendorDec').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
     jsonData["vendor_state"] = $('#vendorState').val();
@@ -211,8 +242,8 @@ $(document).on('click', "#EditVendorButton", function () {
         }).always(function (data) { 
             console.log(data); 
             if (data != "0") {
-                console.log("Vender updated");
-                alert("vendor created . uploading files");
+                alertBox('vendorAlertMsg', 'green', 'Vendor updated successfully');
+                console.log("vendor created . uploading files");
                 var formData = new FormData();
                 formData.append('Vendor_id', id);
                 var files = $("#newVendorForm #vendorDocument")[0].files;
@@ -235,23 +266,23 @@ $(document).on('click', "#EditVendorButton", function () {
                         contentType: false,
                     }).always(function (data) {
                         console.log(data);
-                    });
-                
-
+                        });
+                setTimeout(function () {
+                    $('#newVendorModal').modal('hide'); 
+                }, 3000)
+            } else {
+                alertBox('vendorAlertMsg', 'red', 'Vendor is not updated');
             }
-            alert('update') 
-        
+           
         });
 });
 $(document).on('click', "#AddNewVendorButton", function () {
-    $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton");
-    $("#modalvendor #vendorModalLongTitle").text("Add a New Vendor Profile");
-    $("#newVendorForm input").val("");
+    $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
+    $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
+    $("#newVendorForm input,textarea").val("");
     $("#newVendorForm").data("currentID","");
 });
 $(document).on('click', "#AddMoreReps", function () {
-    //var html = '<span><input type="text" class="form-control d-inline-block" id="vendorRepName" style="width:90%"> <a href="#" id="removeCurrentRep" class="h4">-</a><br><input type="checkbox" id="vendorRepIsPrimary" /> <small>Primary</small></span>'
-    //$('.firstRep').append(html);
                     var html  = '<div class="venderRepoBox" style="border: 1px solid"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
@@ -365,7 +396,7 @@ function repsHtml(data) {
                                                     '<span class="d-inline">(</span> <input type="tel" value="'+phone2.substring(0,3)+'" data-type="number" maxlength="3" class="phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+' data-type="number" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone" maxlength="3" value="'+phone2.substring(3,6)+'" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
                                                     '<input type="tel" class="form-control phone" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
@@ -377,3 +408,40 @@ function repsHtml(data) {
         $('.venderRepo').append(html); 
     }
 }
+
+$(document).on('click', "#VendorNoteButton", function () {
+    var id = $(this).attr('data-id');
+    $('#modaladdnote').attr('data-id', id);
+    if (id != undefined) {
+        $.ajax({
+            url: '/vendor/getvendornoteanddoc/' + id,
+            dataType: 'json',
+            type: 'Get',
+            contentType: 'application/json',
+        }).always(function (data) {
+            console.log(data);
+            if (data.note && data.note.length > 0) {
+                $('#vendorNote').attr('data-value',data.note[data.note.length-1].note).val(data.note[data.note.length-1].note);
+            }
+
+        })
+    }
+})
+$(document).on('click', "#addVendorNote", function () {
+    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
+        var id = $('#modaladdnote').attr('data-id');
+        var jsonData = {};
+        jsonData["vendor_notes"] = $('#vendorNote').val();
+         $.ajax({
+            url: '/vendor/insertvendornote/' + id,
+            dataType: 'json',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+        }).always(function (data) {
+            console.log(data);
+           
+        })
+    }
+});

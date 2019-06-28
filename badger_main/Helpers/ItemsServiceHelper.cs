@@ -39,6 +39,9 @@ namespace badgerApi.Helper
     {
         Task<List<Items>> GetItemsByOrder(int PO_id);
         Task<Object> GetAllStatus();
+        Task<string> ItemUpdateById(int id, string json);
+        Task<string> SkuUpdateById(int id, string json);
+        Task<T> GenericPostAsync<T>(T json, String _call);
         Task<string> SetProductItemStatusForPhotoshootAsync(string json, string status);
 
     }
@@ -76,6 +79,43 @@ namespace badgerApi.Helper
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
+        }
+
+        public async Task<string> ItemUpdateById(int id, string json)
+        {
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/update/"+id.ToString(), json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+        }
+
+        public async Task<string> SkuUpdateById(int id, string json)
+        {
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/update/" + id.ToString(), json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+        }
+        public async Task<T> GenericPostAsync<T>(T json, String _call)
+        {
+            var client = new HttpClient();
+            var response = await client.PostAsJsonAsync(ItemApiUrl + _call, json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(data, settings);
+
         }
 
         public async Task<object> GetProductItemsSmallSku(string product_id)

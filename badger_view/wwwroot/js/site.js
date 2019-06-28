@@ -6,7 +6,7 @@
 // Initiate data table
 
 $(document).ready(function () {
-    $('#openpo').DataTable({ "aaSorting": [] });
+    $('#openpo,#vendorListingArea').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
         "columnDefs": [
             { "orderable": false, "targets": [0, 1, 7] },
@@ -15,26 +15,7 @@ $(document).ready(function () {
     });
 });
 
-// Add another field
 
-$(document).ready(function () {
-    var max_fields = 10; //maximum input boxes allowed
-    var wrapper = $(".input_fields_wrap"); //Fields wrapper
-    var add_button = $(".add_field_button"); //Add button ID
-
-    var x = 1; //initlal text box count
-    $(add_button).click(function (e) { //on add input button click
-        e.preventDefault();
-        if (x < max_fields) { //max input box allowed
-            x++; //text box increment
-            $(wrapper).append('<div class="pb-2"> <input type="text" class="form-control d-inline w-25" name="csize[' + x + ']" placeholder="Size" /> <input type="text" class="form-control d-inline w-25" name="vendorcsize[' + x + ']" placeholder="Vendor Size" /> <input type="text" class="form-control d-inline w-25" name="csku[' + x + ']" placeholder="SKU" /> <input type="text" class="form-control d-inline w-25" name="cqty[' + x + ']" placeholder="Qty" /> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
-        }
-    });
-
-    $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove(); x--;
-    })
-});
 
 // Accordian PO Mgmt
 
@@ -63,7 +44,7 @@ $(document).ready(function () {
         $(this).next().select();
     });
 
-
+   
     $('input.edittitlet[type="text"]').blur(function () {
         if ($.trim(this.value) == '') {
             this.value = (this.defaultValue ? this.defaultValue : '');
@@ -135,7 +116,7 @@ $('#size').multiselect({
         container.find('input[type=checkbox]').addClass('d-none');
     }
 });
-$('#status').multiselect({
+$('#status,#size').multiselect({
     nonSelectedText: 'Select Status',
     enableFiltering: true,
     templates: {

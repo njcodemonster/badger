@@ -320,14 +320,17 @@ namespace itemService.Controllers
         }
 
 
-        [HttpPost("create")]
-        public async Task<string> PostAsync([FromBody]   string value)
+        [HttpPost("create/{qty}")]
+        public async Task<string> PostAsync([FromBody]   string value,int qty = 0)
         {
             string NewInsertionID = "0";
             try
             {
                 Items newItems = JsonConvert.DeserializeObject<Items>(value);
-                NewInsertionID = await _ItemRepository.Create(newItems);
+                for (int loop = 0; loop < qty; loop++)
+                {
+                    NewInsertionID = await _ItemRepository.Create(newItems);
+                }
             }
             catch (Exception ex)
             {
