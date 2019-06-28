@@ -8,7 +8,7 @@
     });
 
     $("#poTotalStyles,#poOrderNumber").on("keydown", function (event) {
-        return allLetterAllow(event);
+        return isNumber(event);
     });
     //P.O. Number
     $("#poNumber,#poInvoiceNumber").on("keydown", function (event) {

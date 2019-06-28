@@ -1,7 +1,7 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
     var notvalid = false;
     $('.errorMsg').remove();
-    $(this).removeClass('errorFeild');
+    $('#newVendorForm input').removeClass('errorFeild');
     $('#newVendorForm input').each(function (){
         if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = true;
@@ -173,7 +173,7 @@ $(document).on('click', "#EditVendorButton", function () {
     var jsonData = {};
      var notvalid = false;
     $('.errorMsg').remove();
-    $(this).removeClass('errorFeild');
+    $('#newVendorForm input').removeClass('errorFeild');
     $('#newVendorForm input').each(function (){
         if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = true;

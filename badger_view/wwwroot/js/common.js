@@ -65,12 +65,31 @@ function alertBox(area, action, massage) {
     var color = 'success'
     if (action == 'red')
         color = 'danger'
-    var html =  '<div style="width: 50%;" class="alert alert-'+color+' alert-dismissible">'+
-                '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
-                massage+             
-        '</div>'
+    var html = '<div style="width: 50%;" class="alert alert-' + color + ' alert-dismissible">' +
+        '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+        massage +
+        '</div>';
     $('.' + area).html(html);
     setTimeout(function () {
         $('.alert').remove()
     }, 3000)
+}
+// global confirmation function
+function confirmationBox(heading,description,callback) {
+    var html = '<div style="z-index: 9;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 20%;" role="alert" class="alert alert-success confirmationBox">' +
+        '<h4 class="alert-heading">' + heading + '</h4>' +
+        '<p>' + description + '</p>' +
+        '<hr>' +
+        '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
+        '</div>';
+    $('body').prepend(html);
+    $('.confirmDialog').click(function () {
+         $('.confirmationBox').remove();
+        if ($(this).attr('data-val') == 'yes') {
+            return callback('yes');
+        } else {
+            return callback('no');
+        }
+      
+    })
 }
