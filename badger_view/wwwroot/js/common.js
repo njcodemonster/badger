@@ -76,12 +76,12 @@ function alertBox(area, action, massage) {
 }
 // global confirmation function
 function confirmationBox(heading,description,callback) {
-    var html = '<div style="z-index: 9;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 20%;" role="alert" class="alert alert-success confirmationBox">' +
+    var html = '<div style="width: 100%;height: 100 %;position: static;z-index: 999999;"><div style="z-index: 9;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
         '<h4 class="alert-heading">' + heading + '</h4>' +
         '<p>' + description + '</p>' +
         '<hr>' +
         '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
-        '</div>';
+        '</div></div>';
     $('body').prepend(html);
     $('.confirmDialog').click(function () {
          $('.confirmationBox').remove();

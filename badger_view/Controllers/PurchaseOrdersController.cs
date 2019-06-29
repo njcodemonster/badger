@@ -783,6 +783,7 @@ namespace badger_view.Controllers
                 id = Int32.Parse(json.Value<string>("line_item_id"));
                 poLineItemUpdate.Add("line_item_id", json.Value<string>("line_item_id"));
                 poLineItemUpdate.Add("sku", json.Value<string>("sku"));
+                poLineItemUpdate.Add("line_item_ordered_quantity", json.Value<string>("quantity"));
                 poLineItemUpdate.Add("updated_by", Int32.Parse(loginUserId));
                 poLineItemUpdate.Add("updated_at", _common.GetTimeStemp());
 
