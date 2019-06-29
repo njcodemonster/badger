@@ -1,5 +1,20 @@
 ﻿var color_added = new Array();
 var color_removed = new Array();
+var tag_added = new Array();
+var tag_removed = new Array();
+function setIfDirty(e) {
+   
+    if (e.data("realvalue") == e.val()) {
+        e.removeClass('dirty');
+        return false;
+    }
+    e.addClass('dirty');
+    return true;
+}
+$(document).on("change blur keyup", ".form-control", function () {
+    setIfDirty($(this));
+
+});
 $(document).on("change", ".colorItem", function () {
    
     var color_value = $(this).data("colorvalue");
@@ -39,6 +54,47 @@ $(document).on("change", ".colorItem", function () {
             }
         }
     }
-    console.log(color_removed);
-    console.log(color_added);
+    
+})
+$(document).on("change", ".tagsData", function () {
+
+    var color_value = $(this).data("attributeid");
+    if ($(this).data("current") == "1") {
+        if (this.checked) {
+            if (tag_removed.find(item => item === color_value)) {
+                tag_removed = tag_removed.filter(item => item !== color_value)
+            }
+            else {
+
+            }
+        }
+        else {
+            if (tag_removed.find(item => item === color_value)) {
+
+            }
+            else {
+                tag_removed.push(color_value);
+            }
+        }
+    }
+    else {
+        if (this.checked) {
+            if (tag_added.find(item => item === color_value)) {
+
+            }
+            else {
+                tag_added.push(color_value);
+            }
+        }
+        else {
+            if (tag_added.find(item => item === color_value)) {
+                tag_added = tag_added.filter(item => item !== color_value)
+            }
+            else {
+
+            }
+        }
+    }
+    console.log(tag_removed);
+    console.log(tag_added);
 })
