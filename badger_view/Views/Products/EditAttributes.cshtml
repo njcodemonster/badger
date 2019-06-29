@@ -1,7 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Edit Attributes";
 }
-@model ProductDetailsPageData  ;
+@model ProductDetailsPageData ;
+@section Scripts {
+    <script src="~/js/productDetails.js" asp-append-version="true"></script>
+    
+}
 
 <div class="text-right w-100">
     <input type="checkbox" /><label class="pl-1">Hide from customers</label>
@@ -24,27 +28,27 @@
                                 <tr>
                                     <td>
                                         <label>Size &amp; Fit</label>
-                                        @{ 
+                                        @{
                                             Dictionary<int, string> SizeAndFit = new Dictionary<int, string>();
                                             SizeAndFit.Add(1, "Runs true to size");
                                             SizeAndFit.Add(2, "Runs Small");
                                             SizeAndFit.Add(3, "Runs Large");
                                         }
-                                    <select class="form-control d-inline-block">
-                                        
-                                        @foreach (KeyValuePair<int, string> sizefit in SizeAndFit)
-                                        {
-                                            if (sizefit.Key == Model.Product.size_and_fit_id)
-                                            {
-                                                <option value="@sizefit.Key" selected>@sizefit.Value</option>
-                                            }
-                                            else
-                                            {
-                                                <option value="@sizefit.Key">@sizefit.Value</option>
-                                            }
-                                        }
+                                        <select class="form-control d-inline-block">
 
-                                    </select>
+                                            @foreach (KeyValuePair<int, string> sizefit in SizeAndFit)
+                                            {
+                                                if (sizefit.Key == Model.Product.size_and_fit_id)
+                                                {
+                                                    <option value="@sizefit.Key" selected>@sizefit.Value</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@sizefit.Key">@sizefit.Value</option>
+                                                }
+                                            }
+
+                                        </select>
                                     </td>
                                 </tr>
                                 <tr>
@@ -96,22 +100,22 @@
                     <tr>
                         <td>
                             <label>Product details</label>
-                            <textarea class="form-control" id="main_page_paragraph" >@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
+                            <textarea class="form-control" id="main_page_paragraph">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit1" value="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit1" value="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit2" value="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit2" value="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit3" value="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit3" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                 </table>
@@ -134,29 +138,29 @@
                     <tr>
                         <td>
                             <label class="h5">Photoshoot status</label>
-                            
-                                @{
-                                    Dictionary<int, string> shoteStatus = new Dictionary<int, string>();
-                                    shoteStatus.Add(1, "Shoot Not Statted");
-                                    shoteStatus.Add(2, "Sent to Editor");
-                                    shoteStatus.Add(3, "In Progress");
-                                    shoteStatus.Add(4, "Compleate");
-                                }
-                        <select class="form-control">
 
-                            @foreach (KeyValuePair<int, string> Shootstatus in shoteStatus)
-                            {
-                                if (Shootstatus.Key == Model.shootstatus)
-                                {
-                                    <option value="@Shootstatus.Key" selected>@Shootstatus.Value</option>
-                                }
-                                else
-                                {
-                                    <option value="@Shootstatus.Key">@Shootstatus.Value</option>
-                                }
+                            @{
+                                Dictionary<int, string> shoteStatus = new Dictionary<int, string>();
+                                shoteStatus.Add(1, "Shoot Not Statted");
+                                shoteStatus.Add(2, "Sent to Editor");
+                                shoteStatus.Add(3, "In Progress");
+                                shoteStatus.Add(4, "Compleate");
                             }
-                        </select>
-</td>
+                            <select class="form-control">
+
+                                @foreach (KeyValuePair<int, string> Shootstatus in shoteStatus)
+                                {
+                                    if (Shootstatus.Key == Model.shootstatus)
+                                    {
+                                        <option value="@Shootstatus.Key" selected>@Shootstatus.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@Shootstatus.Key">@Shootstatus.Value</option>
+                                    }
+                                }
+                            </select>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -198,7 +202,7 @@
                         <td>
                             <label>Pair with</label>
                             @{ string pairvalues = ""; Boolean first = true;}
-                            @foreach ( Productpairwith productpairwith in Model.productpairwiths)
+                            @foreach (Productpairwith productpairwith in Model.productpairwiths)
                             {
                                 if (first)
                                 {
@@ -207,16 +211,16 @@
                                 }
                                 else
                                 {
-                                    pairvalues = ","+productpairwith.paired_product_id;
+                                    pairvalues = "," + productpairwith.paired_product_id;
                                 }
                             }
-                        <input type="text" value="@pairvalues" class="form-control" />
+                            <input type="text" value="@pairvalues" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <label>Other colors available</label>
-                            @{ string colorValues = "";  first = true;}
+                            @{ string colorValues = ""; first = true;}
                             @foreach (Productcolorwith productcolorwith in Model.productcolorwiths)
                             {
                                 if (first)
@@ -274,77 +278,77 @@
                     <br />
                     <input type="checkbox" /> <label>Accessories</label>
                 </td>
-                @{  currentHeading = ""; }
+                @{ currentHeading = ""; }
                 @foreach (AllTags allTags in Model.AllTags)
                 {
                     if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
                     {
-                        if(currentHeading == "")
+                        if (currentHeading == "")
                         {
                             @:<td>
-                        }
-                        else
-                        {
+                            }
+                            else
+                            {
                             @:</td>
                             @:<td>
-                        }
-                        currentHeading = allTags.sub_heading;
-                        if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
-                        {
-                            @:<input type="checkbox" data-attributeid="@allTags.attribute_id" checked/> <label>@allTags.attribute_display_name</label>
+                            }
+                            currentHeading = allTags.sub_heading;
+                            if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
+                            {
+                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
+                            }
+                            else
+                            {
+                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                            }
                         }
                         else
                         {
-                            @:<input type="checkbox" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                            @:<br />
+                            if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
+                            {
+                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
+                            }
+                            else
+                            {
+                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                            }
                         }
+                    }
+            <td>
+                @{ first = true; string itemcolor = @Model.productProperties.Where(X => X.attribute_type_id == 2).Select(X => X.value).DefaultIfEmpty("None").First(); }
+
+                @foreach (AllColors allColors in Model.AllColors)
+                {
+                    if (first)
+                    {
+                        if (allColors.value != itemcolor)
+                        {
+                            @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value"/> <label>@allColors.value</label>
+                        }
+                        else
+                        {
+                            @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value" data-current="1" checked /> <label>@allColors.value</label>
+                        }
+                        first = false;
                     }
                     else
                     {
                         @:<br />
-                        if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
+                        if (@allColors.value != itemcolor)
                         {
-                            @:<input type="checkbox" data-attributeid="@allTags.attribute_id" checked/> <label>@allTags.attribute_display_name</label>
+                            @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value" /> <label>@allColors.value</label>
                         }
                         else
                         {
-                            @:<input type="checkbox" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                            @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value" data-current="1" checked /> <label>@allColors.value</label>
                         }
                     }
+
                 }
-                <td>
-                    @{ first = true; string itemcolor = @Model.productProperties.Where(X=>X.attribute_type_id==2).Select(X => X.value).DefaultIfEmpty("None").First(); }
-
-                    @foreach (AllColors allColors in Model.AllColors)
-                    {
-                        if (first)
-                        {
-                            if (allColors.value != itemcolor)
-                            {
-                                @:<input type="checkbox" /> <label>@allColors.value</label>
-                            }
-                            else
-                            {
-                                @:<input type="checkbox" checked/> <label>@allColors.value</label>
-                            }
-                            first = false;
-                            }
-                        else
-                            {
-                            @:<br />
-                            if (@allColors.value != itemcolor)
-                            {
-                                @:<input type="checkbox" /> <label>@allColors.value</label>
-                            }
-                            else
-                            {
-                                @:<input type="checkbox" checked/> <label>@allColors.value</label>
-                            }
-                        }
-
-                    }
-                </td>
-            </tr>
-        </table>
-        <button type="button" class="btn btn-primary btn-sm float-right mt-3">SAVE</button>
-    </div>
+            </td>
+        </tr>
+    </table>
+    <button type="button" class="btn btn-primary btn-sm float-right mt-3">SAVE</button>
+</div>
 </div>
