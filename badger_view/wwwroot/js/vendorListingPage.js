@@ -1,21 +1,5 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
-    var notvalid = false;
-    $('.errorMsg').remove();
-    $('#newVendorForm input').removeClass('errorFeild');
-    $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
-            notvalid = true;
-            $(this).addClass('errorFeild');
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
-        }
-        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
-            notvalid = true;
-        }
-    });
-    if (notvalid) {
-        return false;
-    }
+    return emptyFeildValidation('newVendorForm');
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
     jsonData["vendor_name"] = $('#vendorName').val();
@@ -280,7 +264,8 @@ $(document).on('click', "#EditVendorButton", function () {
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
-    $("#newVendorForm input,textarea").val("");
+    $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
+    $('.errorMsg').remove();
     $("#newVendorForm").data("currentID","");
 });
 $(document).on('click', "#AddMoreReps", function () {
@@ -315,7 +300,7 @@ $(document).on('click', "#AddMoreReps", function () {
                                         '</div>'+
                                         '<div class="form-group col-md-6">'+
                                             '<label>Email</label>'+
-                                            '<input type="email" class="form-control" id="vendorRepEmail">'+
+                                            '<input type="email" class="form-control email" id="vendorRepEmail">'+
                                         '</div>'+
                                     '</div>'+
                                     '<div class="form-row">'+
@@ -386,7 +371,7 @@ function repsHtml(data) {
                                         '</div>'+
                                         '<div class="form-group col-md-6">'+
                                             '<label>Email</label>'+
-                                            '<input type="email" value="'+data[i].email+'" class="form-control" id="vendorRepEmail">'+
+                                            '<input type="email" value="'+data[i].email+'" class="form-control email" id="vendorRepEmail">'+
                                         '</div>'+
                                     '</div>'+
                                     '<div class="form-row">'+
