@@ -22,7 +22,7 @@
                                 <tr>
                                     <td>
                                         <label class="text_label edittitlel h5">@Model.Product.product_name</label><div class="edit"></div>
-                                        <input class="edittitlet form-control product_title" data-RealValue="@Model.Product.product_name" type="text" value="@Model.Product.product_name" />
+                                        <input class="edittitlet form-control product_title" id="product_name" data-RealValue="@Model.Product.product_name" type="text" value="@Model.Product.product_name" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -34,13 +34,13 @@
                                             SizeAndFit.Add(2, "Runs Small");
                                             SizeAndFit.Add(3, "Runs Large");
                                         }
-                                        <select class="form-control d-inline-block Product_sizeandfit" >
+                                        <select class="form-control d-inline-block Product_sizeandfit" id="Product_sizeandfit" data-RealValue="@Model.Product.size_and_fit_id">
 
                                             @foreach (KeyValuePair<int, string> sizefit in SizeAndFit)
                                             {
                                                 if (sizefit.Key == Model.Product.size_and_fit_id)
                                                 {
-                                                    <option value="@sizefit.Key" data-RealValue="@sizefit.Value" selected>@sizefit.Value</option>
+                                                    <option value="@sizefit.Key"  selected>@sizefit.Value</option>
                                                 }
                                                 else
                                                 {
@@ -79,15 +79,15 @@
                                 <tr>
                                     <td>
                                         <label>Cost</label>
-                                        <input type="text"  data-RealValue="@Model.Product.product_cost" value="@Model.Product.product_cost" class="form-control product_cost" />
+                                        <input type="text"  data-RealValue="@Model.Product.product_cost" id="product_cost" value="@Model.Product.product_cost" class="form-control product_cost" />
                                     </td>
                                     <td>
                                         <label>Retail</label>
-                                        <input type="text" data-RealValue="@Model.Product.product_cost" value="@Model.Product.product_retail" class="form-control product_retail" />
+                                        <input type="text" data-RealValue="@Model.Product.product_retail" id="product_retail" value="@Model.Product.product_retail" class="form-control product_retail" />
                                     </td>
                                     <td>
                                         <label>Discount (%)</label>
-                                        <input type="text" data-RealValue="@Model.Product.product_cost" value="@Model.Product.product_discount" class="form-control product_discount" />
+                                        <input type="text" data-RealValue="@Model.Product.product_discount" id="product_discount" value="@Model.Product.product_discount" class="form-control product_discount" />
                                     </td>
                                 </tr>
                             </table>
@@ -115,7 +115,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit3"@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" data-RealValue=" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit3" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                 </table>
@@ -146,7 +146,7 @@
                                 shoteStatus.Add(3, "In Progress");
                                 shoteStatus.Add(4, "Compleate");
                             }
-                            <select class="form-control">
+                            <select class="form-control" id="product_shoot_status" data-RealValue="@Model.shootstatus">
 
                                 @foreach (KeyValuePair<int, string> Shootstatus in shoteStatus)
                                 {
@@ -174,7 +174,7 @@
                     <tr>
                         <td>
                             <label>Internal Product Notes</label>
-                            <textarea class="form-control" placeholder="Item notes from the earlier screen are also populated here.">@Model.Product_Notes</textarea>
+                            <textarea class="form-control" placeholder="Item notes from the earlier screen are also populated here." data-RealValue="@Model.Product_Notes" id="internalNotes">@Model.Product_Notes</textarea>
                         </td>
                     </tr>
                 </table>
@@ -214,7 +214,7 @@
                                     pairvalues = "," + productpairwith.paired_product_id;
                                 }
                             }
-                            <input type="text" value="@pairvalues" class="form-control" />
+                            <input type="text" value="@pairvalues"  id="Pairwith" data-RealValue="@pairvalues"  class="form-control" />
                         </td>
                     </tr>
                     <tr>
@@ -233,7 +233,7 @@
                                     colorValues = "," + productcolorwith.same_color_product_id;
                                 }
                             }
-                            <input type="text" value="@colorValues" class="form-control" />
+                            <input type="text" value="@colorValues" id="colorwith"   data-RealValue="@colorValues" class="form-control" />
                         </td>
                     </tr>
                     <tr>
@@ -349,6 +349,6 @@
             </td>
         </tr>
     </table>
-    <button type="button" class="btn btn-primary btn-sm float-right mt-3">SAVE</button>
+    <button type="button" class="btn btn-primary btn-sm float-right mt-3 " id="mainSaveButton">SAVE</button>
 </div>
 </div>
