@@ -44,6 +44,7 @@ namespace badgerApi.Helper
         Task<String> GenericPostNote<T>(int reffId, int noteType,string note, int createdBy, Double createdAt);
         Task<String> GenericPostDoc<T>(int reffId,int docType,string URL ,string notes  ,int createdBy, Double createdAt);
         Task<List<Documents>> GenericGetDocAsync<T>(int Reff ,int doc_type, int Limit);
+        Task<List<Notes>> GenericNotes<T>(string Reffs, int note_type);
     }
     public class NotesAndDocHelper:INotesAndDocHelper
     {
@@ -88,7 +89,13 @@ namespace badgerApi.Helper
 
         }
 
-       
+        public async Task<List<Notes>> GenericNotes<T>(string Reffs, int note_type)
+        {
+            List<Notes> notes = new List<Notes>();
+            notes = await GenericGetAsync<List<Notes>>("/notes/reff/" + Reffs + "/" + note_type.ToString());
+            return notes;
+        }
+
         public async Task<List<Notes>> GenericNote<T>(int Reff,int note_type, int Limit)
         {
             List<Notes> notes = new List<Notes>();

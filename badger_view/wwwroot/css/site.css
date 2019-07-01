@@ -117,6 +117,9 @@ button.accept-policy {
     line-height: inherit;
 }
 
+.w-24 {
+    width: 24% !important;
+}
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -142,23 +145,26 @@ header {
     height: 60px;
     line-height: 60px; /* Vertically center the text there */
 }
+
 .venderRepoBox {
     /*border: 1px solid;*/
     padding: 20px;
     position: relative;
 }
+
 .repoCloseBtn {
     position: absolute;
     right: 5px;
-    cursor:pointer
+    cursor: pointer
 }
-.red_color{
-    color:#ff0000;
- }
- 
- .tracking_add_more_box{
-     padding: 5px 0;
- }
+
+.red_color {
+    color: #ff0000;
+}
+
+.tracking_add_more_box {
+    padding: 5px 0;
+}
 
 .porep .btn-group {
     border: 1px solid #ced4da;
@@ -218,13 +224,13 @@ header {
 }
 
 .unselect_menu {
-    display:none;
+    display: none;
 }
 
 
 
 .red_color {
-    color:#ff0000;
+    color: #ff0000;
 }
 
 .tracking_add_more_box {
@@ -239,9 +245,37 @@ header {
 label.error {
     display: inline;
 }
-.errorFeild{
-    border:1px solid red;
+
+.errorFeild {
+    border: 1px solid red;
 }
+
 #newVendorForm .phone {
     text-align: center
 }
+.vendorAlertMsg {
+    text-align: left;
+    position: relative;
+    width: 100%;
+}
+
+.loading-box {
+    display: table;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    position: fixed;
+    top: 0px;
+    border: 0px;
+    left: 0px;
+    visibility:hidden;
+}
+.inner-loading {
+    width: 100%;
+    height: 100px;
+    z-index: 999;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+   }

@@ -36,6 +36,9 @@ namespace itemService.Interfaces
         Task<String> Create(Items NewItem);
         Task<Boolean> Update(Items ItemToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
+        Task SetProductItemSentToPhotoshoot(string product_id);
+
+        Task<String> SetProductItemForPhotoshoot(int skuId, string status);
 
     }
     public class ItemRepo : ItemRepository
@@ -645,6 +648,13 @@ namespace itemService.Interfaces
             }
         }
 
+        public async Task SetProductItemSentToPhotoshoot(string product_id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                await conn.QueryAsync<String>("select count(photoshoot_id) from " + TableName + " where photoshoot_id = 0;");
+            }
+        }
         public async Task<Boolean> Update(Items ItemToUpdate)
         {
             using (IDbConnection conn = Connection)
@@ -667,5 +677,50 @@ namespace itemService.Interfaces
             }
 
         }
+
+        public async Task<String> SetProductItemForPhotoshoot(int skuId, string status) {
+
+            string ToReturn = "success";
+
+            IEnumerable<Items> item = new List<Items>();
+            string itemSelectQuery = "";
+            string itemUpdateQuery = "";
+
+            if (status== "SentToPhotoshoot")
+            {
+                itemSelectQuery = "SELECT * FROM items where items.sku_id= " + skuId.ToString() + " ORDER BY RAND() LIMIT 1;";
+            }
+            else if (status == "PhotoshootNotStarted") {
+                itemSelectQuery = "SELECT * FROM items where items.sku_id= " + skuId.ToString() + " AND item_status_id = 6;";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                item = await conn.QueryAsync<Items>(itemSelectQuery);
+            }
+
+            if (item.Count() > 0)
+            {
+                if (status == "SentToPhotoshoot")
+                {
+                    itemUpdateQuery = "update items set  item_status_id = 6 where item_id = " + item.First().item_id.ToString() + "; ";
+                }
+                else if (status == "PhotoshootNotStarted")
+                {
+                    itemUpdateQuery = "update items set  item_status_id = 1 where item_id = " + item.First().item_id.ToString() + "; ";
+                }
+                using (IDbConnection conn = Connection)
+                {
+                    await conn.QueryAsync<Items>(itemUpdateQuery);
+                }
+            }
+            else
+            {
+                ToReturn = "failed";
+            }
+
+            return ToReturn;
+        } 
+
     }
 }
