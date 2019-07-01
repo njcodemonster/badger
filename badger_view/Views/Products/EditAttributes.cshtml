@@ -22,7 +22,7 @@
                                 <tr>
                                     <td>
                                         <label class="text_label edittitlel h5">@Model.Product.product_name</label><div class="edit"></div>
-                                        <input class="edittitlet form-control" type="text" value="Item's Style Name Here" />
+                                        <input class="edittitlet form-control product_title" data-RealValue="@Model.Product.product_name" type="text" value="@Model.Product.product_name" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -34,13 +34,13 @@
                                             SizeAndFit.Add(2, "Runs Small");
                                             SizeAndFit.Add(3, "Runs Large");
                                         }
-                                        <select class="form-control d-inline-block">
+                                        <select class="form-control d-inline-block Product_sizeandfit" >
 
                                             @foreach (KeyValuePair<int, string> sizefit in SizeAndFit)
                                             {
                                                 if (sizefit.Key == Model.Product.size_and_fit_id)
                                                 {
-                                                    <option value="@sizefit.Key" selected>@sizefit.Value</option>
+                                                    <option value="@sizefit.Key" data-RealValue="@sizefit.Value" selected>@sizefit.Value</option>
                                                 }
                                                 else
                                                 {
@@ -63,7 +63,7 @@
                                 <tr>
                                     <td>
                                         <label>Color</label>
-                                        <input type="text" class="form-control" value="@Model.productProperties.Where(X=>X.attribute_type_id==2).Select(X => X.value).DefaultIfEmpty("None").First()" />
+                                        <input type="text" class="form-control"  disabled="disabled"  value="@Model.productProperties.Where(X=>X.attribute_type_id==2).Select(X => X.value).DefaultIfEmpty("None").First()" />
                                     </td>
                                 </tr>
                             </table>
@@ -79,15 +79,15 @@
                                 <tr>
                                     <td>
                                         <label>Cost</label>
-                                        <input type="text" value="@Model.Product.product_cost" class="form-control" />
+                                        <input type="text"  data-RealValue="@Model.Product.product_cost" value="@Model.Product.product_cost" class="form-control product_cost" />
                                     </td>
                                     <td>
                                         <label>Retail</label>
-                                        <input type="text" value="@Model.Product.product_retail" class="form-control" />
+                                        <input type="text" data-RealValue="@Model.Product.product_cost" value="@Model.Product.product_retail" class="form-control product_retail" />
                                     </td>
                                     <td>
                                         <label>Discount (%)</label>
-                                        <input type="text" value="@Model.Product.product_discount" class="form-control" />
+                                        <input type="text" data-RealValue="@Model.Product.product_cost" value="@Model.Product.product_discount" class="form-control product_discount" />
                                     </td>
                                 </tr>
                             </table>
@@ -100,22 +100,22 @@
                     <tr>
                         <td>
                             <label>Product details</label>
-                            <textarea class="form-control" id="main_page_paragraph">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
+                            <textarea class="form-control" id="main_page_paragraph" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit1" value="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit1" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit2" value="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit2" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" id="main_page_bulit3" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                            <input type="text" id="main_page_bulit3"@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" data-RealValue=" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
                     </tr>
                 </table>
@@ -295,11 +295,11 @@
                             currentHeading = allTags.sub_heading;
                             if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
                             {
-                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
+                                @:<input type="checkbox"  class="tagsData"    data-current="1" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
                             }
                             else
                             {
-                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                @:<input type="checkbox" class="tagsData" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
                             }
                         }
                         else
@@ -307,11 +307,11 @@
                             @:<br />
                             if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
                             {
-                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
+                                @:<input type="checkbox" class="tagsData"  data-current="1" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
                             }
                             else
                             {
-                                @:<input type="checkbox" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                @:<input type="checkbox" class="tagsData" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
                             }
                         }
                     }
