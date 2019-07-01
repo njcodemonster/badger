@@ -2,9 +2,10 @@
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
+    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
+       return false;
     }
+    return blockspecialcharacter(evt)
     return true;
 }
 
@@ -15,6 +16,10 @@ function blockspecialcharacter(e) {
 
             // 0-9
             if(keyCharCode >= 48 && keyCharCode <= 57) {
+                return key;
+            }
+            // 0-9 number pad
+            if(keyCharCode >= 96 && keyCharCode <= 105) {
                 return key;
             }
             // A-Z
@@ -48,8 +53,9 @@ function onlyNumbersWithDot(e) {
         return true
     if (charCode == 190)
         return true
-    if (charCode > 31 && (charCode < 48 || charCode > 57) || charCode == 16)
-        return false;
+    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16) 
+       return false;
+    
     return true;
 }
 
@@ -76,7 +82,7 @@ function alertBox(area, action, massage) {
 }
 // global confirmation function
 function confirmationBox(heading,description,callback) {
-    var html = '<div style="width: 100%;height: 100 %;position: static;z-index: 999999;"><div style="z-index: 9;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
+    var html = '<div style="z-index: 9;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 20%;" role="alert" class="alert alert-success confirmationBox">' +
         '<h4 class="alert-heading">' + heading + '</h4>' +
         '<p>' + description + '</p>' +
         '<hr>' +
@@ -92,4 +98,22 @@ function confirmationBox(heading,description,callback) {
         }
       
     })
+}
+
+function emptyFeildValidation(id){
+    $('.errorMsg').remove();
+    var notvalid = true;
+    $('#'+id+' input').removeClass('errorFeild');
+    $('#'+id+' input').each(function (){
+        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
+            notvalid = false;
+            $(this).addClass('errorFeild');
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        }
+        if (notvalid && $(this).attr('type') == 'email' && isEmail($('.email').val()) == false) {
+            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
+            notvalid = false;
+        }
+    });
+    return notvalid;
 }
