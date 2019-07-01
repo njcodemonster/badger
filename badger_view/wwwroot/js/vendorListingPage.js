@@ -68,7 +68,7 @@
             table.page('last').draw('page');
             alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
             setTimeout(function () {
-               $('#newVendorModal').modal('hide'); 
+               //$('#newVendorModal').modal('hide'); 
             }, 3000)
         } else {
             alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
