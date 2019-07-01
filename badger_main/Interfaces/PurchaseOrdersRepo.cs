@@ -24,6 +24,7 @@ namespace badgerApi.Interfaces
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int limit);
         Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
+        Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -124,7 +125,7 @@ namespace badgerApi.Interfaces
             }
             else
             {
-                sQuery = "SELECT A.* , B.value AS \"Color\" FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight FROM productdb.purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A join  attribute_values   AS B on A.product_id = B.product_id where (B.attribute_id =1) ";
+                sQuery = "SELECT A.* , B.value AS \"Color\" FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight FROM productdb.purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A join  attribute_values   AS B  where (B.attribute_id =1) ";
             }
 
             using (IDbConnection conn = Connection)
@@ -156,5 +157,19 @@ namespace badgerApi.Interfaces
             return poPageList;
 
         }
+
+        public async Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<PurchaseOrderLineItems> result = new List<PurchaseOrderLineItems>();
+                
+                    result = await conn.QueryAsync<PurchaseOrderLineItems>("Select * from purchase_order_line_items where product_id="+ product_id + " and po_id="+ PO_id + " ;");
+                
+               
+                return result.ToList();
+            }
+        }
+
     }
 }
