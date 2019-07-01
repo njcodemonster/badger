@@ -157,13 +157,13 @@ namespace badgerApi.Controllers
         }
 
 
-        [HttpGet("photoshootsAndModels")]
+        [HttpGet("GetPhotoshootsAndModels")]
         public async Task<object> photoshootsAndModels()
         {
             dynamic photoshootsAndModels = new object();
             try
             {
-                photoshootsAndModels = await _PhotoshootRepo.GetAllPhotoshoots(0);
+                photoshootsAndModels = await _PhotoshootRepo.GetAllPhotoshootsAndModels();
             }
             catch (Exception ex)
             {
@@ -176,13 +176,13 @@ namespace badgerApi.Controllers
 
         }
 
-        [HttpGet("SendToEditorPhotoshoot")]
-        public async Task<object> SendToEditorPhotoshoot()
+        [HttpGet("SentToEditorPhotoshoot")]
+        public async Task<object> SentToEditorPhotoshoot()
         {
             dynamic SendToEditorProduct = new object();
             try
             {
-                SendToEditorProduct = await _PhotoshootRepo.GetSendToEditorPhotoshoot(0);
+                SendToEditorProduct = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
             }
             catch (Exception ex)
             {
@@ -358,21 +358,24 @@ namespace badgerApi.Controllers
                                 else
                                 {
                                     skuListInt.Add(element.sku_id.ToString());
-                                    skuSortLink[sku] = element.sku_id.ToString();
+                                    skuSortLink[element.sku_id.ToString()] = element.sku_id.ToString();
                                 }
                             }
                             string[] skuArrayInt = skuListInt.ToArray();
                             Array.Sort(skuArrayInt);
 
                             List<int> SortedSkuReturnIds = new List<int>();
-                            foreach (var sku_id in skuArrayInt)
-                            {
-                                string index = sku_id.ToString();
-                                SortedSkuReturnIds.Add(Int32.Parse(skuSortLink[index]));
-                            }
+                            if (skuArrayInt.Count() > 0) {
+                                foreach (var sku_id in skuArrayInt)
+                                {
+                                    string index = sku_id.ToString();
+                                    SortedSkuReturnIds.Add(Int32.Parse(skuSortLink[index]));
+                                }
 
-                            var idsAll = string.Join(",", SortedSkuReturnIds.ToArray());
-                            AllSkuIdsList.Add(productID, idsAll.ToString());
+                                var idsAll = string.Join(",", SortedSkuReturnIds.ToArray());
+                                AllSkuIdsList.Add(productID, idsAll.ToString());
+                            }
+                            
                         }
                     }
                 }
@@ -403,17 +406,19 @@ namespace badgerApi.Controllers
                         Array.Sort(skuArraySplited);
 
                         List<string> SortedSkuReturnIds = new List<string>();
-                        foreach (var sku_id in skuArraySplited)
-                        { string index = sku_id.ToString();
-                            SortedSkuReturnIds.Add(skuSortLink[index].ToString());
+                        if (skuArraySplited.Count() > 0)
+                        {
+                            foreach (var sku_id in skuArraySplited)
+                            {
+                                string index = sku_id.ToString();
+                                SortedSkuReturnIds.Add(skuSortLink[index].ToString());
+                            }
+                            var ids = string.Join(",", SortedSkuReturnIds.ToArray());
+                            AllSkuIdsList.Add(product_id, ids.ToString());
                         }
-                        var ids = string.Join(",", SortedSkuReturnIds.ToArray());
-                        AllSkuIdsList.Add(product_id, ids.ToString());
                     }
                 }
-
-                returnValue = await _ItemServiceHelper.SetProductItemStatusForPhotoshootAsync(AllSkuIdsList.ToString(Formatting.None), status);
-
+                 returnValue = await _ItemServiceHelper.SetProductItemStatusForPhotoshootAsync(AllSkuIdsList.ToString(Formatting.None), status);
             }
             catch (Exception ex)
             {
@@ -425,8 +430,8 @@ namespace badgerApi.Controllers
             return returnValue;
         }
 
-        [HttpPost("assignProductPhotoshoot/{productId}")]
-        public async Task<string> assignProductPhotoshoot(string productId, [FromBody]   string value)
+        [HttpPost("StartProductPhotoshoot/{productId}")]
+        public async Task<string> StartProductPhotoshoot(string productId, [FromBody]   string value)
         {
             string UpdateResult = "Success";
             try

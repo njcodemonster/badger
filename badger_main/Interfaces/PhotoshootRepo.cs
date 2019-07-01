@@ -24,10 +24,10 @@ namespace badgerApi.Interfaces
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<Object> GetPhotoshootDetailsRep(Int32 id);
         Task<Object> GetPhotoshootProducts(Int32 photoshootId);
-        Task<Object> GetAllPhotoshoots(Int32 id);
+        Task<Object> GetAllPhotoshootsAndModels();
         Task<Object> GetAllPhotoshootsModels(Int32 limit);
         Task<Object> GetInprogressPhotoshoot(Int32 limit);
-        Task<Object> GetSendToEditorPhotoshoot(Int32 limit);
+        Task<Object> GetSentToEditorPhotoshoot(Int32 limit);
 
         Task<Object> GetSkuByProduct(string product_id);
 
@@ -166,22 +166,16 @@ namespace badgerApi.Interfaces
         }
 
 
-        public async Task<Object> GetAllPhotoshoots(Int32 Limit)
+        public async Task<Object> GetAllPhotoshootsAndModels()
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
             string sQuery2 = "";
 
-            if (Limit > 0)
-            {
-                sQuery  = "  SELECT  photoshoot_id, photoshoot_name FROM photoshoots Limit " + Limit.ToString() + " ;";
-                sQuery2 = "  SELECT  model_id, model_name FROM photoshoot_models Limit " + Limit.ToString() + " ;";
-            }
-            else
-            {
+            
                 sQuery  = "SELECT  photoshoot_id, photoshoot_name FROM photoshoots ";
                 sQuery2 = "SELECT  model_id, model_name FROM photoshoot_models ";
-            }
+           
 
             using (IDbConnection conn = Connection)
             {
@@ -251,7 +245,7 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
-        public async Task<Object> GetSendToEditorPhotoshoot(Int32 Limit)
+        public async Task<Object> GetSentToEditorPhotoshoot(Int32 Limit)
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";

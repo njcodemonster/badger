@@ -82,7 +82,7 @@ namespace badger_view.Controllers
         public async Task<IActionResult> sendToEditor()
         {
             SetBadgerHelper();
-            ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SendToEditorPhotoshoot/");
+            ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SentToEditorPhotoshoot/");
             dynamic photoshootSendToEditorModal = new ExpandoObject();
             photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
             return View("SendToEditor", photoshootSendToEditorModal);
@@ -94,9 +94,8 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/getPhotoshootAndModels/")]
         public async Task<string> getPhotoshootAndModelsAsync()
         {
-            //photoshootsAndModels
             SetBadgerHelper();
-            Object photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<Object>("/Photoshoots/photoshootsAndModels/");
+            Object photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<Object>("/Photoshoots/GetPhotoshootsAndModels/");
             return photoshootPagerList.ToString() ;
         }
 
@@ -111,7 +110,7 @@ namespace badger_view.Controllers
             assignPhotoshoot.Add("updated_by", 2);
             assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
 
-            String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/assignProductPhotoshoot/" + product_id);
+            String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/StartProductPhotoshoot/" + product_id);
 
             return AssignPhotoshootStatus;
         }
@@ -177,7 +176,7 @@ namespace badger_view.Controllers
             assignPhotoshoot.Add("updated_by", user_id);
             assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
 
-            String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/assignProductPhotoshoot/"+ productId);
+            String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/StartProductPhotoshoot/" + productId);
 
             return AssignPhotoshootStatus;
         }

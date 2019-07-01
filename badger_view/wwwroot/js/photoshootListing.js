@@ -299,11 +299,9 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
 
         }).always(function (data) {
             if (data == "Success") {
-
                 getPhotoshootProducts(PhotoshootId);
-
             } else {
-                alert(data)
+                //alert(data)
             }
         });
         console.log(product_ids);
