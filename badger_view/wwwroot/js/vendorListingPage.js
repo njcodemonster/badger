@@ -155,24 +155,8 @@ $(document).on('click', "#EditVendor", function () {
 
 });
 $(document).on('click', "#EditVendorButton", function () {
+     return emptyFeildValidation('newVendorForm');
     var jsonData = {};
-     var notvalid = false;
-    $('.errorMsg').remove();
-    $('#newVendorForm input').removeClass('errorFeild');
-    $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
-            notvalid = true;
-            $(this).addClass('errorFeild');
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
-        }
-        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
-            notvalid = true;
-        }
-    });
-    if (notvalid) {
-        return false;
-    }
     var id = $("#newVendorForm").data("currentID");
     jsonData["vendor_name"] = $('#vendorName').val();
     jsonData["corp_name"] = $('#vendorCorpName').val();
