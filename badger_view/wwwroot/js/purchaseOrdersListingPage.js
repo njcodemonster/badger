@@ -746,21 +746,27 @@ $(document).on("click", "#document_submit", function () {
 $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
-    
-        $.ajax({
-            url: '/purchaseorders/delete/' + id,
-            dataType: 'json',
-            type: 'POST',
-            contentType: 'application/json',
-        }).always(function (data) {
-            console.log(data);
-            if (data.responseText == "Success") {
-                var table = $('#purchaseorderlists').DataTable();
-                table.row(window.purchaseorderrownumber).remove().draw(false);
-                $("#modalPurchaseOrder").modal("hide");
-            }
-           
-        });
+
+    confirmationBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
+
+        if (result == "yes") {
+            $.ajax({
+                url: '/purchaseorders/delete/' + id,
+                dataType: 'json',
+                type: 'POST',
+                contentType: 'application/json',
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    var table = $('#purchaseorderlists').DataTable();
+                    table.row(window.purchaseorderrownumber).remove().draw(false);
+                    $("#modalPurchaseOrder").modal("hide");
+                }
+
+            });
+        }
+    }) 
+        
 });
 
 function purchaseOrderData(data) {

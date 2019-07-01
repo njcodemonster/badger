@@ -215,7 +215,11 @@ $(document).on("change", ".item_status", function () {
         }
 
     });
-})
+});
+
+$(".sku_weight").on("keydown", function (event) {
+    return isNumber(event);
+});
 
 $(document).on("change", ".sku_weight", function () {
     var sku_id = $(this).attr('id');
@@ -268,9 +272,17 @@ $(document).on("change", ".sku_weight", function () {
 });
 
 $(document).on("change", ".item_barcode", function () {
-    $('.message').append('<div class="spinner-border text-danger"></div>');
     var item_id = $(this).attr('data-itemid');
     var barcode = $(this).val();
+
+    $('.errorMsg').remove();
+    $(this).removeClass('errorFeild');
+    if (barcode.length < 8) {
+        $(this).addClass('errorFeild');
+        $(this).append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        return false;
+    }
+     $('.message').append('<div class="spinner-border text-danger"></div>');
     var jsondata = $("input#" + item_id).val();
     var itemdata = JSON.parse(jsondata);
     var id = itemdata.item_id
