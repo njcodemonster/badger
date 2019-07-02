@@ -410,6 +410,25 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        
+
+        // GET: api/purchaseorders/lineitems/productid/poid
+        [HttpGet("lineitems/{productid}/{poid}")]
+        public async Task<IEnumerable<PurchaseOrderLineItems>> GetAsyncLineitems(Int32 productid, int poid)
+        {
+            IEnumerable<PurchaseOrderLineItems> ToReturn = new List<PurchaseOrderLineItems>();
+            try
+            {
+                ToReturn = await _PurchaseOrdersRepo.GetPOLineitems(productid, poid);
+                //ToReturn.Add(Res);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Line items by id with message" + ex.Message);
+
+            }
+            return ToReturn;
+        }
+
     }
 }

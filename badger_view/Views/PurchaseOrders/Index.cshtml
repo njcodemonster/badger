@@ -5,9 +5,9 @@
 
 @model dynamic
 @section Scripts {
-    <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
-    <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>    
+    <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
 
 <div class="row">
@@ -223,8 +223,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="vendorAlertMsg"></div>
-                    <button type="button" class="btn btn-warning po_section d-none" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete this P.O.</button>
+                    <div class="poAlertMsg"></div>
+                    <button type="button" class="btn btn-warning po_section d-none" id="poDelete" style="margin: 0 auto; background-color: #f35d47 !important;">Delete</button>
                     <button type="button" class="btn btn-primary" id="NewPurchaseOrderButton">Add</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
@@ -343,7 +343,7 @@
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Email</label>
-                                            <input type="email" class="form-control" style="width:90%" id="vendorRepEmail">
+                                            <input type="email" class="form-control email" style="width:90%" id="vendorRepEmail">
                                         </div>
                                     </div>
                                     <div class="form-row">

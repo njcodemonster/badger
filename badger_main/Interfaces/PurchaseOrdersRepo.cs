@@ -24,6 +24,7 @@ namespace badgerApi.Interfaces
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int limit);
         Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
+        Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -156,5 +157,19 @@ namespace badgerApi.Interfaces
             return poPageList;
 
         }
+
+        public async Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<PurchaseOrderLineItems> result = new List<PurchaseOrderLineItems>();
+                
+                    result = await conn.QueryAsync<PurchaseOrderLineItems>("Select * from purchase_order_line_items where product_id="+ product_id + " and po_id="+ PO_id + " ;");
+                
+               
+                return result.ToList();
+            }
+        }
+
     }
 }
