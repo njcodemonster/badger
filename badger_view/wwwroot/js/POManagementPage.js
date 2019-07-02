@@ -96,7 +96,7 @@ $(document).ready(function () {
 });
 
 $(document).on('change', ".item_note", function () {
-    $('.message').append('<div class="spinner-border text-danger"></div>');
+    $('.message').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
 
     jsonData["item_id"] = $(this).attr('data-itemid');
@@ -153,7 +153,7 @@ $(document).on("click", "#AddDocument", function () {
 });
 
 $(document).on("click", "#document_submit", function () {
-    $('.message').append('<div class="spinner-border text-danger"></div>');
+    $('.message').append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
         var files = $("#poUploadImages")[0].files;
@@ -187,7 +187,7 @@ $(document).on("click", "#document_submit", function () {
 });
 
 $(document).on("change", ".item_status", function () {
-    $('.message').append('<div class="spinner-border text-danger"></div>');
+    $('.message').append('<div class="spinner-border text-info"></div>');
     //$(".message .spinner-border").removeClass("d-none");
     var item_id = $(this).attr('data-itemid');
     var item_status = $(this).val();
@@ -225,12 +225,14 @@ $(document).on("change", ".sku_weight", function () {
     var sku_id = $(this).attr('id');
     var sku_weight = $(this).val();
     var old_sku_weight = $(this).attr("data-weight");
-
+    if (sku_weight == "") {
+        return false;
+    }
     console.log(sku_id + " -- " + sku_weight);
     confirmationBox("SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
         console.log(result)       
         if (result == "yes") {
-            $('.message').append('<div class="spinner-border text-danger"></div>');
+            $('.message').append('<div class="spinner-border text-info"></div>');
             var jsonData = {};
             jsonData["sku_id"] = sku_id;
             jsonData["weight"] = sku_weight;
@@ -275,14 +277,12 @@ $(document).on("change", ".item_barcode", function () {
     var item_id = $(this).attr('data-itemid');
     var barcode = $(this).val();
 
-    $('.errorMsg').remove();
     $(this).removeClass('errorFeild');
     if (barcode.length < 8) {
         $(this).addClass('errorFeild');
-        $(this).append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         return false;
     }
-     $('.message').append('<div class="spinner-border text-danger"></div>');
+    $('.message').append('<div class="spinner-border text-info"></div>');
     var jsondata = $("input#" + item_id).val();
     var itemdata = JSON.parse(jsondata);
     var id = itemdata.item_id
@@ -311,7 +311,7 @@ $(document).on("change", ".item_barcode", function () {
 
 
 $(document).on("click", ".item_row_remove", function () {
-    $('.message').append('<div class="spinner-border text-danger"></div>');
+    $('.message').append('<div class="spinner-border text-info"></div>');
     var trdata = $(this);
 
     var item_id = $(this).attr('data-itemid');
@@ -380,10 +380,17 @@ $(document).on("change", ".item_sku", function () {
     var product_attribute_id = $(this).attr('data-productattributeid');
     var quantity = $(this).attr('data-quantity');
 
+    $(this).removeClass('errorFeild');
+    if (sku == "") {
+        $(this).addClass('errorFeild');
+        return false;
+    }
+
+
     confirmationBox("SKU Update", "This will all same SKU updates, Do you want to continue?", function (result) {
         console.log(result)
         if (result == "yes") {
-            $('.message').append('<div class="spinner-border text-danger"></div>');
+            $('.message').append('<div class="spinner-border text-info"></div>');
            
             var jsonData = {};
             jsonData["sku_id"] = sku_id;

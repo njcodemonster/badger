@@ -387,7 +387,7 @@
                             <input type="text" data-weight="@LineItem.weight" value="@LineItem.weight" id="@LineItem.EndItems[i-1].sku_id" class="form-control sku_weight" />
                         </td>
                         <td>
-                            <input type="text" data-quantity="@DisplayTimes" data-sku="@LineItem.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" />
+                            <input type="text" data-quantity="@DisplayTimes" data-sku="@LineItem.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" maxlength="7" />
                         </td>
                         <td>
                             <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" value="@LineItem.EndItems[i-1].barcode" maxlength="8" />
