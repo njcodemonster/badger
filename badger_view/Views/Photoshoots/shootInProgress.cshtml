@@ -5,6 +5,14 @@
 @model dynamic
 @section Scripts {
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            if ($(".PhotoshootList").length == 0) {
+                $("#no_result").fadeIn(200);
+            }
+
+        })
+    </script>
 }
 
 <div class="">
@@ -12,8 +20,8 @@
 
         @foreach (ProductPhotoshootInProgressRep inProgress in Model.Lists)
         {
-            <div class="card">
-                <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id" >
+            <div class="card PhotoshootList">
+                <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id">
                     <h2 class="mb-0">
                         <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@inProgress.photoshoot_id">
                             <i class="fa fa-plus"></i>
@@ -22,11 +30,21 @@
                     </h2>
                 </div>
                 <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionpomgmt">
-                    
+
                 </div>
             </div>
         }
-
-
+         
     </div>
+</div>
+
+<div class="row" id="no_result" style="display:none;">
+    <div class="col-md-12 col-sm-12">
+        <h4 class="">Photo In-Progress </h4>
+    </div>
+
+    <div class="col-md-12 col-sm-12">
+        <p>No data available</p>
+    </div>
+
 </div>
