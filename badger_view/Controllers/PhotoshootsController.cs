@@ -99,6 +99,16 @@ namespace badger_view.Controllers
             return photoshootPagerList.ToString() ;
         }
 
+        [Authorize]
+        public async Task<IActionResult> summary()
+        {
+            SetBadgerHelper();
+            ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SentToEditorPhotoshoot/");
+            dynamic photoshootSendToEditorModal = new ExpandoObject();
+            photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
+            return View("summary", photoshootSendToEditorModal);
+        }
+
         [HttpGet("photoshoots/addProductInPhotoshoot/{product_id}/{photoshoot_id}")]
         public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
         {
