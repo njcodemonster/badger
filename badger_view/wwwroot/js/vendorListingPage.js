@@ -138,6 +138,7 @@ $(document).on('click', "#EditVendor", function () {
         $('#vendorStatmentName').val(vendor.statement_name);
         $('#vendorDec').val(vendor.vendor_description);
         $('#vendorCode').val(vendor.vendor_code);
+        $('#vendortype').val(vendor.vendor_type);
         $('#vendorourCustomerNumber').val(vendor.our_customer_number);
         // $('#vendorourCustomerNumber').val(vendor.vendor_name);
         if (addresses.length > 0) {
