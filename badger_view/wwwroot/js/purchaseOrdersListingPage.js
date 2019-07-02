@@ -22,6 +22,12 @@
         }
        
     });
+
+    if (window.location.href.indexOf('PurchaseOrders/Single/') > -1) {
+        var id = window.location.href.split('Single/')[1]
+        getSinglePurchaseOrder(id)
+    }
+
 })
 
 var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
@@ -101,6 +107,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         return false;
     }
 
+    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
+
     var jsonData = {};
 
     var delieveryRange  = $("#newPurchaseOrderForm #poDelieveryRange").val();
@@ -152,7 +160,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
         if (data != 0 && data > 0) {
             console.log('New row created - ' + data);
-            alertBox('vendorAlertMsg', 'green', 'Purchase order inserted successfully.');
+            alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -199,7 +207,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
             $('#newPurchaseOrderForm')[0].reset();
         } else {
-            alertBox('vendorAlertMsg', 'red', 'Purchase order not inserted.');
+            alertBox('poAlertMsg', 'red', 'Purchase order not inserted.');
         }
     });
 });
@@ -532,7 +540,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         console.log(data);
 
         if (data.responseText == "Success") {
-            alertBox('vendorAlertMsg', 'green', 'Purchase order is updated');
+            alertBox('poAlertMsg', 'green', 'Purchase order is updated');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -578,7 +586,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             }, 3000)
             $('#newPurchaseOrderForm')[0].reset();
         } else {
-            alertBox('vendorAlertMsg', 'red', 'Purchase order is not updated');
+            alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
 
     })
@@ -746,21 +754,27 @@ $(document).on("click", "#document_submit", function () {
 $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
-    
-        $.ajax({
-            url: '/purchaseorders/delete/' + id,
-            dataType: 'json',
-            type: 'POST',
-            contentType: 'application/json',
-        }).always(function (data) {
-            console.log(data);
-            if (data.responseText == "Success") {
-                var table = $('#purchaseorderlists').DataTable();
-                table.row(window.purchaseorderrownumber).remove().draw(false);
-                $("#modalPurchaseOrder").modal("hide");
-            }
-           
-        });
+
+    confirmationBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
+
+        if (result == "yes") {
+            $.ajax({
+                url: '/purchaseorders/delete/' + id,
+                dataType: 'json',
+                type: 'POST',
+                contentType: 'application/json',
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    var table = $('#purchaseorderlists').DataTable();
+                    table.row(window.purchaseorderrownumber).remove().draw(false);
+                    $("#modalPurchaseOrder").modal("hide");
+                }
+
+            });
+        }
+    }) 
+        
 });
 
 function purchaseOrderData(data) {
@@ -877,8 +891,7 @@ function purchaseOrderData(data) {
         }
 
 }
-function getSinglePurchaseOrder() {
-    var id = window.location.href.split('?')[1]
+function getSinglePurchaseOrder(id) {
     $('.orderNumber').text(id)
     $.ajax({
         url: '/purchaseorders/details/' + id,

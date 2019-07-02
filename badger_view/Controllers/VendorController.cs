@@ -309,10 +309,10 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
-            dynamic vendorProducts = new ExpandoObject();
-            dynamic vendorSkufamily = new ExpandoObject();
+            //dynamic vendorProducts = new ExpandoObject();
+           // dynamic vendorSkufamily = new ExpandoObject();
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
-            vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
+           // vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
             //vendorProducts.skufamily = vendorSkufamily;
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }

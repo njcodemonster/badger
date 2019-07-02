@@ -185,13 +185,13 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-8 pt-4">
-                                <div class="input_fields_wrap pb-3">
+                                <div id="po_input_fields_wrap" class="input_fields_wrap pb-3">
                                     <div class="pb-3 vendorSkuBox">
                                         <input type="text" class="form-control d-inline w-25" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size">
                                         <input type="text" class="form-control d-inline w-25" name="styleSize" id="styleSize" placeholder="Size">
                                         <input type="text" class="form-control d-inline w-25" name="styleSku" id="styleSku" placeholder="SKU">
                                         <input type="text" class="form-control d-inline w-25" name="styleSkuQty" id="styleSkuQty" placeholder="Qty">
-                                    </div> 
+                                    </div>
                                 </div>
                                 <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
                             </div>
@@ -213,6 +213,8 @@
                                 <input type="file" id="StyleImage" class="form-control" />
                             </div>
                         </div>
+                        <input id="po_id" name="po_id" type="text" class="form-control">
+                        <input id="vendor_id" name="vendor_id" type="text" class="form-control">
                     </form>
                 </div>
             </div>
