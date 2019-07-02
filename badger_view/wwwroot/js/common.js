@@ -53,6 +53,8 @@ function onlyNumbersWithDot(e) {
         return true
     if (charCode == 190)
         return true
+    if (charCode == 110)
+        return true
     if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16) 
        return false;
     
@@ -87,7 +89,7 @@ function confirmationBox(heading,description,callback) {
         '<p>' + description + '</p>' +
         '<hr>' +
         '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
-        '</div></div>';
+        '</div>';
     $('body').prepend(html);
     $('.confirmDialog').click(function () {
          $('.confirmationBox').remove();

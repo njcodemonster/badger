@@ -279,3 +279,9 @@ label.error {
     display: table-cell;
     vertical-align: middle;
    }
+
+.poAlertMsg {
+    text-align: left;
+    position: relative;
+    width: 100%
+}
