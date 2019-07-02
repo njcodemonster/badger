@@ -73,7 +73,7 @@
                 console.log(data);
             });
             $('#vendorListingArea').DataTable().row.add([
-                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 2, 0, '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 2, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
             ]).draw();
             var table = $('#vendorListingArea').DataTable();
             table.page('last').draw('page');
@@ -107,12 +107,12 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     }
 })
 $(document).on('click', "#EditVendor", function () {
-    $("#newVendorForm input,textarea").val("");
+    $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
+    $('.errorMsg').remove();
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
     var id = $(this).data("id");
-
     $.ajax({
 
         url: '/vendor/details/'+id,
@@ -168,7 +168,11 @@ $(document).on('click', "#EditVendor", function () {
 
 });
 $(document).on('click', "#EditVendorButton", function () {
-    return emptyFeildValidation('newVendorForm');
+     $(this).attr('disabled', true);
+    if (emptyFeildValidation('newVendorForm') == false) {
+        $(this).attr('disabled', false);
+        return false;
+    }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
     var id = $("#newVendorForm").data("currentID");
@@ -257,7 +261,7 @@ $(document).on('click', "#EditVendorButton", function () {
             } else {
                 alertBox('vendorAlertMsg', 'red', 'Vendor is not updated');
             }
-           
+            $('#EditVendorButton').attr('disabled', false);
         });
 });
 $(document).on('click', "#AddNewVendorButton", function () {

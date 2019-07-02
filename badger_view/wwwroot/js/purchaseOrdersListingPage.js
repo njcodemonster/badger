@@ -22,6 +22,12 @@
         }
        
     });
+
+    if (window.location.href.indexOf('PurchaseOrders/Single/') > -1) {
+        var id = window.location.href.split('Single/')[1]
+        getSinglePurchaseOrder(id)
+    }
+
 })
 
 var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
@@ -905,8 +911,7 @@ function purchaseOrderData(data) {
         }
 
 }
-function getSinglePurchaseOrder() {
-    var id = window.location.href.split('?')[1]
+function getSinglePurchaseOrder(id) {
     $('.orderNumber').text(id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
