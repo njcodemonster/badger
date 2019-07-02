@@ -1,5 +1,7 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
+    $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
+        $(this).attr('disabled', false);
         return false;
     }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
@@ -18,6 +20,7 @@
     jsonData["vendor_state"] = $('#vendorState').val();
     jsonData["vendor_notes"] = $('#vendorNotes').val();
     jsonData["vendor_reps"] = [];
+    jsonData["vendor_type"] = $('#vendortype').val();
     $('.venderRepoBox').each(function (){
         var vendor_rep = {};
         vendor_rep["Rep_first_name"] = $(this).find('#vendorRepName').val();
@@ -81,6 +84,7 @@
         } else {
             alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
         }
+         $('#NewVendorButton').attr('disabled', false);
        
     });
 });
@@ -171,6 +175,7 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["corp_name"] = $('#vendorCorpName').val();
     jsonData["statement_name"] = $('#vendorStatmentName').val();
     jsonData["vendor_code"] = $('#vendorCode').val();
+     jsonData["vendor_type"] = $('#vendortype').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
     jsonData["vendor_description"] = $('#vendorDec').val();
