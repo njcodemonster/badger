@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
 using System.Dynamic;
-using badgerApi.Helper;
 using itemService_entity.Models;
 
 namespace badgerApi.Controllers

@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using badgerApi.Models;
 
 namespace badger_view.Controllers
 {
@@ -53,11 +54,13 @@ namespace badger_view.Controllers
             SetBadgerHelper();
            
             VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/200");
+
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
             VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
-           // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
-          
+            VendorPageModal.VendorType = vendorPagerList.vendorType;
+            // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
+
             //VendorPageModal.Reps = venderAdressandRep.Reps;
             return View("Index",VendorPageModal);
         }
@@ -153,6 +156,7 @@ namespace badger_view.Controllers
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number")); 
             vendor.Add("vendor_description", json.Value<string>("vendor_description")); 
+            vendor.Add("vendor_type", json.Value<Int32>("vendor_type"));
             vendor.Add("created_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("created_at", _common.GetTimeStemp());
@@ -212,6 +216,7 @@ namespace badger_view.Controllers
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
             vendor.Add("vendor_description", json.Value<string>("vendor_description"));
+            vendor.Add("vendor_type", json.Value<Int32>("vendor_type"));
             vendor.Add("updated_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("updated_at", _common.GetTimeStemp());
@@ -304,10 +309,10 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
-            dynamic vendorProducts = new ExpandoObject();
-            dynamic vendorSkufamily = new ExpandoObject();
+            //dynamic vendorProducts = new ExpandoObject();
+           // dynamic vendorSkufamily = new ExpandoObject();
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
-            vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
+           // vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
             //vendorProducts.skufamily = vendorSkufamily;
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }

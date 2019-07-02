@@ -147,7 +147,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("line_item_type", PoLineItemToUpdate.line_item_type.ToString());
                 }
-                if (PoLineItemToUpdate.line_item_ordered_quantity != 0)
+                if (PoLineItemToUpdate.line_item_ordered_quantity >= 0)
                 {
                     ValuesToUpdate.Add("line_item_ordered_quantity", PoLineItemToUpdate.line_item_ordered_quantity.ToString());
                 }

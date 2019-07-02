@@ -1,21 +1,10 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
-    var notvalid = false;
-    $('.errorMsg').remove();
-    $(this).removeClass('errorFeild');
-    $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
-            notvalid = true;
-            $(this).addClass('errorFeild');
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
-        }
-        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
-            notvalid = true;
-        }
-    });
-    if (notvalid) {
+    $(this).attr('disabled', true);
+    if (emptyFeildValidation('newVendorForm') == false) {
+        $(this).attr('disabled', false);
         return false;
     }
+    $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
     jsonData["vendor_name"] = $('#vendorName').val();
@@ -31,6 +20,7 @@
     jsonData["vendor_state"] = $('#vendorState').val();
     jsonData["vendor_notes"] = $('#vendorNotes').val();
     jsonData["vendor_reps"] = [];
+    jsonData["vendor_type"] = $('#vendortype').val();
     $('.venderRepoBox').each(function (){
         var vendor_rep = {};
         vendor_rep["Rep_first_name"] = $(this).find('#vendorRepName').val();
@@ -59,8 +49,13 @@
         console.log(data);
         if (data != "0") {
             var id = data;
+
+            $('#newPurchaseOrderForm #poVendor').append($("<option></option>").attr("value", data).text($('#newVendorForm #vendorName').val()));
+            window.vendor_options = '';
+            window.vendor_options = $("#newPurchaseOrderForm #poVendor > option").clone();
+            $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);
+
             console.log("New Vender Added");
-            alert("vendor created . uploading files");
             var formData = new FormData();
             formData.append('Vendor_id', data);
             var files = $("#newVendorForm #vendorDocument")[0].files;
@@ -89,6 +84,7 @@
         } else {
             alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
         }
+         $('#NewVendorButton').attr('disabled', false);
        
     });
 });
@@ -111,6 +107,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     }
 })
 $(document).on('click', "#EditVendor", function () {
+    $("#newVendorForm input,textarea").val("");
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
@@ -170,29 +167,15 @@ $(document).on('click', "#EditVendor", function () {
 
 });
 $(document).on('click', "#EditVendorButton", function () {
+    return emptyFeildValidation('newVendorForm');
+    $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
-     var notvalid = false;
-    $('.errorMsg').remove();
-    $(this).removeClass('errorFeild');
-    $('#newVendorForm input').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
-            notvalid = true;
-            $(this).addClass('errorFeild');
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
-        }
-        if (!notvalid && $(this).attr('type') == 'email' && isEmail($('#vendorRepEmail').val()) == false) {
-            $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
-            notvalid = true;
-        }
-    });
-    if (notvalid) {
-        return false;
-    }
     var id = $("#newVendorForm").data("currentID");
     jsonData["vendor_name"] = $('#vendorName').val();
     jsonData["corp_name"] = $('#vendorCorpName').val();
     jsonData["statement_name"] = $('#vendorStatmentName').val();
     jsonData["vendor_code"] = $('#vendorCode').val();
+     jsonData["vendor_type"] = $('#vendortype').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
     jsonData["vendor_description"] = $('#vendorDec').val();
@@ -279,7 +262,8 @@ $(document).on('click', "#EditVendorButton", function () {
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
-    $("#newVendorForm input,textarea").val("");
+    $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
+    $('.errorMsg').remove();
     $("#newVendorForm").data("currentID","");
 });
 $(document).on('click', "#AddMoreReps", function () {
@@ -314,7 +298,7 @@ $(document).on('click', "#AddMoreReps", function () {
                                         '</div>'+
                                         '<div class="form-group col-md-6">'+
                                             '<label>Email</label>'+
-                                            '<input type="email" class="form-control" id="vendorRepEmail">'+
+                                            '<input type="email" class="form-control email" id="vendorRepEmail">'+
                                         '</div>'+
                                     '</div>'+
                                     '<div class="form-row">'+
@@ -385,7 +369,7 @@ function repsHtml(data) {
                                         '</div>'+
                                         '<div class="form-group col-md-6">'+
                                             '<label>Email</label>'+
-                                            '<input type="email" value="'+data[i].email+'" class="form-control" id="vendorRepEmail">'+
+                                            '<input type="email" value="'+data[i].email+'" class="form-control email" id="vendorRepEmail">'+
                                         '</div>'+
                                     '</div>'+
                                     '<div class="form-row">'+
