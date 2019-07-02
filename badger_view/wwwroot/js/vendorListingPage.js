@@ -1,5 +1,8 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
-    return emptyFeildValidation('newVendorForm');
+    if (emptyFeildValidation('newVendorForm') == false) {
+        return false;
+    }
+    $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
     jsonData["vendor_name"] = $('#vendorName').val();
@@ -50,7 +53,6 @@
             $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);
 
             console.log("New Vender Added");
-            alert("vendor created . uploading files");
             var formData = new FormData();
             formData.append('Vendor_id', data);
             var files = $("#newVendorForm #vendorDocument")[0].files;
@@ -161,7 +163,8 @@ $(document).on('click', "#EditVendor", function () {
 
 });
 $(document).on('click', "#EditVendorButton", function () {
-     return emptyFeildValidation('newVendorForm');
+    return emptyFeildValidation('newVendorForm');
+    $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
     var id = $("#newVendorForm").data("currentID");
     jsonData["vendor_name"] = $('#vendorName').val();
