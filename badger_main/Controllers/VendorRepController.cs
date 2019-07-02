@@ -53,7 +53,7 @@ namespace badgerApi.Controllers
                 int created_by = newVendorRep.created_by;
                 NewInsertionID = await _VendorRepRepository.Create(newVendorRep);
               
-                event_create_vendor_repo = event_create_vendor_repo.Replace("%%userid%%", created_by.ToString()).Replace("%%documentid%%", NewInsertionID);
+                event_create_vendor_repo = event_create_vendor_repo.Replace("%%userid%%", created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
 
                 _eventRepo.AddVendorEventAsync(newVendorRep.vendor_id, event_vendor_repo_created_id, Int32.Parse(NewInsertionID), created_by, event_create_vendor_repo, _common.GetTimeStemp(), vendorEventTableName);
 
