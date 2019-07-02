@@ -1,5 +1,8 @@
 ﻿$(document).on('click', "#NewVendorButton", function () {
-    return emptyFeildValidation('newVendorForm');
+    if (emptyFeildValidation('newVendorForm') == false) {
+        return false;
+    }
+    $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
     jsonData["vendor_name"] = $('#vendorName').val();
@@ -44,7 +47,6 @@
         if (data != "0") {
             var id = data;
             console.log("New Vender Added");
-            alert("vendor created . uploading files");
             var formData = new FormData();
             formData.append('Vendor_id', data);
             var files = $("#newVendorForm #vendorDocument")[0].files;
@@ -68,7 +70,7 @@
             table.page('last').draw('page');
             alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
             setTimeout(function () {
-               //$('#newVendorModal').modal('hide'); 
+               $('#newVendorModal').modal('hide'); 
             }, 3000)
         } else {
             alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
@@ -155,7 +157,8 @@ $(document).on('click', "#EditVendor", function () {
 
 });
 $(document).on('click', "#EditVendorButton", function () {
-     return emptyFeildValidation('newVendorForm');
+    return emptyFeildValidation('newVendorForm');
+    $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
     var id = $("#newVendorForm").data("currentID");
     jsonData["vendor_name"] = $('#vendorName').val();
