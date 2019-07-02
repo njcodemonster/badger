@@ -43,9 +43,9 @@
                     <select id="poVendor" class="form-control d-inline-block" style="width: 90%">
                         <option selected>Choose...</option>
                         @foreach (Vendor vendor in Model.GetVendorsNameAndId)
-                        {
-                            <option value="@vendor.vendor_id">@vendor.vendor_name</option>
-                        }
+                {
+                    <option value="@vendor.vendor_id">@vendor.vendor_name</option>
+        }
                     </select>
                     <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
                 </div>
@@ -121,6 +121,11 @@
                 <div class="form-group col-md-6">
                     <label>Purchase Order Notes</label>
                     <textarea class="form-control" id="poNotes"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <button type="button" class="btn btn-primary" id="EditPurchaseOrderButton" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </form>
