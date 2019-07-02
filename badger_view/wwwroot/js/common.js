@@ -53,6 +53,8 @@ function onlyNumbersWithDot(e) {
         return true
     if (charCode == 190)
         return true
+    if (charCode == 110)
+        return true
     if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16) 
        return false;
     

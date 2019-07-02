@@ -101,6 +101,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         return false;
     }
 
+    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
+
     var jsonData = {};
 
     var delieveryRange  = $("#newPurchaseOrderForm #poDelieveryRange").val();
@@ -152,7 +154,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
         if (data != 0 && data > 0) {
             console.log('New row created - ' + data);
-            alertBox('vendorAlertMsg', 'green', 'Purchase order inserted successfully.');
+            alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -199,7 +201,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
             $('#newPurchaseOrderForm')[0].reset();
         } else {
-            alertBox('vendorAlertMsg', 'red', 'Purchase order not inserted.');
+            alertBox('poAlertMsg', 'red', 'Purchase order not inserted.');
         }
     });
 });
@@ -532,7 +534,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         console.log(data);
 
         if (data.responseText == "Success") {
-            alertBox('vendorAlertMsg', 'green', 'Purchase order is updated');
+            alertBox('poAlertMsg', 'green', 'Purchase order is updated');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -578,7 +580,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             }, 3000)
             $('#newPurchaseOrderForm')[0].reset();
         } else {
-            alertBox('vendorAlertMsg', 'red', 'Purchase order is not updated');
+            alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
 
     })
