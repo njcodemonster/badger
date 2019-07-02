@@ -13,7 +13,7 @@
     });
 
     $('#modaladdstylec').modal('show');
-    alert("Please wait for the data to load");
+  //  alert("Please wait for the data to load");
    
     $.ajax({
 
