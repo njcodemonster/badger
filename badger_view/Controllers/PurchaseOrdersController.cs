@@ -61,6 +61,8 @@ namespace badger_view.Controllers
 
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
 
+            List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
+
             string DeliveryStartEnd = "";
 
             string NewDateFormat = "";
@@ -103,6 +105,7 @@ namespace badger_view.Controllers
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
             PurchaseOrdersPageModal.GetVendorsNameAndId = getVendorsNameAndId;
+            PurchaseOrdersPageModal.GetVendorsTypes = getVendorTypes;
 
             return View("Index", PurchaseOrdersPageModal);
         }

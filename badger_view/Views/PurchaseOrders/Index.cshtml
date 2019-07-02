@@ -310,6 +310,18 @@
                                     <label>Vendor Description</label>
                                     <textarea class="form-control" id="vendorDec"></textarea>
                                 </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Vendor Types</label>
+                                    <select id="vendortype" class="form-control d-inline-block" style="width: 90%">
+                                        @foreach (VendorType vendorType in Model.GetVendorsTypes)
+                                        {
+                                            <option value="@vendorType.vendor_type_id">@vendorType.vendor_type_description</option>
+                                        }
+
+                                    </select>
+                                </div>
+
                             </div>
                             <div class="venderRepo">
                                 <div class="venderRepoBox">
