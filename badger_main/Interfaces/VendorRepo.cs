@@ -27,6 +27,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorDetailsRep(Int32 id);
         Task<Object> GetVendorDetailsAddress(Int32 id);
         Task<Object> GetVendorsNameAndID();
+        Task<Object> GetVendorTypes();
         Task<Object> GetVendorLastSku(String id);
         
     }
@@ -60,6 +61,18 @@ namespace badgerApi.Interfaces
 
             }
             return vendorDetails;
+        }
+
+        public async Task<Object> GetVendorTypes()
+        {
+            dynamic VendorTypes = new ExpandoObject();
+            string sQuery = "SELECT * FROM vendor_types";
+            using (IDbConnection conn = Connection)
+            {
+                VendorTypes = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return VendorTypes;
         }
 
         public async Task<string> Create(Vendor NewVendor)

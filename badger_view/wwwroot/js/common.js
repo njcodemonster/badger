@@ -82,7 +82,7 @@ function alertBox(area, action, massage) {
 }
 // global confirmation function
 function confirmationBox(heading,description,callback) {
-    var html = '<div style="z-index: 9;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 20%;" role="alert" class="alert alert-success confirmationBox">' +
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
         '<h4 class="alert-heading">' + heading + '</h4>' +
         '<p>' + description + '</p>' +
         '<hr>' +
@@ -103,6 +103,7 @@ function confirmationBox(heading,description,callback) {
 function emptyFeildValidation(id){
     $('.errorMsg').remove();
     var notvalid = true;
+    var emailvalid = true;
     $('#'+id+' input').removeClass('errorFeild');
     $('#'+id+' input').each(function (){
         if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
@@ -110,10 +111,12 @@ function emptyFeildValidation(id){
             $(this).addClass('errorFeild');
             $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         }
-        if (notvalid && $(this).attr('type') == 'email' && isEmail($('.email').val()) == false) {
+        if (notvalid && $(this).attr('type') == 'email' && isEmail($(this).val()) == false) {
             $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid email</span>')
-            notvalid = false;
+            emailvalid = false;
         }
     });
+    if (emailvalid == false)
+        notvalid = false
     return notvalid;
 }

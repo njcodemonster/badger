@@ -115,6 +115,7 @@ namespace badgerApi.Controllers
                 vPageList = await _VendorRepo.GetVendorPageList(limit);
                 string  vPageCount = await _VendorRepo.Count();
                 vPageList.Count = vPageCount;
+                vPageList.VendorType = await _VendorRepo.GetVendorTypes();
             }
             catch(Exception ex)
             {
@@ -475,6 +476,25 @@ namespace badgerApi.Controllers
 
         }
 
+        //GET: api/vendor/getvendortypes
+        [HttpGet("getvendortypes")]
+        public async Task<List<object>> GetVendorTypes()
+        {
+            dynamic VendorTypes = new object();
+            try
+            {
+                VendorTypes = await _VendorRepo.GetVendorTypes();
 
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return VendorTypes;
+
+        }
     }
 }
