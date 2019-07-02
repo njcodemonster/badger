@@ -14,7 +14,7 @@
 
     $('#modaladdstylec').modal('show');
   //  alert("Please wait for the data to load");
-    CurrentVendorId = 1;
+   
     $.ajax({
 
         url: '/vendor/products/' + CurrentVendorId,

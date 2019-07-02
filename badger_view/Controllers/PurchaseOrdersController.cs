@@ -492,7 +492,7 @@ namespace badger_view.Controllers
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(643, 0);
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(641, 0);
             PageModal.AllItemStatus =  await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
 
             return View("PurchaseOrdersManagement", PageModal);
