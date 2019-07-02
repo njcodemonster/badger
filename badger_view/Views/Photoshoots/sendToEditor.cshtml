@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Send to editor Photoshoots";
+    ViewData["Title"] = "Sent to editor Photoshoots";
 }
 @model dynamic
 @section Scripts {
@@ -43,7 +43,7 @@
 </style>
 <div class="row">
     <div class="col-md-8 col-sm-12">
-        <h4 class="">Sent to editor (19 styles)</h4>
+        <h4 class="">Sent to editor</h4>
     </div>
 </div>
 
@@ -59,7 +59,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
+                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnSentToEditor('NotStarted')">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
                 </th>
@@ -77,7 +77,7 @@
 
                 <tr style="">
                     <td class="text-center">
-                        <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
+                        <input type="checkbox" name="productAddToShootNotStarted" value="@photoshoot.product_id" class="select-box">
                     </td>
                     <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
                     <td>@photoshoot.vendor_name</td>
@@ -88,9 +88,7 @@
                     <td id="shootRow_@photoshoot.product_id">
                         <select class="browser-default custom-select" onchange="changeShootStatusOnSendToEditor(@photoshoot.product_id, this.value)">
                             <option value="0">Shoot not started</option>
-                            <option value="1">Shoot in-progress</option>
                             <option value="2" selected>Sent to editor</option>
-                            
                         </select>
                     </td>
                 </tr>
@@ -100,6 +98,9 @@
     </table>
 </div>
 
+<div class="loading-box">
+    <div class="inner-loading"><div class="spinner-border  text-light" role="status" style=" "><span class="sr-only">Loading...</span></div></div>
+</div>
 <script>
     function selectAllCheckbox() {
         $(".select-box").attr("checked", true);

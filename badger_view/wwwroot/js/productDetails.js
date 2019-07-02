@@ -95,6 +95,20 @@ $(document).on("change", ".tagsData", function () {
             }
         }
     }
-    console.log(tag_removed);
-    console.log(tag_added);
+   
 })
+
+$(document).on("click", "#mainSaveButton", function () {
+    datatosend = {};
+    datatosend["tag_added"] = tag_added;
+    datatosend["tag_removed"] = tag_removed;
+    datatosend["color_added"] = color_added;
+    datatosend["color_removed"] = color_removed;
+    $("input.form-control.dirty").each(function (item) {
+        datatosend[$(this).attr("id")] = $(this).val();
+    });
+    $("select.form-control.dirty").each(function (item) {
+        datatosend[$(this).attr("id")] = $(this).val();
+    });
+    console.log(datatosend);
+});
