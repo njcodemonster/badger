@@ -492,7 +492,8 @@ namespace badger_view.Controllers
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(641, 0);
+            int purchase_order_id = PageModal.POList[0].po_id;
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus =  await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
 
             return View("PurchaseOrdersManagement", PageModal);
@@ -794,6 +795,7 @@ namespace badger_view.Controllers
                 id = Int32.Parse(json.Value<string>("line_item_id"));
                 poLineItemUpdate.Add("line_item_id", json.Value<string>("line_item_id"));
                 poLineItemUpdate.Add("sku", json.Value<string>("sku"));
+                poLineItemUpdate.Add("line_item_ordered_quantity", json.Value<string>("quantity"));
                 poLineItemUpdate.Add("updated_by", Int32.Parse(loginUserId));
                 poLineItemUpdate.Add("updated_at", _common.GetTimeStemp());
 

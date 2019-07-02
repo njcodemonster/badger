@@ -18,8 +18,16 @@ namespace badger_view.Models
         public string Count { get; set; }
 
     }
+
+    public class VendorType
+    {
+        public int vendor_type_id { get; set; }
+        public string vendor_type_description { get; set; }
+    }
+
     public class VendorPagerList
     {
+        public IEnumerable<VendorType> vendorType { get; set; }
         public IEnumerable<VendorInfo> vendorInfo { get; set; }
         public string Count { get; set; }
     }

@@ -4,6 +4,7 @@
 }
 @model dynamic
 @section Scripts {
+    <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/POManagementPage.js" asp-append-version="true"></script>
 }
 
@@ -324,6 +325,7 @@
                             <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)" ><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
                             <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
                         </h2>
+                        <div class="message"></div>
                     </div>
                     @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionpomgmt">
                         @:<div class="card-body table-responsive">
@@ -384,13 +386,13 @@
                             <a href="javscript:void(0)" id="AddDocument" data-itemid="@LineItem.EndItems[i-1].item_id"><i class="fa fa-upload h3"></i></a>
                         </td>
                         <td>
-                            <input type="text" value="@LineItem.weight" id="@LineItem.EndItems[i-1].sku_id" class="form-control sku_weight" />
+                            <input type="text" data-weight="@LineItem.weight" value="@LineItem.weight" id="@LineItem.EndItems[i-1].sku_id" class="form-control sku_weight" />
                         </td>
                         <td>
-                            <input type="text" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" />
+                            <input type="text" data-quantity="@DisplayTimes" data-sku="@LineItem.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" maxlength="7" />
                         </td>
                         <td>
-                            <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" value="@LineItem.EndItems[i-1].barcode" />
+                            <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" value="@LineItem.EndItems[i-1].barcode" maxlength="8" />
                         </td>
                         <td>
                             <button type="button" class="btn btn-success btn-sm">Publish</button>
