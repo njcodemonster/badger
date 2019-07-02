@@ -51,9 +51,26 @@ $('#poDelieveryRange').daterangepicker({
     }
 });
 
+$(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e) {
+    var poorderdate = $(this).attr('id');
+    if (poorderdate == "poOrderDate") {
+        $("#"+poorderdate).removeClass('errorFeild');
+        $("#"+poorderdate).parents('.form-group').find('.errorMsg').remove();
+    } else {
+        $(this).removeClass('errorFeild');
+        $(this).parents('.form-group').find('.errorMsg').remove();
+    }
+});
+
 $(document).on('click', "#NewPurchaseOrderButton", function () {
 
-    var errorNumber = 0;
+    $(this).attr('disabled', true);
+    if (emptyFeildValidation('newPurchaseOrderForm') == false) {
+        $(this).attr('disabled', false);
+        return false;
+    }
+
+    /*var errorNumber = 0;
     $(".error").remove();
 
     if ($("#newPurchaseOrderForm #poVendor").val() == "Choose...") {
@@ -99,7 +116,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
     if (errorNumber > 0) {
         return false;
-    }
+    }*/
 
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
 
@@ -235,6 +252,9 @@ function timeToDateConvert(timeinseconds) {
 
 
 $(document).on('click', "#EditPurhaseOrder", function () {
+    $("#newPurchaseOrderForm input,textarea").val("").removeClass('errorFeild');
+    +    $('.errorMsg').remove();
+
     $(".error").remove();
     $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
     $('.poTracking, #poNotes').val("");
