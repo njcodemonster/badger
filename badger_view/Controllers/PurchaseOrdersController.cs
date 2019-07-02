@@ -644,6 +644,17 @@ namespace badger_view.Controllers
             }
             return updatePurchaseOrderID;
         }
+        [HttpGet("purchaseorders/lineitems/{product_id}/{PO_id}")]
+        public async Task<string> GetAsyncLineitems(Int32 product_id, Int32 PO_id)
+        {
+
+            SetBadgerHelper();
+            dynamic poLineitems = new ExpandoObject();
+
+            poLineitems = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/lineitems/" + product_id.ToString()+"/" + PO_id.ToString());
+            
+            return JsonConvert.SerializeObject(poLineitems);
+        }
 
         [Authorize]
         [HttpPost("purchaseorders/itemdocumentcreate")]

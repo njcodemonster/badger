@@ -2,35 +2,37 @@
     debugger;
     var newVendorForm = $("#newAddStyleForm input");
     var jsonData = {};
+
+    selectedProject = $('#ExistingProductSelect option:selected');
+    if (selectedProject.data("product_id") > 0) {
+        jsonData["product_id"] = selectedProject.data("product_id");
+    } 
+
+
+    jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+    jsonData["vendor_id"] = $('#newAddStyleForm #vendor_id').val();
     jsonData["product_name"] = $(newVendorForm[0]).val();
     jsonData["vendor_color_name"] = $(newVendorForm[1]).val();
     jsonData["product_cost"] = $(newVendorForm[2]).val();
     jsonData["product_retail"] = $(newVendorForm[3]).val();
     jsonData["product_type_id"] = $('#StyleType option:selected').val();
 
-    jsonData["product_type_id"] = $('#StyleType option:selected').val();
-
-   
-
-    //jsonData["style_sizestyle_vendor_size"] = $(newVendorForm[4]).val();
-    //jsonData["style_size"] = $(newVendorForm[5]).val();
-    //jsonData["style_sku"] = $(newVendorForm[6]).val();
-    //jsonData["style_qty"] = $(newVendorForm[7]).val();
+    
 
     jsonData["vendor_style_sku"] = [];
-    $('#newAddStyleForm .vendorSkuBox').each(function () {
-        var style_sku = {}; 
+    $('#po_input_fields_wrap .vendorSkuBox').each(function () {
+        var style_sku = {};
         style_sku["style_vendor_size"] = $(this).find('#styleVendorSize').val();
         style_sku["style_size"] = $(this).find('#styleSize').val();
         style_sku["style_sku"] = $(this).find('#styleSku').val();
         style_sku["style_qty"] = $(this).find('#styleSkuQty').val();
         jsonData["vendor_style_sku"].push(style_sku);
-    })
+    });
 
 
     $.ajax({
         
-        url: 'styles/create',
+        url: location.origin + '/styles/create',
         dataType: 'json',
         type: 'post',
         contentType: 'application/json',
@@ -47,7 +49,7 @@
             formData.append('product_id', data);
             formData.append('StyleImage', $('#newAddStyleForm #StyleImage')[0].files[0]);
             $.ajax({
-                url: "/styles/newdoc",
+                url: location.origin + "/styles/newdoc",
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
@@ -72,7 +74,7 @@ $(document).on('click', "#AddStyleButton", function () {
     formData.append('product_id', 507);
     formData.append('StyleImage', $('#newAddStyleForm #StyleImage')[0].files[0]);
     $.ajax({
-        url: "/addstyle/newstyle_doc",
+        url: location.origin + "/styles/newdoc",
         type: 'POST',
         data: formData,
         dataType: 'json',
@@ -85,7 +87,7 @@ $(document).on('click', "#AddStyleButton", function () {
 });
 $(document).ready(function () {
     var max_fields = 10; //maximum input boxes allowed
-    var wrapper = $(".input_fields_wrap"); //Fields wrapper
+    var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
     var add_button = $(".add_field_button"); //Add button ID
     $(".vendorSkuBox").remove();
     var x = 1; //initlal text box count

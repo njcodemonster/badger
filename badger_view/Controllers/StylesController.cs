@@ -78,11 +78,16 @@ namespace badger_view.Controllers
 
             try
             {
-                JObject product = new JObject();
+
+            JObject product = new JObject();
             List<JObject> style_attr = new List<JObject>();
             JObject allData = JObject.Parse(json.ToString());
             JArray vendor_style_sku_data = (JArray)allData["vendor_style_sku"];
 
+            Int32 product_id_current = json.Value<Int32>("product_id");
+            String product_id = "";
+            Int32 po_id = json.Value<Int32>("po_id");
+            Int32 vendor_id = json.Value<Int32>("vendor_id");
             string product_name = json.Value<string>("product_name");
 
             string first_style_vendor_size = vendor_style_sku_data[0].Value<string>("style_vendor_size");
@@ -116,8 +121,15 @@ namespace badger_view.Controllers
 
             product.Add("created_by", 2);
             product.Add("created_at", _common.GetTimeStemp());
-            String product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
 
+                if (product_id_current > 0)
+                {
+                    product_id = product_id_current.ToString();
+                }
+                else {
+                    product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
+                    
+                }
 
              
                 for (int i = 0; i < vendor_style_sku_data.Count; i++)
@@ -170,14 +182,14 @@ namespace badger_view.Controllers
 
                     JObject Sku_obj = new JObject();
                     Sku_obj.Add("sku", sku);
-                    Sku_obj.Add("vendor_id", attribute_id);
+                    Sku_obj.Add("vendor_id", vendor_id);
                     Sku_obj.Add("product_id", Int32.Parse(product_id));
                     String sku_id = await _BadgerApiHelper.GenericPostAsyncString<String>(Sku_obj.ToString(Formatting.None), "/product/createSku");
 
 
                     JObject lineitem_obj = new JObject();
-                    lineitem_obj.Add("po_id", 1);
-                    lineitem_obj.Add("vendor_id", 1);
+                    lineitem_obj.Add("po_id", po_id);
+                    lineitem_obj.Add("vendor_id", vendor_id);
                     lineitem_obj.Add("sku", sku);
                     lineitem_obj.Add("product_id", Int32.Parse(product_id));
                     lineitem_obj.Add("line_item_cost", json.Value<string>("product_cost"));
@@ -199,8 +211,8 @@ namespace badger_view.Controllers
                     items.Add("sku_id", sku_id);
                     items.Add("sku_family", sku_family);
                     items.Add("product_id", product_id);
-                    items.Add("vendor_id", 0);
-                    items.Add("PO_id", 1);
+                    items.Add("vendor_id", vendor_id);
+                    items.Add("PO_id", po_id);
                     items.Add("created_by", 2);
                     items.Add("created_at", _common.GetTimeStemp());
 
