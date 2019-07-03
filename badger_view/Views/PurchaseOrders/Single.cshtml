@@ -3,6 +3,7 @@
     ViewData["Title"] = "Single P.O.";
 }
 @section Scripts {
+    <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
 <div class="row">
@@ -124,9 +125,13 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <button type="button" class="btn btn-primary" id="EditPurchaseOrderButton" style="margin: 0 auto;">Submit</button>
                 </div>
+                <div class="form-group col-md-8">
+                    <div class="poAlertMsg"></div>
+                </div>
+
             </div>
         </form>
     </div>

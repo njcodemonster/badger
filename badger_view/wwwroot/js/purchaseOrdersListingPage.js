@@ -361,7 +361,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     var id = $("#newPurchaseOrderForm").data("currentid");
 
     var jsonData = {};
-
+    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     var delieveryRange = $("#newPurchaseOrderForm #poDelieveryRange").val();
     delieveryRange = delieveryRange.split("-");
 
@@ -781,6 +781,7 @@ function purchaseOrderData(data) {
 }
 function getSinglePurchaseOrder(id) {
     $('.orderNumber').text(id)
+    $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
         dataType: 'json',
