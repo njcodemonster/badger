@@ -115,7 +115,7 @@ namespace badgerApi.Controllers
         /*
         Update Developer: Mohi
         Date: 7-3-19 
-        Action: selcet photoshoot by ID 
+        Action: select photoshoot by ID 
         URL: /Photoshoots/list/1
         Request: GET
         Input: int PhotoshootId
