@@ -28,6 +28,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetAllPhotoshootsModels(Int32 limit);
         Task<Object> GetInprogressPhotoshoot(Int32 limit);
         Task<Object> GetSentToEditorPhotoshoot(Int32 limit);
+        Task<Object> GetPhotoshootSummary();
 
         Task<Object> GetSkuByProduct(string product_id);
 
@@ -257,6 +258,21 @@ namespace badgerApi.Interfaces
             {
                 sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND  p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 2 ";
             }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
+                photoshootsDetails.photoshootSendToEditor = photoshootsModelList;
+            }
+            return photoshootsDetails;
+        }
+
+        public async Task<Object> GetPhotoshootSummary()
+        {
+            dynamic photoshootsDetails = new ExpandoObject();
+            string sQuery = "";
+            
+            sQuery = "SELECT pp.`photoshoot_id`, COUNT(pp.`photoshoot_id`) AS COUNT, p.photoshoot_name, pm.`model_name`, pp.product_shoot_status_id FROM `photoshoots` p, `product_photoshoots` pp, `photoshoot_models` pm WHERE  p.`photoshoot_id` = pp.`photoshoot_id` AND pm.`model_id` = p.`model_id`  AND pp.product_shoot_status_id IN(1,2)  GROUP BY  p.`photoshoot_id` ORDER BY  p.`photoshoot_id`";
 
             using (IDbConnection conn = Connection)
             {

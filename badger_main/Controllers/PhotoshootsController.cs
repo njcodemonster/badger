@@ -54,7 +54,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/Photoshoots/list
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoot products which are not started calling from { '/photoshoots/' }
+        URL: /Photoshoots/list/
+        Request: GET
+        Input: int PhotoshootId
+        output:  List of Photoshoots
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<Photoshoots>>> GetAsync()
         {
@@ -71,6 +79,15 @@ namespace badgerApi.Controllers
             }
         }
 
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoot products which are in-process calling from { '/photoshoots/shootInProgress' }
+        URL: /Photoshoots/inprogress/
+        Request: GET
+        Input: Null
+        output:   dynamic Object of Photoshoots 
+        */
         [HttpGet("inprogress")]
         public async Task<ActionResult<Object>> GetInprogress()
         {
@@ -95,6 +112,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: selcet photoshoot by ID 
+        URL: /Photoshoots/list/1
+        Request: GET
+        Input: int PhotoshootId
+        output: List of Photoshoots 
+        */
         [HttpGet("list/{id}")]
         public async Task<List<Photoshoots>> GetAsync(int id)
         {
@@ -113,7 +139,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/Photoshoots/listpageview/10
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoot products with the given limit which are not started calling from { '/photoshoots/' }
+        URL: /Photoshoots/listpageview/1/
+        Request: GET
+        Input: int limit
+        output:  Object Photoshoot products 
+        */
         [HttpGet("listpageview/{limit}")]
         public async Task<object> listpageviewAsync(int limit)
         {
@@ -135,6 +169,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoot product by photoshoot ID which are in-progress calling from { 'photoshoots/getPhotoshootInProgressProducts/' }
+        URL: /Photoshoots/GetPhotoshootsProducts/1/
+        Request: GET
+        Input: int PhotoshootId
+        output:  dynamic Object of Photoshoot products 
+        */
         [HttpGet("GetPhotoshootsProducts/{photoshootId}")]
         public async Task<object> GetPhotoshootsProducts(int photoshootId)
         {
@@ -142,13 +185,11 @@ namespace badgerApi.Controllers
             try
             {
                 vPageList = await _PhotoshootRepo.GetPhotoshootProducts(photoshootId);
-                //string vPageCount = await _PhotoshootsRepo.Count();
-                //vPageList.Count = vPageCount;
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for GetPhotoshootsProducts with message" + ex.Message);
 
             }
 
@@ -156,7 +197,15 @@ namespace badgerApi.Controllers
 
         }
 
-
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoots and models to add new photoshoot or add new product in already exists photoshoots calling from { 'photoshoots/getPhotoshootAndModels/' }
+        URL: /Photoshoots/GetPhotoshootsAndModels/
+        Request: GET
+        Input: Null
+        output:  dynamic Object of Photoshoots & Models
+        */
         [HttpGet("GetPhotoshootsAndModels")]
         public async Task<object> photoshootsAndModels()
         {
@@ -176,6 +225,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoots those status is SentToEditor calling from { 'photoshoots/sentToEditor/' }
+        URL: /Photoshoots/SentToEditorPhotoshoot/
+        Request: GET
+        Input: Null
+        output:  dynamic Object of Photoshoot Products
+        */
         [HttpGet("SentToEditorPhotoshoot")]
         public async Task<object> SentToEditorPhotoshoot()
         {
@@ -195,8 +253,44 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoots  those status is in-progress calling from { 'photoshoots/summary/' }
+        URL: /Photoshoots/Summary/
+        Request: GET
+        Input: Null
+        output:  dynamic Object of Photoshoot Products
+        */
+        [HttpGet("Summary")]
+        public async Task<object> Summary()
+        {
+            dynamic PhotoshootSummary = new object();
+            try
+            {
+                PhotoshootSummary = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for SendToEditor Product with message" + ex.Message);
 
-        // POST: api/photoshoots/create
+            }
+
+            return PhotoshootSummary;
+
+        }
+
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create new photoshoot and add products in it calling from { 'photoshoots/addNewPhotoshoot/' }
+        URL: /Photoshoots/create/1
+        Request: POST
+        Input: FromBody, string ProductId
+        output: dynamic Object of Photoshoot Products
+        */
         [HttpPost("create/{productId}")]
         public async Task<string> PostAsync([FromBody]   string value, string productId)
         {
@@ -211,7 +305,7 @@ namespace badgerApi.Controllers
                 int countComma = productId.Count(c => c == ',');
                 if (countComma > 0)
                 {
-                    var ids = productId.Split(","); //yields an array containing { "A", "B", "C" }
+                    var ids = productId.Split(",");  
                     foreach (var product_id in ids)
                     {
                         await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
@@ -227,7 +321,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Update photoshoot status to sentToPhotoshoot, shootNotStarted calling from { 'photoshoots/UpdatePhotoshootProductStatus/' }, { 'photoshoots/updateMultiplePhotoshootStatus}
+        URL: /Photoshoots/UpdatePhotoshootProductStatus/
+        Request: PUT
+        Input: FromBody, string productId
+        output: string success or failed
+        */
         [HttpPut("UpdatePhotoshootProductStatus/{productId}")]
         public async Task<string> UpdatePhotoshootProductStatus(string productId, [FromBody]   string value)
         {
@@ -323,7 +425,16 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-         
+      
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: First get product smallest SKU and Set Item Status For Photoshoot, its a private function calls from only in this class 
+        URL:  
+        Request:  
+        Input: string productId, string status
+        output: string success or failed
+        */
         private async Task<string> SetProductItemStatusForPhotoshoot(string product_id, string status)
         {
             dynamic ToReturn = new object();
@@ -430,6 +541,16 @@ namespace badgerApi.Controllers
             return returnValue;
         }
 
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19
+        Action: Start product photoshoot for the given photoshoot ID calling from { 'photoshoots/addProductInPhotoshoot/' } , {'photoshoots/addNewPhotoshoot'}
+        URL: /Photoshoots/StartProductPhotoshoot/
+        Request: POST
+        Input: FromBody, string productId
+        output: string success or failed
+        */
         [HttpPost("StartProductPhotoshoot/{productId}")]
         public async Task<string> StartProductPhotoshoot(string productId, [FromBody]   string value)
         {
@@ -480,12 +601,7 @@ namespace badgerApi.Controllers
 
             return UpdateResult;
         }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+         
     }
 
 
