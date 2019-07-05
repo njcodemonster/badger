@@ -54,7 +54,15 @@ namespace badgerApi.Controllers
             _NotesAndDoc = NotesAndDoc;
            
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting list of all vendors
+            URL: api/vendor/list
+            Request GET
+            Input: null
+            output: vendor
+        */
         // GET: api/vendor/list
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
@@ -76,7 +84,16 @@ namespace badgerApi.Controllers
            
 
         }
-        // GET: api/vendor/list
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: getting vendor products by id
+           URL: api/list/products/id
+           Request GET
+           Input: vendor id
+           output: vendor products
+       */
+        // GET: api/list/products/id
         [HttpGet("list/products/{id}")]
         public async Task<List<Product>> ListVendorProducts(string id)
         {
@@ -98,6 +115,15 @@ namespace badgerApi.Controllers
 
 
         }
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: getting vendor count
+          URL:  api/vendor/count
+          Request GET
+          Input: null
+          output: vendor count
+      */
         // GET: api/vendor/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
@@ -105,6 +131,16 @@ namespace badgerApi.Controllers
             return await _VendorRepo.Count();
 
         }
+
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: getting vendor count
+          URL:  api/vendor/count
+          Request GET
+          Input: null
+          output: vendor count
+        */
         // GET: api/vendor/listpageview/10
         [HttpGet("listpageview/{limit}")]
         public async Task<object> listpageviewAsync(int limit)
@@ -128,6 +164,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: getting vendor name and id
+          URL:  api/vendor/getvendornameandid
+          Request GET
+          Input: null
+          output: list of vendor_name and id
+        */
         //GET: api/vendor/getvendornameandid
         [HttpGet("getvendorsnameandid")]
         public async Task<List<object>> GetVendorsNameAndID()
@@ -149,7 +194,15 @@ namespace badgerApi.Controllers
 
         }
 
-
+        /*
+         Developer: Azeem Hassan
+         Date: 7-5-19 
+         Action: getting vendor details address and repo by vendor id
+         URL:  api/vendor/detailsadressandrep/103
+         Request GET
+         Input: vendor id
+         output: dynamic AdressAndrepDetails object
+       */
         //GET: api/vendor/detailsadressandrep/103
         [HttpGet("detailsaddressandrep/{id}")]
         public async Task<object> DetailsAddressAndRep(int id)
@@ -180,6 +233,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+         Developer: Azeem Hassan
+         Date: 7-5-19 
+         Action: getting vendor note and document by vendor id
+         URL:  api/vendor/getnoteanddoc/103
+         Request GET
+         Input: vendor id
+         output: dynamic ExpandoObject vendorNoteAndDoc
+       */
         //GET: api/vendor/getnoteanddoc/103
         [HttpGet("getnoteanddoc/{id}")]
         public async Task<object> DetailsNotesAndDoc(int id)
@@ -202,6 +264,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+         Developer: Azeem Hassan
+         Date: 7-5-19 
+         Action: getting vendor address details by vendor id
+         URL:  api/vendor/detailsaddress/103
+         Request GET
+         Input: vendor id
+         output: dynamic AdressDetails object
+       */
         //GET: api/vendor/detailsaddress/103
         [HttpGet("detailsaddress/{id}")]
         public async Task<List<object>> DetailsAddress(int id)
@@ -222,6 +293,16 @@ namespace badgerApi.Controllers
             return AdressDetails;
 
         }
+
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting vendor detailsrep by vendor id
+            URL:  api/vendor/detailsrep/103
+            Request GET
+            Input: vendor id
+            output: dynamic RepDetails object
+        */
         //GET: api/vendor/detailsrep/103
         [HttpGet("detailsRep/{id}")]
         public async Task<List<object>> DetailsRep(int id)
@@ -242,6 +323,16 @@ namespace badgerApi.Controllers
             return RepDetails;
 
         }
+
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting single vendor by vendor id
+            URL:  api/vendor/list/1
+            Request GET
+            Input: vendor id
+            output: vendor
+        */
         // GET: api/vendor/list/1
         [HttpGet("list/{id}")]
         public async Task<List<Vendor>> GetAsync(int id)
@@ -261,6 +352,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: create new vendor with vendor and user event
+            URL:  api/vendor/create
+            Request POST
+            Input: vendor form data
+            output: vendor_id
+        */
         // POST: api/vendor/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
@@ -286,6 +386,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: create vendor note with vendor and user event
+           URL:  api/vendor/note/create
+           Request POST
+           Input: vendor note form data
+           output: note id
+        */
         // POST: api/vendor/note/create
         [HttpPost("note/create")]
         public async Task<string> NoteCreate([FromBody]   string value)
@@ -314,6 +423,15 @@ namespace badgerApi.Controllers
             return newNoteID;
         }
 
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: create vendor document with vendor and user event
+          URL:  api/vendor/documentcreate
+          Request POST
+          Input: vendor document form data
+          output: document id
+       */
         // POST: api/vendor/documentcreate
         [HttpPost("documentcreate")]
         public async Task<string> DocumentCreate([FromBody]   string value)
@@ -341,6 +459,16 @@ namespace badgerApi.Controllers
             }
             return newDocID;
         }
+
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: update vendor with vendor and user event by vendor id
+          URL:  api/vendor/update/5
+          Request PUT
+          Input: vendor_id and vendor updated form data
+          output: update result
+       */
         // PUT: api/vendor/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
@@ -455,6 +583,15 @@ namespace badgerApi.Controllers
         {
         }
 
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: get vendor last sku by vendor id
+           URL:  api/vendor/skufamily/id
+           Request GET
+           Input: vendor_id
+           output: vendor product
+        */
         // GET: api/vendor/skufamily/id
         [HttpGet("list/skufamily/{id}")]
         public async Task<Object> ListVendorLastSku(string id)
@@ -476,6 +613,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: get all vendors types
+           URL:  api/vendor/getvendortypes
+           Request GET
+           Input: null
+           output: vendor types
+        */
         //GET: api/vendor/getvendortypes
         [HttpGet("getvendortypes")]
         public async Task<List<object>> GetVendorTypes()

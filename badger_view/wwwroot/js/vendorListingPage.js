@@ -1,4 +1,13 @@
-﻿$(document).on('click', "#NewVendorButton", function () {
+﻿
+/*
+    Developer: Azeem Hassan
+    Date: 7-3-19 
+    Action:sent vendor data to controller
+    URL:/vendor/newvendor
+    Input:form data
+    output: vendor id
+*/
+$(document).on('click', "#NewVendorButton", function () {
     $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
@@ -89,7 +98,11 @@
     });
 });
 
-
+/*
+       Developed By: Azeem Hassan
+       Date: 7-3-19 
+       action: input field validation not allow character and special character
+*/
 $(document).on('keydown', "#newVendorForm input", function (e) {
     $(this).removeClass('errorFeild');
    $(this).parents('.form-group').find('.errorMsg').remove();
@@ -101,11 +114,26 @@ $(document).on('keydown', "#newVendorForm input", function (e) {
         }
     }
 });
+
+/*
+       Developed By: Azeem Hassan
+       Date: 7-3-19 
+       action: phone keyups next input focusing
+*/
 $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     if($(this).val().length == $(this).attr('maxlength')){
         $(this).parent('div').next().find('input').focus();
     }
 })
+
+/*
+    Developer: Azeem Hassan
+    Date: 7-3-19 
+    Action:getting data from controller by sent vendor id
+    URL:/vendor/details
+    Input:form data
+    output: vendor data
+*/
 $(document).on('click', "#EditVendor", function () {
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
     $('.errorMsg').remove();
@@ -167,6 +195,15 @@ $(document).on('click', "#EditVendor", function () {
     });
 
 });
+
+/*
+    Developer: Azeem Hassan
+    Date: 7-3-19 
+    Action:sent vendor data to controller 
+    URL:/vendor/updatevendor
+    Input:form data
+    output: vendor data
+*/
 $(document).on('click', "#EditVendorButton", function () {
      $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
@@ -264,6 +301,12 @@ $(document).on('click', "#EditVendorButton", function () {
             $('#EditVendorButton').attr('disabled', false);
         });
 });
+
+/*
+       Developed By: Azeem Hassan
+       Date: 7-3-19 
+       action: open modal add new vendor
+*/
 $(document).on('click', "#AddNewVendorButton", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
@@ -271,6 +314,12 @@ $(document).on('click', "#AddNewVendorButton", function () {
     $('.errorMsg').remove();
     $("#newVendorForm").data("currentID","");
 });
+
+/*
+       Developed By: Azeem Hassan
+       Date: 7-3-19 
+       action: adding more repo button
+*/
 $(document).on('click', "#AddMoreReps", function () {
                     var html  = '<div class="venderRepoBox" style="border: 1px solid"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
                                     '<div class="form-row">'+
@@ -325,10 +374,21 @@ $(document).on('click', "#AddMoreReps", function () {
                                 '</div>'
     $('.venderRepo').append(html);  
 });
+
+/*
+       Developed By: Azeem Hassan
+       Date: 7-3-19 
+       action: remove repo
+*/
 $(document).on('click', "#removeCurrentRep", function () {
     $(this).parent().remove();
 });
 
+/*
+       Developed By: Azeem Hassan
+       Date: 7-3-19 
+       action: getting data for add repo html
+*/
 function repsHtml(data) {
     for (i = 0; i < data.length; i++) {
         var phone1 = data[i].phone1;
@@ -398,6 +458,14 @@ function repsHtml(data) {
     }
 }
 
+/*
+    Developer: Azeem Hassan
+    Date: 7-3-19 
+    Action:getting vendor not from controller
+    URL:/vendor/getvendornoteanddoc
+    Input:vendor id
+    output: vendor note and doc
+*/
 $(document).on('click', "#VendorNoteButton", function () {
     var id = $(this).attr('data-id');
     $('#modaladdnote').attr('data-id', id);
@@ -416,6 +484,15 @@ $(document).on('click', "#VendorNoteButton", function () {
         })
     }
 })
+
+/*
+    Developer: Azeem Hassan
+    Date: 7-3-19 
+    Action:send vendor not to controller
+    URL:/vendor/insertvendornote
+    Input:vendor note and id
+    output: vendor id
+*/
 $(document).on('click', "#addVendorNote", function () {
     if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
         var id = $('#modaladdnote').attr('data-id');
