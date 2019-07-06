@@ -42,6 +42,15 @@ namespace badger_view.Controllers
             }
         }
 
+
+        /*
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (Style vendor image) from addstyle JS and pass the data to API /product/updatespecific/{product_id}
+        URL: /styles/newdoc
+        Input: HTML form image and new product_id
+        output: file path (upload folder)
+        */
         [HttpPost("/styles/newdoc")]
         public async Task<String> CreateNewStyleDoc(StyleFileData StyleFileData)
         {
@@ -71,6 +80,17 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
+
+        /*
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Styles Data) from addstyle JS and pass the data to multiple API functions 
+        /product/create , attribute crete, product attreibute create, product attribute values create , SKU create
+        URL: /styles/create
+        Input: HTML form with the data of new product
+        output: New product id
+        */
+
         [HttpPost("/styles/create")]
         public  async Task<String> CreateNewStyle([FromBody]   JObject json)
         {
