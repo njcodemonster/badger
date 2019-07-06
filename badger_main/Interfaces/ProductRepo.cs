@@ -166,7 +166,7 @@ namespace badgerApi.Interfaces
             IEnumerable<ProductProperties> productProperties;
             using (IDbConnection conn = Connection)
             {
-                 productProperties = await conn.QueryAsync<ProductProperties>("select A.attribute_id,A.sku,A.product_id,C.attribute_type_id,C.attribute,C.attribute_display_name,D.value from product_attributes as A  , attributes as C ,attribute_values as D where (A.product_id = "+id+" and A.attribute_id= C.attribute_id and D.product_id = A.product_id and D.attribute_id= A.attribute_id) ");
+                 productProperties = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,C.attribute_type_id,C.attribute,C.attribute_display_name,D.value FROM product_attributes AS A  , attributes AS C ,attribute_values AS D,product_attribute_values AS E WHERE (A.product_id = "+id+" AND A.attribute_id= C.attribute_id AND E.attribute_id =  A.attribute_id AND D.value_id= E.value_id AND E.product_id="+id+")  ");
                 
             }
             return productProperties;

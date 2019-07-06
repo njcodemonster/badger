@@ -24,15 +24,12 @@ namespace badgerApi.Controllers
         private int note_type = 3;
         private IEventRepo _eventRepo;
         private IProductRepository _productRepository;
-
-
         private int event_vendor_id = 1;
         private int event_vendor_note_create_id = 22;
         private int event_type_vendor_document_create_id = 21;
         private int event_type_vendor_update_id = 23;
         private string userEventTableName = "user_events";
         private string vendorEventTableName = "vendor_events";
-
         private string event_create_vendor= "Vendor created by user =%%userid%% with vendor id= %%vendorid%%";
         private string event_create_vendor_note = "Vendor note created by user =%%userid%% with note id= %%noteid%%";
         private string event_create_vendor_document = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
@@ -58,10 +55,7 @@ namespace badgerApi.Controllers
         // GET: api/vendor/list
         [HttpGet("list")]
         public async Task<ActionResult<List<Vendor>>> GetAsync()
-        {
-            // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
-            // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
-           
+        {  
             List<Vendor> ToReturn = new List<Vendor>();
             try
             {
@@ -80,8 +74,6 @@ namespace badgerApi.Controllers
         [HttpGet("list/products/{id}")]
         public async Task<List<Product>> ListVendorProducts(string id)
         {
-            // List<Documents> notes = await _NotesAndDoc.GenericGetDocAsync<Documents>(2001, 0, 2);
-            // string nnn = await _NotesAndDoc.GenericPostDoc<String>(2001,0,"testurl/url","test doc",0,254896312.2);
 
             List<Product> ToReturn = new List<Product>();
             try
@@ -127,7 +119,6 @@ namespace badgerApi.Controllers
             return vPageList;
 
         }
-
         //GET: api/vendor/getvendornameandid
         [HttpGet("getvendorsnameandid")]
         public async Task<List<object>> GetVendorsNameAndID()
@@ -148,8 +139,6 @@ namespace badgerApi.Controllers
             return vendorDetails;
 
         }
-
-
         //GET: api/vendor/detailsadressandrep/103
         [HttpGet("detailsaddressandrep/{id}")]
         public async Task<object> DetailsAddressAndRep(int id)
@@ -179,7 +168,6 @@ namespace badgerApi.Controllers
             return AdressAndrepDetails;
 
         }
-
         //GET: api/vendor/getnoteanddoc/103
         [HttpGet("getnoteanddoc/{id}")]
         public async Task<object> DetailsNotesAndDoc(int id)
@@ -201,7 +189,6 @@ namespace badgerApi.Controllers
             return vendorNoteAndDoc;
 
         }
-
         //GET: api/vendor/detailsaddress/103
         [HttpGet("detailsaddress/{id}")]
         public async Task<List<object>> DetailsAddress(int id)
@@ -260,7 +247,6 @@ namespace badgerApi.Controllers
             }
             return ToReturn;
         }
-
         // POST: api/vendor/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
@@ -285,7 +271,6 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
-
         // POST: api/vendor/note/create
         [HttpPost("note/create")]
         public async Task<string> NoteCreate([FromBody]   string value)
@@ -313,7 +298,6 @@ namespace badgerApi.Controllers
             }
             return newNoteID;
         }
-
         // POST: api/vendor/documentcreate
         [HttpPost("documentcreate")]
         public async Task<string> DocumentCreate([FromBody]   string value)
@@ -374,7 +358,6 @@ namespace badgerApi.Controllers
             }
             return UpdateResult;
         }
-
         // PUT: api/vendor/specificUpdate/5
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
@@ -448,13 +431,11 @@ namespace badgerApi.Controllers
             
             return UpdateResult;
         }
-
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
         }
-
         // GET: api/vendor/skufamily/id
         [HttpGet("list/skufamily/{id}")]
         public async Task<Object> ListVendorLastSku(string id)
