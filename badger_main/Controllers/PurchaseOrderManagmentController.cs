@@ -60,6 +60,16 @@ namespace badgerApi.Controllers
             }
             return index;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: All item status of Purchase Order Management
+        URL: /api/purchaseordermanagement/ListAllItemStatus
+        Request: Get
+        Input: Null
+        output: dynamic object of purchase orders items status
+        */
         [HttpGet("ListAllItemStatus")]
         public async Task<object> ListAllItemStatus()
         {
@@ -76,6 +86,16 @@ namespace badgerApi.Controllers
             return AllItemStatus;
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get All items of Purchase Order Management
+        URL: /api/purchaseordermanagement/GetLineItemDetails/poid/limit
+        Request: Get
+        Input: int poid, int limit
+        output: dynamic object of purchase orders items 
+        */
         [HttpGet("GetLineItemDetails/{PO_id}/{limit}")]
         public async Task<object> GetLineItemsDetails(int PO_id, int limit)
         {
@@ -124,7 +144,15 @@ namespace badgerApi.Controllers
             return LineITemsDetails;
         }
 
-        // POST: api/purchaseordermanagement/notecreate
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create Purchase Order Note
+        URL: api/purchaseordermanagement/notecreate
+        Request: Post
+        Input: Frombody string
+        output: string of purchase orders note id 
+        */
         [HttpPost("notecreate")]
         public async Task<string> NoteCreate([FromBody]   string value)
         {
@@ -152,7 +180,15 @@ namespace badgerApi.Controllers
             return newNoteID;
         }
 
-        // GET: api/purchaseordermanagement/getitemnotes/ref_ids
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get item note of Purchase Order Note by multiple ids with comma seperate
+        URL: api/purchaseordermanagement/getitemnotes/ref_ids
+        Request: Get
+        Input: string ids
+        output: string of purchase orders note id 
+        */
         [HttpGet("getitemnotes/{ref_ids}")]
         public async Task<List<Notes>> GetItemNotesViewAsync(string ref_ids)
         {
@@ -170,8 +206,15 @@ namespace badgerApi.Controllers
             return notes;
         }
 
-
-        // GET: api/purchaseordermanagement/getitemdocuments/ref_id
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get item document note of Purchase Order Note
+        URL: api/purchaseordermanagement/getitemdocuments/ref_id/limit
+        Request: Get
+        Input: int ref_id, int limit
+        output: List of purchase orders document
+        */
         [HttpGet("getitemdocuments/{ref_id}/{limit}")]
         public async Task<List<Documents>> GetDocumentsViewAsync(int ref_id, int limit)
         {
@@ -191,7 +234,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/purchaseordermanagement/documentcreate
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create New of Purchase Order document
+        URL: api/purchaseordermanagement/documentcreate
+        Request: Post
+        Input: int ref_id, int limit
+        output: List of purchase orders document
+        */
         [HttpPost("documentcreate")]
         public async Task<string> DocumentCreate([FromBody]   string value)
         {
@@ -221,7 +272,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // POST: api/purchaseordermanagement/itemupdate/id
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Item update by id 
+        URL: api/purchaseordermanagement/itemupdate/id
+        Request: Post
+        Input: int id, Frombody string
+        output: string of purchase orders item
+        */
         [HttpPost("itemupdate/{id}")]
         public async Task<string> ItemUpdate(int id,[FromBody] string value)
         {

@@ -37,7 +37,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/purchaseordersledger/list
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order ledger list "api/purchaseordersledger/list"
+        URL: api/purchaseordersledger/list
+        Request: Get
+        Input: /list
+        output: List of Purchase order ledger
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrderLedger>>> GetAsync()
         {
@@ -55,7 +63,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseordersledger/list/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order ledger list "api/purchaseordersledger/list/1"
+        URL: api/purchaseordersledger/list/1
+        Request: Get
+        Input: int id
+        output: List of Purchase order ledger
+        */
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrderLedger>> GetAsync(int id)
         {
@@ -74,7 +90,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/purchaseordersledger/getledger/10
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order ledger by id limit 1 "api/purchaseordersledger/getledger/1"
+        URL: api/purchaseordersledger/getledger/1
+        Request: Get
+        Input: int id
+        output: List of Purchase order ledger
+        */
         [HttpGet("getledger/{id}")]
         public async Task<object> GetLedger(int id)
         {
@@ -94,7 +118,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseordersledger/count
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order ledger count "api/purchaseordersledger/count"
+        URL: api/purchaseordersledger/count
+        Request: Get
+        Input: /count
+        output: Count of Purchase order ledger
+        */
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
@@ -102,7 +134,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/purchaseordersledger/create
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create purchase order ledger "api/purchaseordersledger/create"  with events created in purchase order event and user event
+        URL: api/purchaseordersledger/create
+        Request: Post
+        Input: FromBody String
+        output: string of Purchase order ledger id
+        */
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -127,7 +167,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/purchaseordersledger/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order ledger by id "api/purchaseordersledger/update/1"  with events created in purchase order event and user event
+        URL: api/purchaseordersledger/update/5
+        Request: Put
+        Input: int id, FromBody String
+        output: string
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -159,8 +207,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-
-        // PUT: api/purchaseordersledger/updatespecific/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific purchase order ledger by id "api/purchaseordersledger/updatespecific/1"  with events created in purchase order event and user event
+        URL: api/purchaseordersledger/updatespecific/5
+        Request: Put
+        Input: int id, FromBody String
+        output: string
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

@@ -42,6 +42,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: insert sku to database
+        URL: 
+        Request: Post
+        Input: new sku data
+        output: string of sku id
+        */
         public async Task<string> Create(Sku NewSku)
         {
             using (IDbConnection conn = Connection)
@@ -51,6 +60,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: get all sku data from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: list of sku
+        */
         public async Task<List<Sku>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -68,8 +86,15 @@ namespace badgerApi.Interfaces
             }
         }
 
-
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: get sku by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: list of sku
+        */
         public async Task<Sku> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -80,6 +105,16 @@ namespace badgerApi.Interfaces
             }
         }
 
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update sku by id  to database
+        URL: 
+        Request: Put
+        Input: sku data
+        output: Boolean
+        */
         public async Task<Boolean> Update(Sku SkuToUpdate)
         {
 
@@ -90,6 +125,16 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific sku by id to database
+        URL: 
+        Request: Put
+        Input: fields value and where to update
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

@@ -41,6 +41,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: get tracking by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: dynamic object of tracking
+        */
         public async Task<object> GetTrackingById(int id)
         {
             dynamic poPageList = new ExpandoObject();
@@ -56,6 +65,15 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert tracking to database
+        URL: 
+        Request: Post
+        Input: new tracking data
+        output: string of tracking id
+        */
         public async Task<string> Create(PurchaseOrdersTracking Newtracking)
         {
             using (IDbConnection conn = Connection)
@@ -65,6 +83,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action:update tracking data by id from database
+        URL: 
+        Request: Put
+        Input: tracking data
+        output:Boolean
+        */
         public async Task<Boolean> Update(PurchaseOrdersTracking TrackingToUpdate)
         {
 
@@ -76,6 +103,15 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action:update specific tracking data by id from database
+        URL: 
+        Request: Put
+        Input: fields value and where to update
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
