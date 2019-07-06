@@ -164,12 +164,14 @@ namespace badgerApi.Interfaces
         public async Task<IEnumerable<ProductProperties>> GetProductProperties (string id)
         {
             IEnumerable<ProductProperties> productProperties;
+            IEnumerable<ProductProperties> productProperties2;
             using (IDbConnection conn = Connection)
             {
                  productProperties = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,C.attribute_type_id,C.attribute,C.attribute_display_name,D.value FROM product_attributes AS A  , attributes AS C ,attribute_values AS D,product_attribute_values AS E WHERE (A.product_id = "+id+" AND A.attribute_id= C.attribute_id AND E.attribute_id =  A.attribute_id AND D.value_id= E.value_id AND E.product_id="+id+")  ");
-                
+                 productProperties2 = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,B.attribute_type_id,B.attribute,B.attribute_display_name,NULL AS 'value' FROM product_attributes AS A, attributes AS B WHERE A.product_id = "+id+" AND A.attribute_id = B.attribute_id AND B.attribute_type_id =4");
+
             }
-            return productProperties;
+            return productProperties.Concat(productProperties2);
 
         }
         public async Task<IEnumerable<ProductDetails>> GetProductDetails(string id)
