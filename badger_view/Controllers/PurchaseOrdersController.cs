@@ -52,6 +52,15 @@ namespace badger_view.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: View ALL Purchase Orders List & Get All Vendors with id and name & Get All Vendor types using badger api helper and common helper   
+        URL: /purchaseorders
+        Request: Get
+        Input: Null
+        output: Dynamic object of purchase orders
+        */
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -74,7 +83,6 @@ namespace badger_view.Controllers
 
             foreach (PurchaseOrdersInfo poList in TotalList)
             {
-
                 DeliveryStartEnd = _common.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
 
                 NewDateFormat = _common.ConvertToDate(poList.order_date);
@@ -109,6 +117,16 @@ namespace badger_view.Controllers
 
             return View("Index", PurchaseOrdersPageModal);
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: View Single Purchase Orders List & Get Note,Document,Tracking,Ledger and Discount by using badger api helper   
+        URL: /purchaseorders/details/id
+        Request: Get
+        Input: int id
+        output: Dynamic object of purchase orders
+        */
         [Authorize]
         [HttpGet("purchaseorders/details/{id}")]
         public async Task<string> GetDetails(Int32 id)
@@ -138,6 +156,8 @@ namespace badger_view.Controllers
 
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
+
+
         [Authorize]
         public async Task<IActionResult> Single()
         {
@@ -149,6 +169,16 @@ namespace badger_view.Controllers
 
             return View("Single", vendor);
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: create new Purchase Order & Note using badger api helper and login helper
+        URL: /purchaseorders/newpurchaseorder
+        Request: Post
+        Input: FromBody Json jobject
+        output: string of purchase orders id
+        */
         [Authorize]
         [HttpPost("purchaseorders/newpurchaseorder")]
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
@@ -201,6 +231,16 @@ namespace badger_view.Controllers
 
             return newPurchaseOrderID;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: create new Purchase Order document it check file already exist in upload folder by using badger api helper and login helper
+        URL: /purchaseorders/purchaseorder_doc
+        Request: Post
+        Input: FromBody string multiple files
+        output: string of purchase orders document
+        */
         [Authorize]
         [HttpPost("purchaseorders/purchaseorder_doc")]
         public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
@@ -254,6 +294,16 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order by id and create note,tracking if already not exist by using badger api helper and login helper
+        URL: /purchaseorders/updatepurchaseorder/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of purchase orders id
+        */
         [Authorize]
         [HttpPost("purchaseorders/updatepurchaseorder/{id}")]
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
@@ -347,6 +397,16 @@ namespace badger_view.Controllers
 
             return newPurchaseOrderID;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: create new Purchase Order discount and get discount list by id by using badger api helper and login helper
+        URL: /purchaseorders/discountcreate
+        Request: Post
+        Input: FromBody json object
+        output: string of purchase orders discount 
+        */
         [Authorize]
         [HttpPost("purchaseorders/discountcreate")]
         public async Task<String> DiscountCreate([FromBody] JObject json)
@@ -382,6 +442,16 @@ namespace badger_view.Controllers
                 return newPurchaseDiscountID;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order discount and get discount list by id by using badger api helper and login helper
+        URL: /purchaseorders/discountupdate/id
+        Request: Post
+        Input:int id, FromBody json object
+        output: string of purchase orders discount 
+        */
         [Authorize]
         [HttpPost("purchaseorders/discountupdate/{id}")]
         public async Task<String> DiscountUpdate(int id,[FromBody] JObject json)
@@ -415,6 +485,16 @@ namespace badger_view.Controllers
                 return updatePurchaseDiscountID;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: create new Purchase Order ledger and get ledger list by id by using badger api helper and login helper
+        URL: /purchaseorders/ledgercreate
+        Request: Post
+        Input:FromBody json object
+        output: string of purchase orders ledger
+        */
         [Authorize]
         [HttpPost("purchaseorders/ledgercreate")]
         public async Task<String> LedgerCreate([FromBody] JObject json)
@@ -449,6 +529,16 @@ namespace badger_view.Controllers
                 return newPurchaseLedgerID;
             }  
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order ledger and get ledger list by id by using badger api helper and login helper
+        URL: /purchaseorders/ledgerupdate/id
+        Request: Post
+        Input:int id, FromBody json object
+        output: string of purchase orders ledger
+        */
         [Authorize]
         [HttpPost("purchaseorders/ledgerupdate/{id}")]
         public async Task<String> LedgerUpdate(int id, [FromBody] JObject json)
@@ -480,6 +570,16 @@ namespace badger_view.Controllers
                 return updatePurchaseLedgerID;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Purchase Order line item detail by id by using badger api helper
+        URL: /purchaseorders/PurchaseOrderLineItemDetails(poid,limit)
+        Request: Get
+        Input:int poid, int limit
+        output: dynamic object of purchase orders line item
+        */
         public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
@@ -488,6 +588,17 @@ namespace badger_view.Controllers
 
             return LineItemsDetails;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Purchase Order List & Get first purchase order by id and Get purchase order line item by id & 
+        List all status by purchase order for itemm by using badger api helper
+        URL: /purchaseorders/PurchaseOrdersManagement
+        Request: Get
+        Input: Null
+        output: dynamic object of purchase orders management list
+        */
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
             SetBadgerHelper();
@@ -508,6 +619,15 @@ namespace badger_view.Controllers
             return View();
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create Purchase Order notes by using badger api helper and login helper 
+        URL: /purchaseorders/notecreate
+        Request: Post
+        Input: FromBody json object
+        output: string of purchase orders note id
+        */
         [Authorize]
         [HttpPost("purchaseorders/notecreate")]
         public async Task<String> NoteCreate([FromBody] JObject json)
@@ -531,6 +651,15 @@ namespace badger_view.Controllers
             return newPurchaseLedgerID;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create Purchase Order item note create by using badger api helper and login helper 
+        URL: /purchaseorders/itemnotecreate
+        Request: Post
+        Input: FromBody json object
+        output: string of purchase orders item note id
+        */
         [Authorize]
         [HttpPost("purchaseorders/itemnotecreate")]
         public async Task<String> ItemNoteCreate([FromBody] JObject json)
@@ -554,9 +683,18 @@ namespace badger_view.Controllers
             return newItemID;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Order note by id by using badger api helper
+        URL: /purchaseorders/getnote/id
+        Request: Get
+        Input: int id
+        output: string of purchase orders note 
+        */
         [Authorize]
         [HttpGet("purchaseorders/getnote/{id}")]
-        public async Task<String> GetNote(string id)
+        public async Task<String> GetNote(int id)
         {
             SetBadgerHelper();
 
@@ -565,6 +703,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrderNote);
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Order item notes by multiple ids by using badger api helper 
+        URL: /purchaseorders/getitemnotes/id
+        Request: Get
+        Input: int id
+        output: string of purchase orders item notes
+        */
         [Authorize]
         [HttpGet("purchaseorders/getitemnotes/{ids}")]
         public async Task<String> GetItemNotes(string ids)
@@ -576,6 +723,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrderNote);
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Order document by id by using badger api helper  
+        URL: /purchaseorders/getitemnotes/id
+        Request: Get
+        Input: int id
+        output: string of purchase orders document
+        */
         [Authorize]
         [HttpGet("purchaseorders/getdocument/{id}")]
         public async Task<String> GetDocument(int id)
@@ -590,6 +746,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Order item document by id by using badger api helper  
+        URL: /purchaseorders/getitemdocument/id
+        Request: Get
+        Input: int id
+        output: string of purchase orders document
+        */
         [Authorize]
         [HttpGet("purchaseorders/getitemdocument/{id}")]
         public async Task<String> GetItemDocument(int id)
@@ -601,8 +766,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrderDocs);
         }
 
-
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: delete Purchase Order tracking by id by using badger api helper and login helper  
+        URL: /purchaseorders/trackingdelete/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of purchase orders tracking delete
+        */
         [Authorize]
         [HttpPost("purchaseorders/trackingdelete/{id}")]
         public async Task<string> TrackingDelete(int id, [FromBody] JObject json)
@@ -618,6 +790,15 @@ namespace badger_view.Controllers
             return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrdersTrackingData.ToString(Formatting.None), "/purchaseorderstracking/delete/" + id.ToString());
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Delete Purchase Order by id by using badger api helper and login helper  
+        URL: /purchaseorders/delete/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of purchase orders delete
+        */
         [Authorize]
         [HttpPost("purchaseorders/delete/{id}")]
         public async Task<string> PurchaseOrdersDelete(int id, [FromBody] JObject json)
@@ -644,6 +825,16 @@ namespace badger_view.Controllers
             }
             return updatePurchaseOrderID;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Order Line Item by product id and by purchase order id by using badger api helper 
+        URL: /purchaseorders/lineitems/productid/poid
+        Request: Get
+        Input: int product id, int purchase order id
+        output: string of purchase orders line items
+        */
         [HttpGet("purchaseorders/lineitems/{product_id}/{PO_id}")]
         public async Task<string> GetAsyncLineitems(Int32 product_id, Int32 PO_id)
         {
@@ -656,6 +847,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(poLineitems);
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create Purchase Order item document by using badger api helper and login helper 
+        URL: /purchaseorders/lineitems/productid/poid
+        Request: Post
+        Input: FromBody string file
+        output: string of purchase orders item document
+        */
         [Authorize]
         [HttpPost("purchaseorders/itemdocumentcreate")]
         public async Task<String> CreateNewItemDoc(purchaseOrderFileData purchaseorderfile)
@@ -710,6 +910,15 @@ namespace badger_view.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order item update by id by using badger api helper 
+        URL: /purchaseorders/itemupdate/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of purchase orders item
+        */
         [Authorize]
         [HttpPost("purchaseorders/itemupdate/{id}")]
         public async Task<string> ItemStatusUpdate(int id, [FromBody] JObject json)
@@ -729,6 +938,15 @@ namespace badger_view.Controllers
             return updateItemID;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order sku weight update by id by using badger api helper and login helper 
+        URL: /purchaseorders/skuweightupdate/id
+        Request: Get
+        Input: int id, FromBody json object
+        output: string of purchase orders sku
+        */
         [Authorize]
         [HttpPost("purchaseorders/skuweightupdate/{id}")]
         public async Task<string> SkuWeightUpdate(int id, [FromBody] JObject json)
@@ -757,6 +975,16 @@ namespace badger_view.Controllers
             return updateSkuID;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order sku update by id & by product id sku family update & product attribute by id sku update & 
+        line item by id sku and quantity update by using badger api helper and login helper  
+        URL: /purchaseorders/skuupdate/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of purchase orders sku
+        */
         [Authorize]
         [HttpPost("purchaseorders/skuupdate/{id}")]
         public async Task<string> SkuUpdate(int id, [FromBody] JObject json)
@@ -814,6 +1042,15 @@ namespace badger_view.Controllers
             return updateSkuID;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update Purchase Order line item quantity update by id by using badger api helper and login helper
+        URL: /purchaseorders/polineitemupdate/id
+        Request: Get
+        Input: int id, FromBody json object
+        output: string of purchase orders line item
+        */
         [Authorize]
         [HttpPost("purchaseorders/polineitemupdate/{id}")]
         public async Task<string> POLineItemUpdate(int id, [FromBody] JObject json)

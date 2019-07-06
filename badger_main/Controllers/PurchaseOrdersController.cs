@@ -13,8 +13,6 @@ using System.Data;
 using Dapper;
 using MySql.Data.MySqlClient;
 
-
-
 namespace badgerApi.Controllers
 {
     [Route("api/[controller]")]
@@ -67,7 +65,15 @@ namespace badgerApi.Controllers
             _ItemsHelper = ItemsHelper;
         }
 
-        // GET: api/purchaseorders/list
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get List of Purchase Orders calling from "/purchaseorders/list"
+        URL: api/purchaseorders/list
+        Request: Get
+        Input: /list
+        output: List of Purchase Orders
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrders>>> GetAsync()
         {
@@ -85,7 +91,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseorders/list/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order by id "api/purchaseorders/list/1"
+        URL: api/purchaseorders/list/id
+        Request: Get
+        Input: int id of Purchase Orders
+        output: List of Purchase Orders by id
+        */
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrders>> GetAsync(int id)
         {
@@ -104,7 +118,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/purchaseorders/count
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Count of purchase orders "api/purchaseorders/count"
+        URL: api/purchaseorders/count
+        Request: Get
+        Input: /count
+        output: Count of Purchase Orders
+        */
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
@@ -112,7 +134,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseorders/listpageview/10/boolean
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order list page view limit and count "api/purchaseorders/listpageview/10/boolean"
+        URL: api/purchaseorders/listpageview/10/boolean
+        Request: Get
+        Input: int limit and boolean (true/false)
+        output: list of dynamic Object of Purchase Orders
+        */
         [HttpGet("listpageview/{limit}/{countNeeded}")]
         public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
         {
@@ -137,9 +167,17 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/purchaseorders/create
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create new purchase orders with events created in purchase order event and user event "api/purchaseorders/create"
+        URL: api/purchaseorders/create
+        Request: Post
+        Input: FromBody, string 
+        output: string of Last insert Purchase Orders id
+        */
         [HttpPost("create")]
-        public async Task<string> PostAsync([FromBody]   string value)
+        public async Task<string> PostAsync([FromBody] string value)
         {
             string NewInsertionID = "0";
             try
@@ -161,7 +199,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // POST: api/purchaseorders/notecreate
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create purchase order note with events created in purchase order event and user event  " api/purchaseorders/notecreate"
+        URL: api/purchaseorders/notecreate
+        Request: Post
+        Input: FromBody, string 
+        output: string of Last insert Purchase Orders note id
+        */
         [HttpPost("notecreate")]
         public async Task<string> NoteCreate([FromBody]   string value)
         {
@@ -189,7 +235,15 @@ namespace badgerApi.Controllers
             return newNoteID;
         }
 
-        // POST: api/purchaseorders/documentcreate
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create purchase order document with events created in purchase order event and user event  " api/purchaseorders/documentcreate"
+        URL: api/purchaseorders/documentcreate
+        Request: Post
+        Input: FromBody, string 
+        output: string of Last insert Purchase Orders note id
+        */
         [HttpPost("documentcreate")]
         public async Task<string> DocumentCreate([FromBody]   string value)
         {
@@ -219,7 +273,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // GET: api/purchaseorders/getnote/ref_id
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order note by note id and limit  "api/purchaseorders/getnote/ref_id/limit"
+        URL: api/purchaseorders/getnote/ref_id/limit
+        Request: Get
+        Input: int ref_id, int limit 
+        output: List of Purchase Orders note
+        */
         [HttpGet("getnote/{ref_id}/{limit}")]
         public async Task<List<Notes>> GetNoteViewAsync(int ref_id, int limit)
         {
@@ -239,7 +301,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseorders/getdocuments/ref_id
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order document by doc id and limit  "api/purchaseorders/getdocuments/ref_id/limit"
+        URL: api/purchaseorders/getdocuments/ref_id/limit
+        Request: Get
+        Input: int ref_id, int limit 
+        output: List of Purchase Orders document
+        */
         [HttpGet("getdocuments/{ref_id}/{limit}")]
         public async Task<List<Documents>> GetDocumentsViewAsync(int ref_id, int limit)
         {
@@ -259,7 +329,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // PUT: api/purchaseorders/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order by id with events created in purchase order event and user event  "api/purchaseorders/update/5"
+        URL: api/purchaseorders/update/5
+        Request: Put
+        Input: int id, FormBody string  
+        output: string
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -291,8 +369,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-
-        // PUT: api/purchaseorders/updatespecific/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific purchase order by id with events created in purchase order event and user event  "api/purchaseorders/updatespecific/5"
+        URL: api/purchaseorders/updatespecific/5
+        Request: Put
+        Input: int id, FormBody string  
+        output: string
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -410,8 +495,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-
-        // GET: api/purchaseorders/lineitems/productid/poid
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order line item by product id and purchase order id  "api/purchaseorders/lineitems/productid/poid"
+        URL: api/purchaseorders/lineitems/productid/poid
+        Request: Get
+        Input: int productid, int purchase order id
+        output: List of Purchase order line item
+        */
         [HttpGet("lineitems/{productid}/{poid}")]
         public async Task<IEnumerable<PurchaseOrderLineItems>> GetAsyncLineitems(Int32 productid, int poid)
         {

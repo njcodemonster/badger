@@ -76,54 +76,6 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         return false;
     }
 
-    /*var errorNumber = 0;
-    $(".error").remove();
-
-    if ($("#newPurchaseOrderForm #poVendor").val() == "Choose...") {
-        $('#poVendor').next().after('<br><span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poDelieveryRange").val().length < 1) {
-        $('#poDelieveryRange').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poNumber").val().length < 1) {
-        $('#poNumber').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poTotalStyles").val().length < 1) {
-        $('#poTotalStyles').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poInvoiceNumber").val().length < 1) {
-        $('#poInvoiceNumber').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poTotalQuantity").val().length < 1) {
-        $('#poTotalQuantity').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poOrderNumber").val().length < 1) {
-        $('#poOrderNumber').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poSubtotal").val().length < 1) {
-        $('#poSubtotal').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poOrderDate").val().length < 1) {
-        $('#poOrderDate').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-    if ($("#newPurchaseOrderForm #poShipping").val().length < 1) {
-        $('#poShipping').after('<span class="error">This field is required</span>');
-        errorNumber++;
-    }
-
-    if (errorNumber > 0) {
-        return false;
-    }*/
-
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
 
     var jsonData = {};
@@ -209,7 +161,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
             }
             $('#purchaseorderlists').DataTable().row.add([
                 $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text()
-                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
+                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
             ]).draw();
 
             table.page('last').draw('page');
@@ -482,7 +434,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
@@ -813,3 +765,12 @@ function getSinglePurchaseOrder(id) {
     })
 
 }
+
+$(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
+    console.log($(this).attr("data-ID"));
+    var poid = $(this).attr("data-ID");
+    $("#checkin_form").attr("data-poid", poid);
+    $("#modalcheckin").modal("show")
+
+});
+

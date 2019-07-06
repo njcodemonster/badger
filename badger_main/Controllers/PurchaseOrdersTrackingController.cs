@@ -53,8 +53,16 @@ namespace badgerApi.Controllers
             _PurchaseOrdersTrackingRepo = PurchaseOrdersTrackingRepo;
             _loggerFactory = loggerFactory;
         }
-
-        // GET: api/purchaseorderstracking/gettracking/10
+    
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order tracking by id "api/purchaseorderstracking/gettracking/1"
+        URL: api/purchaseorderstracking/gettracking/10
+        Request: Get
+        Input: int id
+        output: dynamic object of Purchase order tracking
+        */
         [HttpGet("gettracking/{id}")]
         public async Task<object> GetTrackingViewAsync(int id)
         {
@@ -74,7 +82,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // POST: api/purchaseorderstracking/create
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create purchase order tracking "api/purchaseorderstracking/create"  with events created in purchase order event and user event
+        URL: api/purchaseorderstracking/create
+        Request: Post
+        Input: FromBody string
+        output: string of Purchase order tracking id
+        */
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -98,7 +114,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/purchaseorderstracking/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order tracking by id "api/purchaseorderstracking/update/1"  with events created in purchase order event and user event
+        URL: api/purchaseorderstracking/update/5
+        Request: Put
+        Input: int id, FromBody string
+        output: string of Purchase order tracking
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -130,8 +154,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-
-        // PUT: api/purchaseorderstracking/updatespecific/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific purchase order tracking by id "api/purchaseorderstracking/updatespecific/1"  with events created in purchase order event and user event
+        URL: api/purchaseorderstracking/updatespecific/5
+        Request: Put
+        Input: int id, FromBody string
+        output: string of Purchase order tracking
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -188,7 +219,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // POST: api/purchaseorderstracking/delete/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: delete purchase order tracking by id "api/purchaseorderstracking/delete/1"  with events created in purchase order event and user event
+        URL: api/purchaseorderstracking/delete/5
+        Request: Delete
+        Input: int id, FromBody string
+        output: string of Purchase order tracking
+        */
         [HttpPost("delete/{id}")]
         public async Task<bool> Delete(int id, [FromBody] string value)
         {
