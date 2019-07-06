@@ -495,3 +495,28 @@ $(document).on("change", ".item_sku", function () {
         }
     });
 });
+
+
+$(document).on("change", ".expand_vendor", function () {
+    var PO_id = $(this).attr('id');
+   
+
+
+           
+           
+
+    $.ajax({
+        url: "/purchaseorders/skuupdate/" + PO_id,
+        dataType: 'json',
+        type: 'get',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false
+    }).always(function (data) {
+        console.log(data);
+    });
+
+       
+    });
+
+
