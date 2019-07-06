@@ -38,6 +38,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert purchase order status to database
+        URL: 
+        Request: Post
+        Input: new status data
+        output: string of status id
+        */
         public async Task<string> Create(PurchaseOrderStatus NewPurchaseOrderStatus)
         {
             using (IDbConnection conn = Connection)
@@ -47,6 +56,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: get all purchase order status from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: list of status
+        */
         public async Task<List<PurchaseOrderStatus>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -64,6 +82,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: get purchase order status by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: list of status
+        */
         public async Task<PurchaseOrderStatus> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -74,6 +101,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order status by name from database
+        URL: 
+        Request: Get
+        Input: string name
+        output: list of status
+        */
         public async Task<List<PurchaseOrderStatus>> GetByName(string name)
         {
             try
