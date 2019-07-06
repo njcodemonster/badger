@@ -34,7 +34,6 @@ namespace badgerApi.Controllers
         }
 
 
-
         // GET: api/VendorRep/5
         [HttpGet("{id}")]
         public string Get(int id)
@@ -42,6 +41,15 @@ namespace badgerApi.Controllers
             return "value";
         }
 
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: create vendor repo with user and vendor events
+           URL:  api/VendorRep/create
+           Request POST
+           Input: vendor repo data
+           output: rep id
+        */
         // POST: api/VendorRep/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
@@ -68,7 +76,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-       
+         /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: update vendor repo with user and vendor events
+            URL:  api/VendorRep/create
+            Request PUT
+            Input: vendor repo data and id
+            output: update result
+         */
         // PUT: api/VendorRep/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)

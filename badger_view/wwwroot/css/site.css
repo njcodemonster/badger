@@ -285,3 +285,7 @@ label.error {
     position: relative;
     width: 100%
 }
+#newPurchaseOrderForm hr {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+}

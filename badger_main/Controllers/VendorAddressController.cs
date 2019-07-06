@@ -41,7 +41,15 @@ namespace badgerApi.Controllers
         {
             return "value";
         }
-
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: create vendor address with vendor and user events 
+           URL: api/VendorAddress/create
+           Request:POST
+           Input: vendor address data
+           output: newAddressId
+        */
         // POST: api/VendorAddress/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
@@ -66,6 +74,16 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: update vendor address with vendor and user events 
+           URL: api/VendorAddress/update/5
+           Request:PUT
+           Input: vendor address data and vendor id
+           output: updateResult
+        */
         // PUT: api/VendorAddress/update/5
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)

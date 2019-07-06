@@ -38,6 +38,15 @@ namespace badgerApi.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: creating new vendor address to database
+          URL: 
+          Request:POST
+          Input: vendor address
+          output: result
+       */
         public async Task<string> Create(VendorAddress NewVendor)
         {
             using (IDbConnection conn = Connection)
@@ -46,6 +55,15 @@ namespace badgerApi.Interfaces
                 return result.ToString();
             }
         }
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: update vendor address to database
+          URL: 
+          Request:PUT
+          Input: vendor address
+          output: result
+       */
         public async Task<Boolean> Update(VendorAddress VendorToUpdate)
         {
 
