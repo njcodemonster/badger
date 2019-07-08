@@ -857,7 +857,7 @@ function purchaseOrderData(data) {
 
 }
 function getSinglePurchaseOrder(id) {
-    $('.orderNumber').text(id)
+    //$('.orderNumber').text(id)
     $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
@@ -866,6 +866,7 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
+         $('.orderNumber').text(data.purchase_order[0].vendor_po_number)
         purchaseOrderData(data)
 
     })
