@@ -509,7 +509,7 @@ $(document).on('click', "#addVendorNote", function () {
             processData: false,
         }).always(function (data) {
             console.log(data);
-           
+           $('#modaladdnote').modal('hide');
         })
     }
 });
