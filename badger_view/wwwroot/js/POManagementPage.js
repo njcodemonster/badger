@@ -1,9 +1,13 @@
-﻿$(document).on('click', "#AddItemButton", function () {
+﻿/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get Data of items by vendor id and show in dropdown and fields
+Input: int purchase order id, int vendor id
+Output: string of vendor products
+*/
+$(document).on('click', "#AddItemButton", function () {
     var CurrentPOID = $(this).data("poid");
     var CurrentVendorId = $(this).data("vendorid");
-
-    
-    
 
     $('#modaladdstylec input').val("");
     $('#modaladdstylec #StyleSubType option').each(function () {
@@ -55,6 +59,16 @@
         console.log(data);
     });
 });
+
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Select dropdown data show by id 
+URL:  purchaseorders/lineitems/productid/purchaseorderid
+Input: int product id, int purchase order id
+Output: get data in fields
+*/
 $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
     var SelectedProduct = $(this.options[this.selectedIndex]);
     SelectedProductID = SelectedProduct.data("product_id");

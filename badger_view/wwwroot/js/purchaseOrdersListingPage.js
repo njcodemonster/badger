@@ -405,6 +405,14 @@ $(document).on("click", "#ledger_submit", function () {
 
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: update purchase orders data with notes and files by poid
+URL: /purchaseorders/updatepurchaseorder/id
+Input: int id
+output: string
+*/
 $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
@@ -529,6 +537,15 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     })
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: show popup of purchase order form with input empty fields
+URL: 
+Input: 
+output: form input fields
+*/
 $(document).on('click', ".model_purchase_order", function () {
 
     $("#newPurchaseOrderForm .error").remove();
@@ -545,12 +562,28 @@ $(document).on('click', ".model_purchase_order", function () {
     $('.poTracking, #poNotes').val("");
 });
 
-
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: dynamic tracking add more input field
+URL:
+Input:
+output: form input fields
+*/
 $(document).on('click', ".add_tracking", function () {
     //Append a new row of code to the "#items" div
     $("#wrapper_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: remove dynamic tracking field by id
+URL: /purchaseorders/trackingdelete/id
+Input: int id
+output: boolean
+*/
 $(document).on('click', ".remove_tracking", function () {
     var track_id = $(this).parent().children().attr("id");
     var track_number = $(this).parent().children().attr("value");
@@ -580,6 +613,14 @@ $(document).on('click', ".remove_tracking", function () {
     }    
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get purchase order note by id
+URL: /purchaseorders/getnote/id
+Input: int id
+output: dynamic object of purchase order note
+*/
 $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#note_form #po_notes").val("");
     var id = $(this).attr("data-id");
@@ -603,6 +644,15 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
     });
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: send to new purchase order note data
+URL: /purchaseorders/notecreate
+Input: note data
+output: string of purchase order note
+*/
 $(document).on("click", "#note_submit", function () {
 
     var jsonData = {};
@@ -624,6 +674,15 @@ $(document).on("click", "#note_submit", function () {
         $("#modaladdnote").modal("hide");
     });
 });
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get purchase order documents data by id
+URL: /purchaseorders/getdocument/id
+Input: int id
+output:string of purchase order documents
+*/
 
 $(document).on("click", "#EditPurhaseOrderDocument", function () {
     $('#document_form')[0].reset();
@@ -656,6 +715,14 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
     });
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: send to new purchase order document data
+URL: /purchaseorders/purchaseorder_doc
+Input: document data
+output: string of purchase order document
+*/
 $(document).on("click", "#document_submit", function () {
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
@@ -688,6 +755,14 @@ $(document).on("click", "#document_submit", function () {
 });
 
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Delete purchase order data
+URL: /purchaseorders/delete/id
+Input: int id
+output: string of purchase order
+*/
 $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
@@ -714,6 +789,14 @@ $(document).on('click', "#poDelete", function () {
         
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get purchase order data by id
+URL: 
+Input: int id
+output: dynamic object of purchase order data
+*/
 function purchaseOrderData(data) {
     var data = data;
        var podata = data['purchase_order'];
@@ -828,6 +911,15 @@ function purchaseOrderData(data) {
         }
 
 }
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get single page purchase order data by id
+URL:
+Input: int id
+output: dynamic object of purchase order data
+*/
 function getSinglePurchaseOrder(id) {
     //$('.orderNumber').text(id)
     $("#newPurchaseOrderForm").attr('data-currentid',id)
@@ -844,6 +936,7 @@ function getSinglePurchaseOrder(id) {
     })
 
 }
+
 
 $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     console.log($(this).attr("data-ID"));

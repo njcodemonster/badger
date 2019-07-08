@@ -57,6 +57,16 @@ namespace badgerApi.Helper
             NOtesApiUrl = _config.GetValue<string>("Services:NotesAndDoc");
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get note json data  
+        URL: 
+        Request: Get
+        Input:  string url
+        output: json data of note
+        */
         private async Task<T> GenericGetAsync<T>(String _call)
         {
             var client = new HttpClient();
@@ -72,6 +82,16 @@ namespace badgerApi.Helper
             return JsonConvert.DeserializeObject<T>(data, settings);
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Create new note json data  
+        URL: 
+        Request: Post
+        Input:  type json, string url
+        output: json data of note
+        */
         private async Task<T> GenericPostAsync<T>(T json, String _call)
         {
             var client = new HttpClient();
@@ -89,6 +109,15 @@ namespace badgerApi.Helper
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get notes by multiple ids with comma seperate and note type
+        URL: 
+        Request: Get
+        Input:  string ids, int note type
+        output: list of notes
+        */
         public async Task<List<Notes>> GenericNotes<T>(string Reffs, int note_type)
         {
             List<Notes> notes = new List<Notes>();
@@ -96,6 +125,15 @@ namespace badgerApi.Helper
             return notes;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get note by id,note type and limit
+        URL: 
+        Request: Get
+        Input:  int id, int note type,int limit
+        output: list of notes
+        */
         public async Task<List<Notes>> GenericNote<T>(int Reff,int note_type, int Limit)
         {
             List<Notes> notes = new List<Notes>();
@@ -103,6 +141,15 @@ namespace badgerApi.Helper
             return notes;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: note data send
+        URL: 
+        Request: Post
+        Input:  int id, int note type, string note, int createdby, double createdat
+        output: string of note id
+        */
         public async Task<string> GenericPostNote<T>(int reffId, int noteType, string note, int createdBy,Double createdAt)
         {
             JObject newNote = new JObject();
@@ -114,6 +161,15 @@ namespace badgerApi.Helper
             return await GenericPostAsync<string>(newNote.ToString(Formatting.None), "/notes/create");
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: document data send
+        URL: 
+        Request: Post
+        Input:  int id, int document type, string document url,string notes, int createdby, double createdat
+        output: string of document id
+        */
         public async Task<string> GenericPostDoc<T>(int reffId, int docType, string URL, string notes, int createdBy, Double createdAt)
         {
             JObject newDoc = new JObject();
@@ -126,6 +182,15 @@ namespace badgerApi.Helper
             return await GenericPostAsync<string>(newDoc.ToString(Formatting.None), "/documents/create");
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get documents by id
+        URL: 
+        Request: Get
+        Input:  int id, int doc type, int limit
+        output: list of documents
+        */
         public async Task<List<Documents>> GenericGetDocAsync<T>(int Reff, int doc_type,int Limit)
         {
             List<Documents> Docs = new List<Documents>();

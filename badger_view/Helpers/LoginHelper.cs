@@ -71,6 +71,15 @@ namespace badger_view.Helpers
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: validate user is login or not
+        Request: Get 
+        Input: 
+        output: boolean
+        */
         public async Task<Boolean> CheckLogin()
         {
             Int32? isLogin = _httpContextAccessor.HttpContext.Session.GetInt32("isLogin");
@@ -82,6 +91,15 @@ namespace badger_view.Helpers
             
             return  isLoedIn;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Login user id 
+        Request: Get 
+        Input: 
+        output: string login id
+        */
         public async Task<string> GetLoginUserId()
         {
             string id = "0";
@@ -95,6 +113,15 @@ namespace badger_view.Helpers
             }
             return id;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Login user Firstname 
+        Request: Get 
+        Input: 
+        output: string login Firstname
+        */
         public async Task<string> GetLoginUserFirstName()
         {
             string id = "0";
@@ -109,6 +136,15 @@ namespace badger_view.Helpers
             return id;
         }
 
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Login Form data send to user validate record and save in cookie
+        Request: Get 
+        Input:  Login data email and password
+        output: boolean
+        */
         public async Task<bool> DoLogin(badger_view.Models.LogiDetails logiDetails)
         {
             SetBadgerHelper();
