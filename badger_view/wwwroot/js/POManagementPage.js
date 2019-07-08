@@ -497,26 +497,35 @@ $(document).on("change", ".item_sku", function () {
 });
 
 
-$(document).on("change", ".expand_vendor", function () {
-    var PO_id = $(this).attr('id');
-   
 
 
-           
-           
+
+$('.card-header').click(function () {
+    var thisPO = $(this);
+    var POid = thisPO.attr("data-POId");
+    if ($("#collapse_" + POid).is(":hidden")) {
+        getPOdetail(POid);
+    } else {
+        $("#collapse_" + POid).html("");
+    }
+});
+
+function getPOdetail(PO_id) {
+
+    $("#collapse_" + PO_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
 
     $.ajax({
-        url: "/purchaseorders/skuupdate/" + PO_id,
+        url: "/PurchaseOrders/lineitemsdetails/" + PO_id,
         dataType: 'json',
         type: 'get',
         contentType: 'application/json',
-        data: JSON.stringify(jsonData),
         processData: false
     }).always(function (data) {
-        console.log(data);
+        //console.log(data);
+        $("#collapse_" + PO_id).html("");
+        $("#collapse_" + PO_id).html(data.responseText);
+
     });
 
-       
-    });
 
-
+}
