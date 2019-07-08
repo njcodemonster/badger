@@ -638,7 +638,12 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
-
+        /*Developer: ubaid
+       Date:5-7-19
+       Action:get NewItem Model from controller and insert the NewItem
+       Input: NewItem Model 
+       output: New Item id
+       */
         public async Task<string> Create(Items NewItem)
         {
             using (IDbConnection conn = Connection)

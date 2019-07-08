@@ -128,6 +128,14 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        /*
+       Developer: ubaid
+       Date:5-7-19
+       Action:get HTML Form (New Styles Data) from VIEW and pass the data to items API
+       URL: /product/createitems/{quantity}
+       Input: HTML form Body Json with the data of new product
+       output: New item id
+       */
         // POST: api/product/create/items
         [HttpPost("createitems/{qty}")]
         public async Task<string> PostItemsAsync([FromBody]   string value,int qty)

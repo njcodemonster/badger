@@ -216,6 +216,12 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get AttributeValues Model from controller and insert the AttributeValues
+        Input: AttributeValues Model 
+        output: New AttributeValues id
+        */
         public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
         {
             using (IDbConnection conn = Connection)
@@ -225,6 +231,13 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get SKU Model from controller and insert the SKU
+        Input: SKU Model 
+        output: New SKU id
+        */
         public async Task<string> CreateSku(Sku NewSku)
         {
             using (IDbConnection conn = Connection)
@@ -234,6 +247,12 @@ namespace badgerApi.Interfaces
             }
 
         }
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
+        Input: PurchaseOrderLineItems Model 
+        output: New PO LineItem id
+        */
         public async Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem)
         {
             using (IDbConnection conn = Connection)
@@ -243,7 +262,12 @@ namespace badgerApi.Interfaces
             }
 
         }
-
+        /*Developer: ubaid
+       Date:5-7-19
+       Action:get ProductAttributes values from controller and update the spesific Row
+       Input: ProductAttributes values and where clause 
+       output: None
+       */
         public async Task AttributeUpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
