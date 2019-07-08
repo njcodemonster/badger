@@ -51,6 +51,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get All vendors name and id
+        URL: 
+        Request GET
+        Input: null
+        output: list of vendors data
+         */
         public async Task<Object> GetVendorsNameAndID()
         {
             dynamic vendorDetails = new ExpandoObject();
