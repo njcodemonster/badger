@@ -38,6 +38,15 @@ namespace badger_view.Controllers
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19
+            Request: GET
+            Action:send attributes id to badger api to get attributes
+            URL: product/EditAttributes/id
+            Input: attributes id
+            output: view data in EditAttributes
+        */
         [Authorize]
         [HttpGet("product/EditAttributes/{id}")]
         public async Task<IActionResult> EditAttributes(string id)

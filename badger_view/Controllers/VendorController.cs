@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using badgerApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace badger_view.Controllers
 {
@@ -57,6 +58,7 @@ namespace badger_view.Controllers
            Input: Null
            output: dynamic ExpandoObject of VendorPageModal
        */
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
@@ -67,9 +69,7 @@ namespace badger_view.Controllers
             VendorPageModal.VendorCount = vendorPagerList.Count; 
             VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
             VendorPageModal.VendorType = vendorPagerList.vendorType;
-            // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
-
-            //VendorPageModal.Reps = venderAdressandRep.Reps;
+       
             return View("Index",VendorPageModal);
         }
         /*
@@ -80,6 +80,7 @@ namespace badger_view.Controllers
             Input: vendor id
             output: dynamic ExpandoObject of vendorDetails
         */
+        [Authorize]
         [HttpGet("vendor/details/{id}")]
         public async Task<Object> GetDetails(Int32 id)
         {
@@ -100,6 +101,7 @@ namespace badger_view.Controllers
             Input: vendor file data with vendor id
             output: file inserting massage
         */
+        [Authorize]
         [HttpPost("vendor/newvendor_doc")]
         public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
         {
@@ -109,20 +111,7 @@ namespace badger_view.Controllers
             string messageAlreadyDocuments = "";
             try
             {
-                //string Fill_path = vendorDoc.vendorDocuments.FileName;
-                //Fill_path = UploadPath + Fill_path;
-                //using (var stream = new FileStream(Fill_path, FileMode.Create))
-                //{
-                //    await vendorDoc.vendorDocument.CopyToAsync(stream);
-                //    int ref_id = Int32.Parse(vendorDoc.Vendor_id);
-                //    JObject vendorDocuments = new JObject();
-                //    vendorDocuments.Add("ref_id", ref_id);
-                //    vendorDocuments.Add("url", Fill_path);
-                //    await _BadgerApiHelper.GenericPostAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/documentcreate");
-                //}
-                //return Fill_path;
-
-
+             
                 List<IFormFile> files = vendorDoc.vendorDocuments;
 
                 foreach (var formFile in files)
@@ -173,6 +162,7 @@ namespace badger_view.Controllers
             Input: vendor form data json
             output: vendor id
         */
+        [Authorize]
         [HttpPost("vendor/newvendor")]
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
         {
@@ -193,41 +183,45 @@ namespace badger_view.Controllers
             vendor.Add("active_status", 1);
             vendor.Add("created_at", _common.GetTimeStemp());
             String newVendorID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor.ToString(Formatting.None), "/vendor/create");
-            vendor_adress.Add("vendor_id",newVendorID);
-            vendor_adress.Add("vendor_street", json.Value<string>("vendor_street"));
-            vendor_adress.Add("vendor_suite_number", json.Value<string>("vendor_suite_number"));
-            vendor_adress.Add("vendor_city", json.Value<string>("vendor_city"));
-            vendor_adress.Add("vendor_zip", json.Value<string>("vendor_zip"));
-            vendor_adress.Add("vendor_state", json.Value<string>("vendor_state"));
-            vendor_adress.Add("created_by", Int32.Parse(loginUserId));
-            vendor_adress.Add("created_at", _common.GetTimeStemp());
-            String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAddress/create");
-            JObject allData = JObject.Parse(json.ToString());
-            JArray vendor_reps_data = (JArray)allData["vendor_reps"];
-
-            for (int i = 0; i < vendor_reps_data.Count; i++)
+            if (newVendorID != "0")
             {
-                JObject vendor_rep = new JObject();
-                vendor_rep.Add("vendor_id", newVendorID);
-                vendor_rep.Add("first_name", vendor_reps_data[i].Value<string>("Rep_first_name"));
-                vendor_rep.Add("full_name", vendor_reps_data[i].Value<string>("Rep_full_name"));
-                vendor_rep.Add("phone1", vendor_reps_data[i].Value<string>("Rep_phone1"));
-                vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
-                vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
-                vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
-                vendor_rep.Add("created_by", Int32.Parse(loginUserId));
-                vendor_rep.Add("created_at", _common.GetTimeStemp());
-                String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
-            }
-            string vendor_notes = json.Value<string>("vendor_notes");
-            if (vendor_notes != "")
-            {
-                JObject vendorNotes = new JObject();
-                vendorNotes.Add("ref_id", newVendorID);
-                vendorNotes.Add("note", vendor_notes);
-                vendorNotes.Add("created_by", Int32.Parse(loginUserId));
-                String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+                vendor_adress.Add("vendor_id", newVendorID);
+                vendor_adress.Add("vendor_street", json.Value<string>("vendor_street"));
+                vendor_adress.Add("vendor_suite_number", json.Value<string>("vendor_suite_number"));
+                vendor_adress.Add("vendor_city", json.Value<string>("vendor_city"));
+                vendor_adress.Add("vendor_zip", json.Value<string>("vendor_zip"));
+                vendor_adress.Add("vendor_state", json.Value<string>("vendor_state"));
+                vendor_adress.Add("created_by", Int32.Parse(loginUserId));
+                vendor_adress.Add("created_at", _common.GetTimeStemp());
+                String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAddress/create");
 
+                JObject allData = JObject.Parse(json.ToString());
+                JArray vendor_reps_data = (JArray)allData["vendor_reps"];
+
+                for (int i = 0; i < vendor_reps_data.Count; i++)
+                {
+                    JObject vendor_rep = new JObject();
+                    vendor_rep.Add("vendor_id", newVendorID);
+                    vendor_rep.Add("first_name", vendor_reps_data[i].Value<string>("Rep_first_name"));
+                    vendor_rep.Add("full_name", vendor_reps_data[i].Value<string>("Rep_full_name"));
+                    vendor_rep.Add("phone1", vendor_reps_data[i].Value<string>("Rep_phone1"));
+                    vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
+                    vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
+                    vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
+                    vendor_rep.Add("created_by", Int32.Parse(loginUserId));
+                    vendor_rep.Add("created_at", _common.GetTimeStemp());
+                    String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
+                }
+                string vendor_notes = json.Value<string>("vendor_notes");
+                if (vendor_notes != "")
+                {
+                    JObject vendorNotes = new JObject();
+                    vendorNotes.Add("ref_id", newVendorID);
+                    vendorNotes.Add("note", vendor_notes);
+                    vendorNotes.Add("created_by", Int32.Parse(loginUserId));
+                    String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+
+                }
             }
             return newVendorID;
 
@@ -241,6 +235,7 @@ namespace badger_view.Controllers
             Input: vendor form data json
             output: status success/failed
         */
+        [Authorize]
         [HttpPost("vendor/updatevendor/{id}")]
         public async Task<String> UpdateNewVendor(int id ,[FromBody]   JObject json)
         {
@@ -326,6 +321,7 @@ namespace badger_view.Controllers
             Input: vendor id
             output: dynamic venderDocAndNotes
         */
+        [Authorize]
         [HttpGet("vendor/getvendornoteanddoc/{id}")]
         public async Task<Object> GetNotesAndDoc(Int32 id)
         {
@@ -343,6 +339,7 @@ namespace badger_view.Controllers
             Input: vendor not and vendor id
             output: new note id
         */
+        [Authorize]
         [HttpPost("vendor/insertvendornote/{id}")]
         public async Task<String> InsertVendorNote(int id, [FromBody]   JObject json)
         {
@@ -369,16 +366,13 @@ namespace badger_view.Controllers
             Input: vendor id
             output: vendor products and sku
         */
+        [Authorize]
         [HttpGet("vendor/products/{id}")]
         public async Task<Object> GetVendorProducts(Int32 id)
         {
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
-            //dynamic vendorProducts = new ExpandoObject();
-           // dynamic vendorSkufamily = new ExpandoObject();
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
-           // vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
-            //vendorProducts.skufamily = vendorSkufamily;
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }
            
