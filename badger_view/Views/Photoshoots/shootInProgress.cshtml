@@ -10,13 +10,13 @@
             if ($(".PhotoshootList").length == 0) {
                 $("#no_result").fadeIn(200);
             }
-
+            $(".card-header .btn-link:first").click();
         })
     </script>
 }
 
 <div class="">
-    <div class="accordion" id="accordionpomgmt">
+    <div class="accordion" id="accordionShootInProgress">
 
         @foreach (ProductPhotoshootInProgressRep inProgress in Model.Lists)
         {
@@ -29,7 +29,7 @@
                         </button>
                     </h2>
                 </div>
-                <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionpomgmt">
+                <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionShootInProgress">
 
                 </div>
             </div>
