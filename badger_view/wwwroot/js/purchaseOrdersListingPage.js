@@ -198,6 +198,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     console.log(data);
                     if (data == "0") {
                         console.log("Exception Error");
+                        alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
                         console.log(data.responseText);
                     }
@@ -210,14 +211,10 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
             table.page('last').draw('page');
             setTimeout(function () {
+                alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
                $('#modalPurchaseOrder').modal('hide'); 
             }, 3000)
-            /*window.vendor_options = '';
-
-            window.vendor_options = $("#poVendor > option").clone();
-
-            $('#poVendor').empty().append(window.vendor_options);*/
-
+            
             $('#newPurchaseOrderForm')[0].reset();
         } else {
             alertBox('poAlertMsg', 'red', 'Purchase order not inserted.');
@@ -246,15 +243,6 @@ function timeToDateConvert(timeinseconds) {
     if (month < 10) {
         month = month;
     }
-
-    /*var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var year = a.getFullYear();
-    var month = months[a.getMonth()];
-    var date = a.getDate();
-    var hour = a.getHours();
-    var min = a.getMinutes();
-    var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;*/
 
     return month + '/' + date + '/' + year;
 }
@@ -294,6 +282,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     }).always(function (data) {
         console.log(data);
         purchaseOrderData(data);
+        $("#modalPurchaseOrder #purchaseOrderModalLongTitle").text("Edit Purhase Order Number : " + $('#newPurchaseOrderForm #poNumber').val());
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Update");
         $('#modalPurchaseOrder input').removeAttr("disabled");
@@ -385,21 +374,8 @@ $(document).on("click", "#ledger_submit", function () {
             console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
             $("#view_adjustment").append("Adjustment -- Credit - " + i.credit + " Debit - " + i.debit + " - " + i.description + " <br>");
 
-            /*$("#ledger_form").attr("data-adjustment", i.transaction_id);
-
-            if (i.credit > 0) {
-                $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
-                $("#ledger_amount").val(i.credit);
-            } else {
-                $('#ledger_adjustment option[value=debit]').attr('selected', 'selected');
-                $("#ledger_amount").val(i.debit);
-            }
-            
-            $("#ledger_note").val(i.description);*/
-            
             window.adjustment = jsonData;
 
-            //$("#ledger_submit").attr("id", "update_ledger_submit");
         })
     });
 
@@ -510,6 +486,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     console.log(data);
                     if (data == "0") {
                         console.log("Exception Error");
+                        alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
                         console.log(data.responseText);
                     }
@@ -527,6 +504,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             $("#newPurchaseOrderForm").attr("data-currentid", "");
             setTimeout(function () {
+                alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
                 $('#modalPurchaseOrder').modal('hide');
             }, 3000)
             $('#newPurchaseOrderForm')[0].reset();
@@ -625,6 +603,7 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#note_form #po_notes").val("");
     var id = $(this).attr("data-id");
     $("#note_form").attr("data-noteid", id);
+    $("#noteModalLongTitle").text("Note : "+$(this).parents('tr').find('td:first-child').text());
     $.ajax({
         url: '/purchaseorders/getnote/' + id,
         dataType: 'json',
@@ -690,6 +669,8 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
     $("#document_form").attr("data-documentid", "");
     var id = $(this).attr("data-id");
     $("#document_form").attr("data-documentid", id);
+    $("#documentModalLongTitle").text("Document : " + $(this).parents('tr').find('td:first-child').text());
+
     $.ajax({
         url: '/purchaseorders/getdocument/' + id,
         dataType: 'json',
@@ -946,3 +927,10 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
 });
 
+$(document).on('click', "#add_invoice_adjustment", function () {
+    $("#invoice_ponumber").text(" : "+$('#newPurchaseOrderForm #poNumber').val());
+});
+
+$(document).on('click', "#add_discount", function () {
+    $("#discount_ponumber").text(" : " +$('#newPurchaseOrderForm #poNumber').val());
+});
