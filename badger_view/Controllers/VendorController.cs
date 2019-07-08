@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using badgerApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace badger_view.Controllers
 {
@@ -57,6 +58,7 @@ namespace badger_view.Controllers
            Input: Null
            output: dynamic ExpandoObject of VendorPageModal
        */
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
@@ -80,6 +82,7 @@ namespace badger_view.Controllers
             Input: vendor id
             output: dynamic ExpandoObject of vendorDetails
         */
+        [Authorize]
         [HttpGet("vendor/details/{id}")]
         public async Task<Object> GetDetails(Int32 id)
         {
@@ -100,6 +103,7 @@ namespace badger_view.Controllers
             Input: vendor file data with vendor id
             output: file inserting massage
         */
+        [Authorize]
         [HttpPost("vendor/newvendor_doc")]
         public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
         {
@@ -173,6 +177,7 @@ namespace badger_view.Controllers
             Input: vendor form data json
             output: vendor id
         */
+        [Authorize]
         [HttpPost("vendor/newvendor")]
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
         {
@@ -241,6 +246,7 @@ namespace badger_view.Controllers
             Input: vendor form data json
             output: status success/failed
         */
+        [Authorize]
         [HttpPost("vendor/updatevendor/{id}")]
         public async Task<String> UpdateNewVendor(int id ,[FromBody]   JObject json)
         {
@@ -326,6 +332,7 @@ namespace badger_view.Controllers
             Input: vendor id
             output: dynamic venderDocAndNotes
         */
+        [Authorize]
         [HttpGet("vendor/getvendornoteanddoc/{id}")]
         public async Task<Object> GetNotesAndDoc(Int32 id)
         {
@@ -343,6 +350,7 @@ namespace badger_view.Controllers
             Input: vendor not and vendor id
             output: new note id
         */
+        [Authorize]
         [HttpPost("vendor/insertvendornote/{id}")]
         public async Task<String> InsertVendorNote(int id, [FromBody]   JObject json)
         {
@@ -369,16 +377,13 @@ namespace badger_view.Controllers
             Input: vendor id
             output: vendor products and sku
         */
+        [Authorize]
         [HttpGet("vendor/products/{id}")]
         public async Task<Object> GetVendorProducts(Int32 id)
         {
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
-            //dynamic vendorProducts = new ExpandoObject();
-           // dynamic vendorSkufamily = new ExpandoObject();
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
-           // vendorProductsandSku.vendorSkufamily = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/skufamily/" + id.ToString());
-            //vendorProducts.skufamily = vendorSkufamily;
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }
            
