@@ -140,6 +140,7 @@ $(document).on('click', "#EditVendor", function () {
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
+    $('#noteModalLongTitle').text($(this).parents('tr').find('.vendorName').text()+' Note')
     var id = $(this).data("id");
     $.ajax({
 
@@ -467,6 +468,7 @@ function repsHtml(data) {
     output: vendor note and doc
 */
 $(document).on('click', "#VendorNoteButton", function () {
+    $('#vendorNote').val('');
     var id = $(this).attr('data-id');
     $('#modaladdnote').attr('data-id', id);
     if (id != undefined) {
