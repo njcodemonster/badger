@@ -24,7 +24,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/attributetype/list
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: getting attributetype list
+           Request:GET
+           URL: api/attributetype/list
+           Input: null
+           output: list of attributetype
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<AttributeType>>> GetAsync()
         {
@@ -42,7 +50,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/attributetype/list/1
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: getting attributetype by id
+           Request:GET
+           URL: api/attributetype/list/1
+           Input: int id
+           output: attributetype
+        */
         [HttpGet("list/{id}")]
         public async Task<List<AttributeType>> GetAsync(int id)
         {
@@ -62,7 +78,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // POST: api/attributetype/create
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: Inserting new attributetype
+           Request:POST
+           URL: api/attributetype/create
+           Input: FormBody data
+           output: NewInsertionID
+        */
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -80,7 +104,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/attributetype/update/5
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: Update attributetype by id
+           Request:PUT
+           URL: api/attributetype/update/5
+           Input: FormBody data and int id
+           output: Success/Failed
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -106,7 +138,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // PUT: api/attributetype/updatespecific/1
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: Update specific attributetype by id
+           Request:PUT
+           URL:  api/attributetype/updatespecific/1
+           Input: FormBody data and int id
+           output: Success/Failed
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

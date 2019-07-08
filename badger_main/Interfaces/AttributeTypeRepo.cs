@@ -40,7 +40,15 @@ namespace badgerApi.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
-
+        /*
+           Developer: Azeem Hassan
+           Date: 7-8-19 
+           Action: creating new attribute type to database
+           URL: 
+           Request:POST
+           Input: new attribute
+           output: attribute id
+        */
         public async Task<string> Create(AttributeType NewAttributeType)
         {
             using (IDbConnection conn = Connection)
@@ -50,6 +58,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+           Developer: Azeem Hassan
+           Date: 7-8-19 
+           Action: getting list of attributes from database 
+           URL: 
+           Request:GET
+           Input: limit
+           output: list of attribute
+        */
         public async Task<List<AttributeType>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -68,7 +85,15 @@ namespace badgerApi.Interfaces
         }
 
 
-
+        /*
+          Developer: Azeem Hassan
+          Date: 7-8-19 
+          Action: getting attributes by id from database 
+          URL: 
+          Request:GET
+          Input: int id
+          output: attribute
+       */
         public async Task<AttributeType> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -78,7 +103,15 @@ namespace badgerApi.Interfaces
                 return result;
             }
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-8-19 
+            Action: update AttributeType to database
+            URL: 
+            Request:PUT
+            Input: AttributeTypeToUpdate
+            output: result
+        */
         public async Task<Boolean> Update(AttributeType AttributeTypeToUpdate)
         {
 
@@ -89,6 +122,15 @@ namespace badgerApi.Interfaces
             }
 
         }
+        /*
+           Developer: Azeem Hassan
+           Date: 7-8-19 
+           Action: UpdateSpecific to database
+           URL: 
+           Request:PUT
+           Input: Dictionary<String, String> ValuePairs, String where
+           output: result
+       */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

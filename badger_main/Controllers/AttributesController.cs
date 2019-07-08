@@ -41,8 +41,16 @@ namespace badgerApi.Controllers
             }
            
         }
-
-        // GET: api/attributes/list/1
+        
+        /*
+         Developer: Azeem Hassan
+         Date:7-8-19
+         Action:Get attributes data by attributes id
+         Request:GET
+         URL: api/attributes/list/id
+         Input: int id
+         output: list of attributes data
+        */
         [HttpGet("list/{id}")]
         public async Task<List<Attributes>> GetAsync(int id)
         {
@@ -88,7 +96,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/attributes/update/5
+        /*
+         Developer: Azeem Hassan
+         Date:7-8-19
+         Action:updating attrbutes data by id
+         Request:PUT
+         URL: api/attributes/update/id
+         Input: FormBody data and id
+         output: Success/Failed
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -113,8 +129,15 @@ namespace badgerApi.Controllers
             }
             return UpdateResult;
         }
-
-        // PUT: api/attributes/updatespecific/1
+        /*
+            Developer: Azeem Hassan
+            Date:7-8-19
+            Action:updating specific attrbutes field by id
+            Request:PUT
+            URL: api/attributes/updatespecific/1
+            Input: FormBody data and id
+            output: Success/Failed
+       */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
