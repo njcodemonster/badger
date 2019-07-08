@@ -45,6 +45,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert purchase order Ledger data to database
+        URL: 
+        Request: Post
+        Input: new Purchase Orders Ledger data
+        output: string of PurchaseOrders Ledger id
+        */
         public async Task<string> Create(PurchaseOrderLedger NewPurchaseOrder)
         {
             using (IDbConnection conn = Connection)
@@ -54,6 +63,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Total count of purchase order Ledger data from database
+        URL: 
+        Request: Get
+        Input: null
+        output: string of PurchaseOrders Ledger count
+        */
         public async Task<string> Count()
         {
             using (IDbConnection conn = Connection)
@@ -63,6 +81,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order Ledger data by poid from database
+        URL: 
+        Request: Get
+        Input: int poid
+        output: dynamic object of PurchaseOrders Ledger
+        */
         public async Task<object> GetPurchaseOrdersLedger(int id)
         {
             dynamic poLedger = new ExpandoObject();
@@ -79,6 +106,15 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get All purchase order Ledger data from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: list of PurchaseOrders Ledger
+        */
         public async Task<List<PurchaseOrderLedger>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -96,8 +132,15 @@ namespace badgerApi.Interfaces
             }
         }
 
-
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order Ledger data by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: list of PurchaseOrders Ledger
+        */
         public async Task<PurchaseOrderLedger> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -108,6 +151,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order Ledger data by id from database
+        URL: 
+        Request: Put
+        Input: purchase order Ledger data
+        output: Boolean
+        */
         public async Task<Boolean> Update(PurchaseOrderLedger PurchaseOrdersToUpdate)
         {
 
@@ -118,6 +170,16 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update Specific purchase order Ledger data by id from database
+        URL: 
+        Request: Put
+        Input: fields value and where to update
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

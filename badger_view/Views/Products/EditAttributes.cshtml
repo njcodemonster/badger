@@ -316,13 +316,13 @@
                         }
                     }
             <td>
-                @{ first = true; string itemcolor = @Model.productProperties.Where(X => X.attribute_type_id == 2).Select(X => X.value).DefaultIfEmpty("None").First(); }
+                @{ first = true; var  itemcolor = @Model.productProperties.Where(X => X.attribute_type_id == 2).Select(X => X.value).DefaultIfEmpty("None"); }
 
                 @foreach (AllColors allColors in Model.AllColors)
                 {
                     if (first)
                     {
-                        if (allColors.value != itemcolor)
+                        if (!itemcolor.Any(X=>X==allColors.value))
                         {
                             @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value"/> <label>@allColors.value</label>
                         }
@@ -335,7 +335,7 @@
                     else
                     {
                         @:<br />
-                        if (@allColors.value != itemcolor)
+                        if (!itemcolor.Any(X=>X==allColors.value))
                         {
                             @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value" /> <label>@allColors.value</label>
                         }

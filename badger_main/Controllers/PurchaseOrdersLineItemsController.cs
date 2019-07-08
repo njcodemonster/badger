@@ -24,7 +24,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/purchaseorderlineitems/list
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order line item list "api/purchaseorderlineitems/list"
+        URL: api/purchaseorderlineitems/list
+        Request: Get
+        Input: /list
+        output: List of Purchase order ledger
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrderLineItems>>> GetAsync()
         {
@@ -42,7 +50,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseorderlineitems/list/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order line item by id "api/purchaseorderlineitems/list/1"
+        URL: api/purchaseorderlineitems/list/1
+        Request: Get
+        Input: int id
+        output: List of Purchase order ledger
+        */
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrderLineItems>> GetAsync(int id)
         {
@@ -62,7 +78,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // POST: api/purchaseorderlineitems/create
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create purchase order line item "api/purchaseorderlineitems/create"  with events created in purchase order event and user event
+        URL: api/purchaseorderlineitems/create
+        Request: Post
+        Input: FromBody string
+        output: string of purchase order line item id
+        */
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -80,7 +104,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/purchaseorderlineitems/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order line item by id "api/purchaseorderlineitems/update/1"  with events created in purchase order event and user event
+        URL: api/purchaseorderlineitems/update/5
+        Request: Put
+        Input: FromBody string
+        output: string of purchase order line item
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -106,7 +138,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // PUT: api/purchaseorderlineitems/updatespecific/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific purchase order line item by id "api/purchaseorderlineitems/updatespecific/1"  with events created in purchase order event and user event
+        URL: api/purchaseorderlineitems/updatespecific/5
+        Request: Put
+        Input: FromBody string
+        output: string of purchase order line item
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

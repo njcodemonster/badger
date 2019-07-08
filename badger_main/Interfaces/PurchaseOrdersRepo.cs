@@ -46,6 +46,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert purchase order data to database
+        URL: 
+        Request: Post
+        Input: new PurchaseOrders data
+        output: string of PurchaseOrders id
+        */
         public async Task<string> Create(PurchaseOrders NewPurchaseOrder)
         {
             using (IDbConnection conn = Connection)
@@ -55,6 +64,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Total count of purchase order data from database
+        URL: 
+        Request: Get
+        Input: null
+        output: string of PurchaseOrders count
+        */
         public async Task<string> Count()
         {
             using (IDbConnection conn = Connection)
@@ -64,6 +82,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get All purchase order data from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: list of PurchaseOrders
+        */
         public async Task<List<PurchaseOrders>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -81,8 +108,15 @@ namespace badgerApi.Interfaces
             }
         }
 
-
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order data by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: list of PurchaseOrders
+        */
         public async Task<PurchaseOrders> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -93,6 +127,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order data by id from database
+        URL: 
+        Request: Put
+        Input: purchase order data
+        output: Boolean
+        */
         public async Task<Boolean> Update(PurchaseOrders PurchaseOrdersToUpdate)
         {
 
@@ -103,6 +146,16 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update Specific purchase order data by id from database
+        URL: 
+        Request: Put
+        Input: fields value and where to update
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
@@ -114,6 +167,16 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order line item data by purhcase order id and limit from database
+        URL: 
+        Request: Get
+        Input: int purhcase order id,int limit
+        output: Dynamic object of purchase order line item
+        */
         public async Task<Object> GetOpenPOLineItemDetails(int PO_id , int Limit)
         {
 
@@ -135,6 +198,16 @@ namespace badgerApi.Interfaces
             }
             return OpenPoLineItemDetails;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order page list data and limit from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: Dynamic object of purchase order
+        */
         public async Task<object> GetPurchaseOrdersPageList(int limit)
         {
 
@@ -158,6 +231,15 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order line item data by product_id and PO_id from database
+        URL: 
+        Request: Get
+        Input: int product_id, int PO_id
+        output: List of purchase order line item
+        */
         public async Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id)
         {
             using (IDbConnection conn = Connection)

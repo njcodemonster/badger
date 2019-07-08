@@ -102,7 +102,14 @@ namespace badgerApi.Controllers
 
 
 
-
+        /*
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Styles Data) from VIEW and pass the data to API product Repo 
+        URL: /product/create
+        Input: HTML form Body Json with the data of new product
+        output: New product id
+        */
         // POST: api/product/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
@@ -204,6 +211,16 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
+
+
+        /*
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Attribute Data) from VIEW and pass the data to API product Repo 
+        URL: /product/createProductAttribute
+        Input: HTML form Body Json with the data of new Attribute and product_id
+        output: New Attribute id
+        */
         // POST: api/product/create
         [HttpPost("createProductAttribute")]
         public async Task<string> PostAsyncAttribute([FromBody]   string value)
@@ -222,6 +239,14 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        /*
+       Developer: ubaid
+       Date:5-7-19
+       Action:get HTML Form (New Styles Attributes Values Data) from VIEW and pass the data to API product Repo 
+       URL: /product/createAttributesValues
+       Input: HTML form Body Json with the data of new Attribute values and product_id and new Attribute_id
+       output: New Attribute value id
+       */
         // POST: api/product/create
         [HttpPost("createAttributesValues")]
         public async Task<string> PostAsyncAttributesValues([FromBody]   string value)
@@ -239,6 +264,15 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+        /*
+       Developer: ubaid
+       Date:5-7-19
+       Action:get HTML Form (New Styles SKU Data) from VIEW and pass the data to API product Repo 
+       URL: /product/createSku
+       Input: HTML form Body Json with the data of new SKU values and product_id
+       output: New SKU id
+       */
         // POST: api/product/create
         [HttpPost("createSku")]
         public async Task<string> PostAsyncSku([FromBody]   string value)
@@ -256,6 +290,15 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+        /*
+          Developer: ubaid
+          Date:5-7-19
+          Action:get HTML Form (New Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
+          URL: /product/createLineitems
+          Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
+          output: New LINE ITEM id
+          */
         // POST: api/product/create   // purchase order line items
         [HttpPost("createLineitems")]
         public async Task<string> PostAsyncLineitem([FromBody]   string value)

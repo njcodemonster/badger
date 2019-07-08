@@ -1,5 +1,11 @@
 ﻿// Photoshoots/shootInProgress page accordian code here...
-
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: Open accordian in Photoshoot inProgress page and call function getPhotoshootProducts();
+Input: Null
+Output: 
+*/
 $('.card-header').click(function () {
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
@@ -10,7 +16,13 @@ $('.card-header').click(function () {
     }
 });
 
-
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: Get photoshoot products in photoshoot inProgress page
+Input: PhotoshootId
+Output: add products in photoshoot div 
+*/
 function getPhotoshootProducts(photoshootId) {
     $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
         $.ajax({
@@ -25,7 +37,6 @@ function getPhotoshootProducts(photoshootId) {
                 ]
             });
         })
-    
 }
 /**********************************************************/
 
@@ -35,6 +46,14 @@ $('#photoshootDate').datepicker({
 });
 var datatable_js_ps = $('.datatable_js_ps').DataTable();
 
+
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: Check All Checkboxes
+Input: Null
+Output: 
+*/
 function selectAllCheckbox() {
 
     $(".select_menu").hide();
@@ -43,6 +62,13 @@ function selectAllCheckbox() {
 
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: Uncheck All Checkboxes
+Input: Null
+Output:
+*/
 function unselectAllCheckbox() {
 
     $(".select_menu").show();
@@ -51,14 +77,29 @@ function unselectAllCheckbox() {
 
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: Open add new photoshoots modal on photoshoot not started
+Input: Null
+Output:
+*/
 function addNewPhotoshoot() {
     $("#modalAddNewPhotoshoot").modal('show');
 }
 
-function AddToShootSingle(shootRowId, selectValue) {
-    window.photoShootRowId = shootRowId;
-    $("#AddToPhotoshootProductId").val(shootRowId);
-    if (selectValue == 1) {
+
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: get all photoshoots & models and add in Add photoshoot modal and open modal
+Input: photoshoot productID, photoshoot status 
+Output: it will add photoshoots & models in add new photoshoot modal and open
+*/
+function AddToShootSingle(shootProductId, statusId) {
+    window.photoShootRowId = shootProductId;
+    $("#AddToPhotoshootProductId").val(shootProductId);
+    if (statusId == 1) {
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
             dataType: 'json',
@@ -86,6 +127,13 @@ function AddToShootSingle(shootRowId, selectValue) {
     }
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: it will add products in already exits photoshoots
+Input: ProductId, PhotoShootId
+Output: it closes the add new modal and remove the prodcuts from the current list
+*/
 function AddToExistingPhotoshoot() {
     $(".existingShootError").addClass("d-none");
     var ProductId = $("#AddToPhotoshootProductId").val();
@@ -127,6 +175,14 @@ function AddToExistingPhotoshoot() {
         $(".existingShootError").removeClass("d-none");
     }
 }
+
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: it will add new photoshoot first and product in that
+Input: ProductId, PhotoShootId
+Output: it closes the add new modal and remove the selected prodcut from the current list
+*/
 
 function AddToNewPhotoshoot() {
     $(".newShootError").addClass("d-none");
@@ -184,6 +240,14 @@ function AddToNewPhotoshoot() {
     }
 }
 
+
+/*
+Developer: Mohi
+Date: 7-3-19 
+Action: it will select all the selected product ids and get all photoshoots & models and add in Add photoshoot modal and open modal
+Input: ProductIds
+Output: it closes the add new modal and remove the selected prodcut from the current list
+*/
 function moveSelectedToPhotoshoot() {
     var productAddToShoot = [];
     $.each($("input[name='productAddToShoot']:checked"), function () {
@@ -220,6 +284,13 @@ function moveSelectedToPhotoshoot() {
     
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: it will take photoshoot id, product id, status and it update the status of that product
+Input: photoshoot id, product id, status
+Output: it removes the current product from the list
+*/
 function updatephotoshootStatus(productId, photoshoot_id, status) {
     
     $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
@@ -248,6 +319,13 @@ function updatephotoshootStatus(productId, photoshoot_id, status) {
 
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: it will take   product id, status and it update the status of that product on SentToEditor pages
+Input: product id, status
+Output: it removes the current product from the list
+*/
 function changeShootStatusOnSendToEditor(productId, status) {
     $(".loading-box").css("visibility", "visible");
     var statusUpdate = "";
@@ -275,6 +353,13 @@ function changeShootStatusOnSendToEditor(productId, status) {
 
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: it will take selected product id, photoshoot id, status and it update the status of all that products on Inprogress pages
+Input: product id, status
+Output: it removes the current products from the list
+*/
 function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
     var productAddToShootNotStarted = [];
     $(".select-box:checked").each(function () {
@@ -311,6 +396,13 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
     
 }
 
+/*
+Developer: Mohi
+Date: 7-3-19
+Action: it will take selected product id,  status and it update the status of all that products on SentToEditor pages
+Input: product id, status
+Output: it removes the current products from the list
+*/
 function updateMultipleProductStatusOnSentToEditor(Status) {
     var productAddToShootNotStarted = [];
     $(".select-box:checked").each(function () {

@@ -63,6 +63,15 @@ namespace badgerApi.Interfaces
             return vendorDetails;
         }
 
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting vendor types from database
+            URL: 
+            Request GET
+            Input: null
+            output: vendor types
+         */
         public async Task<Object> GetVendorTypes()
         {
             dynamic VendorTypes = new ExpandoObject();
@@ -74,7 +83,15 @@ namespace badgerApi.Interfaces
             }
             return VendorTypes;
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: insert vendor data to database
+            URL: 
+            Request:POST
+            Input: new vendor data
+            output: vendor id
+         */
         public async Task<string> Create(Vendor NewVendor)
         {
             using (IDbConnection conn = Connection)
@@ -83,6 +100,15 @@ namespace badgerApi.Interfaces
                 return result.ToString() ;
             }
         }
+         /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: get vendor count 
+            URL: 
+            Request:GET
+            Input: null
+            output: vendor count
+         */
         public async Task<string> Count()
         {
             using (IDbConnection conn = Connection)
@@ -91,6 +117,16 @@ namespace badgerApi.Interfaces
                 return result.FirstOrDefault();
             }
         }
+
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: get vendors with limit 
+            URL: 
+            Request:GET
+            Input: limit
+            output: vendors list
+         */
         public async Task<List<Vendor>> GetAll(Int32 Limit)
         {
             
@@ -109,8 +145,16 @@ namespace badgerApi.Interfaces
             }
         }
 
-       
 
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: get vendor from database by id
+            URL: 
+            Request:GET
+            Input: vendor id
+            output: vendor
+         */
         public async Task<Vendor> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -120,7 +164,15 @@ namespace badgerApi.Interfaces
                 return result;
             }
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: update vendor to database by id
+            URL: 
+            Request:PUT
+            Input: vendor data
+            output: result
+         */
         public async Task<Boolean> Update( Vendor VendorToUpdate)
         {
             
@@ -131,6 +183,15 @@ namespace badgerApi.Interfaces
             }
            
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: updating specific fields to database
+            URL: 
+            Request:PUT
+            Input: fields value and where to repair
+            output: result
+         */
         public async Task UpdateSpecific(Dictionary<String , String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
@@ -142,7 +203,15 @@ namespace badgerApi.Interfaces
             }
 
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting vendor info from database
+            URL: 
+            Request:GET
+            Input: limit
+            output: vendorsinfo
+         */
         public async Task<object> GetVendorPageList(int limit)
         {
 
@@ -165,6 +234,15 @@ namespace badgerApi.Interfaces
             return vPageList;
            
         }
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: getting vendor details address and repo from database by vendor id
+           URL: 
+           Request:GET
+           Input: vendor id
+           output: vendorDetails
+        */
         public async Task<Object> GetVendorDetailsAdressRep(Int32 id)
         {
             dynamic vendorDetails = new ExpandoObject();
@@ -176,6 +254,15 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: getting vendor address from database by vendor id
+           URL: 
+           Request:GET
+           Input: vendor id
+           output: vendorAddressDetails
+        */
         public async Task<Object> GetVendorDetailsAddress(Int32 id)
         {
             dynamic vendorDetails = new ExpandoObject();
@@ -187,6 +274,15 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: getting vendor rep Details from database by vendor id
+           URL: 
+           Request:GET
+           Input: vendor id
+           output: vendorRepoDetails
+        */
         public async Task<Object> GetVendorDetailsRep(Int32 id)
         {
             dynamic vendorDetails = new ExpandoObject();
@@ -198,6 +294,15 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: getting vendor last sku from database by vendor id
+           URL: 
+           Request:GET
+           Input: vendor id
+           output: vendorLastSku
+        */
         public async Task<Object> GetVendorLastSku(string id)
         {
              dynamic vendorLastSku = new ExpandoObject();
