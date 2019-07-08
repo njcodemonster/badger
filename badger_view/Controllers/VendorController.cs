@@ -183,41 +183,45 @@ namespace badger_view.Controllers
             vendor.Add("active_status", 1);
             vendor.Add("created_at", _common.GetTimeStemp());
             String newVendorID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor.ToString(Formatting.None), "/vendor/create");
-            vendor_adress.Add("vendor_id",newVendorID);
-            vendor_adress.Add("vendor_street", json.Value<string>("vendor_street"));
-            vendor_adress.Add("vendor_suite_number", json.Value<string>("vendor_suite_number"));
-            vendor_adress.Add("vendor_city", json.Value<string>("vendor_city"));
-            vendor_adress.Add("vendor_zip", json.Value<string>("vendor_zip"));
-            vendor_adress.Add("vendor_state", json.Value<string>("vendor_state"));
-            vendor_adress.Add("created_by", Int32.Parse(loginUserId));
-            vendor_adress.Add("created_at", _common.GetTimeStemp());
-            String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAddress/create");
-            JObject allData = JObject.Parse(json.ToString());
-            JArray vendor_reps_data = (JArray)allData["vendor_reps"];
-
-            for (int i = 0; i < vendor_reps_data.Count; i++)
+            if (newVendorID != "0")
             {
-                JObject vendor_rep = new JObject();
-                vendor_rep.Add("vendor_id", newVendorID);
-                vendor_rep.Add("first_name", vendor_reps_data[i].Value<string>("Rep_first_name"));
-                vendor_rep.Add("full_name", vendor_reps_data[i].Value<string>("Rep_full_name"));
-                vendor_rep.Add("phone1", vendor_reps_data[i].Value<string>("Rep_phone1"));
-                vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
-                vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
-                vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
-                vendor_rep.Add("created_by", Int32.Parse(loginUserId));
-                vendor_rep.Add("created_at", _common.GetTimeStemp());
-                String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
-            }
-            string vendor_notes = json.Value<string>("vendor_notes");
-            if (vendor_notes != "")
-            {
-                JObject vendorNotes = new JObject();
-                vendorNotes.Add("ref_id", newVendorID);
-                vendorNotes.Add("note", vendor_notes);
-                vendorNotes.Add("created_by", Int32.Parse(loginUserId));
-                String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+                vendor_adress.Add("vendor_id", newVendorID);
+                vendor_adress.Add("vendor_street", json.Value<string>("vendor_street"));
+                vendor_adress.Add("vendor_suite_number", json.Value<string>("vendor_suite_number"));
+                vendor_adress.Add("vendor_city", json.Value<string>("vendor_city"));
+                vendor_adress.Add("vendor_zip", json.Value<string>("vendor_zip"));
+                vendor_adress.Add("vendor_state", json.Value<string>("vendor_state"));
+                vendor_adress.Add("created_by", Int32.Parse(loginUserId));
+                vendor_adress.Add("created_at", _common.GetTimeStemp());
+                String newVendorAdressID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_adress.ToString(Formatting.None), "/VendorAddress/create");
 
+                JObject allData = JObject.Parse(json.ToString());
+                JArray vendor_reps_data = (JArray)allData["vendor_reps"];
+
+                for (int i = 0; i < vendor_reps_data.Count; i++)
+                {
+                    JObject vendor_rep = new JObject();
+                    vendor_rep.Add("vendor_id", newVendorID);
+                    vendor_rep.Add("first_name", vendor_reps_data[i].Value<string>("Rep_first_name"));
+                    vendor_rep.Add("full_name", vendor_reps_data[i].Value<string>("Rep_full_name"));
+                    vendor_rep.Add("phone1", vendor_reps_data[i].Value<string>("Rep_phone1"));
+                    vendor_rep.Add("phone2", vendor_reps_data[i].Value<string>("Rep_phone2"));
+                    vendor_rep.Add("email", vendor_reps_data[i].Value<string>("Rep_email"));
+                    vendor_rep.Add("main", vendor_reps_data[i].Value<string>("main"));
+                    vendor_rep.Add("created_by", Int32.Parse(loginUserId));
+                    vendor_rep.Add("created_at", _common.GetTimeStemp());
+                    String newVendorRepID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor_rep.ToString(Formatting.None), "/VendorRep/create");
+                }
+                string vendor_notes = json.Value<string>("vendor_notes");
+                if (vendor_notes != "")
+                {
+                    JObject vendorNotes = new JObject();
+                    vendorNotes.Add("ref_id", newVendorID);
+                    vendorNotes.Add("note", vendor_notes);
+                    vendorNotes.Add("created_by", Int32.Parse(loginUserId));
+                    String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+
+                }
             }
             return newVendorID;
 
