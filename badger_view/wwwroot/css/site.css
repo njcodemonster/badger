@@ -253,6 +253,7 @@ label.error {
 #newVendorForm .phone {
     text-align: center
 }
+
 .vendorAlertMsg {
     text-align: left;
     position: relative;
@@ -269,8 +270,9 @@ label.error {
     top: 0px;
     border: 0px;
     left: 0px;
-    visibility:hidden;
+    visibility: hidden;
 }
+
 .inner-loading {
     width: 100%;
     height: 100px;
@@ -278,13 +280,14 @@ label.error {
     text-align: center;
     display: table-cell;
     vertical-align: middle;
-   }
+}
 
 .poAlertMsg {
     text-align: left;
     position: relative;
     width: 100%
 }
+
 #newPurchaseOrderForm hr {
     margin-top: 0rem;
     margin-bottom: 0rem;
