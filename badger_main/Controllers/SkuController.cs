@@ -24,7 +24,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/sku/list
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get sku list "api/sku/list"
+        URL: api/sku/list
+        Request: Get
+        Input: /list
+        output: List of SKU
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<Sku>>> GetAsync()
         {
@@ -42,6 +50,15 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get sku list by id "api/sku/list/1"
+        URL: api/sku/list/1
+        Request: Get
+        Input: int id
+        output: List of SKU
+        */
         // GET: api/sku/list/1
         [HttpGet("list/{id}")]
         public async Task<List<Sku>> GetAsync(int id)
@@ -62,6 +79,14 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
+        /*
+          Developer: ubaid
+          Date:5-7-19
+          Action:get HTML Form (New Styles SKUs Data) from VIEW and pass the data to API SKU Repo 
+          URL: /sku/create
+          Input: HTML form Body Json with the data of new Styles SKU and product_id
+          output: New SKU id
+          */
         // POST: api/sku/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
@@ -80,7 +105,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/sku/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update sku by id "api/sku/update/5"
+        URL: api/sku/update/5
+        Request: Put
+        Input: int id, FromBody string
+        output: string of sku
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -106,7 +139,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // PUT: api/sku/updatespecific/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific sku by id "api/sku/updatespecific/1"
+        URL: api/sku/updatespecific/1
+        Request: Put
+        Input: int id, FromBody string
+        output: string of sku
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

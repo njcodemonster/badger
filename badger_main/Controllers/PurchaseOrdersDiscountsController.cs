@@ -41,7 +41,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/purchaseordersdiscounts/list
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order discount list "api/purchaseordersdiscounts/list"
+        URL: api/purchaseordersdiscounts/list
+        Request: Get
+        Input: /list
+        output: List of Purchase order discount
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<PurchaseOrderDiscounts>>> GetAsync()
         {
@@ -59,7 +67,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseordersdiscounts/list/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order discount by id "api/purchaseordersdiscounts/list/1"
+        URL: api/purchaseordersdiscounts/list/id
+        Request: Get
+        Input: int id
+        output: List of Purchase order discount
+        */
         [HttpGet("list/{id}")]
         public async Task<List<PurchaseOrderDiscounts>> GetAsync(int id)
         {
@@ -78,7 +94,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // GET: api/purchaseordersdiscounts/getdiscount/10
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order discount by id limit 1 "api/purchaseordersdiscounts/getdiscount/1"
+        URL: api/purchaseordersdiscounts/getdiscount/id
+        Request: Get
+        Input: int id
+        output: count of Purchase order discount
+        */
         [HttpGet("getdiscount/{id}")]
         public async Task<object> GetDiscount(int id)
         {
@@ -98,15 +122,30 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/purchaseordersdiscounts/count
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order discount count "api/purchaseordersdiscounts/count"
+        URL: api/purchaseordersdiscounts/count
+        Request: Get
+        Input: /count
+        output: List of Purchase order discount
+        */
         [HttpGet("count")]
         public async Task<string> CountAsync()
         {
             return await _PurchaseOrdersDiscountsRepo.Count();
-
         }
 
-        // POST: api/purchaseordersdiscounts/create
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create purchase order discount "api/purchaseordersdiscounts/create"  with events created in purchase order event and user event
+        URL: api/purchaseordersdiscounts/create 
+        Request: Post
+        Input: FormBody String
+        output: string purchase order discount id
+        */
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -130,7 +169,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/purchaseordersdiscounts/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order discount by id "api/purchaseordersdiscounts/update/1"  with events created in purchase order event and user event
+        URL: api/purchaseordersdiscounts/update/5
+        Request: Put
+        Input: FormBody String
+        output: string 
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -162,8 +209,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-
-        // PUT: api/purchaseordersdiscounts/updatespecific/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific purchase order discount by id "api/purchaseordersdiscounts/updatespecific/1"  with events created in purchase order event and user event
+        URL: api/purchaseordersdiscounts/updatespecific/5
+        Request: Put
+        Input: FormBody String
+        output: string 
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
