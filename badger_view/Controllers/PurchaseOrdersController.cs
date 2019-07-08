@@ -157,7 +157,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Orders data by id 
+        URL: /purchaseorders/single/649
+        Request: Get
+        Input: int id
+        output: dynamic object of purchase orders
+        */
         [Authorize]
         public async Task<IActionResult> Single()
         {
