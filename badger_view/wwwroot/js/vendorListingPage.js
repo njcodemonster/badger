@@ -467,6 +467,7 @@ function repsHtml(data) {
     output: vendor note and doc
 */
 $(document).on('click', "#VendorNoteButton", function () {
+    $('#vendorNote').val('');
     var id = $(this).attr('data-id');
     $('#modaladdnote').attr('data-id', id);
     if (id != undefined) {

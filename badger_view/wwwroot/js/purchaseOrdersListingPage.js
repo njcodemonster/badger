@@ -1,20 +1,49 @@
 ﻿$(document).ready(function () {
-
+    /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action:checking value of input number and dot allow
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poTotalQuantity,#poSubtotal,#poShipping").on("keydown", function (event) {
         if ($(this).val().indexOf('.') > -1 && event.which == 190) {
             return false;
         }
           return onlyNumbersWithDot(event);
     });
-
+     /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action:checking value of input number allow only
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poTotalStyles,#poOrderNumber").on("keydown", function (event) {
         return isNumber(event);
     });
-    //P.O. Number
+      /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action: blocking special characters
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poNumber,#poInvoiceNumber").on("keydown", function (event) {
        return blockspecialcharacter(event)
     });
-    // Order Date : Order Delivery Range
+
+    /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action: allow number and back slash
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poOrderDate, #poDelieveryRange").on("keypress keyup blur", function (event) {
         $(this).val($(this).val().replace(/[^0-9- \/ ]/g, ''));
         if ((event.which != 32 || $(this).val().indexOf('/') != -1) && (event.which < 45 || event.which > 57)) {
@@ -22,7 +51,14 @@
         }
        
     });
-
+     /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action: this function is getting single purchase order data or single purchase order page
+        URL:
+        Input: order id
+        output: single purchase order
+    */
     if (window.location.href.indexOf('PurchaseOrders/Single/') > -1) {
         var id = window.location.href.split('Single/')[1]
         getSinglePurchaseOrder(id)
@@ -56,7 +92,15 @@ $('#poDelieveryRange').daterangepicker({
         format: 'M/D/YYYY'
     }
 });
-
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action: this function is getting data from purchase order form and parsing to variable and sends to controller
+    URL:/purchaseorders/newpurchaseorder
+    Request: POST
+    Input: new purchase order form data
+    output: new purchase id
+*/
 $(document).on('click', "#NewPurchaseOrderButton", function () {
 
     var errorNumber = 0;
@@ -211,7 +255,14 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         }
     });
 });
-
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action:converting secont to date
+    URL:
+    Input:time in second
+    output: date
+*/
 function timeToDateConvert(timeinseconds) {
     var datetime = new Date(timeinseconds * 1000);
 
@@ -239,6 +290,15 @@ function timeToDateConvert(timeinseconds) {
     return month + '/' + date + '/' + year;
 }
 
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action:getting data from controller and sending to purchaseOrderData function to show data
+    URL:/purchaseorders/details/
+    REQUEST:GET
+    Input:
+    output: purchase order data
+*/
 
 $(document).on('click', "#EditPurhaseOrder", function () {
     $(".error").remove();
@@ -268,7 +328,15 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     });
 
 });
-
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action: creating discount 
+    URL:/purchaseorders/discountcreate
+    REQUEST:POST
+    Input:Discount data
+    output: discount id
+*/
 window.discount = "";
 $(document).on("click", "#discount_submit", function () {
 
@@ -307,6 +375,15 @@ $(document).on("click", "#discount_submit", function () {
 });
 
 window.adjustment = "";
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action: creating ledger 
+    URL:/purchaseorders/ledgercreate
+    REQUEST:POST
+    Input:ledger data
+    output: ledger id
+*/
 $(document).on("click", "#ledger_submit", function () {
 
     var jsonData = {};
