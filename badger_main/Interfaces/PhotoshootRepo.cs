@@ -28,6 +28,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetAllPhotoshootsModels(Int32 limit);
         Task<Object> GetInprogressPhotoshoot(Int32 limit);
         Task<Object> GetSentToEditorPhotoshoot(Int32 limit);
+        Task<Object> GetPhotoshootSummary();
 
         Task<Object> GetSkuByProduct(string product_id);
 
@@ -57,6 +58,14 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create new photoshoot and return ID of that photoshoot 
+        Input: FromBody
+        output: photoshoot id
+        */
+
         public async Task<string> Create(Photoshoots NewPhotoshoot)
         {
             using (IDbConnection conn = Connection)
@@ -65,6 +74,14 @@ namespace badgerApi.Interfaces
                 return result.ToString() ;
             }
         }
+
+        /*
+        Developer: 
+        Date: 
+        Action: 
+        Input: 
+        output:
+        */
         public async Task<string> Count()
         {
             using (IDbConnection conn = Connection)
@@ -73,6 +90,14 @@ namespace badgerApi.Interfaces
                 return result.FirstOrDefault();
             }
         }
+
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: List of all not started photoshoot with the given limit 
+        Input: FromBody
+        output: photoshoot id
+        */
         public async Task<List<Photoshoots>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -91,8 +116,14 @@ namespace badgerApi.Interfaces
             }
         }
 
-       
 
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: select photoshoot by ID and return photoshoot model
+        Input: int PhotoshootID
+        output: Photoshoot Model
+        */
         public async Task<Photoshoots> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -103,6 +134,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Update Developer: Mohi
+        Date: 7-3-19 
+        Action: update photoshoots all values using common functon UpdateAsync 
+        Input: Photoshoots Model
+        output: boolean return
+        */
         public async Task<Boolean> Update(Photoshoots PhotoshootsToUpdate)
         {
             
@@ -113,6 +151,14 @@ namespace badgerApi.Interfaces
             }
            
         }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: update photoshoots all values using common functon UpdateAsync 
+        Input: Dictionary<String , String> ValuePairs, String where condition
+        output: 
+        */
         public async Task UpdateSpecific(Dictionary<String , String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
@@ -125,6 +171,13 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List of all photoshoot product with the product details which are not started
+        Input: Limit int
+        output: Object photoshoots
+        */
         public async Task<Object> GetPhotoshootDetailsRep(Int32 Limit)
         {
             dynamic photoshootsDetails = new ExpandoObject();
@@ -148,6 +201,13 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
+        /*
+       Developer: Mohi
+       Date: 7-3-19 
+       Action: List of all photoshoot products by photoshoot ID with the product details which are in-progress
+       Input: int PhotoshootId
+       output: Object photoshoots
+       */
         public async Task<Object> GetPhotoshootProducts(Int32 photoshootId)
         {
             dynamic photoshootsDetails = new ExpandoObject();
@@ -165,7 +225,13 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
-
+        /*
+       Developer: Mohi
+       Date: 7-3-19 
+       Action: List of all photoshoots and models
+       Input: int PhotoshootId
+       output: Object photoshoots & models
+       */
         public async Task<Object> GetAllPhotoshootsAndModels()
         {
             dynamic photoshootsDetails = new ExpandoObject();
@@ -173,8 +239,11 @@ namespace badgerApi.Interfaces
             string sQuery2 = "";
 
             
-                sQuery  = "SELECT  photoshoot_id, photoshoot_name FROM photoshoots ";
-                sQuery2 = "SELECT  model_id, model_name FROM photoshoot_models ";
+            sQuery  =   " SELECT p.`photoshoot_id`, p.`photoshoot_name` FROM `photoshoots` p, `product_photoshoots` pp" +
+                        " WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pp.product_shoot_status_id IN(1, 2) " +
+                        " GROUP BY p.`photoshoot_id` ORDER BY p.`photoshoot_id`  ";
+
+            sQuery2 =   "SELECT  model_id, model_name FROM photoshoot_models ";
            
 
             using (IDbConnection conn = Connection)
@@ -189,6 +258,13 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
+        /*
+       Developer: Mohi
+       Date: 7-3-19 
+       Action: Returns list of photoshoot models according to the given limit
+       Input: int limit
+       output: Object photoshoot models
+       */
         public async Task<Object> GetAllPhotoshootsModels(Int32 Limit)
         {
             dynamic photoshootsDetails = new ExpandoObject();
@@ -210,6 +286,13 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Returns list of inprogress photoshoots according to the given limit
+        Input: int limit
+        output: Object photoshoot models
+        */
         public async Task<Object> GetInprogressPhotoshoot(Int32 Limit)
         {
             dynamic photoshootsDetails = new ExpandoObject();
@@ -231,20 +314,34 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Returns the sku object of the given product id 
+        Input: int productId
+        output: ExpandoObject SkuDetails
+        */
         public async Task<Object> GetSkuByProduct(string product_id)
         {
-            dynamic photoshootsDetails = new ExpandoObject();
+            dynamic SkuDetails = new ExpandoObject();
             string sQuery = "";
             sQuery = "Select * from `sku` where `product_id` IN ("+ product_id + ")";
 
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
-                photoshootsDetails = photoshootsModelList;
+                IEnumerable<object> skuResult = await conn.QueryAsync<object>(sQuery);
+                SkuDetails = skuResult;
             }
-            return photoshootsDetails;
+            return SkuDetails;
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Returns sent to editor photoshoot products according to the given limit
+        Input: int Limit
+        output: ExpandoObject Photoshoot
+        */
         public async Task<Object> GetSentToEditorPhotoshoot(Int32 Limit)
         {
             dynamic photoshootsDetails = new ExpandoObject();
@@ -257,6 +354,29 @@ namespace badgerApi.Interfaces
             {
                 sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND  p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 2 ";
             }
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
+                photoshootsDetails.photoshootSendToEditor = photoshootsModelList;
+            }
+            return photoshootsDetails;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Returns photoshoots which are in-progress
+        Input: null
+        output: ExpandoObject Photoshoots
+        */
+
+        public async Task<Object> GetPhotoshootSummary()
+        {
+            dynamic photoshootsDetails = new ExpandoObject();
+            string sQuery = "";
+            
+            sQuery = "SELECT pp.`photoshoot_id`, COUNT(pp.`photoshoot_id`) AS COUNT, p.photoshoot_name, pm.`model_name`, pp.product_shoot_status_id FROM `photoshoots` p, `product_photoshoots` pp, `photoshoot_models` pm WHERE  p.`photoshoot_id` = pp.`photoshoot_id` AND pm.`model_id` = p.`model_id`  AND pp.product_shoot_status_id IN(1,2)  GROUP BY  p.`photoshoot_id` ORDER BY  p.`photoshoot_id`";
 
             using (IDbConnection conn = Connection)
             {

@@ -3,6 +3,7 @@
     ViewData["Title"] = "Single P.O.";
 }
 @section Scripts {
+    <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
 <div class="row">
@@ -35,7 +36,7 @@
     </div>
 </div>
 <div class="row pt-5">
-    <div class="col-md-6">
+    <div class="col-md-8" style="    margin: 0 auto;">
         <form id="newPurchaseOrderForm" data-currentid="" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -54,6 +55,7 @@
                     <input type="text" class="form-control" id="poDelieveryRange">
                 </div>
             </div>
+            <hr />
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>P.O. Number</label>
@@ -64,6 +66,7 @@
                     <input type="text" class="form-control" id="poTotalStyles">
                 </div>
             </div>
+            <hr />
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Invoice Number</label>
@@ -74,6 +77,7 @@
                     <input type="text" class="form-control" id="poTotalQuantity">
                 </div>
             </div>
+            <hr />
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Order Number</label>
@@ -84,6 +88,7 @@
                     <input type="text" class="form-control" id="poSubtotal">
                 </div>
             </div>
+            <hr />
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Order Date</label>
@@ -94,6 +99,7 @@
                     <input type="text" class="form-control" id="poShipping">
                 </div>
             </div>
+            <hr />
             <div class="form-row po_section">
                 <div class="form-group col-md-6">
                     <label>Tracking #</label>
@@ -111,6 +117,7 @@
 
                 </div>
             </div>
+            <hr />
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Upload Images</label>
@@ -122,6 +129,16 @@
                     <label>Purchase Order Notes</label>
                     <textarea class="form-control" id="poNotes"></textarea>
                 </div>
+            </div>
+            <hr />
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <button type="button" class="btn btn-primary" id="EditPurchaseOrderButton" style="margin: 0 auto;">Save</button>
+                </div>
+                <div class="form-group col-md-8">
+                    <div class="poAlertMsg"></div>
+                </div>
+
             </div>
         </form>
     </div>

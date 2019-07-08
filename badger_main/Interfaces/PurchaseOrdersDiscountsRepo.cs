@@ -46,6 +46,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert purchase order discount data to database
+        URL: 
+        Request: Post
+        Input: new Purchase Orders discount data
+        output: string of PurchaseOrders discount id
+        */
         public async Task<string> Create(PurchaseOrderDiscounts NewPurchaseOrder)
         {
             using (IDbConnection conn = Connection)
@@ -55,6 +64,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Total count of purchase order discount data from database
+        URL: 
+        Request: Get
+        Input: null
+        output: string of PurchaseOrders discount count
+        */
         public async Task<string> Count()
         {
             using (IDbConnection conn = Connection)
@@ -64,6 +82,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order discount data by poid from database
+        URL: 
+        Request: Get
+        Input: int poid
+        output: dynamic object of Purchase Orders discount
+        */
         public async Task<object> GetPurchaseOrdersDiscount(int id)
         {
             dynamic poLedger = new ExpandoObject();
@@ -80,6 +107,15 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get All purchase order discount data from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: list of Purchase Orders discount
+        */
         public async Task<List<PurchaseOrderDiscounts>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -97,6 +133,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order discount data by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: list of PurchaseOrders discount
+        */
         public async Task<PurchaseOrderDiscounts> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -107,6 +152,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order discount data by id from database
+        URL: 
+        Request: Put
+        Input: purchase order discount data
+        output: Boolean
+        */
         public async Task<Boolean> Update(PurchaseOrderDiscounts PurchaseOrdersToUpdate)
         {
 
@@ -117,6 +171,16 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update Specific purchase order discount data by id from database
+        URL: 
+        Request: Put
+        Input: fields value and where to update
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

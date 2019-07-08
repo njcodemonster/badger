@@ -48,7 +48,15 @@ namespace badger_view.Controllers
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
         }
-       
+
+        /*
+           Developer: Azeem Hassan
+           Date: 7-3-19 
+           Action: getting all vendors_type vendor_list and vendor_count from badger api
+           URL: index
+           Input: Null
+           output: dynamic ExpandoObject of VendorPageModal
+       */
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
@@ -64,6 +72,14 @@ namespace badger_view.Controllers
             //VendorPageModal.Reps = venderAdressandRep.Reps;
             return View("Index",VendorPageModal);
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action: getting all vendor details note and doc form badger api
+            URL: vendor/details/id
+            Input: vendor id
+            output: dynamic ExpandoObject of vendorDetails
+        */
         [HttpGet("vendor/details/{id}")]
         public async Task<Object> GetDetails(Int32 id)
         {
@@ -76,6 +92,14 @@ namespace badger_view.Controllers
             vendorDetails.venderDocAndNotes = venderDocAndNotes;
             return JsonConvert.SerializeObject(vendorDetails);
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action: send vendor doc to badger api
+            URL: vendor/newvendor_doc
+            Input: vendor file data with vendor id
+            output: file inserting massage
+        */
         [HttpPost("vendor/newvendor_doc")]
         public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
         {
@@ -141,6 +165,14 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action: parsing 3 objects of vender_details,vendor_address,vendor_repo and vendor_note data sends to badger api
+            URL: vendor/newvendor
+            Input: vendor form data json
+            output: vendor id
+        */
         [HttpPost("vendor/newvendor")]
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
         {
@@ -201,6 +233,14 @@ namespace badger_view.Controllers
 
            
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action: parsing 3 objects of vender_details,vendor_address,vendor_repo and vendor_note sends to badger api to update vendor by id
+            URL: vendor/updatevendor
+            Input: vendor form data json
+            output: status success/failed
+        */
         [HttpPost("vendor/updatevendor/{id}")]
         public async Task<String> UpdateNewVendor(int id ,[FromBody]   JObject json)
         {
@@ -278,6 +318,14 @@ namespace badger_view.Controllers
             return vendorStatus;
 
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action:send vendor id to badger api to get not and doc
+            URL: vendor/getvendornoteanddoc/id
+            Input: vendor id
+            output: dynamic venderDocAndNotes
+        */
         [HttpGet("vendor/getvendornoteanddoc/{id}")]
         public async Task<Object> GetNotesAndDoc(Int32 id)
         {
@@ -286,6 +334,15 @@ namespace badger_view.Controllers
        
             return JsonConvert.SerializeObject(venderDocAndNotes);
         }
+
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action:send vendor note to badger api
+            URL: vendor/insertvendornote/id
+            Input: vendor not and vendor id
+            output: new note id
+        */
         [HttpPost("vendor/insertvendornote/{id}")]
         public async Task<String> InsertVendorNote(int id, [FromBody]   JObject json)
         {
@@ -304,6 +361,14 @@ namespace badger_view.Controllers
             }
             return newNoteID;
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-3-19 
+            Action:send vendor id to badger api to get vendor all product
+            URL: vendor/products/id
+            Input: vendor id
+            output: vendor products and sku
+        */
         [HttpGet("vendor/products/{id}")]
         public async Task<Object> GetVendorProducts(Int32 id)
         {

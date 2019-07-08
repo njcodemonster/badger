@@ -34,6 +34,14 @@ namespace badger_view.Controllers
             }
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all Photoshoot Products which are not started from this api url "/Photoshoots/listpageview/10"
+        URL: /Photoshoots
+        Input: Null
+        output: dynamic ExpandoObject of ProductPhotoshoot
+        */
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -45,12 +53,15 @@ namespace badger_view.Controllers
 
         }
 
-        [Authorize]
-        public IActionResult inProgress()
-        {
-           return View("InProgress");
-        }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all Photoshoots which are in-progress from this api url "/Photoshoots/inprogress/"
+        URL: /Photoshoots/shootInProgress
+        Input: Null
+        output: dynamic ExpandoObject of ProductPhotoshoot
+        */
         [Authorize]
         public async Task<IActionResult> shootInProgress()
         {
@@ -65,6 +76,15 @@ namespace badger_view.Controllers
             return View("ShootInProgress", photoshootInProgressModal);
         }
 
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: get all photoshoot products by photoshoot id which are in-progress from this api url "/Photoshoots/GetPhotoshootsProducts/"
+        URL: /Photoshoots/getPhotoshootInProgressProducts/1
+        Input: Photoshoot Id
+        output: dynamic ExpandoObject of PhotoshootInProgressProducts
+        */
         [Authorize]
         [HttpGet("photoshoots/getPhotoshootInProgressProducts/{photoshootId}")]
         public async Task<IActionResult> getPhotoshootInProgressProducts(int photoshootId)
@@ -78,19 +98,33 @@ namespace badger_view.Controllers
             return View("InProgressPhotoshootProductsViewAjax", ProductPhotoshootModal);
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoot products those are SentToEditor from this api url "/Photoshoots/SentToEditorPhotoshoot/"
+        URL: /Photoshoots/sentToEditor/
+        Input: Null
+        output: dynamic ExpandoObject of Photoshoot SentToEditor Products
+        */
         [Authorize]
-        public async Task<IActionResult> sendToEditor()
+        public async Task<IActionResult> sentToEditor()
         {
             SetBadgerHelper();
             ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SentToEditorPhotoshoot/");
             dynamic photoshootSendToEditorModal = new ExpandoObject();
             photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
             return View("SendToEditor", photoshootSendToEditorModal);
-
-
-            //return View("SendToEditor");
         }
 
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: All photoshoot and models from this api url "/Photoshoots/GetPhotoshootsAndModels/"
+        URL: /Photoshoots/getPhotoshootAndModels/
+        Input: Null
+        output: Json string of photoshoot and models 
+        */
         [HttpGet("photoshoots/getPhotoshootAndModels/")]
         public async Task<string> getPhotoshootAndModelsAsync()
         {
@@ -99,6 +133,32 @@ namespace badger_view.Controllers
             return photoshootPagerList.ToString() ;
         }
 
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: List all photoshoots from this api url "/Photoshoots/summary/"
+        URL: /Photoshoots/summary/
+        Input: Null
+        output: dynamic ExpandoObject of Photoshoot Summary
+        */
+        [Authorize]
+        public async Task<IActionResult> summary()
+        {
+            SetBadgerHelper();
+            ProductPhotoshootSendToEditorPagerList photoshootSummary = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/summary/");
+            dynamic photoshootSummaryModal = new ExpandoObject();
+            photoshootSummaryModal.Lists = photoshootSummary.photoshootSendToEditor;
+            return View("summary", photoshootSummaryModal);
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create JObject to add product in photoshoot using this api url "/Photoshoots/StartProductPhotoshoot/{product_id}"
+        URL: /Photoshoots/addProductInPhotoshoot/1/100
+        Input: ProductID, PhotoshootID
+        output: string success or failed
+        */
         [HttpGet("photoshoots/addProductInPhotoshoot/{product_id}/{photoshoot_id}")]
         public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
         {
@@ -115,7 +175,14 @@ namespace badger_view.Controllers
             return AssignPhotoshootStatus;
         }
 
-
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Update product photoshoot status for single product using this api url "/Photoshoots/UpdatePhotoshootProductStatus/{product_id}"
+        URL: /Photoshoots/addProductInPhotoshoot/1/NotStarted
+        Input: ProductID, Status
+        output: string success or failed
+        */
         [HttpGet("photoshoots/UpdatePhotoshootProductStatus/{product_id}/{status}")]
         public async Task<string> UpdatePhotoshootProductStatus(string product_id, string status)
         {
@@ -146,7 +213,14 @@ namespace badger_view.Controllers
             return returnStatus;
         }
 
-        [Authorize]
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create JObject of photoshoot to add new and add product in that photoshoot using this api url "/Photoshoots/create/{product_id}" and "/photoshoots/StartProductPhotoshoot/{product_id}"
+        URL: /Photoshoots/addNewPhotoshoot/1/NotStarted
+        Input: FromBody   
+        output: string success or failed
+        */
         [HttpPost("photoshoots/addNewPhotoshoot")]
         public async Task<String> addNewPhotoshoot([FromBody]   JObject json)
         {
@@ -181,7 +255,14 @@ namespace badger_view.Controllers
             return AssignPhotoshootStatus;
         }
 
-        [Authorize]
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Update product photoshoot status for multiple products using this api url "/Photoshoots/UpdatePhotoshootProductStatus/{product_id}"
+        URL: /Photoshoots/addProductInPhotoshoot/1/NotStarted
+        Input: FromBody
+        output: string success or failed
+        */
         [HttpPost("photoshoots/updateMultiplePhotoshootStatus")]
         public async Task<String> updateMultiplePhotoshootStatus([FromBody]   JObject json)
         {
@@ -211,6 +292,37 @@ namespace badger_view.Controllers
             photoshoot.Add("updated_at", _common.GetTimeStemp());
 
             string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(photoshoot.ToString(Formatting.None), "/Photoshoots/UpdatePhotoshootProductStatus/" + product_id);
+            return returnStatus;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create JObject of photoshoot to add new photoshoot using this api url "/Photoshoots/create/" 
+        URL: /Photoshoots/addNewPhotoshootModel/
+        Input: FromBody   
+        output: string success or failed
+        */
+        [HttpPost("photoshoots/addNewPhotoshootModel")]
+        public async Task<String> addNewPhotoshootModel([FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            string user_id = await _ILoginHelper.GetLoginUserId();
+
+            JObject photoshootModel = new JObject();
+            photoshootModel.Add("model_name", json.Value<string>("model_name"));
+            photoshootModel.Add("model_height", json.Value<string>("model_height"));
+            photoshootModel.Add("model_hair", json.Value<string>("model_hair"));
+            photoshootModel.Add("model_ethnicity", json.Value<string>("model_ethnicity"));
+
+            photoshootModel.Add("active_status", 1);
+            photoshootModel.Add("created_by", user_id);
+            photoshootModel.Add("updated_by", 0);
+            photoshootModel.Add("created_at", _common.GetTimeStemp());
+            photoshootModel.Add("updated_at", 0);
+
+            String returnStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshootModel.ToString(Formatting.None), "/PhotoshootModels/create/");
+
             return returnStatus;
         }
     }

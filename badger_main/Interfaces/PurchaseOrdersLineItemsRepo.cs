@@ -41,6 +41,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert purchase order line item data to database
+        URL: 
+        Request: Post
+        Input: new Purchase Orders line item data
+        output: string of PurchaseOrders line item id
+        */
         public async Task<string> Create(PurchaseOrderLineItems NewPoLineItem)
         {
             using (IDbConnection conn = Connection)
@@ -50,6 +59,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get All purchase order line item data from database
+        URL: 
+        Request: Get
+        Input: int limit
+        output: list of PurchaseOrders line item
+        */
         public async Task<List<PurchaseOrderLineItems>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -67,8 +85,15 @@ namespace badgerApi.Interfaces
             }
         }
 
-
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order line item data by id from database
+        URL: 
+        Request: Get
+        Input: int id
+        output: list of PurchaseOrders line item
+        */
         public async Task<PurchaseOrderLineItems> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -79,6 +104,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update purchase order line item data by id from database
+        URL: 
+        Request: Put
+        Input: purchase order line item data
+        output: Boolean
+        */
         public async Task<Boolean> Update(PurchaseOrderLineItems PoLineItemToUpdate)
         {
 
@@ -89,6 +123,16 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update Specific purchase order line item data by id from database
+        URL: 
+        Request: Put
+        Input: fields value and where to update
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
