@@ -69,9 +69,7 @@ namespace badger_view.Controllers
             VendorPageModal.VendorCount = vendorPagerList.Count; 
             VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
             VendorPageModal.VendorType = vendorPagerList.vendorType;
-            // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
-
-            //VendorPageModal.Reps = venderAdressandRep.Reps;
+       
             return View("Index",VendorPageModal);
         }
         /*
@@ -113,20 +111,7 @@ namespace badger_view.Controllers
             string messageAlreadyDocuments = "";
             try
             {
-                //string Fill_path = vendorDoc.vendorDocuments.FileName;
-                //Fill_path = UploadPath + Fill_path;
-                //using (var stream = new FileStream(Fill_path, FileMode.Create))
-                //{
-                //    await vendorDoc.vendorDocument.CopyToAsync(stream);
-                //    int ref_id = Int32.Parse(vendorDoc.Vendor_id);
-                //    JObject vendorDocuments = new JObject();
-                //    vendorDocuments.Add("ref_id", ref_id);
-                //    vendorDocuments.Add("url", Fill_path);
-                //    await _BadgerApiHelper.GenericPostAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/documentcreate");
-                //}
-                //return Fill_path;
-
-
+             
                 List<IFormFile> files = vendorDoc.vendorDocuments;
 
                 foreach (var formFile in files)
