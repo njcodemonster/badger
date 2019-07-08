@@ -275,11 +275,13 @@
 @{ int First = 0;}
 @foreach (PurchaseOrdersInfo purchaseOrder in Model.POList)
 {
+    
     <table class="table outerboddy">
         <tr>
             <td>
-                <h5>Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a></h5>
+                <h5>Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a>  <span class="expand_vendor" id="@purchaseOrder.po_id">Expand this PO</span></h5>
                 <h5>Vendor Name: <a href="#">@purchaseOrder.vendor</a></h5>
+               
             </td>
             <td class="align-middle">
                 <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
@@ -322,12 +324,12 @@
                 @:<div class="card">
                     <div class="card-header" id="headingOne">
                         <h2 class="mb-0">
-                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
+                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)" ><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
                             <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
                         </h2>
                         <div class="message"></div>
                     </div>
-                    @:<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionpomgmt">
+                    @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionpomgmt">
                         @:<div class="card-body table-responsive">
                             @:<table class="table text-center borderless" style="width:100%">
                                 <thead>

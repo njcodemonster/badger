@@ -62,8 +62,16 @@ namespace badgerApi.Controllers
             }
             return ToReturn;
         }
+        /*
+         Developer: ubaid
+         Date:5-7-19
+         Action:get HTML Form (New Styles attributes values Data) from VIEW and pass the data to API Attributes values Repo 
+         URL: /attributevalues/create
+         Input: HTML form Body Json with the data of new Style attributes values and product_id
+         output: New attribute values id
+         */
 
-        // GET: api/attributevalues/create
+        // POST: api/attributevalues/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {

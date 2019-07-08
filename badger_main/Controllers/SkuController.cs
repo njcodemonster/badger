@@ -80,14 +80,14 @@ namespace badgerApi.Controllers
         }
 
         /*
-        Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Create new sku "api/sku/create"
-        URL: api/sku/create
-        Request: Post
-        Input: FromBody string
-        output: string of sku id
-        */
+          Developer: ubaid
+          Date:5-7-19
+          Action:get HTML Form (New Styles SKUs Data) from VIEW and pass the data to API SKU Repo 
+          URL: /sku/create
+          Input: HTML form Body Json with the data of new Styles SKU and product_id
+          output: New SKU id
+          */
+        // POST: api/sku/create
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {

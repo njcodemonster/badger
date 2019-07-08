@@ -41,8 +41,16 @@
                     return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
                 }
             }
-
-            public async Task<string> Create(VendorContactPerson NewVendorRep)
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: creating new vendor repo to database
+          URL: 
+          Request:POST
+          Input: vendor repo
+          output: result
+       */
+        public async Task<string> Create(VendorContactPerson NewVendorRep)
             {
                 using (IDbConnection conn = Connection)
                 {
@@ -50,7 +58,16 @@
                     return result.ToString();
                 }
             }
-            public async Task<Boolean> Update(VendorContactPerson VendorToUpdate)
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: update vendor repo to database
+          URL: 
+          Request:PUT
+          Input: vendor repo
+          output: result
+       */
+        public async Task<Boolean> Update(VendorContactPerson VendorToUpdate)
             {
 
                 using (IDbConnection conn = Connection)

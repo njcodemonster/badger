@@ -1,4 +1,9 @@
-﻿// check is number press
+﻿
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action: checking is number press
+*/
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -9,7 +14,11 @@ function isNumber(evt) {
     return true;
 }
 
-// block special characters 
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action:  block special characters 
+*/
 function blockspecialcharacter(e) {
     let key = e.key;
             let keyCharCode = key.charCodeAt(0);
@@ -34,13 +43,22 @@ function blockspecialcharacter(e) {
             return false;
 }
 
-// check email valid
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action:  check email valid
+*/
 function isEmail(email) {
   var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   return regex.test(email);
 }
 
-// only number and dots allow
+
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action: only number and dots allow 
+*/
 function onlyNumbersWithDot(e) {           
     var charCode;
     if (e.keyCode > 0) {
@@ -61,6 +79,11 @@ function onlyNumbersWithDot(e) {
     return true;
 }
 
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action:  check email valid
+*/
 function allLetterAllow(event){
   var inputValue = event.which;
         // allow letters and whitespaces only.
@@ -68,7 +91,11 @@ function allLetterAllow(event){
           return false
         }
 }
-
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action:  alert function for any event success or failed. give area action and massage to print
+*/
 function alertBox(area, action, massage) {
     var color = 'success'
     if (action == 'red')
@@ -82,7 +109,11 @@ function alertBox(area, action, massage) {
         $('.alert').remove()
     }, 3000)
 }
-// global confirmation function
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action:  aler for confirmation  yes or no .give heading description and return callback
+*/
 function confirmationBox(heading,description,callback) {
     var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
         '<h4 class="alert-heading">' + heading + '</h4>' +
@@ -102,6 +133,11 @@ function confirmationBox(heading,description,callback) {
     })
 }
 
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
+  action:  check any field validtaion give form id and return true/false
+*/
 function emptyFeildValidation(id){
     $('.errorMsg').remove();
     var notvalid = true;
