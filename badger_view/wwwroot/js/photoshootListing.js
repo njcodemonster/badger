@@ -98,6 +98,7 @@ Output: it will add photoshoots & models in add new photoshoot modal and open
 */
 function AddToShootSingle(shootProductId, statusId) {
     window.photoShootRowId = shootProductId;
+    var ProductName = $("#tableRow_" + shootProductId + " .productName").html();
     $("#AddToPhotoshootProductId").val(shootProductId);
     if (statusId == 1) {
         $.ajax({
@@ -119,9 +120,12 @@ function AddToShootSingle(shootProductId, statusId) {
             $(".allPhotoshootList").html(allPhotoshootListHTML);
 
             $("#AllModels").find('option').remove()
+            $("#AllModels").append(new Option("Choose...", ""));
             $(jsonPhotoshootsModelsList).each(function (i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
+            $("#modalAddNewPhotoshoot .modal-title").html("Add to photoshoot <small> (" + ProductName + ") </small>");
+
             $("#modalAddNewPhotoshoot").modal('show');
         }); 
     }
@@ -250,11 +254,17 @@ Output: it closes the add new modal and remove the selected prodcut from the cur
 */
 function moveSelectedToPhotoshoot() {
     var productAddToShoot = [];
+    var productNameList = [];
     $.each($("input[name='productAddToShoot']:checked"), function () {
+        var id = $(this).val();
         productAddToShoot.push($(this).val());
+        productName = $("#tableRow_" + id + " .productName").html();
+        productNameList.push("&nbsp; "+productName );
+
     });
     if (productAddToShoot.length > 0) {
         var product_ids = productAddToShoot.join(","); 
+        var all_products = productNameList.join(", ");
         $("#AddToPhotoshootProductId").val(productAddToShoot.join(","));
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
@@ -274,10 +284,12 @@ function moveSelectedToPhotoshoot() {
             });
             $(".allPhotoshootList").html(allPhotoshootListHTML);
 
-            $("#AllModels").find('option').remove()
+            $("#AllModels").find('option').remove();
+            $("#AllModels").append(new Option("Choose...", ""));
             $(jsonPhotoshootsModelsList).each(function (i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
+            $("#modalAddNewPhotoshoot .modal-title").html("Add to photoshoot <small> (" + productNameList + ") </small>");
             $("#modalAddNewPhotoshoot").modal('show');
         });
     }
@@ -295,15 +307,8 @@ function updatephotoshootStatus(productId, photoshoot_id, status) {
     
     $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
 
-    var statusUpdate = "";
-    if (status == 0) {
-        statusUpdate = "NotStarted";
-    } else if (status == 2) {
-        statusUpdate = "SendToEditor";
-    }
-
     $.ajax({
-        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + statusUpdate,
+        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + status,
         dataType: 'html',
         type: 'GET',
         contentType: 'application/json',
@@ -328,15 +333,9 @@ Output: it removes the current product from the list
 */
 function changeShootStatusOnSendToEditor(productId, status) {
     $(".loading-box").css("visibility", "visible");
-    var statusUpdate = "";
-    if (status == 0) {
-        statusUpdate = "NotStarted";
-    } else if (status == 1) {
-        statusUpdate = "InProgress";
-    }
-
+      
     $.ajax({
-        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + statusUpdate,
+        url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + status,
         dataType: 'html',
         type: 'GET',
         contentType: 'application/json',
@@ -486,7 +485,7 @@ function addNewPhotoshootModel() {
             if (data != "0") {
                 $("#modaladdmodel").modal('hide');
                 $("#AllModels").append(new Option(name, data));
-                $('#AllModels').val(data);
+                //$('#AllModels').val(data);
                 $('#NewModelForm')[0].reset();
                 $("#_modal_loader").fadeOut(200);
             } else {

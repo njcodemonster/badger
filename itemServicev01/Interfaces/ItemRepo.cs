@@ -38,7 +38,7 @@ namespace itemService.Interfaces
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
         Task SetProductItemSentToPhotoshoot(string product_id);
 
-        Task<String> SetProductItemForPhotoshoot(int skuId, string status);
+        Task<String> SetProductItemForPhotoshoot(int skuId, int status);
 
     }
     public class ItemRepo : ItemRepository
@@ -46,6 +46,8 @@ namespace itemService.Interfaces
         private readonly IConfiguration _config;
         private string TableName = "items";
         private string selectlimit = "30";
+
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
 
         public ItemRepo(IConfiguration config)
         {
@@ -678,7 +680,7 @@ namespace itemService.Interfaces
 
         }
 
-        public async Task<String> SetProductItemForPhotoshoot(int skuId, string status) {
+        public async Task<String> SetProductItemForPhotoshoot(int skuId, int status) {
 
             string ToReturn = "success";
 
@@ -686,11 +688,11 @@ namespace itemService.Interfaces
             string itemSelectQuery = "";
             string itemUpdateQuery = "";
 
-            if (status== "SentToPhotoshoot")
+            if (status == 1)
             {
                 itemSelectQuery = "SELECT * FROM items where items.sku_id= " + skuId.ToString() + " ORDER BY RAND() LIMIT 1;";
             }
-            else if (status == "PhotoshootNotStarted") {
+            else if (status == 0) {
                 itemSelectQuery = "SELECT * FROM items where items.sku_id= " + skuId.ToString() + " AND item_status_id = 6;";
             }
 
@@ -701,13 +703,13 @@ namespace itemService.Interfaces
 
             if (item.Count() > 0)
             {
-                if (status == "SentToPhotoshoot")
+                if (status == 1)
                 {
-                    itemUpdateQuery = "update items set  item_status_id = 6 where item_id = " + item.First().item_id.ToString() + "; ";
+                    itemUpdateQuery = "update items set  item_status_id = 6, updated_at = "+_common.GetTimeStemp() +" where item_id = " + item.First().item_id.ToString() + "; ";
                 }
-                else if (status == "PhotoshootNotStarted")
+                else if (status == 0)
                 {
-                    itemUpdateQuery = "update items set  item_status_id = 1 where item_id = " + item.First().item_id.ToString() + "; ";
+                    itemUpdateQuery = "update items set  item_status_id = 1, updated_at = " + _common.GetTimeStemp() + " where item_id = " + item.First().item_id.ToString() + "; ";
                 }
                 using (IDbConnection conn = Connection)
                 {

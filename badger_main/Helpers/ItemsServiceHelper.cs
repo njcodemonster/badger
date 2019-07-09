@@ -42,7 +42,7 @@ namespace badgerApi.Helper
         Task<string> ItemUpdateById(int id, string json);
         Task<string> SkuUpdateById(int id, string json);
         Task<T> GenericPostAsync<T>(T json, String _call);
-        Task<string> SetProductItemStatusForPhotoshootAsync(string json, string status);
+        Task<string> SetProductItemStatusForPhotoshootAsync(string json, int status);
 
     }
         public class ItemsServiceHelper:IItemServiceHelper
@@ -127,7 +127,7 @@ namespace badgerApi.Helper
             return data;
         }
 
-        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , string status)
+        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , int status)
         {
             var client = new HttpClient();
             var response = await client.PostAsJsonAsync(ItemApiUrl + "/item/UpdateProductItemForPhotoshoot/"+ status, json );

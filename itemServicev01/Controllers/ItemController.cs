@@ -342,7 +342,7 @@ namespace itemService.Controllers
 
         
         [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
-        public async Task<string> UpdateProductItemForPhotoshoot([FromBody]   string value, string status)
+        public async Task<string> UpdateProductItemForPhotoshoot([FromBody]   string value, int status)
         {
             string toReturn= "success";
             string response = "";

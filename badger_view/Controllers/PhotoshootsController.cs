@@ -68,8 +68,7 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             
             ProductPhotoshootInProgressPagerList photoshootInProgress         = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootInProgressPagerList>("/Photoshoots/inprogress/");
-            var a = photoshootInProgress.photoshootsInprogress;
-
+            
             dynamic photoshootInProgressModal   = new ExpandoObject();
             photoshootInProgressModal.Lists     = photoshootInProgress.photoshootsInprogress;
 
@@ -125,6 +124,7 @@ namespace badger_view.Controllers
         Input: Null
         output: Json string of photoshoot and models 
         */
+        [Authorize]
         [HttpGet("photoshoots/getPhotoshootAndModels/")]
         public async Task<string> getPhotoshootAndModelsAsync()
         {
@@ -159,15 +159,17 @@ namespace badger_view.Controllers
         Input: ProductID, PhotoshootID
         output: string success or failed
         */
+        [Authorize]
         [HttpGet("photoshoots/addProductInPhotoshoot/{product_id}/{photoshoot_id}")]
         public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
         {
             SetBadgerHelper();
+            string user_id = await _ILoginHelper.GetLoginUserId();
 
             JObject assignPhotoshoot = new JObject();
             assignPhotoshoot.Add("photoshoot_id", photoshoot_id);
             assignPhotoshoot.Add("product_shoot_status_id", 1);
-            assignPhotoshoot.Add("updated_by", 2);
+            assignPhotoshoot.Add("updated_by", user_id);
             assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
 
             String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/StartProductPhotoshoot/" + product_id);
@@ -183,29 +185,16 @@ namespace badger_view.Controllers
         Input: ProductID, Status
         output: string success or failed
         */
+        [Authorize]
         [HttpGet("photoshoots/UpdatePhotoshootProductStatus/{product_id}/{status}")]
         public async Task<string> UpdatePhotoshootProductStatus(string product_id, string status)
         {
             SetBadgerHelper();
-            string status_id = "";
-            if (status == "NotStarted")
-            {
-                status_id = "0";
-            }
-            else if (status == "InProgress")
-            {
-                status_id = "1";
-            }
-            else if (status == "SendToEditor")
-            {
-                status_id = "2";
-            }
-
-
+              
             string user_id = await _ILoginHelper.GetLoginUserId();
             
             JObject photoshoot = new JObject();
-            photoshoot.Add("product_shoot_status_id", status_id);
+            photoshoot.Add("product_shoot_status_id", status);
             photoshoot.Add("updated_by", user_id);
             photoshoot.Add("updated_at", _common.GetTimeStemp());
 
@@ -221,6 +210,7 @@ namespace badger_view.Controllers
         Input: FromBody   
         output: string success or failed
         */
+        [Authorize]
         [HttpPost("photoshoots/addNewPhotoshoot")]
         public async Task<String> addNewPhotoshoot([FromBody]   JObject json)
         {
@@ -263,31 +253,18 @@ namespace badger_view.Controllers
         Input: FromBody
         output: string success or failed
         */
+        [Authorize]
         [HttpPost("photoshoots/updateMultiplePhotoshootStatus")]
         public async Task<String> updateMultiplePhotoshootStatus([FromBody]   JObject json)
         {
-            SetBadgerHelper();
-            string status_id    = "";
+            SetBadgerHelper(); 
             string status       = json.Value<string>("status");
             string product_id   = json.Value<string>("product_id");
-
-            if (status == "NotStarted")
-            {
-                status_id = "0";
-            }
-            else if (status == "InProgress")
-            {
-                status_id = "1";
-            }
-            else if (status == "SendToEditor")
-            {
-                status_id = "2";
-            }
-
+             
             string user_id = await _ILoginHelper.GetLoginUserId();
 
             JObject photoshoot = new JObject();
-            photoshoot.Add("product_shoot_status_id", status_id);
+            photoshoot.Add("product_shoot_status_id", status);
             photoshoot.Add("updated_by", user_id);
             photoshoot.Add("updated_at", _common.GetTimeStemp());
 
@@ -303,6 +280,7 @@ namespace badger_view.Controllers
         Input: FromBody   
         output: string success or failed
         */
+        [Authorize]
         [HttpPost("photoshoots/addNewPhotoshootModel")]
         public async Task<String> addNewPhotoshootModel([FromBody]   JObject json)
         {
