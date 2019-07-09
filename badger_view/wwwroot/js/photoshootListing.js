@@ -452,3 +452,46 @@ function updateMultipleProductStatusOnSentToEditor(Status) {
         
     }
 }
+
+/*
+Developer: Mohi
+Date: 7-8-19
+Action: it will add new photoshoot model 
+Input: Name, height, hair, Ethnicity
+Output: it will add new model & update models in Add new photoshoot modals 
+*/
+function addNewPhotoshootModel() {
+    $("#_modal_loader").fadeIn(200);
+    var name    = $("#model_name").val();
+    var height  = $("#model_height").val();
+    var hair    = $("#model_hair").val();
+    var ethnicity = $("#model_ethnicity").val();
+
+    if (name != '' && height != '' && hair != '' && ethnicity != '') {
+
+        var jsonData = {};
+        jsonData["model_name"] = name;
+        jsonData["model_height"] = height;
+        jsonData["model_hair"] = hair;
+        jsonData["model_ethnicity"] = ethnicity;
+
+        $.ajax({
+            url: '/Photoshoots/addNewPhotoshootModel/',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+
+        }).always(function (data) {
+            if (data != "0") {
+                $("#modaladdmodel").modal('hide');
+                $("#AllModels").append(new Option(name, data));
+                $('#AllModels').val(data);
+                $('#NewModelForm')[0].reset();
+                $("#_modal_loader").fadeOut(200);
+            } else {
+                
+            }
+        });
+    }
+}

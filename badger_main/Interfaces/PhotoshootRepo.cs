@@ -239,8 +239,11 @@ namespace badgerApi.Interfaces
             string sQuery2 = "";
 
             
-                sQuery  = "SELECT  photoshoot_id, photoshoot_name FROM photoshoots ";
-                sQuery2 = "SELECT  model_id, model_name FROM photoshoot_models ";
+            sQuery  =   " SELECT p.`photoshoot_id`, p.`photoshoot_name` FROM `photoshoots` p, `product_photoshoots` pp" +
+                        " WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pp.product_shoot_status_id IN(1, 2) " +
+                        " GROUP BY p.`photoshoot_id` ORDER BY p.`photoshoot_id`  ";
+
+            sQuery2 =   "SELECT  model_id, model_name FROM photoshoot_models ";
            
 
             using (IDbConnection conn = Connection)
