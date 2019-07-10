@@ -521,6 +521,11 @@ $(document).on('click', "#addVendorNote", function () {
 $(document).on('change', "#vendorDocument", function () {
     $('.documentsLink').remove()
 });
+$(document).on('change', "#vendortype", function () {
+   $(this).removeClass('errorFeild');
+   $(this).parents('.form-group').find('.errorMsg').remove();
+});
+
 $(document).on('click', ".deleteImage", function () {
     var jsonData = {};
     var _this = $(this);
