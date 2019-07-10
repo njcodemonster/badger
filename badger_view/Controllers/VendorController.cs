@@ -152,10 +152,10 @@ namespace badger_view.Controllers
         /*
            Developer: Azeem Hassan
            Date: 7-3-19 
-           Action: send vendor logo to badger api
-           URL: vendor/newvendor_logo
+           Action: delete vendor logo form folder and update to badger api
+           URL: vendor/deletevendor_logo
            Input: vendor file data with vendor id
-           output: file inserting massage
+           output: file deleted massage
        */
         [Authorize]
         [HttpPost("vendor/deletevendor_logo")]
