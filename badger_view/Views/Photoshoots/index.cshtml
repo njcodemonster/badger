@@ -52,8 +52,9 @@
                     <td class="productName">@photoshoot.product_name</td>
                     <td><b>@photoshoot.color</b></td>
                     <td><b>@photoshoot.sku_family</b></td>
-                    <td></td>
+                    <td>@photoshoot.po_status</td>
                     <td id="shootRow_@photoshoot.product_id">
+                        
                         <select class="browser-default custom-select" onchange="AddToShootSingle(@photoshoot.product_id, this.value)">
                             <option value="0" selected>Shoot not started</option>
                             <option value="1">Add to photoshoot</option>

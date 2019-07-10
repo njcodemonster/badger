@@ -184,11 +184,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                 sQuery = "  SELECT  ps.product_shoot_status_id , p.product_id, p.vendor_color_name as color, p.product_vendor_image, p.product_name, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0 )  AND p.`vendor_id` = v.`vendor_id` Limit " + Limit.ToString() + " ;";
+                 sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2  Limit " + Limit.ToString() + " ;";
             }
             else
             {
-                 sQuery = "SELECT  ps.product_shoot_status_id , p.product_id, p.product_name, p.vendor_color_name as color, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0 ) AND p.`vendor_id` = v.`vendor_id`; ";
+                 sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` pos.`po_status_id` AND pos.`po_status_id` <> 2; ";
             }
 
             using (IDbConnection conn = Connection)

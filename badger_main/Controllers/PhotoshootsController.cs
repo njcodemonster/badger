@@ -404,8 +404,10 @@ namespace badgerApi.Controllers
                     }
                 }
 
-                
-                 await SetProductItemStatusForPhotoshoot(productId, Int32.Parse( PhotoshootStatus) );
+                if (PhotoshootStatus == "0" || PhotoshootStatus == "1")
+                {
+                    await SetProductItemStatusForPhotoshoot(productId, Int32.Parse(PhotoshootStatus));
+                }
             }
             catch (Exception ex)
             {
