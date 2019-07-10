@@ -143,8 +143,8 @@ function emptyFeildValidation(id){
     $('.errorMsg').remove();
     var notvalid = true;
     var emailvalid = true;
-    $('#'+id+' input').removeClass('errorFeild');
-    $('#'+id+' input').each(function (){
+    $('#'+id+' input,#'+id+' select').removeClass('errorFeild');
+    $('#'+id+' input,#'+id+' select').each(function (){
         if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = false;
             $(this).addClass('errorFeild');

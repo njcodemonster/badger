@@ -156,7 +156,7 @@ $(document).on('click', "#EditVendor", function () {
         var addresses = vendorData.Addresses;
         var reps = vendorData.Reps;
         var notes = vendorNoteAndDoc.note;
-        var documents = vendorNoteAndDoc.doc;
+        var documents = vendor.upload_logo
         $("#newVendorForm").data("currentID",vendor.vendor_id);
         $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name+")");
         if(notes.length > 0)
@@ -179,11 +179,11 @@ $(document).on('click', "#EditVendor", function () {
             $('#newVendorForm').attr('data-address-id',add1.vendor_address_id);
         }
         $('.documentsLink').remove();
-        if (documents.length > 0) {
-            for (var i = 0; i < documents.length; i++) {
-                var html = '';
-                html += '<a class="documentsLink" data-val="'+documents[i].url+'" href="">'+documents[i].url+'<span style="color:red;margin-left:10px">&times;</span></a><br>';
-            }
+        if (documents != '') {
+            //for (var i = 0; i < documents.length; i++) {
+
+                var html = '<a onclick="return false" class="documentsLink" data-val="'+documents+'" href="">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
+            //}
             $('#vendorDocument').parent('div').append(html)
         }
         if (reps.length > 0) {
@@ -217,7 +217,7 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["corp_name"] = $('#vendorCorpName').val();
     jsonData["statement_name"] = $('#vendorStatmentName').val();
     jsonData["vendor_code"] = $('#vendorCode').val();
-     jsonData["vendor_type"] = $('#vendortype').val();
+    jsonData["vendor_type"] = $('#vendortype').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
     jsonData["vendor_description"] = $('#vendorDec').val();
@@ -226,6 +226,11 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["vendor_state"] = $('#vendorState').val();
     jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
     jsonData["address_id"] = $('#newVendorForm').attr('data-address-id');
+    if ($('.documentsLink').text() != '') {
+        jsonData["upload_logo"] = $('.documentsLink').attr('data-val');
+    } else {
+        jsonData["upload_logo"] = '';
+    }
      if($('#vendorNotes').val() != $('#vendorNotes').attr('data-value')) {
          jsonData["vendor_notes"] = $('#vendorNotes').val();
          $('#vendorNotes').attr('data-value',$('#vendorNotes').val())
@@ -272,16 +277,8 @@ $(document).on('click', "#EditVendorButton", function () {
                 var formData = new FormData();
                 formData.append('Vendor_id', id);
                 var files = $("#newVendorForm #vendorDocument")[0].files;
-
-                    for (var i = 0; i != files.length; i++) {
-                        if ($('#documentsLink').attr('data-val')) {
-                            if($('#documentsLink').attr('data-val').indexOf(files[i].name) == -1)
-                                formData.append("vendorDocuments", files[i]);
-                        } else {
-                            formData.append("vendorDocuments", files[i]);
-                        }
-                         //formData.append("vendorDocuments", files[i]);
-                    }
+                if (files.length > 0) {
+                    formData.append("vendorDocuments", files[0]);
                     $.ajax({
                         url: "/vendor/newvendor_logo",
                         type: 'POST',
@@ -292,7 +289,7 @@ $(document).on('click', "#EditVendorButton", function () {
                     }).always(function (data) {
                         console.log(data);
                     });
-               
+                }
                     $('#newVendorModal').modal('hide'); 
               
             } else {
@@ -519,4 +516,26 @@ $(document).on('click', "#addVendorNote", function () {
            $('#modaladdnote').modal('hide');
         })
     }
+});
+
+$(document).on('change', "#vendorDocument", function () {
+    $('.documentsLink').remove()
+});
+$(document).on('click', ".deleteImage", function () {
+    var jsonData = {};
+    var _this = $(this);
+    jsonData["vendorDocuments"] = $(this).parents('.documentsLink').attr('data-val');
+    jsonData["Vendor_id"] =  $("#newVendorForm").data("currentID");
+    $.ajax({
+        url: "/vendor/deletevendor_logo",
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data:  JSON.stringify(jsonData) ,
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if(data.responseText != '0')
+        _this.parents('.documentsLink').remove()
+    });
 });
