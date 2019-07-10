@@ -96,14 +96,14 @@ namespace badger_view.Controllers
         /*
             Developer: Azeem Hassan
             Date: 7-3-19 
-            Action: send vendor doc to badger api
-            URL: vendor/newvendor_doc
+            Action: send vendor logo to badger api
+            URL: vendor/newvendor_logo
             Input: vendor file data with vendor id
             output: file inserting massage
         */
         [Authorize]
-        [HttpPost("vendor/newvendor_doc")]
-        public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
+        [HttpPost("vendor/newvendor_logo")]
+        public async Task<String> CreateNewVendorLogo(vendorFileData vendorLogo)
         {
             SetBadgerHelper();
             string loginUserId = await _LoginHelper.GetLoginUserId();
@@ -112,7 +112,7 @@ namespace badger_view.Controllers
             try
             {
              
-                List<IFormFile> files = vendorDoc.vendorDocuments;
+                List<IFormFile> files = vendorLogo.vendorDocuments;
 
                 foreach (var formFile in files)
                 {
@@ -130,18 +130,14 @@ namespace badger_view.Controllers
                             using (var stream = new FileStream(Fill_path, FileMode.Create))
                             {
                                 messageDocuments += Fill_path + " \r\n";
-                                
+
                                 awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
-
-                                int ref_id = Int32.Parse(vendorDoc.Vendor_id);
+                                int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();
-                                vendorDocuments.Add("ref_id", ref_id);
-                                vendorDocuments.Add("created_by", Int32.Parse(loginUserId));
-                                vendorDocuments.Add("url", Fill_path);
-                                await _BadgerApiHelper.GenericPostAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/documentcreate");
-
-
+                                vendorDocuments.Add("vendor_id", ref_id);
+                                vendorDocuments.Add("upload_logo", Fill_path);
+                                await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/"+ vendorLogo.Vendor_id);
                             }
                         }
                     }
