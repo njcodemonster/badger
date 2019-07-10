@@ -100,11 +100,12 @@ function alertBox(area, action, massage) {
     var color = 'success'
     if (action == 'red')
         color = 'danger'
-    var html = '<div style="width: 50%;" class="alert alert-' + color + ' alert-dismissible">' +
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" class="alert alert-' + color + ' alert-dismissible">' +
         '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
         massage +
         '</div>';
-    $('.' + area).html(html);
+     $('.' + area).html('');
+     $('body').append(html);
     setTimeout(function () {
         $('.alert').remove()
     }, 3000)
@@ -142,8 +143,8 @@ function emptyFeildValidation(id){
     $('.errorMsg').remove();
     var notvalid = true;
     var emailvalid = true;
-    $('#'+id+' input').removeClass('errorFeild');
-    $('#'+id+' input').each(function (){
+    $('#'+id+' input,#'+id+' select').removeClass('errorFeild');
+    $('#'+id+' input,#'+id+' select').each(function (){
         if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
             notvalid = false;
             $(this).addClass('errorFeild');

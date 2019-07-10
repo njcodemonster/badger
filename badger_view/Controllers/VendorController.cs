@@ -96,14 +96,14 @@ namespace badger_view.Controllers
         /*
             Developer: Azeem Hassan
             Date: 7-3-19 
-            Action: send vendor doc to badger api
-            URL: vendor/newvendor_doc
+            Action: send vendor logo to badger api
+            URL: vendor/newvendor_logo
             Input: vendor file data with vendor id
             output: file inserting massage
         */
         [Authorize]
-        [HttpPost("vendor/newvendor_doc")]
-        public async Task<String> CreateNewVendorDoc(vendorFileData vendorDoc)
+        [HttpPost("vendor/newvendor_logo")]
+        public async Task<String> CreateNewVendorLogo(vendorFileData vendorLogo)
         {
             SetBadgerHelper();
             string loginUserId = await _LoginHelper.GetLoginUserId();
@@ -112,7 +112,7 @@ namespace badger_view.Controllers
             try
             {
              
-                List<IFormFile> files = vendorDoc.vendorDocuments;
+                List<IFormFile> files = vendorLogo.vendorDocuments;
 
                 foreach (var formFile in files)
                 {
@@ -120,7 +120,6 @@ namespace badger_view.Controllers
                     {
                         string Fill_path = formFile.FileName;
                         Fill_path = UploadPath + Fill_path;
-
                         if (System.IO.File.Exists(Fill_path))
                         {
                             messageAlreadyDocuments += "File Already Exists: " + Fill_path + " \r\n";
@@ -130,18 +129,14 @@ namespace badger_view.Controllers
                             using (var stream = new FileStream(Fill_path, FileMode.Create))
                             {
                                 messageDocuments += Fill_path + " \r\n";
-                                
-                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+
+                                //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
-
-                                int ref_id = Int32.Parse(vendorDoc.Vendor_id);
+                                int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();
-                                vendorDocuments.Add("ref_id", ref_id);
-                                vendorDocuments.Add("created_by", Int32.Parse(loginUserId));
-                                vendorDocuments.Add("url", Fill_path);
-                                await _BadgerApiHelper.GenericPostAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/documentcreate");
-
-
+                                vendorDocuments.Add("vendor_id", ref_id);
+                                vendorDocuments.Add("upload_logo", Fill_path);
+                                await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/"+ vendorLogo.Vendor_id);
                             }
                         }
                     }
@@ -150,6 +145,37 @@ namespace badger_view.Controllers
                 return messageDocuments + " \r\n " + messageAlreadyDocuments;
             }
             catch(Exception ex)
+            {
+                return "0";
+            }
+        }
+        /*
+           Developer: Azeem Hassan
+           Date: 7-3-19 
+           Action: delete vendor logo form folder and update to badger api
+           URL: vendor/deletevendor_logo
+           Input: vendor file data with vendor id
+           output: file deleted massage
+       */
+        [Authorize]
+        [HttpPost("vendor/deletevendor_logo")]
+        public async Task<String> DeleteVendorLogo([FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            try
+            {
+
+                var fileName = json.Value<string>("vendorDocuments");
+                var vendor_id = json.Value<string>("Vendor_id");
+                int ref_id = Int32.Parse(vendor_id);
+                JObject vendorDocuments = new JObject();
+                vendorDocuments.Add("vendor_id", ref_id);
+                vendorDocuments.Add("upload_logo", "");
+                System.IO.File.Delete(fileName);
+                await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id);
+                return "file deleted successfully";
+            }
+            catch (Exception ex)
             {
                 return "0";
             }
@@ -251,6 +277,7 @@ namespace badger_view.Controllers
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
             vendor.Add("vendor_description", json.Value<string>("vendor_description"));
+            vendor.Add("upload_logo", json.Value<string>("upload_logo"));
             vendor.Add("vendor_type", json.Value<Int32>("vendor_type"));
             vendor.Add("updated_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);

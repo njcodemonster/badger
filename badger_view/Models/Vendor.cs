@@ -19,6 +19,7 @@ namespace badger_view.Models
         public int updated_by { get; set; }
         public int active_status { get; set; }
         public double vendor_since { get; set; }
+        public string upload_logo { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
     }

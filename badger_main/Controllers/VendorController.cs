@@ -554,6 +554,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("updated_at", VendorToUpdate.updated_at.ToString());
                 }
+                if (VendorToUpdate.upload_logo != null)
+                {
+                    ValuesToUpdate.Add("upload_logo", VendorToUpdate.upload_logo);
+                }
 
 
                 await _VendorRepo.UpdateSpecific(ValuesToUpdate, "vendor_id="+id);
