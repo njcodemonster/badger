@@ -303,3 +303,7 @@ label.error {
     color: red;
     margin-left: 10px;
 }
+
+.ui-widget.ui-widget-content, .ui-front{
+    z-index: 9999 !important;
+}
