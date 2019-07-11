@@ -297,3 +297,13 @@ label.error {
     box-shadow: 0 -5px 15px rgba(3, 122, 244, 0.62), 0 10px 10px rgba(0,0,0,0.22);
     border: none;
 }
+
+.podeleteImage {
+    cursor: pointer;
+    color: red;
+    margin-left: 10px;
+}
+
+.ui-widget.ui-widget-content, .ui-front{
+    z-index: 9999 !important;
+}

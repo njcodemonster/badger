@@ -1,4 +1,35 @@
-﻿
+﻿$(document).ready(function () {
+
+    var countries = [{ label: "sajid", value: "1" }, { label: "azeem", value: "212" }, { label: "sameer", value: "12" }];
+
+    // Single Select
+    $("#autocomplete").autocomplete({
+        source: function (request, response) {
+
+           var columnName = "vendor_name";
+             // Fetch data
+            $.ajax({
+                url: '/vendor/autosuggest/',
+                dataType: 'json',
+                type: 'post',
+                data: { search: request.term, columnname: columnName  }
+            }).always(function (data) {
+                response(data);
+            });
+        },
+        select: function (event, ui) {
+            // Set selection
+            console.log(ui.item.label);
+            console.log(ui.item.value);
+            $('#autocomplete').val(ui.item.label); // display the selected text
+            $('#autocomplete').attr("data-val", ui.item.value);
+            // $('#selectuser_id').val(ui.item.value); // save selected id to input
+            return false;
+        }
+    });
+
+})
+
 /*
     Developer: Azeem Hassan
     Date: 7-3-19 

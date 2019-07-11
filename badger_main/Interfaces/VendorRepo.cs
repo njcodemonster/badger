@@ -29,7 +29,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorsNameAndID();
         Task<Object> GetVendorTypes();
         Task<Object> GetVendorLastSku(String id);
-        
+        Task<Object> GetVendorsByColumnName(string columnName, string search);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -51,6 +51,15 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get All vendors name and id
+        URL: 
+        Request GET
+        Input: null
+        output: list of vendors data
+         */
         public async Task<Object> GetVendorsNameAndID()
         {
             dynamic vendorDetails = new ExpandoObject();
@@ -314,6 +323,27 @@ namespace badgerApi.Interfaces
             }
             return vendorLastSku;
 
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get All vendors name and id
+        URL: 
+        Request GET
+        Input: null
+        output: list of vendors data
+         */
+        public async Task<Object> GetVendorsByColumnName(string columnName, string search)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "SELECT vendor_id, "+ columnName + " FROM " + TableName + " WHERE " + columnName + " LIKE '%" + search+"%';";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
         }
 
     }

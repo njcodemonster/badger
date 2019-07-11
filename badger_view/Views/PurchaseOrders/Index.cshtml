@@ -135,6 +135,9 @@
                         <form id="newPurchaseOrderForm" data-currentid="" enctype="multipart/form-data">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
+
+                                    <input id="autocomplete">
+                                     <br />
                                     <label>Vendor Name</label>
                                     <select id="poVendor" class="form-control d-inline-block" style="width: 90%">
                                         <option selected>Choose...</option>
@@ -201,9 +204,9 @@
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <br />
-                                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice">Add Invoice Adjustment</a>
+                                    <a href="#" data-toggle="modal" data-target="#modaladdinvoice" id="add_invoice_adjustment">Add Invoice Adjustment</a>
                                     <br />
-                                    <a href="#" data-toggle="modal" data-target="#modaladddiscount">Add Discount %</a>
+                                    <a href="#" data-toggle="modal" data-target="#modaladddiscount" id="add_discount">Add Discount %</a>
 
                                 </div>
                             </div>
@@ -397,7 +400,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment</h5>
+                    <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment <span id="invoice_ponumber"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -438,7 +441,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="discountModalLongTitle">Add Discount %</h5>
+                    <h5 class="modal-title" id="discountModalLongTitle">Add Discount % <span id="discount_ponumber"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

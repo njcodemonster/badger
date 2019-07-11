@@ -402,6 +402,28 @@ namespace badger_view.Controllers
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }
-           
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Vendor data  for dropdown
+        URL: /purchaseorders/autosuggest
+        Request: Get
+        Input: 
+        output: dynamic object of purchase orders
+        */
+        [Authorize]
+        [HttpPost("vendor/autosuggest")]
+        public async Task<string> Autosuggest([FromBody] string  value)
+        {
+            SetBadgerHelper();
+            dynamic vendorSearch = JsonConvert.DeserializeObject<object>(value);
+            string search = vendorSearch.search;
+            string columnName = vendorSearch.columnname;
+            object getVendorsNameAndId = new object();
+            getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendorsbycolumnname/"+columnName+"/"+search);
+            return JsonConvert.SerializeObject(getVendorsNameAndId);
+        }
+
     }
 }

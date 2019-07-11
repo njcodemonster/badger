@@ -32,6 +32,15 @@ namespace badgerApi.Controllers
             
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Login form data send 
+        URL: /User/Authenticate
+        Request: Post
+        Input:  FromBody string 
+        output: dynamic object of users
+        */
         [HttpPost("Authenticate")]
         public async Task<Users> Authenticate([FromBody]   string value)
         {
