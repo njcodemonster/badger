@@ -7,6 +7,7 @@ Input: Null
 Output: 
 */
 $('.card-header').click(function () {
+    $(".PhotoshootList .collapse").html("");
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
     if ($("#collapse_" + photoshootId).is(":hidden")) {
@@ -23,19 +24,26 @@ Action: Get photoshoot products in photoshoot inProgress page
 Input: PhotoshootId
 Output: add products in photoshoot div 
 */
+var PhotoshootInProgressProductsList;
 function getPhotoshootProducts(photoshootId) {
-    $("#collapse_" + photoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
+    PhotoshootInProgressProductsList = null;
+    var htmlLoader = $("#inprogressContainer_" + photoshootId + "  .loading-box-light ");
+    htmlLoader.fadeIn(200);
         $.ajax({
             url: '/photoshoots/getPhotoshootInProgressProducts/' + photoshootId,
             type: 'GET',
             dataType: "html",
         }).always(function (data) {
-            $("#collapse_" + photoshootId).html(data);
-            var PhotoshootInProgressProductsList = $("#collapse_" + photoshootId + " .datatable_js_ps ").DataTable({
-                columnDefs: [
-                    { targets: 'no-sort', orderable: false }
-                ]
+            
+            htmlLoader.fadeOut(200, function () {
+                $("#collapse_" + photoshootId).html(data);
+                PhotoshootInProgressProductsList = $("#collapse_" + photoshootId + " .datatable_js_ps ").DataTable({
+                    columnDefs: [
+                        { targets: 'no-sort', orderable: false }
+                    ]
+                });
             });
+
         })
 }
 /**********************************************************/
@@ -303,9 +311,10 @@ Action: it will take photoshoot id, product id, status and it update the status 
 Input: photoshoot id, product id, status
 Output: it removes the current product from the list
 */
-function updatephotoshootStatus(productId, photoshoot_id, status) {
-    
-    $("#collapse_" + photoshoot_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
+function updatephotoshootStatus(productId, photoshootId, status) {
+
+    var htmlLoader = $(".loading-box ");
+    htmlLoader.css("visibility", "visible");
 
     $.ajax({
         url: "/photoshoots/UpdatePhotoshootProductStatus/" + productId + "/" + status,
@@ -315,12 +324,15 @@ function updatephotoshootStatus(productId, photoshoot_id, status) {
         processData: false,
 
     }).always(function (data) {
+        if (data == "Success") {
+            PhotoshootInProgressProductsList
+                .row($("#shootRow_" + productId).parents('tr'))
+                .remove()
+                .draw();
+        }
+        htmlLoader.css("visibility", "hidden");
 
-        setTimeout(function () {
-            getPhotoshootProducts(photoshoot_id);
-            $("#collapse_" + photoshoot_id).collapse("show");
-        }, 1000);
-    }); 
+    });
 
 }
 
@@ -360,16 +372,16 @@ Input: product id, status
 Output: it removes the current products from the list
 */
 function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
+
+    $(".loading-box").css("visibility", "visible");
     var productAddToShootNotStarted = [];
     $(".select-box:checked").each(function () {
         console.log($(this).val())
         productAddToShootNotStarted.push($(this).val());
     }) 
-    $("#collapse_" + PhotoshootId).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
-    console.log((productAddToShootNotStarted));
+ 
     if (productAddToShootNotStarted.length > 0) {
-        var product_ids = productAddToShootNotStarted.join(",");
-        console.log(product_ids);
+        var product_ids = productAddToShootNotStarted.join(","); 
         var jsonData = {};
         jsonData["product_id"] = product_ids;
         jsonData["status"] = Status;
@@ -382,15 +394,25 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
             processData: false,
 
         }).always(function (data) {
-            if (data == "Success") {
-                getPhotoshootProducts(PhotoshootId);
-            } else {
-                //alert(data)
-            }
-        });
-        console.log(product_ids);
-    } else {
-        getPhotoshootProducts(PhotoshootId);
+            if (data == "Success") { 
+                if (product_ids.indexOf(',') == -1) {
+                    PhotoshootInProgressProductsList
+                        .row($("#shootRow_" + product_ids).parents('tr'))
+                        .remove()
+                        .draw();
+                } else {
+                    var arrayProductId = product_ids.split(",");
+                    $.each(arrayProductId, function (i) {
+                        PhotoshootInProgressProductsList
+                            .row($("#shootRow_" + arrayProductId[i]).parents('tr'))
+                            .remove()
+                            .draw();
+                    });
+                }
+
+
+            } $(".loading-box").css("visibility", "hidden");
+        }); 
     }
     
 }
