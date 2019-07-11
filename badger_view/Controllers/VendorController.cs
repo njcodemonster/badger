@@ -414,12 +414,12 @@ namespace badger_view.Controllers
         */
         [Authorize]
         [HttpPost("vendor/autosuggest")]
-        public async Task<string> Autosuggest([FromBody] string  value)
+        public async Task<string> Autosuggest([FromBody]   JObject json)
         {
             SetBadgerHelper();
-            dynamic vendorSearch = JsonConvert.DeserializeObject<object>(value);
-            string search = vendorSearch.search;
-            string columnName = vendorSearch.columnname;
+
+            string search = json.Value<string>("search");
+            string columnName = json.Value<string>("columnname");
             object getVendorsNameAndId = new object();
             getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendorsbycolumnname/"+columnName+"/"+search);
             return JsonConvert.SerializeObject(getVendorsNameAndId);

@@ -3,19 +3,25 @@
     var countries = [{ label: "sajid", value: "1" }, { label: "azeem", value: "212" }, { label: "sameer", value: "12" }];
 
     // Single Select
-    $("#autocomplete").autocomplete({
-        source: function (request, response) {
-
-           var columnName = "vendor_name";
-             // Fetch data
-            $.ajax({
-                url: '/vendor/autosuggest/',
-                dataType: 'json',
-                type: 'post',
-                data: { search: request.term, columnname: columnName  }
-            }).always(function (data) {
-                response(data);
-            });
+    $(".autocomplete").autocomplete({
+       source: function (request, response) {
+       var jsonData = {};
+       jsonData["columnname"] = 'vendor_code';
+       jsonData["search"] = request.term;
+        console.log(jsonData);
+       $.ajax({
+           url: "/vendor/autosuggest/",
+           dataType: 'json',
+           type: 'post',
+           data:JSON.stringify(jsonData),
+           contentType: 'application/json',
+           processData: false,
+       }).always(function (data) {
+           console.log(data);
+         
+       });
+ 
+  
         },
         select: function (event, ui) {
             // Set selection
@@ -576,7 +582,7 @@ $(document).on('click', ".deleteImage", function () {
     });
 });
 
-$(document).on('keyup', "#vendorCode", function () {
+$(document).on('keyup', "#vendorCodeas", function () {
 
    var value = $(this).val();
 
