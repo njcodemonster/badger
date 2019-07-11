@@ -544,3 +544,31 @@ $(document).on('click', ".deleteImage", function () {
         _this.parents('.documentsLink').remove()
     });
 });
+
+$(document).on('keyup', "#vendorCode", function () {
+
+   var value = $(this).val();
+
+    var countries = [{ name:"sajid",id:"1" }, { name:"azeem",id:"212" }, { name:"sameer",id:"12"}]
+
+   autocomplete(document.getElementById("vendorCode"), countries);
+
+   var jsonData = {};
+   jsonData["columnName"] = 'vendor_code';
+   jsonData["search"] = value;
+
+   console.log(jsonData);
+
+   /*if (value.length > 0) {
+       $.ajax({
+           url: "/vendor/autosuggest/",
+           dataType: 'json',
+           type: 'post',
+           contentType: 'application/json',
+           processData: false,
+       }).always(function (data) {
+           console.log(data);
+       });
+   }*/
+  
+});
