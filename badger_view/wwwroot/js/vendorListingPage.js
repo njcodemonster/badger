@@ -4,11 +4,11 @@
     $(".autocomplete").autocomplete({
        source: function (request, response) {
            var jsonData = {};
-               jsonData["columnname"] = 'vendor_name';
+               jsonData["columnname"] = 'vendor_code';
                jsonData["search"] = request.term;
                console.log(jsonData);
 
-            if (request.term.length > 3) {
+            if (request.term.length > 1) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
                     dataType: 'json',
@@ -32,6 +32,7 @@
             return false;
         }
     });
+
 
 })
 
