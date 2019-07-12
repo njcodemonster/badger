@@ -638,15 +638,14 @@ namespace badgerApi.Controllers
         }
 
         /*
-          Developer: Azeem Hassan
-          Date: 7-5-19 
-          Action: getting vendor name and id
-          URL:  api/vendor/getvendornameandid
+          Developer: Sajid Khan
+          Date: 7-12-19 
+          Action: Getting vendor name and id by search string
+          URL:  api/vendor/getvendorsbycolumnname/columnname/search
           Request GET
-          Input: null
+          Input: string columnName, string search 
           output: list of vendor_name and id
         */
-        //GET: api/vendor/getvendornameandid
         [HttpGet("getvendorsbycolumnname/{columnName}/{search}")]
         public async Task<List<object>> GetVendorsByColumnName(string columnName, string search)
         {

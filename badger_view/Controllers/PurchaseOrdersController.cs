@@ -72,8 +72,6 @@ namespace badger_view.Controllers
 
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/true");
 
-            List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
-
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
             string DeliveryStartEnd = "";
@@ -116,7 +114,6 @@ namespace badger_view.Controllers
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
-            PurchaseOrdersPageModal.GetVendorsNameAndId = getVendorsNameAndId;
             PurchaseOrdersPageModal.GetVendorsTypes = getVendorTypes;
 
             return View("Index", PurchaseOrdersPageModal);
@@ -141,6 +138,10 @@ namespace badger_view.Controllers
 
             dynamic purchaseOrder = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
 
+            string vendor_id = purchaseOrder[0].vendor_id;
+
+            dynamic vendorData = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/list/"+ vendor_id);
+
             dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
 
             dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
@@ -152,6 +153,7 @@ namespace badger_view.Controllers
             dynamic getDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/getdiscount/" + id.ToString());
 
             purchaseOrdersData.purchase_order = purchaseOrder;
+            purchaseOrdersData.vendor = vendorData;
             purchaseOrdersData.notes = purchaseOrderNote;
             purchaseOrdersData.documents = purchaseOrderDocs;
             purchaseOrdersData.tracking = purchaseOrderTracking;

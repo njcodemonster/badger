@@ -406,11 +406,11 @@ namespace badger_view.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
-        Action: Get Vendor data  for dropdown
-        URL: /purchaseorders/autosuggest
-        Request: Get
-        Input: 
-        output: dynamic object of purchase orders
+        Action: Get Vendors list which matched by string
+        URL: /vendor/autosuggest
+        Request: Post
+        Input: [FromBody]  string json
+        output: dynamic list of venders which matched with string
         */
         [Authorize]
         [HttpPost("vendor/autosuggest")]

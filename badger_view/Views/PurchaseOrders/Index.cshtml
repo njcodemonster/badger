@@ -143,60 +143,51 @@
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
                                     <input type="text" class="form-control d-inline-block autocomplete" id="poVendor" style="width: 90%">
-                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
-                                    <!-- select id="poVendor" class="form-control d-inline-block" style="width: 90%">
-                                                    <option selected>Choose...</option>
-                                                    @*foreach (Vendor vendor in Model.GetVendorsNameAndId)
-                                                    {
-                                                        <option value="@vendor.vendor_id">@vendor.vendor_name</option>
-                                                    }*@
-                                                </select>
-
-                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>-->
+                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>                                    
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Order Delivery Range</label>
-                                    <input type="text" class="form-control" id="poDelieveryRange">
+                                    <input type="text" class="form-control required" id="poDelieveryRange">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>P.O. Number</label>
-                                    <input type="text" class="form-control" id="poNumber">
+                                    <input type="text" class="form-control required" id="poNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Total Styles</label>
-                                    <input type="text" class="form-control" id="poTotalStyles">
+                                    <input type="text" class="form-control required" id="poTotalStyles">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Invoice Number</label>
-                                    <input type="text" class="form-control" id="poInvoiceNumber">
+                                    <input type="text" class="form-control required" id="poInvoiceNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Total Quantity</label>
-                                    <input type="text" class="form-control" id="poTotalQuantity">
+                                    <input type="text" class="form-control required" id="poTotalQuantity">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Order Number</label>
-                                    <input type="text" class="form-control" id="poOrderNumber">
+                                    <input type="text" class="form-control required" id="poOrderNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Subtotal</label>
-                                    <input type="text" class="form-control" id="poSubtotal">
+                                    <input type="text" class="form-control required" id="poSubtotal">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Order Date</label>
-                                    <input type="text" class="form-control" id="poOrderDate">
+                                    <input type="text" class="form-control required" id="poOrderDate">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Shipping &amp; Handling</label>
-                                    <input type="text" class="form-control" id="poShipping">
+                                    <input type="text" class="form-control required" id="poShipping">
                                 </div>
                             </div>
                             <div class="form-row po_section d-none">
@@ -258,50 +249,50 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
-                                    <input type="text" class="form-control" id="vendorName">
+                                    <input type="text" class="form-control required" id="vendorName">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Corporation Name</label>
-                                    <input type="text" class="form-control" id="vendorCorpName">
+                                    <input type="text" class="form-control required" id="vendorCorpName">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Exact Statement Name</label>
-                                    <input type="text" class="form-control" id="vendorStatmentName">
+                                    <input type="text" class="form-control required" id="vendorStatmentName">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Vendor Code</label>
-                                    <input type="text" class="form-control" id="vendorCode">
+                                    <input type="text" class="form-control required" id="vendorCode">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Our Customer #</label>
-                                    <input type="text" class="form-control" id="vendorourCustomerNumber">
+                                    <input type="text" class="form-control required" id="vendorourCustomerNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Street Address</label>
-                                    <input type="text" class="form-control" id="vendorStreetAdress">
+                                    <input type="text" class="form-control required" id="vendorStreetAdress">
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group col-md-3">
                                     <label>Zip Code</label>
-                                    <input type="text" maxlength="5" data-type="number" class="form-control" id="vendorZip">
+                                    <input type="text" maxlength="5" data-type="number" class="form-control required" id="vendorZip">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>State</label>
-                                    <input type="text" class="form-control" id="vendorState">
+                                    <input type="text" class="form-control required" id="vendorState">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>Unit Number</label>
-                                    <input type="text" class="form-control" id="vendorUnitNumber">
+                                    <input type="text" class="form-control required" id="vendorUnitNumber">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>City</label>
-                                    <input type="text" class="form-control" id="vendorCity">
+                                    <input type="text" class="form-control required" id="vendorCity">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -322,7 +313,7 @@
 
                                 <div class="form-group col-md-6">
                                     <label>Vendor Types</label>
-                                    <select id="vendortype" class="form-control d-inline-block" style="width: 90%">
+                                    <select id="vendortype" class="form-control d-inline-block required" style="width: 90%">
                                         <option value="">choose ...</option>
                                         @foreach (VendorType vendorType in Model.GetVendorsTypes)
                                         {
@@ -338,12 +329,12 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label>Rep First Name</label>
-                                            <input type="text" class="form-control" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
+                                            <input type="text" class="form-control required" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Rep Full Name</label>
                                             <span class="firstRep">
-                                                <input type="text" class="form-control" id="vendorFullRepName" style="width:90%">
+                                                <input type="text" class="form-control required" id="vendorFullRepName" style="width:90%">
                                             </span>
                                         </div>
                                     </div>
@@ -352,20 +343,20 @@
                                             <label>Phone Number 1</label>
                                             <div class="row">
                                                 <div class="col-md-3 p-0">
-                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
+                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75 required" id="vendorRepPhone11"> <span class="d-inline">)</span>
                                                 </div>
                                                 <div class="col-md-3 p-0">
-                                                    <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone12">
+                                                    <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone12">
                                                 </div>
 
                                                 <div class="col-md-5">
-                                                    <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone13">
+                                                    <input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone13">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Email</label>
-                                            <input type="email" class="form-control email" style="width:90%" id="vendorRepEmail">
+                                            <input type="email" class="form-control email required" style="width:90%" id="vendorRepEmail">
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -373,14 +364,14 @@
                                             <label>Phone Number 2</label>
                                             <div class="row">
                                                 <div class="col-md-3 p-0">
-                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone" id="vendorRepPhone14"> <span class="d-inline">)</span>
+                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone required" id="vendorRepPhone14"> <span class="d-inline">)</span>
                                                 </div>
                                                 <div class="col-md-3 p-0">
-                                                    <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone15">
+                                                    <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone15">
                                                 </div>
 
                                                 <div class="col-md-5">
-                                                    <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone16">
+                                                    <input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone16">
                                                 </div>
                                             </div>
                                         </div>
@@ -417,7 +408,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Adjustment</label>
-                                    <select id="ledger_adjustment" name="ledger_adjustment" class="form-control">
+                                    <select id="ledger_adjustment" name="ledger_adjustment" class="form-control required">
                                         <option selected>Choose...</option>
                                         <option value="credit">Credit</option>
                                         <option value="debit">Debit</option>
@@ -425,11 +416,11 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label>Amount</label>
-                                    <input type="text" class="form-control" id="ledger_amount" name="ledger_amount" placeholder="$">
+                                    <input type="text" class="form-control required" id="ledger_amount" name="ledger_amount" placeholder="$">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label>Note</label>
-                                    <input type="text" class="form-control" id="ledger_note" name="ledger_note">
+                                    <input type="text" class="form-control required" id="ledger_note" name="ledger_note">
                                 </div>
                             </div>
                         </form>
@@ -458,11 +449,11 @@
                             <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label>Discount</label>
-                                    <input type="text" class="form-control" id="discount_percentage" name="discount" placeholder="%">
+                                    <input type="text" class="form-control required" id="discount_percentage" name="discount" placeholder="%">
                                 </div>
                                 <div class="form-group col-md-8">
                                     <label>Note</label>
-                                    <input type="text" class="form-control" id="discount_note" name="discount_note">
+                                    <input type="text" class="form-control required" id="discount_note" name="discount_note">
                                 </div>
                             </div>
                             <div class="text-center w-100">
