@@ -81,50 +81,50 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
-                                    <input type="text" class="form-control" id="vendorName">
+                                    <input type="text" class="form-control required" id="vendorName">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Corporation Name</label>
-                                    <input type="text" class="form-control" id="vendorCorpName">
+                                    <input type="text" class="form-control required" id="vendorCorpName">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Exact Statement Name</label>
-                                    <input type="text" class="form-control" id="vendorStatmentName">
+                                    <input type="text" class="form-control required" id="vendorStatmentName">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Vendor Code</label>
-                                    <input type="text" class="form-control autocomplete" id="vendorCode">
+                                    <input type="text" class="form-control autocomplete required" id="vendorCode">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Our Customer #</label>
-                                    <input type="text" class="form-control" id="vendorourCustomerNumber">
+                                    <input type="text" class="form-control required" id="vendorourCustomerNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Street Address</label>
-                                    <input type="text" class="form-control" id="vendorStreetAdress">
+                                    <input type="text" class="form-control required" id="vendorStreetAdress">
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group col-md-3">
                                     <label>Zip Code</label>
-                                    <input type="text" maxlength="5" data-type="number" class="form-control" id="vendorZip">
+                                    <input type="text" maxlength="5" data-type="number" class="form-control required" id="vendorZip">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>State</label>
-                                    <input type="text" class="form-control" id="vendorState">
+                                    <input type="text" class="form-control required" id="vendorState">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>Unit Number</label>
-                                    <input type="text" class="form-control" id="vendorUnitNumber">
+                                    <input type="text" class="form-control required" id="vendorUnitNumber">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>City</label>
-                                    <input type="text" class="form-control" id="vendorCity">
+                                    <input type="text" class="form-control required" id="vendorCity">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -144,7 +144,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Vendor Types</label>
-                                    <select id="vendortype" class="form-control d-inline-block" style="width: 90%">
+                                    <select id="vendortype" class="form-control d-inline-block required" style="width: 90%">
                                         <option value="">choose ...</option>
 
                                         @foreach (VendorType vendorType in Model.VendorType)
@@ -152,7 +152,7 @@
                                             <option value="@vendorType.vendor_type_id">@vendorType.vendor_type_description</option>
                                         }
 
-                                    </select>
+                                    </select><br>
                                 </div>
                             </div>
                             <div class="venderRepo">
@@ -160,12 +160,12 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label>Rep First Name</label>
-                                            <input type="text" class="form-control" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
+                                            <input type="text" class="form-control required" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Rep Full Name</label>
                                             <span class="firstRep">
-                                                <input type="text" class="form-control" id="vendorFullRepName" style="width:90%">
+                                                <input type="text" class="form-control required" id="vendorFullRepName" style="width:90%">
                                             </span>
                                         </div>
                                     </div>
@@ -174,14 +174,14 @@
                                             <label>Phone Number 1</label>
                                             <div class="row">
                                                 <div class="col-md-3 p-0">
-                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>
+                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75 required" id="vendorRepPhone11"> <span class="d-inline">)</span>
                                                 </div>
                                                 <div class="col-md-3 p-0">
-                                                    <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone12">
+                                                    <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone12">
                                                 </div>
 
                                                 <div class="col-md-5">
-                                                    <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone13">
+                                                    <input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone13">
                                                 </div>
                                             </div>
                                         </div>
@@ -195,14 +195,14 @@
                                             <label>Phone Number 2</label>
                                             <div class="row">
                                                 <div class="col-md-3 p-0">
-                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone" id="vendorRepPhone14"> <span class="d-inline">)</span>
+                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone required" id="vendorRepPhone14"> <span class="d-inline">)</span>
                                                 </div>
                                                 <div class="col-md-3 p-0">
-                                                    <input type="tel" class="form-control phone" maxlength="3" data-type="number" id="vendorRepPhone15">
+                                                    <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone15">
                                                 </div>
 
                                                 <div class="col-md-5">
-                                                    <input type="tel" class="form-control phone" maxlength="4" data-type="number" id="vendorRepPhone16">
+                                                    <input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone16">
                                                 </div>
                                             </div>
                                         </div>

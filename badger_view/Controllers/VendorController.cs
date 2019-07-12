@@ -424,6 +424,25 @@ namespace badger_view.Controllers
             getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendorsbycolumnname/"+columnName+"/"+search);
             return JsonConvert.SerializeObject(getVendorsNameAndId);
         }
+        /*
+        Developer: Azeem
+        Date: 7-11-19 
+        Action: sending vendor to badger api to check vendor code existence 
+        URL: vendor/vendorcodeexist
+        Request: GET
+        Input: vendorcode
+        output: vendor exist massage
+        */
+        [Authorize]
+        [HttpPost("vendor/vendorcodeexist")]
+        public async Task<string> VendorCodeExist([FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+
+            string vendorcode = json.Value<string>("vendorcode");
+            dynamic vendorCodeList = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/checkvendorcodeexist/"+ vendorcode);
+            return JsonConvert.SerializeObject(vendorCodeList); 
+        }
 
     }
 }
