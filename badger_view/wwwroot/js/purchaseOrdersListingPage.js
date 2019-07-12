@@ -152,10 +152,10 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
     output: new purchase id
 */
 $(document).on('click', "#NewPurchaseOrderButton", function () {
-
-    $(this).attr('disabled', true);
+    _self = $(this);
+    _self.attr('disabled', true);
     if (emptyFeildValidation('newPurchaseOrderForm') == false) {
-        $(this).attr('disabled', false);
+        _self.attr('disabled', false);
         return false;
     }
 
@@ -198,7 +198,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
     console.log(jsonData);
-
+    var vendorname = $("#newPurchaseOrderForm #poVendor").val();
+    window.vname = vendorname;
     $.ajax({
         url: '/purchaseorders/newpurchaseorder',
         dataType: 'json',
@@ -212,7 +213,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
         if (data != 0 && data > 0) {
             console.log('New row created - ' + data);
-            alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
+            //alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -244,18 +245,19 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                 });
             }
             $('#purchaseorderlists').DataTable().row.add([
-                $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor").val()
+                $("#newPurchaseOrderForm #poNumber").val(), orderdate, vname
                 , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
             ]).draw();
 
             table.page('last').draw('page');
-            setTimeout(function () {
-                $('#modalPurchaseOrder').modal('hide');
-                alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
-            }, 3000)
+
+            $('#modalPurchaseOrder').modal('hide');
+
+            alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             
             $('#newPurchaseOrderForm')[0].reset();
         } else {
+            _self.attr('disabled', false);
             alertBox('poAlertMsg', 'red', 'Purchase order not inserted.');
         }
     });
