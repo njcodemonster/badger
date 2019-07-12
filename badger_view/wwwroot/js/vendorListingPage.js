@@ -1,4 +1,44 @@
 ﻿/*
+   Developer: Azeem Hassan
+   Date: 7-12-19
+   Action: Autocomplete search by vendor name like on greater than three character
+   URL:
+   Input: string
+   output: list of vendors like matched
+*/
+﻿$(document).ready(function () {
+    $(".autocomplete").autocomplete({
+       source: function (request, response) {
+           var jsonData = {};
+               jsonData["columnname"] = 'vendor_code';
+               jsonData["search"] = request.term;
+               console.log(jsonData);
+
+            if (request.term.length > 1) {
+                $.ajax({
+                    url: "/vendor/autosuggest/",
+                    dataType: 'json',
+                    type: 'post',
+                    data: JSON.stringify(jsonData),
+                    contentType: 'application/json',
+                    processData: false,
+                }).always(function (data) {
+                    response(data);
+                });
+            }  
+        },
+        select: function (event, ui) {
+            // Set selection
+            console.log(ui.item.label);
+            console.log(ui.item.value);
+            return false;
+        }
+    });
+
+
+})
+
+/*
     Developer: Azeem Hassan
     Date: 7-3-19 
     Action:sent vendor data to controller
@@ -134,6 +174,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
     output: vendor data
 */
 $(document).on('click', "#EditVendor", function () {
+    $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
     $('.errorMsg,.documentsLink').remove();
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
@@ -308,7 +349,8 @@ $(document).on('click', "#AddNewVendorButton", function () {
     $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
     $('.errorMsg,.documentsLink').remove();
-    $("#newVendorForm").data("currentID","");
+    $("#newVendorForm").data("currentID", "");
+    $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
 });
 
 /*
@@ -525,6 +567,15 @@ $(document).on('change', "#vendortype", function () {
    $(this).parents('.form-group').find('.errorMsg').remove();
 });
 
+/*
+   Developer: Azeem Hassan
+   Date: 7-12-19
+   Action: delete vendor logo
+   URL:/vendor/deletevendor_logo
+   Input: vendor id and logo name
+   Request: POST
+   output: massage
+*/
 $(document).on('click', ".deleteImage", function () {
     var jsonData = {};
     var _this = $(this);
@@ -544,30 +595,40 @@ $(document).on('click', ".deleteImage", function () {
     });
 });
 
-$(document).on('keyup', "#vendorCodeas", function () {
+/*
+   Developer: Azeem Hassan
+   Date: 7-12-19
+   Action: checking vendor code exist in db
+   URL:/vendor/vendorcodeexist
+   Input: string
+   Request: POST
+   output: vendor code array 
+*/
+$(document).on('blur', "#vendorCode", function (event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var jsonData = {};
+    var _this = $(this);
+    if ($(this).val() == '') {
+        return false;
+    }
+    $('#NewVendorButton,#EditVendorButton').attr('disabled',true)
+    jsonData["vendorcode"] = $(this).val();
+    $.ajax({
+        url: "/vendor/vendorcodeexist",
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data:  JSON.stringify(jsonData) ,
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.length > 0) {
+            _this.addClass('errorFeild');
+            _this.parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this code is already exist</span>');
+        } else {
+            $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
+        }
+    });
 
-   var value = $(this).val();
-
-    var countries = [{ name:"sajid",id:"1" }, { name:"azeem",id:"212" }, { name:"sameer",id:"12"}]
-
-   autocomplete(document.getElementById("vendorCode"), countries);
-
-   var jsonData = {};
-   jsonData["columnName"] = 'vendor_code';
-   jsonData["search"] = value;
-
-   console.log(jsonData);
-
-   /*if (value.length > 0) {
-       $.ajax({
-           url: "/vendor/autosuggest/",
-           dataType: 'json',
-           type: 'post',
-           contentType: 'application/json',
-           processData: false,
-       }).always(function (data) {
-           console.log(data);
-       });
-   }*/
-  
 });

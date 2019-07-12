@@ -143,9 +143,9 @@ function emptyFeildValidation(id){
     $('.errorMsg').remove();
     var notvalid = true;
     var emailvalid = true;
-    $('#'+id+' input,#'+id+' select').removeClass('errorFeild');
-    $('#'+id+' input,#'+id+' select').each(function (){
-        if($(this).val() == '' && $(this).attr('type') != 'radio' && $(this).attr('type') != 'file'){
+    $('#'+id+' .required').removeClass('errorFeild');
+    $('#'+id+' .required').each(function (){
+        if($(this).val() == ''){
             notvalid = false;
             $(this).addClass('errorFeild');
             $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
