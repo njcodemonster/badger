@@ -1,4 +1,41 @@
 ﻿$(document).ready(function () {
+
+    // Single Select
+    $("#poVendor").autocomplete({
+        source: function (request, response) {
+            var jsonData = {};
+            jsonData["columnname"] = 'vendor_name';
+            jsonData["search"] = request.term;
+            console.log(jsonData);
+
+            if (request.term.length > 3) {
+                $.ajax({
+                    url: "/vendor/autosuggest/",
+                    dataType: 'json',
+                    type: 'post',
+                    data: JSON.stringify(jsonData),
+                    contentType: 'application/json',
+                    processData: false,
+                }).always(function (data) {
+                    console.log(data);
+                    response(data);
+                });
+            } 
+            if (request.term.length == 0){
+                $('#poVendor').val(""); // display the selected text
+                $('#poVendor').attr("data-val", "");
+            }
+        },
+        select: function (event, ui) {
+            // Set selection
+            $('#poVendor').val(ui.item.label); // display the selected text
+            $('#poVendor').attr("data-val", ui.item.value);
+            // $('#selectuser_id').val(ui.item.value); // save selected id to input
+            return false;
+        }
+    });
+
+
     /*
         Developer: Azeem Hassan
         Date: 7-6-19 

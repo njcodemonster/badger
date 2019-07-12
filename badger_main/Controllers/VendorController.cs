@@ -648,7 +648,7 @@ namespace badgerApi.Controllers
         */
         //GET: api/vendor/getvendornameandid
         [HttpGet("getvendorsbycolumnname/{columnName}/{search}")]
-        public async Task<List<object>> GetVendorsByColumnName(string search, string columnName)
+        public async Task<List<object>> GetVendorsByColumnName(string columnName, string search)
         {
             dynamic vendorDetails = new object();
             try

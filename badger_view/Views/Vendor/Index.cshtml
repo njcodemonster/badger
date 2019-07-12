@@ -5,6 +5,8 @@
 @model dynamic
 
 @section Scripts {
+    <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
+    <script src="~/js/jquery-ui.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
 }
@@ -147,7 +149,7 @@
 
                                         @foreach (VendorType vendorType in Model.VendorType)
                                         {
-                                        <option value="@vendorType.vendor_type_id">@vendorType.vendor_type_description</option>
+                                            <option value="@vendorType.vendor_type_id">@vendorType.vendor_type_description</option>
                                         }
 
                                     </select>
