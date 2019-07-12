@@ -337,7 +337,7 @@ namespace badgerApi.Interfaces
         public async Task<Object> GetVendorsByColumnName(string columnName, string search)
         {
             dynamic vendorDetails = new ExpandoObject();
-            string sQuery = "SELECT vendor_id, "+ columnName + " FROM " + TableName + " WHERE " + columnName + " LIKE '%" + search+"%';";
+            string sQuery = "SELECT vendor_id as value, "+ columnName + " as label FROM " + TableName + " WHERE " + columnName + " LIKE '%" + search+"%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);
