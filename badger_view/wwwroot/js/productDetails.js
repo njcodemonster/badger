@@ -16,7 +16,7 @@ $(document).on("change blur keyup", ".form-control", function () {
 
 });
 $(document).on("change", ".colorItem", function () {
-   
+
     var color_value = $(this).data("colorvalue");
     if ($(this).data("current") == "1") {
         if (this.checked) {
@@ -24,12 +24,12 @@ $(document).on("change", ".colorItem", function () {
                 color_removed = color_removed.filter(item => item !== color_value)
             }
             else {
-               
+
             }
         }
         else {
-            if (color_removed.find(item => item === color_value )) {
-                
+            if (color_removed.find(item => item === color_value)) {
+
             }
             else {
                 color_removed.push(color_value);
@@ -39,7 +39,7 @@ $(document).on("change", ".colorItem", function () {
     else {
         if (this.checked) {
             if (color_added.find(item => item === color_value)) {
-                
+
             }
             else {
                 color_added.push(color_value);
@@ -54,8 +54,8 @@ $(document).on("change", ".colorItem", function () {
             }
         }
     }
-    
-})
+
+});
 $(document).on("change", ".tagsData", function () {
 
     var color_value = $(this).data("attributeid");
@@ -95,8 +95,8 @@ $(document).on("change", ".tagsData", function () {
             }
         }
     }
-   
-})
+
+});
 
 $(document).on("click", "#mainSaveButton", function () {
     datatosend = {};
@@ -110,5 +110,15 @@ $(document).on("click", "#mainSaveButton", function () {
     $("select.form-control.dirty").each(function (item) {
         datatosend[$(this).attr("id")] = $(this).val();
     });
+    $.ajax({
+
+        url: '/product/UpdateAttributes',
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(datatosend),
+        processData: false,
+
+    }).always(function (data) { });
     console.log(datatosend);
 });

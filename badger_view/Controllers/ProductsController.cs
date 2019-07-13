@@ -57,6 +57,12 @@ namespace badger_view.Controllers
             return View("EditAttributes",productDetailsPageData );
         }
 
-
+        [Authorize]
+        [HttpPost("product/UpdateAttributes")]
+        public async Task<IActionResult> UpdateAttributes([FromBody]   JObject json)
+        {
+            ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
+            return View("EditAttributes", productDetailsPageData);
+        }
     }
 }
