@@ -148,6 +148,12 @@ namespace badger_view.Controllers
                 }
                 else {
                     product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
+                    JObject used_in_obj = new JObject();
+                    used_in_obj.Add("product_id", Int32.Parse(product_id));
+                    used_in_obj.Add("po_id", po_id);
+                    
+                    String used_in_id = await _BadgerApiHelper.GenericPostAsyncString<String>(used_in_obj.ToString(Formatting.None), "/product/createUsedIn");
+
                     if (product_type == "1") //only for Color
                     {
                         JObject product_attr_color = new JObject();

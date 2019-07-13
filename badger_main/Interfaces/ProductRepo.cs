@@ -34,6 +34,7 @@ namespace badgerApi.Interfaces
         Task<IEnumerable<AllColors>> GetAllProductColors();
         Task<IEnumerable<AllTags>> GetAllProductTags();
         Task<Int32> GetProductShootStatus(string id);
+        Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
     }
     public class ProductRepo : IProductRepository
     {
@@ -278,6 +279,21 @@ namespace badgerApi.Interfaces
             {
                 var result = await conn.QueryAsync(UpdateQuery);
 
+            }
+
+        }
+        /*Developer: ubaid
+       Date:13-7-19
+       Action:get ProductUsedIn Model from controller and insert the ProductUsedIn
+       Input: ProductUsedIn Model 
+       output: New product UsedIn id
+       */
+        public async Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<ProductUsedIn>(NewUsedIn);
+                return result.ToString();
             }
 
         }

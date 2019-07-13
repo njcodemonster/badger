@@ -324,5 +324,30 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+        /*
+          Developer: ubaid
+          Date:13-7-19
+          Action:get HTML Form (POid and product id) from VIEW and pass the data to API product Repo 
+          URL: /product/createUsedIn
+          Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
+          output: New LINE ITEM id
+          */
+        // POST: api/product/createUsedIn   // purchase order line items
+        [HttpPost("createUsedIn")]
+        public async Task<string> PostAsyncUsedIn([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
+                NewInsertionID = await _ProductRepo.CreatePOLineitems(newPOlineitems);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
     }
 }
