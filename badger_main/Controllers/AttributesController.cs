@@ -24,7 +24,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/attributes/list
+        /*
+         Developer: Sajid Khan
+         Date:7-13-19
+         Action:Get List of attributes data
+         Request: GET
+         URL: api/attributes/list
+         Input: /list
+         output: list of attributes data
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<Attributes>>> GetAsync()
         {

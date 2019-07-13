@@ -35,11 +35,6 @@ namespace badgerApi.Controllers
         private string event_create_vendor_document = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
         private string event_update_vendor = "Vendor updated by user =%%userid%% with vendor id= %%vendorid%%";
 
-
-
-
-
-
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository)
         {
