@@ -34,13 +34,6 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-
-        // GET: api/VendorAddress/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
         /*
            Developer: Azeem Hassan
            Date: 7-5-19 

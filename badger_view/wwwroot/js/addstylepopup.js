@@ -1,4 +1,12 @@
-﻿$(document).on('click', "#AddNewStyleButton", function () {
+﻿/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: Add new style
+URL: /styles/create
+Input: styles data
+Output: string of style
+*/
+$(document).on('click', "#AddNewStyleButton", function () {
     debugger;
     var newVendorForm = $("#newAddStyleForm input");
     var jsonData = {};
@@ -64,7 +72,14 @@
     });
 });
 
-
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: Add new style document
+URL: /styles/newdoc
+Input: string file path
+Output: string of style doc 
+*/
 $(document).on('click', "#AddStyleButton", function () {
     debugger;
     console.log("New style Added");
@@ -85,6 +100,17 @@ $(document).on('click', "#AddStyleButton", function () {
     });
 
 });
+
+
+
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: default show style size, quantity etc
+URL: 
+Input: 
+Output: input fields show dynamic 
+*/
 $(document).ready(function () {
     var max_fields = 10; //maximum input boxes allowed
     var wrapper = $("#po_input_fields_wrap"); //Fields wrapper

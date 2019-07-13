@@ -26,7 +26,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/PhotoshootModels/list
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get List of PhotoshootModels calling from "/PhotoshootModels/list"
+        URL: api/PhotoshootModels/list
+        Request: Get
+        Input: /list
+        output: List of PhotoshootModels
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<PhotoshootModels>>> GetAsync()
         {
@@ -45,7 +53,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/PhotoshootModels/list/1
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get PhotoshootModels by id "api/PhotoshootModels/list/1"
+        URL: api/PhotoshootModels/list/1
+        Request: Get
+        Input: int id of PhotoshootModels
+        output: List of PhotoshootModels by id
+        */
         [HttpGet("list/{id}")]
         public async Task<List<PhotoshootModels>> GetAsync(int id)
         {
@@ -64,7 +80,15 @@ namespace badgerApi.Controllers
             return ToReturn;
         }
 
-        // POST: api/PhotoshootModels/create
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Create new PhotoshootModels with events created in PhotoshootModels event and user event "api/PhotoshootModels/create"
+        URL: api/PhotoshootModels/create
+        Request: Post
+        Input: FromBody, string 
+        output: string of Last insert PhotoshootModels id
+        */
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody]   string value)
         {
@@ -82,7 +106,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/PhotoshootModels/update/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update PhotoshootModels by id with events created in PhotoshootModels event and user event "api/PhotoshootModels/update/5"
+        URL: api/PhotoshootModels/update/5
+        Request: Put
+        Input: int id, FormBody string  
+        output: string
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -108,7 +140,15 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-        // PUT: api/PhotoshootModels/updatespecific/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update specific PhotoshootModels by id with events created in PhotoshootModels event and user event "api/PhotoshootModels/updatespecific/5"
+        URL: api/PhotoshootModels/updatespecific/5
+        Request: Put
+        Input: int id, FormBody string  
+        output: string
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

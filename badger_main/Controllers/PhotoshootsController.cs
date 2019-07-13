@@ -404,15 +404,9 @@ namespace badgerApi.Controllers
                     }
                 }
 
-                if (PhotoshootStatus == "0")
+                if (PhotoshootStatus == "0" || PhotoshootStatus == "1")
                 {
-                    string photoShootItemStatus = "PhotoshootNotStarted";
-                    await SetProductItemStatusForPhotoshoot(productId, photoShootItemStatus);
-                }
-                else if(PhotoshootStatus == "1")
-                {
-                    string photoShootItemStatus = "SentToPhotoshoot";
-                    await SetProductItemStatusForPhotoshoot(productId, photoShootItemStatus);
+                    await SetProductItemStatusForPhotoshoot(productId, Int32.Parse(PhotoshootStatus));
                 }
             }
             catch (Exception ex)
@@ -435,7 +429,7 @@ namespace badgerApi.Controllers
         Input: string productId, string status
         output: string success or failed
         */
-        private async Task<string> SetProductItemStatusForPhotoshoot(string product_id, string status)
+        private async Task<string> SetProductItemStatusForPhotoshoot(string product_id, int status)
         {
             dynamic ToReturn = new object();
             string returnValue = "success";
@@ -574,7 +568,7 @@ namespace badgerApi.Controllers
                 event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
                 event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
 
-                string photoShootStatus = "SentToPhotoshoot";
+                int photoShootStatus = 1;
                 await SetProductItemStatusForPhotoshoot(productId, photoShootStatus);
 
                 int countComma = productId.Count(c => c == ',');

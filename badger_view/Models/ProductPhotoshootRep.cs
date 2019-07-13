@@ -17,6 +17,10 @@ namespace badger_view.Models
         public string product_name { get; set; }
         public string photoshoot_id { get; set; }
         public string username { get; set; }
+        public string color { get; set; }
+        public string po_id { get; set; }
+        public string po_status { get; set; }
+
     }
     public class ProductPhotoshootPagerList
     {

@@ -43,17 +43,18 @@
             @foreach (ProductPhotoshootRep photoshoot in Model.Lists)
             {
 
-                <tr style="">
+                <tr style="" id="tableRow_@photoshoot.product_id">
                     <td class="text-center">
                         <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
                     </td>
                     <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
                     <td>@photoshoot.vendor_name</td>
-                    <td>@photoshoot.product_name</td>
-                    <td><b>-</b></td>
+                    <td class="productName">@photoshoot.product_name</td>
+                    <td><b>@photoshoot.color</b></td>
                     <td><b>@photoshoot.sku_family</b></td>
-                    <td></td>
+                    <td>@photoshoot.po_status</td>
                     <td id="shootRow_@photoshoot.product_id">
+                        
                         <select class="browser-default custom-select" onchange="AddToShootSingle(@photoshoot.product_id, this.value)">
                             <option value="0" selected>Shoot not started</option>
                             <option value="1">Add to photoshoot</option>
@@ -101,7 +102,9 @@
                         <div> Or, create a new photoshoot:</div>
                         <div class="form-row">
                             <div class="form-group col-md-4">
-                                <select class="custom-select" id="AllModels"></select>
+                                <select class="custom-select" id="AllModels">
+                                    
+                                </select>
                             </div>
                             <div class="form-group col-md-6">
                                 <input id="photoshootDate" name="photoshootDate" value="" type="text" class="form-control">

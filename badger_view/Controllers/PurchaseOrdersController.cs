@@ -27,9 +27,11 @@ namespace badger_view.Controllers
     {
         private readonly IConfiguration _config;
 
-        private String UploadPath = "";
-
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        private CommonHelper.awsS3helper awsS3Helper = new CommonHelper.awsS3helper();
+        private String UploadPath = "";
+        private String S3bucket = "";
+        private String S3folder = "";
 
         private ILoginHelper _LoginHelper;
 
@@ -40,6 +42,8 @@ namespace badger_view.Controllers
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
+            S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
+            S3folder = _config.GetValue<string>("S3config:Folder");
             _loggerFactory = loggerFactory;
         }
         private BadgerApiHelper _BadgerApiHelper;
@@ -67,8 +71,6 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/true");
-
-            List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
 
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
@@ -112,7 +114,6 @@ namespace badger_view.Controllers
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
-            PurchaseOrdersPageModal.GetVendorsNameAndId = getVendorsNameAndId;
             PurchaseOrdersPageModal.GetVendorsTypes = getVendorTypes;
 
             return View("Index", PurchaseOrdersPageModal);
@@ -137,7 +138,11 @@ namespace badger_view.Controllers
 
             dynamic purchaseOrder = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/list/" + id.ToString());
 
-            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+            string vendor_id = purchaseOrder[0].vendor_id;
+
+            dynamic vendorData = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/list/"+ vendor_id);
+
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
 
             dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
 
@@ -148,6 +153,7 @@ namespace badger_view.Controllers
             dynamic getDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/getdiscount/" + id.ToString());
 
             purchaseOrdersData.purchase_order = purchaseOrder;
+            purchaseOrdersData.vendor = vendorData;
             purchaseOrdersData.notes = purchaseOrderNote;
             purchaseOrdersData.documents = purchaseOrderDocs;
             purchaseOrdersData.tracking = purchaseOrderTracking;
@@ -157,7 +163,15 @@ namespace badger_view.Controllers
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Purchase Orders data by id 
+        URL: /purchaseorders/single/649
+        Request: Get
+        Input: int id
+        output: dynamic object of purchase orders
+        */
         [Authorize]
         public async Task<IActionResult> Single()
         {
@@ -271,7 +285,7 @@ namespace badger_view.Controllers
                             using (var stream = new FileStream(Fill_path, FileMode.Create))
                             {
                                 messageDocuments += Fill_path + " \r\n";
-
+                                //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
 
                                 JObject purchaseOrderDocuments = new JObject();
@@ -1101,6 +1115,41 @@ namespace badger_view.Controllers
         public IActionResult PurchaseOrdersCheckIn()
         {
             return View();
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-11-19 
+        Action: delete Purchase Order document by id by using badger api helper and login helper  
+        URL: /purchaseorders/documentdelete/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of purchase orders delete
+        */
+        [Authorize]
+        [HttpPost("purchaseorders/documentsdelete/{id}")]
+        public async Task<string> DocumentsDelete(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            JObject purchaseOrderDocumentDelete = new JObject();
+            purchaseOrderDocumentDelete.Add("doc_id", json.Value<string>("doc_id"));
+            purchaseOrderDocumentDelete.Add("po_id", json.Value<string>("po_id"));
+            purchaseOrderDocumentDelete.Add("updated_by", Int32.Parse(loginUserId));
+
+            string fileName = json.Value<string>("url");
+
+            if (fileName != null || fileName != string.Empty)
+            {
+                if ((System.IO.File.Exists(fileName)))
+                {
+                    System.IO.File.Delete(fileName);
+                }
+
+            }
+            return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
         }
 
     }

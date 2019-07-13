@@ -12,9 +12,10 @@
                             Actions
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnInprogress(@Model.PhotoshootID, 'SendToEditor');">Mark selected as "Send to editor"</a>
-                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnInprogress(@Model.PhotoshootID, 'NotStarted');">Mark selected as "Shoot not started"</a>
+                            <a class="dropdown-item select_menu" href="#" onclick="selectAllCheckbox()">Select All</a>
+                            <a class="dropdown-item unselect_menu" href="#" onclick="unselectAllCheckbox()">Unselect All</a>
+                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnInprogress(@Model.PhotoshootID, '2');">Mark selected as "Send to editor"</a>
+                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnInprogress(@Model.PhotoshootID, '0');">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
                 </th>
@@ -37,7 +38,7 @@
                     <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
                     <td>@photoshoot.vendor_name</td>
                     <td>@photoshoot.product_name</td>
-                    <td><b>-</b></td>
+                    <td><b>@photoshoot.color</b></td>
                     <td><b>@photoshoot.sku_family</b></td>
                     <td>@photoshoot.username</td>
                     <td id="shootRow_@photoshoot.product_id">
