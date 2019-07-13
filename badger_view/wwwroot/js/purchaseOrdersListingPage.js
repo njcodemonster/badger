@@ -982,7 +982,14 @@ function getSinglePurchaseOrder(id) {
 
 }
 
-
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Checkin button click
+URL:
+Input: 
+output: Checkin Model Show
+*/
 $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     console.log($(this).attr("data-ID"));
     var poid = $(this).attr("data-ID");
@@ -991,21 +998,43 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Add Invoice Model Top Heading
+URL:
+Input:
+output: Add Invoice Adjustment Model Top Heading
+*/
 $(document).on('click', "#add_invoice_adjustment", function () {
     $("#invoice_ponumber").text(" : "+$('#newPurchaseOrderForm #poNumber').val());
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Add Discount Model Top Heading
+URL:
+Input:
+output: Add Discount Model Top Heading
+*/
 $(document).on('click', "#add_discount", function () {
     $("#discount_ponumber").text(" : " +$('#newPurchaseOrderForm #poNumber').val());
 });
 
-
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Delete Document or Image on click 
+URL:
+Input:
+output: Boolean
+*/
 $(document).on('click', ".podeleteImage", function () {
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');
-
-    //var poid = $("#newPurchaseOrderForm").attr('data-currentid');
     var poid = $('#document_form').attr("data-documentid");
 
     var jsonData = {};

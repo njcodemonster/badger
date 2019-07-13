@@ -17,30 +17,34 @@ function isNumber(evt) {
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
-  action:  block special characters 
+  action: allow space and block special characters 
 */
 function blockspecialcharacter(e) {
     let key = e.key;
-            let keyCharCode = key.charCodeAt(0);
+    let keyCharCode = key.charCodeAt(0);
 
-            // 0-9
-            if(keyCharCode >= 48 && keyCharCode <= 57) {
-                return key;
-            }
-            // 0-9 number pad
-            if(keyCharCode >= 96 && keyCharCode <= 105) {
-                return key;
-            }
-            // A-Z
-            if(keyCharCode >= 65 && keyCharCode <= 90) {
-                return key;
-            }
-            // a-z
-            if(keyCharCode >= 97 && keyCharCode <= 122) {
-                return key;
-            }
+    // space        
+    if (keyCharCode == 32) {
+        return key;
+    }
+    // 0-9
+    if(keyCharCode >= 48 && keyCharCode <= 57) {
+        return key;
+    }
+    // 0-9 number pad
+    if(keyCharCode >= 96 && keyCharCode <= 105) {
+        return key;
+    }
+    // A-Z
+    if(keyCharCode >= 65 && keyCharCode <= 90) {
+        return key;
+    }
+    // a-z
+    if(keyCharCode >= 97 && keyCharCode <= 122) {
+        return key;
+    }
 
-            return false;
+    return false;
 }
 
 /*
