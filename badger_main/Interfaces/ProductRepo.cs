@@ -364,15 +364,11 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
-
-        /*
-        Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Create new product attributes value into database
-        URL: 
-        Request: Post
-        Input: product attributes value data
-        output: string of product attributes value
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get AttributeValues Model from controller and insert the AttributeValues
+        Input: AttributeValues Model 
+        output: New AttributeValues id
         */
         public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
         {
@@ -384,14 +380,11 @@ namespace badgerApi.Interfaces
 
         }
 
-        /*
-        Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Create new sku into database
-        URL: 
-        Request: Post
-        Input: sku data
-        output: string of sku
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get SKU Model from controller and insert the SKU
+        Input: SKU Model 
+        output: New SKU id
         */
         public async Task<string> CreateSku(Sku NewSku)
         {
@@ -402,15 +395,11 @@ namespace badgerApi.Interfaces
             }
 
         }
-
-        /*
-        Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Create new purchase order line item into database
-        URL: 
-        Request: Post
-        Input: purchase order line item data
-        output: string of purchase order line item
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
+        Input: PurchaseOrderLineItems Model 
+        output: New PO LineItem id
         */
         public async Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem)
         {
@@ -421,17 +410,12 @@ namespace badgerApi.Interfaces
             }
 
         }
-
-
-        /*
-        Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: update Product attribute data by id into database
-        URL: 
-        Request: Post
-        Input: Dictionary<String, String> ValuePairs, String where condition
-        output: Boolean
-        */
+        /*Developer: ubaid
+       Date:5-7-19
+       Action:get ProductAttributes values from controller and update the spesific Row
+       Input: ProductAttributes values and where clause 
+       output: None
+       */
         public async Task AttributeUpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

@@ -319,7 +319,13 @@ namespace itemService.Controllers
             }
         }
 
-
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form(New items Data) from badger api and pass the data to items Repo
+        URL: /item/create/{quantity}
+        Input: HTML form Body Json with the data of new item(s)
+        output: New item id
+        */
         [HttpPost("create/{qty}")]
         public async Task<string> PostAsync([FromBody]   string value,int qty = 0)
         {

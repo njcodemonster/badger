@@ -629,16 +629,16 @@ namespace badger_view.Controllers
 
         //purchaseorders/lineitemsdetails/poid
         [Authorize]
-        [HttpGet("purchaseorders/lineitemsdetails/{id}")]
-        public async Task<String> GetLineItemsByPOID(int po_id)
+        [HttpGet("PurchaseOrders/lineitemsdetails/{po_id}")]
+        public async Task<IActionResult> GetLineItemsByPOID(int po_id)
         {
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
             
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
-           
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+
             return View("PurchaseOrdersManagementViewAjax", PageModal);
         }
 
