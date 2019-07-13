@@ -44,8 +44,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-8-19 
            Action: creating new attribute type to database
-           URL: 
-           Request:POST
            Input: new attribute
            output: attribute id
         */
@@ -62,8 +60,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-8-19 
            Action: getting list of attributes from database 
-           URL: 
-           Request:GET
            Input: limit
            output: list of attribute
         */
@@ -89,8 +85,6 @@ namespace badgerApi.Interfaces
           Developer: Azeem Hassan
           Date: 7-8-19 
           Action: getting attributes by id from database 
-          URL: 
-          Request:GET
           Input: int id
           output: attribute
        */
@@ -107,8 +101,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-8-19 
             Action: update AttributeType to database
-            URL: 
-            Request:PUT
             Input: AttributeTypeToUpdate
             output: result
         */
@@ -126,8 +118,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-8-19 
            Action: UpdateSpecific to database
-           URL: 
-           Request:PUT
            Input: Dictionary<String, String> ValuePairs, String where
            output: result
        */

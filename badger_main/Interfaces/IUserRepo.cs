@@ -50,8 +50,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Get Matched users data by email and password
-        URL: 
-        Request GET
         Input: null
         output: List of user
          */

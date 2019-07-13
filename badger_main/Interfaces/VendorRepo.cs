@@ -56,8 +56,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Get All vendors name and id
-        URL: 
-        Request GET
         Input: null
         output: list of vendors data
          */
@@ -77,8 +75,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: getting vendor types from database
-            URL: 
-            Request GET
             Input: null
             output: vendor types
          */
@@ -97,8 +93,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: insert vendor data to database
-            URL: 
-            Request:POST
             Input: new vendor data
             output: vendor id
          */
@@ -114,8 +108,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: get vendor count 
-            URL: 
-            Request:GET
             Input: null
             output: vendor count
          */
@@ -132,8 +124,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: get vendors with limit 
-            URL: 
-            Request:GET
             Input: limit
             output: vendors list
          */
@@ -160,8 +150,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: get vendor from database by id
-            URL: 
-            Request:GET
             Input: vendor id
             output: vendor
          */
@@ -178,8 +166,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: update vendor to database by id
-            URL: 
-            Request:PUT
             Input: vendor data
             output: result
          */
@@ -197,8 +183,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: updating specific fields to database
-            URL: 
-            Request:PUT
             Input: fields value and where to repair
             output: result
          */
@@ -217,8 +201,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-5-19 
             Action: getting vendor info from database
-            URL: 
-            Request:GET
             Input: limit
             output: vendorsinfo
          */
@@ -248,8 +230,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-5-19 
            Action: getting vendor details address and repo from database by vendor id
-           URL: 
-           Request:GET
            Input: vendor id
            output: vendorDetails
         */
@@ -268,8 +248,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-5-19 
            Action: getting vendor address from database by vendor id
-           URL: 
-           Request:GET
            Input: vendor id
            output: vendorAddressDetails
         */
@@ -288,8 +266,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-5-19 
            Action: getting vendor rep Details from database by vendor id
-           URL: 
-           Request:GET
            Input: vendor id
            output: vendorRepoDetails
         */
@@ -308,8 +284,6 @@ namespace badgerApi.Interfaces
            Developer: Azeem Hassan
            Date: 7-5-19 
            Action: getting vendor last sku from database by vendor id
-           URL: 
-           Request:GET
            Input: vendor id
            output: vendorLastSku
         */
@@ -330,8 +304,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Get All vendors name and id
-        URL: 
-        Request GET
         Input: null
         output: list of vendors data
          */
@@ -350,8 +322,6 @@ namespace badgerApi.Interfaces
             Developer: Azeem Hassan
             Date: 7-11-19 
             Action: get all vendor code
-            URL: 
-            Request:POST
             Input: vendorcode
             output: list of vendor code data
          */

@@ -37,6 +37,14 @@ namespace notesService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: insert document to database
+        Input: new document data
+        output: string of document id
+        */
         public async Task<string> CreateAsync(Documents NewDoc)
         {
             using (IDbConnection conn = Connection)
@@ -46,6 +54,13 @@ namespace notesService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: List of document by refference id from database
+        Input: int reff,int doc_type, int Limit
+        output: Dynamic List of document
+        */
         public async Task<List<Documents>> GetAllByReffAsync(int reff,int doc_type, int Limit)
         {
             using (IDbConnection conn = Connection)
@@ -63,6 +78,13 @@ namespace notesService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: List of document by id from database
+        Input: int id
+        output: Dynamic List of document
+        */
         public async Task<Documents> GetByIDAsync(int id)
         {
             using (IDbConnection conn = Connection)

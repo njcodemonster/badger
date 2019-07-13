@@ -45,8 +45,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Insert purchase order line item data to database
-        URL: 
-        Request: Post
         Input: new Purchase Orders line item data
         output: string of PurchaseOrders line item id
         */
@@ -63,8 +61,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get All purchase order line item data from database
-        URL: 
-        Request: Get
         Input: int limit
         output: list of PurchaseOrders line item
         */
@@ -89,8 +85,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get purchase order line item data by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: list of PurchaseOrders line item
         */
@@ -108,8 +102,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: update purchase order line item data by id from database
-        URL: 
-        Request: Put
         Input: purchase order line item data
         output: Boolean
         */
@@ -128,8 +120,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Update Specific purchase order line item data by id from database
-        URL: 
-        Request: Put
         Input: fields value and where to update
         output: Boolean
         */

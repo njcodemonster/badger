@@ -62,6 +62,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-13-19 
+       Action: Get list of items from database
+       Input: int limit
+       output: List of items
+       */
         public async Task<List<Items>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -79,6 +86,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by id also with comma multiple ids or without comma seperate single to database
+        Input: string id
+        output: List of items
+        */
         public async Task<List<Items>> GetItemById(string id)
         {
             try
@@ -113,6 +127,14 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by PO_id to database
+        Input: int PO_id
+        output: List of items
+        */
         public async Task<List<Items>> GetByPOid(int PO_id)
         {
             try
@@ -132,6 +154,14 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by Barcode to database
+        Input: string Barcode
+        output: List of items
+        */
         public async Task<List<Items>> GetItemByBarcode(string Barcode)
         {
             try
@@ -160,6 +190,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by bag_code to database
+        Input: string bag_code
+        output: List of items
+        */
         public async Task<List<Items>> GetItemByBagNumber(string BagNumber)
         {
             try
@@ -188,6 +225,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by SkuFamily and limit to database
+        Input: string SkuFamily, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetBySkuFamily(string SkuFamily, int Limit)
         {
             try
@@ -225,6 +269,13 @@ namespace itemService.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by ProductId and limit to database
+        Input: string ProductId, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByProductId(string ProductId, int Limit)
         {
             try
@@ -263,6 +314,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by item_status_id and limit to database
+        Input: string StatusId, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByStatusId(string StatusId, int Limit)
         {
             try
@@ -301,6 +359,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by VendorId and limit to database
+        Input: string VendorId, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByVendorId(string VendorId, int Limit)
         {
             try
@@ -339,6 +404,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by SkuId and limit to database
+        Input: string SkuId, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetBySkuId(string SkuId, int Limit)
         {
             try
@@ -376,7 +448,14 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by published date and limit to database
+        Input: string PublishDate, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByPublishDate(string PublishDate, int Limit)
         {
             try
@@ -415,6 +494,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by published range start,end and limit to database
+        Input: string StartDate, string EndDate, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByPublishDateRange(string StartDate, string EndDate, int Limit)
         {
             try
@@ -445,6 +531,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by RaStatus and limit to database
+        Input: string RaStatusId, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByRaStatus(string RaStatusId, int Limit)
         {
             try
@@ -483,6 +576,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by Published By and limit to database
+        Input: string PublishedBy, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByPublishedBy(string PublishedBy, int Limit)
         {
             try
@@ -521,6 +621,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by updated at in range start date,end date and limit to database
+        Input: string StartDate, string EndDate, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByUpdateDateRange(string StartDate, string EndDate, int Limit)
         {
             try
@@ -550,7 +657,14 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by created at in range start date,end date and limit to database
+        Input: string StartDate, string EndDate, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetByCreateDateRange(string StartDate, string EndDate, int Limit)
         {
             try
@@ -581,6 +695,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by created at after date and limit to database
+        Input: string AfterDate, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetAfterDate(string AfterDate, int Limit)
         {
             try
@@ -611,6 +732,13 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by created at  before date and limit to database
+        Input: string BeforeDate, int Limit
+        output: List of items
+        */
         public async Task<List<Items>> GetBeforeDate(string BeforeDate, int Limit)
         {
             try
@@ -655,6 +783,14 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+         * (There is mistake in function,There is no product id used in function )
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get count of phootoshots where id equal to zero from database
+        Input: string product_id (There is mistake in function,There is no product id used in function )
+        output: boolean
+        */
         public async Task SetProductItemSentToPhotoshoot(string product_id)
         {
             using (IDbConnection conn = Connection)
@@ -662,6 +798,14 @@ namespace itemService.Interfaces
                 await conn.QueryAsync<String>("select count(photoshoot_id) from " + TableName + " where photoshoot_id = 0;");
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: update item by id to database
+        Input: item data
+        output: boolean
+        */
         public async Task<Boolean> Update(Items ItemToUpdate)
         {
             using (IDbConnection conn = Connection)
@@ -672,7 +816,13 @@ namespace itemService.Interfaces
 
         }
 
-       
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: update specific item by id to database
+        Input: Dictionary<String, String> ValuePairs, String where condition
+        output: boolean
+        */
         public async Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
@@ -685,6 +835,13 @@ namespace itemService.Interfaces
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get item status by id and update item status to database
+        Input: int skuId, int status
+        output: string
+        */
         public async Task<String> SetProductItemForPhotoshoot(int skuId, int status) {
 
             string ToReturn = "success";

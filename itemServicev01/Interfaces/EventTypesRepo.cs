@@ -34,6 +34,15 @@ namespace itemService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ItemsDatabase"));
             }
         }
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get list of event types from database
+        Input: null
+        output: List of event types
+        */
         public async Task<List<EventTypes>> GetAllAsync()
         {
             using (IDbConnection conn = Connection)
@@ -44,8 +53,14 @@ namespace itemService.Interfaces
             }
         }
 
-       
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get event type by id from database
+        Input: int id
+        output: List of event types
+        */
         public async Task<EventTypes> GetByID(int id)
         {
             using (IDbConnection conn = Connection)
@@ -56,6 +71,14 @@ namespace itemService.Interfaces
             }
         }
 
+        /*
+         ** (There is wrong function name ponka etc)
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get event type by id equal to 1 from database
+        Input: null
+        output: List of event types
+        */
         public async Task<List<ponkaquery>> GetPonka()
         {
             using (IDbConnection conn = Connection)

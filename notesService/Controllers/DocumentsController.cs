@@ -28,6 +28,16 @@ namespace notesService.Controllers
         {
             return "value";
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get Documents list "api/Documents/Reff/5/5/1"
+        URL: api/Documents/Reff/5/5/1
+        Request: Get
+        Input: int reffence id,int doctype, int Limit
+        output: List of Documents
+        */
         // GET: api/Notes/Reff/5
         [HttpGet("Reff/{id}/{doctype}/{limit}")]
         public async Task<List<Documents>> GetByReff(int id, int doctype, int limit)
@@ -47,7 +57,15 @@ namespace notesService.Controllers
             return ToReturn;
         }
 
-        // POST: api/Notes
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Create new Documents "api/Documents/create"
+        URL: api/Documents/create
+        Request: Post
+        Input: [FromBody] string value
+        output: string last insert Documents id
+        */
         [HttpPost("create")]
         public async Task<String> PostAsync([FromBody] string value)
         {
