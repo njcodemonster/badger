@@ -24,7 +24,15 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        // GET: api/attributevalues/list
+        /*
+          Developer: Azeem Hassan
+          Date:7-8-19
+          Action: getting attributevalues list
+          Request:GET
+          URL: api/attributevalues/list
+          Input: null
+          output: list of attributevalues
+       */
         [HttpGet("list")]
         public async Task<ActionResult<List<AttributeValues>>> GetAsync()
         {
@@ -43,7 +51,15 @@ namespace badgerApi.Controllers
 
         }
 
-        // GET: api/attributevalues/list/1
+        /*
+          Developer: Azeem Hassan
+          Date:7-8-19
+          Action: getting attributevalues by id
+          Request:GET
+          URL: api/attributevalues/list/1
+          Input: int id
+          output: attributevalues
+       */
         [HttpGet("list/{id}")]
         public async Task<List<AttributeValues>> GetAsync(int id)
         {
@@ -89,7 +105,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-        // PUT: api/attributevalues/update/5
+        /*
+          Developer: Azeem Hassan
+          Date:7-8-19
+          Action: Update attributevalues by id
+          Request:PUT
+          URL: api/attributevalues/update/5
+          Input: FormBody data and int id
+          output: Success/Failed
+       */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         {
@@ -116,6 +140,15 @@ namespace badgerApi.Controllers
         }
 
         // PUT: api/attributevalues/updatespecific/1
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: Update specific attributevalues by id
+           Request:PUT
+           URL:  api/attributevalues/updatespecific/1
+           Input: FormBody data and int id
+           output: Success/Failed
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
