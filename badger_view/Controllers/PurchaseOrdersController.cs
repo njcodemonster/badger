@@ -232,7 +232,7 @@ namespace badger_view.Controllers
 
             if (newPurchaseOrderID != "0")
             {
-                if (json.Value<string>("note") != null)
+                if (json.Value<string>("note") != "")
                 {
                     JObject purchaseOrderNote = new JObject();
                     purchaseOrderNote.Add("ref_id", newPurchaseOrderID);
