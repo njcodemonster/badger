@@ -24,7 +24,7 @@
         <button type="button" class="btn btn-success btn-sm model_purchase_order" data-toggle="modal" data-target="#modalPurchaseOrder">
             Add New P.O.
         </button>
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#newVendorModal">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#newVendorModal" id="AddNewVendorButton">
             Add New Vendor
         </button>
     </div>
@@ -54,10 +54,6 @@
             @foreach (PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
             {
                 <tr>
-                    <!-- td>@purchaseOrders.po_id</!--td>
-                    <td>@purchaseOrders.vendor_invoice_number</td>
-                    <td>@purchaseOrders.vendor_order_number</td-->
-
                     <td>@purchaseOrders.vendor_po_number</td>
                     <td>
                         @purchaseOrders.custom_order_date
@@ -551,6 +547,7 @@
                                 <div class="form-group col-md-12">
                                     <label>Note</label>
                                     <textarea type="text" class="form-control" id="po_notes" name="po_notes"></textarea>
+                                    <div class="poNoteAlertMsg"></div>
                                 </div>
                             </div>
                         </form>
@@ -580,6 +577,7 @@
                                 <div class="form-group col-md-12">
                                     <label>Document</label>
                                     <input type="file" class="form-control" id="poUploadImages" name="poUploadImages" multiple>
+                                    <div class="poDocAlertMsg"></div>
                                 </div>
                             </div>
                         </form>

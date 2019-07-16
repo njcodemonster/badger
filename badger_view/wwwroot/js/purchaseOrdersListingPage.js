@@ -671,6 +671,7 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
             $("#note_form").attr("data-noteid", id);
             $("#note_form #po_notes").val(note);
         }
+        $(".poNoteAlertMsg").empty();
         $("#modaladdnote").modal("show");
     });
 });
@@ -686,6 +687,14 @@ output: string of purchase order note
 */
 $(document).on("click", "#note_submit", function () {
 
+    var _self = $(this);
+
+    if (_self.val() == "") {
+        $(".poNoteAlertMsg").css("color", "red").text("Please fill empty field.");
+        return false;
+    }
+
+    _self.attr("disabled", true);
     var jsonData = {};
 
     jsonData["po_id"] = $("#note_form").attr("data-noteid");
@@ -702,8 +711,10 @@ $(document).on("click", "#note_submit", function () {
         processData: false,
     }).always(function (data) {
         if (data == "0") {
+            _self.attr("disabled", false);
             alertBox('poAlertMsg', 'red', 'Purchase order note not updated');
         } else {
+            _self.attr("disabled", false);
             $("#modaladdnote").modal("hide");
             alertBox('poAlertMsg', 'green', 'Purchase order note updated successfully.');
         }
@@ -750,6 +761,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         } else {
             $(".po_doc_section").addClass('d-none');
         }
+        $(".poDocAlertMsg").empty();
         $("#modaladddocument").modal("show");        
     });
 });
@@ -763,6 +775,15 @@ Input: document data
 output: string of purchase order document
 */
 $(document).on("click", "#document_submit", function () {
+    var _self = $(this);
+
+    if (_self.val() == "") {
+        $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
+        return false;
+    }
+
+    _self.attr("disabled", true);
+
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
         var files = $("#poUploadImages")[0].files;
@@ -784,10 +805,12 @@ $(document).on("click", "#document_submit", function () {
         }).always(function (data) {
             console.log(data);
             if (data == "0") {
+                _self.attr("disabled", false);
                 alertBox('poAlertMsg', 'red', 'Purchase order document not updated');
               console.log("Exception Error");
             } else {
                 console.log(data.responseText);
+                _self.attr("disabled", false);
                 $("#modaladddocument").modal("hide");
                 alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
             }

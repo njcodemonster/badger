@@ -35,6 +35,14 @@ namespace itemService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ItemsDatabase"));
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get item status by id from database
+        Input: int id
+        output: list of item status
+        */
         public async Task<List<ItemStatus>> GetStatusByID(int id)
         {
             try
@@ -56,6 +64,14 @@ namespace itemService.Interfaces
                 throw ex;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get all item status from database
+        Input: null
+        output: list of item status
+        */
         public async Task<List<ItemStatus>> GetAllStatus()
         {
             try

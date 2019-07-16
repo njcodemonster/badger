@@ -42,8 +42,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Insert purchase order status to database
-        URL: 
-        Request: Post
         Input: new status data
         output: string of status id
         */
@@ -60,8 +58,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: get all purchase order status from database
-        URL: 
-        Request: Get
         Input: int limit
         output: list of status
         */
@@ -86,8 +82,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: get purchase order status by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: list of status
         */
@@ -105,8 +99,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get purchase order status by name from database
-        URL: 
-        Request: Get
         Input: string name
         output: list of status
         */

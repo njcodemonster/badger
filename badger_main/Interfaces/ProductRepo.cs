@@ -62,8 +62,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Insert new Product data into database
-        URL: 
-        Request: Post
         Input: Product data
         output: string of Product data
         */
@@ -80,8 +78,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Get all Product data from database
-        URL: 
-        Request: Get
         Input: int limit
         output: list of Product data
         */
@@ -106,8 +102,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Product data by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: list of Product data
         */
@@ -127,8 +121,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Update Product data by id from database
-        URL: 
-        Request: Put
         Input: Product data
         output: Boolean
         */
@@ -146,8 +138,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Update Product data with specific fields by id from database
-        URL: 
-        Request: Put
         Input: Dictionary<String , String> ValuePairs, String where condition
         output: Boolean
         */
@@ -168,8 +158,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Products data by vendor id from database
-        URL: 
-        Request: Get
         Input:string vendor id
         output: List of products by vendor id
         */
@@ -187,9 +175,7 @@ namespace badgerApi.Interfaces
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
-        Action: Create new product attributes into database
-        URL: 
-        Request: Post
+        Action: Create new product attributes into databaset
         Input: product attributes data
         output: string of product attributes
         */
@@ -206,8 +192,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Product pair with from database
-        URL: 
-        Request: Get
         Input: string id 
         output: list of Product pair with
         */
@@ -225,8 +209,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Product color with from database
-        URL: 
-        Request: Get
         Input: string id 
         output: list of Product color with
         */
@@ -244,8 +226,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Product image from database
-        URL: 
-        Request: Get
         Input: string id 
         output: list of Product image
         */
@@ -263,8 +243,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Product properties from database
-        URL: 
-        Request: Get
         Input: string id 
         output: list of Product properties
         */
@@ -286,8 +264,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Product details from database
-        URL: 
-        Request: Get
         Input: string id 
         output: list of Product details
         */
@@ -307,8 +283,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Productshoot status from database
-        URL: 
-        Request: Get
         Input: string id 
         output: list of Productshoot status
         */
@@ -328,8 +302,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get all Product colors from database
-        URL: 
-        Request: Get
         Input: 
         output: list of Product colors
         */
@@ -349,8 +321,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get all Product tags from database
-        URL: 
-        Request: Get
         Input: 
         output: list of Product tags
         */

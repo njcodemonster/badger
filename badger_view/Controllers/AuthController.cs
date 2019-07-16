@@ -62,6 +62,20 @@ namespace badger_view.Controllers
             }
 
         }
-        
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+
+            if (await _LoginHelper.Logout())
+            {
+                return RedirectToAction("Dologin", "Auth");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
     }
 }

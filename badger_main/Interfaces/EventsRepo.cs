@@ -41,8 +41,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: dynamic Create Events data by table 
-        URL: 
-        Request Post
         Input: int eventtype, int reffrenceId,int userID,string description,double createdat , string tableName
         output: boolean
          */
@@ -71,8 +69,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Create Purchase Orders Events data
-        URL: 
-        Request Post
         Input: int po_id, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName
         output: boolean
          */
@@ -99,8 +95,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Create Vendor Event data
-        URL: 
-        Request Post
         Input: int vendor_id, int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName
         output: boolean
         */
@@ -128,8 +122,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Create Photoshoot Event data
-        URL: 
-        Request Post
         Input: int productId, int eventTypeId, int reffrenceId, string eventNotes, int userId, double createdAt, string tableName
         output: boolean
         */
@@ -157,8 +149,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-7-19 
         Action: Create Item Event data
-        URL: 
-        Request Post
         Input: int item_id, int barcode, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName
         output: boolean
         */

@@ -45,8 +45,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: get tracking by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: dynamic object of tracking
         */
@@ -69,8 +67,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Insert tracking to database
-        URL: 
-        Request: Post
         Input: new tracking data
         output: string of tracking id
         */
@@ -87,8 +83,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action:update tracking data by id from database
-        URL: 
-        Request: Put
         Input: tracking data
         output:Boolean
         */
@@ -107,8 +101,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action:update specific tracking data by id from database
-        URL: 
-        Request: Put
         Input: fields value and where to update
         output: Boolean
         */

@@ -42,8 +42,6 @@ namespace badgerApi.Interfaces
           Developer: Azeem Hassan
           Date: 7-5-19 
           Action: creating new vendor address to database
-          URL: 
-          Request:POST
           Input: vendor address
           output: result
        */
@@ -59,8 +57,6 @@ namespace badgerApi.Interfaces
           Developer: Azeem Hassan
           Date: 7-5-19 
           Action: update vendor address to database
-          URL: 
-          Request:PUT
           Input: vendor address
           output: result
        */

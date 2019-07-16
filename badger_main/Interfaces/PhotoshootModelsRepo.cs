@@ -46,8 +46,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Insert new PhotoshootModel data into database
-        URL: 
-        Request: Post
         Input: PhotoshootModel data
         output: string of PhotoshootModel data
         */
@@ -64,8 +62,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get all PhotoshootModel data from database
-        URL: 
-        Request: Get
         Input: int limit
         output: list of PhotoshootModel data
         */
@@ -90,8 +86,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get PhotoshootModel data by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: list of PhotoshootModel data
         */
@@ -109,8 +103,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Update PhotoshootModel data by id from database
-        URL: 
-        Request: Put
         Input: PhotoshootModel data
         output: Boolean
         */
@@ -129,8 +121,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Update PhotoshootModel data with specific fields by id from database
-        URL: 
-        Request: Put
         Input: Dictionary<String , String> ValuePairs, String where condition
         output: Boolean
         */

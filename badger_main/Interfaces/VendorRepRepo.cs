@@ -45,8 +45,6 @@
           Developer: Azeem Hassan
           Date: 7-5-19 
           Action: creating new vendor repo to database
-          URL: 
-          Request:POST
           Input: vendor repo
           output: result
        */
@@ -62,8 +60,6 @@
           Developer: Azeem Hassan
           Date: 7-5-19 
           Action: update vendor repo to database
-          URL: 
-          Request:PUT
           Input: vendor repo
           output: result
        */

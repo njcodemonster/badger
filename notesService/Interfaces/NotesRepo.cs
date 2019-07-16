@@ -37,6 +37,14 @@ namespace notesService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: insert note to database
+        Input: new note data
+        output: string of note id
+        */
         public async Task<string> Create(Notes NewNote)
         {
             using (IDbConnection conn = Connection)
@@ -46,6 +54,13 @@ namespace notesService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: List of notes by refference id from database
+        Input: int reff,int note_type, int Limit
+        output: Dynamic List of Notes
+        */
         public async Task<List<Notes>> GetAllByReff(int reff,int note_type, int Limit)
         {
             using (IDbConnection conn = Connection)
@@ -63,6 +78,13 @@ namespace notesService.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Multiple Lists of notes by refference ids with comma seperate from database
+        Input: string reffs,int note_type
+        output: Dynamic List of Notes
+        */
         public async Task<List<Notes>> GetAllNotesByReffs(string reffs, int note_type)
         {
             using (IDbConnection conn = Connection)
@@ -75,6 +97,13 @@ namespace notesService.Interfaces
             }
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-13-19 
+       Action: List of notes by id from database
+       Input: int id
+       output: Dynamic List of Notes
+       */
         public async Task<Notes> GetByID(int id)
         {
             using (IDbConnection conn = Connection)

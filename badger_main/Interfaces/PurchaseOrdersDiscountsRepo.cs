@@ -50,8 +50,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Insert purchase order discount data to database
-        URL: 
-        Request: Post
         Input: new Purchase Orders discount data
         output: string of PurchaseOrders discount id
         */
@@ -68,8 +66,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Total count of purchase order discount data from database
-        URL: 
-        Request: Get
         Input: null
         output: string of PurchaseOrders discount count
         */
@@ -86,8 +82,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get purchase order discount data by poid from database
-        URL: 
-        Request: Get
         Input: int poid
         output: dynamic object of Purchase Orders discount
         */
@@ -111,8 +105,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get All purchase order discount data from database
-        URL: 
-        Request: Get
         Input: int limit
         output: list of Purchase Orders discount
         */
@@ -137,8 +129,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get purchase order discount data by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: list of PurchaseOrders discount
         */
@@ -156,8 +146,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: update purchase order discount data by id from database
-        URL: 
-        Request: Put
         Input: purchase order discount data
         output: Boolean
         */
@@ -176,8 +164,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Update Specific purchase order discount data by id from database
-        URL: 
-        Request: Put
         Input: fields value and where to update
         output: Boolean
         */

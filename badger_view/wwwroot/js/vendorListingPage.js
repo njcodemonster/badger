@@ -32,6 +32,10 @@
             console.log(ui.item.label);
             console.log(ui.item.value);
             return false;
+        },
+        focus: function (event, ui) {
+            event.preventDefault();
+            $(".autocomplete").val("");
         }
     });
 

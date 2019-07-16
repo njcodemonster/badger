@@ -53,6 +53,7 @@ namespace badger_view.Helpers
         Task<Boolean> DoLogin(badger_view.Models.LogiDetails logiDetails);
         Task<string> GetLoginUserId();
         Task<string> GetLoginUserFirstName();
+        Task<bool> Logout();
     }
     public class LoginHelper : ILoginHelper
     {
@@ -176,6 +177,13 @@ namespace badger_view.Helpers
             }
           
             return isLoedIn;
+        }
+
+        public async Task<bool> Logout()
+        {
+            await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return true;
         }
     }
 }
