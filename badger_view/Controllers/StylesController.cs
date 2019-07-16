@@ -22,15 +22,16 @@ namespace badger_view.Controllers
     }
     public class StylesController : Controller
     {
-        
+        private ILoginHelper _ILoginHelper;
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         //private IItemServiceHelper _itemService
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         private String UploadPath = "";
-        public StylesController(IConfiguration config)
+        public StylesController(IConfiguration config, ILoginHelper LoginHelper)
         {
             _config = config;
+            _ILoginHelper = LoginHelper;
             UploadPath = _config.GetValue<string>("UploadPath:path");
 
         }
@@ -95,9 +96,8 @@ namespace badger_view.Controllers
         public  async Task<String> CreateNewStyle([FromBody]   JObject json)
         {
             SetBadgerHelper();
-
-            try
-            {
+            int user_id = Int32.Parse(await _ILoginHelper.GetLoginUserId());
+            
 
             JObject product = new JObject();
             List<JObject> style_attr = new List<JObject>();
@@ -109,7 +109,7 @@ namespace badger_view.Controllers
             Int32 po_id = json.Value<Int32>("po_id");
             Int32 vendor_id = json.Value<Int32>("vendor_id");
             string product_name = json.Value<string>("product_name");
-            string product_type = json.Value<string>("product_type_id");
+            
             string first_style_vendor_size = vendor_style_sku_data[0].Value<string>("style_vendor_size");
             string first_style_size = vendor_style_sku_data[0].Value<string>("style_size");
             string first_style_qty = vendor_style_sku_data[0].Value<string>("style_qty");
@@ -118,71 +118,83 @@ namespace badger_view.Controllers
             if (first_sku.Count() > 0 ) {
                  first_sku_family = first_sku.Split('-')[0];
             }
-                //style_sku["style_vendor_size"] = $(this).find('#styleVendorSize').val();
-                //style_sku["style_size"] = $(this).find('#styleSize').val();
-                //style_sku["style_sku"] = $(this).find('#styleSku').val();
-                //style_sku["style_qty"] = $(this).find('#styleSkuQty').val();
+            string vendor_color_name = json.Value<string>("vendor_color_name");
+            string product_cost = json.Value<string>("product_cost");
+            string product_retail = json.Value<string>("product_retail");
+            string product_url_handle = product_name.Replace(' ', '-').ToLower();
+            string product_type_id = json.Value<string>("product_type_id");
+            int size_and_fit_id = 0;
+            int wash_type_id = 0;
+            int product_discount = 20;
+            int published_status = 0;
+            int is_on_site_status = 0;
+            String attr_value_id_color = "15";
+            string color_attribute_id = "1"; // color attribute id
+
+          
             product.Add("vendor_id", vendor_id);
             product.Add("product_name", product_name);
-            product.Add("vendor_color_name", json.Value<string>("vendor_color_name"));
-            product.Add("product_cost", json.Value<string>("product_cost"));
-            product.Add("product_retail", json.Value<string>("product_retail"));
-            product.Add("product_url_handle", product_name.Replace(' ','-').ToLower() );
-            product.Add("product_type_id", json.Value<string>("product_type_id"));
+            product.Add("vendor_color_name", vendor_color_name);
+            product.Add("product_cost", product_cost);
+            product.Add("product_retail", product_retail);
+            product.Add("product_url_handle", product_url_handle);
+            product.Add("product_type_id", product_type_id);
 
             product.Add("product_description", "");
             product.Add("sku_family", first_sku_family);
-            product.Add("size_and_fit_id",0);
-            product.Add("wash_type_id", 0);
-            product.Add("product_discount", 20);
-            product.Add("published_status", 0);
-            product.Add("is_on_site_status", 0);
+            product.Add("size_and_fit_id", size_and_fit_id);
+            product.Add("wash_type_id", wash_type_id);
+            product.Add("product_discount", product_discount);
+            product.Add("published_status", published_status);
+            product.Add("is_on_site_status", is_on_site_status);
 
 
-            product.Add("created_by", 2);
+            product.Add("created_by", user_id);
             product.Add("created_at", _common.GetTimeStemp());
 
                 if (product_id_current > 0)
                 {
-                    product_id = product_id_current.ToString();
+                    product_id = product_id_current.ToString(); //update on selected product id
                 }
                 else {
                     product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
-                    if (product_type == "1") //only for Color
-                    {
-                        JObject product_attr_color = new JObject();
-                        product_attr_color.Add("attribute_id", 1);
-                        product_attr_color.Add("product_id", Int32.Parse(product_id));
-                        product_attr_color.Add("value", "");
-
-                        product_attr_color.Add("created_by", 2);
-                        product_attr_color.Add("created_at", _common.GetTimeStemp());
-                        String attr_value_id_color = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr_color.ToString(Formatting.None), "/attributevalues/create");
+                   
+                    
+                        
 
                         JObject product_attr_value_color = new JObject();
                         product_attr_value_color.Add("product_id", Int32.Parse(product_id));
-                        product_attr_value_color.Add("attribute_id", 1);
+                        product_attr_value_color.Add("attribute_id", color_attribute_id);
                         product_attr_value_color.Add("value_id", attr_value_id_color);
 
-                        product_attr_value_color.Add("created_by", 2);
+                        product_attr_value_color.Add("created_by", user_id);
                         // product_attr_value.Add("created_at", _common.GetTimeStemp()); need to create in DB
                         String product_attribute_value_id_color = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr_value_color.ToString(Formatting.None), "/product/createAttributesValues");
 
                         JObject product_attribute_obj_color = new JObject();
                         product_attribute_obj_color.Add("product_id", Int32.Parse(product_id));
-                        product_attribute_obj_color.Add("attribute_id", 1);
+                        product_attribute_obj_color.Add("attribute_id", color_attribute_id);
                         product_attribute_obj_color.Add("sku", "");
 
-                        product_attribute_obj_color.Add("created_by", 2);
+                        product_attribute_obj_color.Add("created_by", user_id);
                         //product_attribute_obj.Add("created_at", _common.GetTimeStemp()); need to create in DB
                         String product_attribute_id_color = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj_color.ToString(Formatting.None), "/product/createProductAttribute");
 
-                    }
+                    
+
+                    JObject used_in_obj = new JObject();
+                    used_in_obj.Add("product_id", Int32.Parse(product_id));
+                    used_in_obj.Add("po_id", po_id);
+                    used_in_obj.Add("created_at", _common.GetTimeStemp());
+                    String used_in_id = await _BadgerApiHelper.GenericPostAsyncString<String>(used_in_obj.ToString(Formatting.None), "/product/createUsedIn");
+
                 }
 
-             
+
                 for (int i = 0; i < vendor_style_sku_data.Count; i++)
                 {
+
+                
                     string style_vendor_size = vendor_style_sku_data[i].Value<string>("style_vendor_size");
                     string style_size = vendor_style_sku_data[i].Value<string>("style_size");
                     string style_qty = vendor_style_sku_data[i].Value<string>("style_qty");
@@ -193,7 +205,9 @@ namespace badger_view.Controllers
                         sku_family = sku.Split('-')[0];
                     }
 
-
+                if (product_type_id == "2") //only for Sizes
+                {
+                    /// sizes attribute add from here
                     JObject product_attr = new JObject();
                     Int16 attribute_id = 3;
                     if (style_size == "XS") { attribute_id = 3; }
@@ -206,17 +220,17 @@ namespace badger_view.Controllers
                     product_attr.Add("product_id", Int32.Parse(product_id));
                     product_attr.Add("value", style_size);
 
-                    product_attr.Add("created_by", 2);
+                    product_attr.Add("created_by", user_id);
                     product_attr.Add("created_at", _common.GetTimeStemp());
                     String attr_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr.ToString(Formatting.None), "/attributevalues/create");
 
- 
+
                     JObject product_attr_value = new JObject();
                     product_attr_value.Add("product_id", Int32.Parse(product_id));
                     product_attr_value.Add("attribute_id", attribute_id);
                     product_attr_value.Add("value_id", attr_value_id);
 
-                    product_attr_value.Add("created_by", 2);
+                    product_attr_value.Add("created_by", user_id);
                     // product_attr_value.Add("created_at", _common.GetTimeStemp()); need to create in DB
                     String product_attribute_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr_value.ToString(Formatting.None), "/product/createAttributesValues");
 
@@ -225,12 +239,12 @@ namespace badger_view.Controllers
                     product_attribute_obj.Add("attribute_id", attribute_id);
                     product_attribute_obj.Add("sku", sku);
 
-                    product_attribute_obj.Add("created_by", 2);
+                    product_attribute_obj.Add("created_by", user_id);
                     //product_attribute_obj.Add("created_at", _common.GetTimeStemp()); need to create in DB
                     String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
 
-
-
+                    //// size attribute ends here
+                }
 
 
                     JObject Sku_obj = new JObject();
@@ -245,9 +259,9 @@ namespace badger_view.Controllers
                     lineitem_obj.Add("vendor_id", vendor_id);
                     lineitem_obj.Add("sku", sku);
                     lineitem_obj.Add("product_id", Int32.Parse(product_id));
-                    lineitem_obj.Add("line_item_cost", json.Value<string>("product_cost"));
-                    lineitem_obj.Add("line_item_retail", json.Value<string>("product_retail"));
-                    lineitem_obj.Add("line_item_type_id", 1);
+                    lineitem_obj.Add("line_item_cost", product_cost);
+                    lineitem_obj.Add("line_item_retail", product_retail);
+                    lineitem_obj.Add("line_item_type_id", product_type_id);
                     lineitem_obj.Add("line_item_ordered_quantity", style_qty);
                     String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/createLineitems");
 
@@ -266,7 +280,7 @@ namespace badger_view.Controllers
                     items.Add("product_id", product_id);
                     items.Add("vendor_id", vendor_id);
                     items.Add("PO_id", po_id);
-                    items.Add("created_by", 2);
+                    items.Add("created_by", user_id);
                     items.Add("created_at", _common.GetTimeStemp());
 
 
@@ -279,11 +293,7 @@ namespace badger_view.Controllers
 
 
             return product_id;
-            }
-            catch (Exception ex)
-            {
-                return "0";
-            }
+           
         }
     }
 }
