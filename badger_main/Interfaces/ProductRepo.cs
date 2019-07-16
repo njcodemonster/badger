@@ -71,7 +71,7 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<Product>(NewProduct);
+                long result =  conn.Insert<Product>(NewProduct);
                 return result.ToString();
             }
         }

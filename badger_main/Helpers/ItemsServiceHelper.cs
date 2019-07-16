@@ -192,7 +192,7 @@ namespace badgerApi.Helper
         Input:  string json , string status
         output: string of items product data of small sku
         */
-        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , string status)
+        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , int status)
         {
             var client = new HttpClient();
             var response = await client.PostAsJsonAsync(ItemApiUrl + "/item/UpdateProductItemForPhotoshoot/"+ status, json );

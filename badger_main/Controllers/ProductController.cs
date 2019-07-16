@@ -383,15 +383,15 @@ namespace badgerApi.Controllers
           Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
           output: New LINE ITEM id
           */
-        // POST: api/product/createUsedIn   // purchase order line items
+        // POST: api/product/createUsedIn   
         [HttpPost("createUsedIn")]
         public async Task<string> PostAsyncUsedIn([FromBody]   string value)
         {
             string NewInsertionID = "0";
             try
             {
-                PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
-                NewInsertionID = await _ProductRepo.CreatePOLineitems(newPOlineitems);
+                ProductUsedIn newProductUsedIn = JsonConvert.DeserializeObject<ProductUsedIn>(value);
+                NewInsertionID = await _ProductRepo.CreateProductUsedIn(newProductUsedIn);
             }
             catch (Exception ex)
             {
