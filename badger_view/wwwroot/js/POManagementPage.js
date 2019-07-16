@@ -604,3 +604,47 @@ function getPOdetail(PO_id) {
 
 
 }
+
+
+/*
+Developer: Sajid Khan
+Date: 7-16-19
+Action: update item bagcode by item id
+Input: int item id
+Output: string item
+*/
+$(document).on("change", ".item_bagcode", function () {
+    var item_id = $(this).attr('data-itemid');
+    var bagcode = $(this).val();
+
+    $(this).removeClass('errorFeild');
+    if (bagcode.length < 1) {
+        $(this).addClass('errorFeild');
+        return false;
+    }
+    $('.message').append('<div class="spinner-border text-info"></div>');
+    var jsondata = $("input#" + item_id).val();
+    var itemdata = JSON.parse(jsondata);
+    var id = itemdata.item_id
+    itemdata.bag_code = bagcode;
+    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+    console.log($("input#" + item_id).val());
+
+    $.ajax({
+        url: "/purchaseorders/itemupdate/" + id,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(itemdata),
+        processData: false
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText == "Success") {
+            alertBox('message', 'green', 'Item bag code has been updated successfully');
+        } else {
+            alertBox('message', 'red', 'Item bag code has error' + data.responseText);
+        }
+
+    });
+})

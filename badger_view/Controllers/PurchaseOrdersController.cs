@@ -638,6 +638,7 @@ namespace badger_view.Controllers
             
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+            PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
 
             return View("PurchaseOrdersManagementViewAjax", PageModal);
         }
