@@ -667,7 +667,7 @@ namespace badger_view.Controllers
 
             String newPurchaseLedgerID = "0";
 
-            if (json.Value<string>("po_notes") != null)
+            if (json.Value<string>("po_notes") != "")
             {
                 JObject purchaseOrderNote = new JObject();
                 purchaseOrderNote.Add("ref_id", json.Value<string>("po_id"));
@@ -699,7 +699,7 @@ namespace badger_view.Controllers
 
             String newItemID = "0";
 
-            if (json.Value<string>("item_note") != null)
+            if (json.Value<string>("item_note") != "")
             {
                 JObject ItemNotes = new JObject();
                 ItemNotes.Add("ref_id", json.Value<string>("item_id"));
