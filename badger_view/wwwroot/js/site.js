@@ -74,16 +74,19 @@ $(document).ready(function () {
     });
 
     // date range picker
-
-    $('#poreporting').daterangepicker();
+/** Include your own page where it is required because this js file load on  every page **/
+   // $('#poreporting').daterangepicker();
 });
 
-$('#delivery').datepicker({
+
+/** Include your own page where it is required because this js file load on  every page **/
+
+/*$('#delivery').datepicker({
     uiLibrary: 'bootstrap4'
 });
 $('#orderdate').datepicker({
     uiLibrary: 'bootstrap4'
-});
+});*/
 
 
 // dropdpwn with checkbox

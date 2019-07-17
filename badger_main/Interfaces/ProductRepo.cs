@@ -57,6 +57,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Insert new Product data into database
+        Input: Product data
+        output: string of Product data
+        */
         public async Task<string> Create(Product NewProduct)
         {
             using (IDbConnection conn = Connection)
@@ -66,6 +73,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get all Product data from database
+        Input: int limit
+        output: list of Product data
+        */
         public async Task<List<Product>> GetAll(int Limit)
         {
             using (IDbConnection conn = Connection)
@@ -83,6 +97,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Product data by id from database
+        Input: int id
+        output: list of Product data
+        */
         public async Task<Product> GetByIdAsync(int id)
         {
 
@@ -95,6 +116,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update Product data by id from database
+        Input: Product data
+        output: Boolean
+        */
         public async Task<bool>  UpdateAsync(Product ProductToUpdate)
         {
            
@@ -105,6 +133,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update Product data with specific fields by id from database
+        Input: Dictionary<String , String> ValuePairs, String where condition
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
@@ -116,6 +151,15 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Products data by vendor id from database
+        Input:string vendor id
+        output: List of products by vendor id
+        */
         public async Task<List<Product>> GetProductsByVendorId(String Vendor_id)
         {
             IEnumerable<Product> toReturn;
@@ -126,6 +170,14 @@ namespace badgerApi.Interfaces
             }
             return toReturn.ToList();
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Create new product attributes into databaset
+        Input: product attributes data
+        output: string of product attributes
+        */
         public async Task<string> CreateProductAttribute(ProductAttributes NewProductAttributes)
         {
             using (IDbConnection conn = Connection)
@@ -134,6 +186,14 @@ namespace badgerApi.Interfaces
                 return result.ToString();
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Product pair with from database
+        Input: string id 
+        output: list of Product pair with
+        */
         public async Task<IEnumerable<Productpairwith>> GetProductpairwiths(string id)
         {
             IEnumerable<Productpairwith> productProperties;
@@ -143,6 +203,14 @@ namespace badgerApi.Interfaces
             }
             return productProperties;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Product color with from database
+        Input: string id 
+        output: list of Product color with
+        */
         public async Task<IEnumerable<Productcolorwith>> GetProductcolorwiths(string id)
         {
             IEnumerable<Productcolorwith> productProperties;
@@ -152,6 +220,14 @@ namespace badgerApi.Interfaces
             }
             return productProperties;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Product image from database
+        Input: string id 
+        output: list of Product image
+        */
         public async Task<IEnumerable<ProductImages>> GetProductImages(string id)
         {
             IEnumerable<ProductImages> productProperties;
@@ -161,6 +237,14 @@ namespace badgerApi.Interfaces
             }
             return productProperties;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Product properties from database
+        Input: string id 
+        output: list of Product properties
+        */
         public async Task<IEnumerable<ProductProperties>> GetProductProperties (string id)
         {
             IEnumerable<ProductProperties> productProperties;
@@ -174,6 +258,14 @@ namespace badgerApi.Interfaces
             return productProperties.Concat(productProperties2);
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Product details from database
+        Input: string id 
+        output: list of Product details
+        */
         public async Task<IEnumerable<ProductDetails>> GetProductDetails(string id)
         {
             IEnumerable<ProductDetails> productProperties;
@@ -185,6 +277,14 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get Productshoot status from database
+        Input: string id 
+        output: list of Productshoot status
+        */
         public async Task<Int32> GetProductShootStatus(string id)
         {
             Int32 shootstatus = 0;
@@ -196,6 +296,14 @@ namespace badgerApi.Interfaces
             return shootstatus;
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all Product colors from database
+        Input: 
+        output: list of Product colors
+        */
         public async Task<IEnumerable<AllColors>> GetAllProductColors()
         {
             IEnumerable<AllColors> productProperties;
@@ -207,6 +315,14 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all Product tags from database
+        Input: 
+        output: list of Product tags
+        */
         public async Task<IEnumerable<AllTags>> GetAllProductTags()
         {
             IEnumerable<AllTags> productProperties;
@@ -218,6 +334,12 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get AttributeValues Model from controller and insert the AttributeValues
+        Input: AttributeValues Model 
+        output: New AttributeValues id
+        */
         public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
         {
             using (IDbConnection conn = Connection)
@@ -227,6 +349,13 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get SKU Model from controller and insert the SKU
+        Input: SKU Model 
+        output: New SKU id
+        */
         public async Task<string> CreateSku(Sku NewSku)
         {
             using (IDbConnection conn = Connection)
@@ -236,6 +365,12 @@ namespace badgerApi.Interfaces
             }
 
         }
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
+        Input: PurchaseOrderLineItems Model 
+        output: New PO LineItem id
+        */
         public async Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem)
         {
             using (IDbConnection conn = Connection)
@@ -245,7 +380,12 @@ namespace badgerApi.Interfaces
             }
 
         }
-
+        /*Developer: ubaid
+       Date:5-7-19
+       Action:get ProductAttributes values from controller and update the spesific Row
+       Input: ProductAttributes values and where clause 
+       output: None
+       */
         public async Task AttributeUpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

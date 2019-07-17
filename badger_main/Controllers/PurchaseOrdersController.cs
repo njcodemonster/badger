@@ -34,6 +34,7 @@ namespace badgerApi.Controllers
         private int event_type_po_update_id = 8;
         private int event_type_po_specific_update_id = 9;
         private int event_type_po_delete_id = 24;
+        private int event_type_po_delete_document_id = 31;
 
         private string userEventTableName = "user_events";
         private string tableName = "purchase_order_events";
@@ -44,6 +45,7 @@ namespace badgerApi.Controllers
         private string event_update_purchase_orders = "Purchase order updated by user =%%userid%% with purchase order id= %%poid%%";
         private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
         private string event_delete_purchase_orders = "Purchase order deleted by user =%%userid%% with purchase order id= %%poid%%";
+        private string event_delete_document_purchase_orders = "Purchase order document deleted by user =%%userid%% with document id= %%documentid%%";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
 
@@ -520,6 +522,47 @@ namespace badgerApi.Controllers
 
             }
             return ToReturn;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: delete purchase order document by id "api/purchaseorders/documentdelete/1"  with events created in purchase order event and user event
+        URL: api/purchaseorders/documentdelete/5
+        Request: Delete
+        Input: int id, FromBody string
+        output: string of Purchase order document delete
+        */
+        [HttpPost("documentdelete/{id}")]
+        public async Task<bool> DocumentDelete(int id, [FromBody] string value)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DeleteQuery = "Delete From documents WHERE doc_id =" + id.ToString();
+                    var docDetails = await conn.QueryAsync<object>(DeleteQuery);
+                    res = true;
+
+                    dynamic PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<JObject>(value);
+                    int po_id = PurchaseOrdersToUpdate.po_id;
+                    int updated_by = PurchaseOrdersToUpdate.updated_by;
+
+                    event_delete_document_purchase_orders = event_delete_document_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%documentid%%", id.ToString());
+
+                    _eventRepo.AddPurchaseOrdersEventAsync(po_id, event_type_po_delete_document_id, id, event_delete_document_purchase_orders, updated_by, _common.GetTimeStemp(), tableName);
+
+                    _eventRepo.AddEventAsync(event_type_po_delete_document_id, updated_by, id, event_delete_document_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders document deleted by id with message" + ex.Message);
+            }
+            return res;
         }
 
     }

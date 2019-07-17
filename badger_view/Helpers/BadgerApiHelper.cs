@@ -21,6 +21,15 @@ namespace badger_view.Helpers
             BadgerAPIURL = _config.GetValue<string>("Services:Badger");
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: data sends to badger api
+        Request: Get 
+        Input: Any Type and URL
+        output: json object 
+        */
         public async Task<T> GenericGetAsync<T>(String _call)
         {
             var client = new HttpClient();
@@ -36,6 +45,15 @@ namespace badger_view.Helpers
             return JsonConvert.DeserializeObject<T>(data,settings);
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: data sends to badger api
+        Request: Post 
+        Input: Json Type, URL
+        output: json object 
+        */
         public async Task<T> GenericPostAsync<T>(T json,String _call)
         {
             var client = new HttpClient();
@@ -53,6 +71,14 @@ namespace badger_view.Helpers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: data sends to badger api
+        Request: Post 
+        Input: Json data, URL
+        output: string data
+        */
         public async Task<String> GenericPostAsyncString<T>(T json, String _call)
         {
             var client = new HttpClient();
@@ -66,6 +92,14 @@ namespace badger_view.Helpers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: data sends to badger api
+        Request: Put 
+        Input: Json Type, URL
+        output: string data
+        */
         public async Task<String> GenericPutAsyncString<T>(T json, String _call)
         {
             var client = new HttpClient();
@@ -78,6 +112,15 @@ namespace badger_view.Helpers
             return data.ToString();
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: string data convert to json
+        Request: Get 
+        Input: string data
+        output: json data
+        */
         public async Task<T> ForceConvert<T>(String data)
         {
             var settings = new JsonSerializerSettings

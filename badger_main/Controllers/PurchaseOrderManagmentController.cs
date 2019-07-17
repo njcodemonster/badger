@@ -46,6 +46,15 @@ namespace badgerApi.Controllers
             _ItemsHelper = ItemsHelper;
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-13-19 
+       Action: Find Sku from Lin item array
+       URL: /api/purchaseordermanagement/FindSku/LineItemArray/sku
+       Request: Get
+       Input: dynamic LineItemArray,String sku
+       output: int number count which matched
+       */
         private int FindSku(dynamic LineItemArray,String sku)
         {
             int index = -1;

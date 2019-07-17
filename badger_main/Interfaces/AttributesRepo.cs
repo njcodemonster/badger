@@ -41,7 +41,13 @@ namespace badgerApi.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
-
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: insert new sttribute data to database
+           Input: new Attribute data
+           output: Attribute id
+        */
         public async Task<string> Create(Attributes NewAttribute)
         {
             using (IDbConnection conn = Connection)
@@ -50,7 +56,13 @@ namespace badgerApi.Interfaces
                 return result.ToString();
             }
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting attributes with limit from database
+            Input: limit
+            output: attributes list
+         */
         public async Task<List<Attributes>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -69,7 +81,13 @@ namespace badgerApi.Interfaces
         }
 
 
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting attribute by id from database
+            Input: int id
+            output: attribute
+         */
         public async Task<Attributes> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -80,6 +98,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+           Developer: Azeem Hassan
+           Date: 7-5-19 
+           Action: update attribute to database
+           Input: AttributesToUpdate
+           output: result
+        */
         public async Task<Boolean> Update(Attributes AttributesToUpdate)
         {
 
@@ -90,6 +115,14 @@ namespace badgerApi.Interfaces
             }
 
         }
+
+        /*
+          Developer: Azeem Hassan
+          Date: 7-5-19 
+          Action: update specific attribute to database
+          Input: value and where
+          output: result
+       */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

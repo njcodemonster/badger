@@ -37,7 +37,16 @@ namespace notesService.Controllers
         {
             return "value";
         }
-        // GET: api/Notes/Reff/5
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get Notes list "api/Notes/Reff/5/5/1"
+        URL: api/Notes/Reff/5/5/1
+        Request: Get
+        Input: int reffence id,int notetype, int Limit
+        output: List of Notes
+        */
         [HttpGet("Reff/{id}/{notetype}/{limit}")]
         public async Task<List<Notes>> GetByReff(int id,int notetype, int Limit)
         {
@@ -56,7 +65,15 @@ namespace notesService.Controllers
             return ToReturn;
         }
 
-        // GET: api/Notes/Reff/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get Notes list "api/Notes/Reff/5,2,44,1/5"
+        URL: api/Notes/Reff/5,2,44,1/5
+        Request: Get
+        Input: string reffences ids,int notetype
+        output: List of Notes
+        */
         [HttpGet("Reff/{ids}/{notetype}")]
         public async Task<List<Notes>> GetAllNotesByReffs(string ids, int notetype)
         {
@@ -74,7 +91,15 @@ namespace notesService.Controllers
             return ToReturn;
         }
 
-        // POST: api/Notes
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Create new Notes "api/Notes/create"
+        URL: api/Notes/create
+        Request: Post
+        Input: [FromBody] string value
+        output: string last insert note id
+        */
         [HttpPost("create")]
         public async Task<String> PostAsync([FromBody] string value)
         {

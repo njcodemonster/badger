@@ -46,8 +46,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: insert sku to database
-        URL: 
-        Request: Post
         Input: new sku data
         output: string of sku id
         */
@@ -64,8 +62,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: get all sku data from database
-        URL: 
-        Request: Get
         Input: int limit
         output: list of sku
         */
@@ -90,8 +86,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: get sku by id from database
-        URL: 
-        Request: Get
         Input: int id
         output: list of sku
         */
@@ -110,8 +104,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: update sku by id  to database
-        URL: 
-        Request: Put
         Input: sku data
         output: Boolean
         */
@@ -130,8 +122,6 @@ namespace badgerApi.Interfaces
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: update specific sku by id to database
-        URL: 
-        Request: Put
         Input: fields value and where to update
         output: Boolean
         */

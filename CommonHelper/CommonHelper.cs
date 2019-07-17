@@ -8,12 +8,29 @@ namespace CommonHelper
 {
     public class CommonHelper
     {
-        
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Now Today Timestamp
+        URL: 
+        Request: Get
+        Input:  
+        output: double timesteamp
+        */
         public Double GetTimeStemp()
         {
             return (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: date convert to timestamp
+        URL: 
+        Request: Get
+        Input:  string date
+        output: double timesteamp
+        */
         public double DateConvertToTimeStamp(string date)
         {
             Double TotalSeconds = 0;
@@ -32,16 +49,44 @@ namespace CommonHelper
             
             return TotalSeconds;
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: date convert to timestamp
+        URL: 
+        Request: Get
+        Input:  string date
+        output: double timesteamp
+        */
         public string ConvertToDate(double unixtime)
         {
             return (new DateTime(1970, 1, 1).AddSeconds(unixtime)).ToString("M/d/yyyy");
-        } 
+        }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Convert Multi Date Picker Format 
+        URL: 
+        Request: Get
+        Input:  double starttime, double endtime
+        output: string multidateformat
+        */
         public string MultiDatePickerFormat(double starttime, double endtime)
         {
             return (new DateTime(1970, 1, 1).AddSeconds(starttime)).ToString("M/d") + "-" + (new DateTime(1970, 1, 1).AddSeconds(endtime)).ToString("M/d/yyyy");
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Total number of days from now today date time
+        URL: 
+        Request: Get
+        Input:  double date
+        output: Number of day or days
+        */
         public string NumberOfDays(double timestamp)
         {
             string NumOfDate = "0";

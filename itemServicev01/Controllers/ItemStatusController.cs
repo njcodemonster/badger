@@ -20,8 +20,16 @@ namespace itemService.Controllers
         {
             _ItemStatusRepository = _ItemStatusReposit;
         }
-        
-        // GET: /id/5
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get item status list by id "api/ItemStatus/list/id/2"
+        URL: api/ItemStatus/list/id/2
+        Request: Get
+        Input: int item_status_id
+        output: List of item status
+        */
         [HttpGet("list/id/{item_status_id}")]
         public async Task<List<ItemStatus>> id(int item_status_id)
         {   
@@ -37,7 +45,15 @@ namespace itemService.Controllers
             }
         }
 
-        // GET: /id/
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all item status list "api/ItemStatus/list"
+        URL: api/ItemStatus/list
+        Request: Get
+        Input: null
+        output: List of item status
+        */
         [HttpGet("list")]
         public async Task<List<ItemStatus>> GetAll()
         {

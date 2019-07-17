@@ -21,6 +21,17 @@ namespace badger_view.Controllers
         {
             _LoginHelper = loginHelper;
         }
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: View Login page default
+        URL: /Dologin
+        Request: Get
+        Input: Null
+        output: page of login
+        */
         [HttpGet("Dologin")]
         public async Task<IActionResult> DoLogin()
         {
@@ -28,6 +39,16 @@ namespace badger_view.Controllers
             return View("Login");
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Check function login data and by pass on page
+        URL: /TryLogin
+        Request: Get
+        Input: Login data
+        output: Redirect to page
+        */
         [HttpPost("TryLogin")]
         public async Task<IActionResult> TryLogin(badger_view.Models.LogiDetails logiDetails)
         {
@@ -41,6 +62,20 @@ namespace badger_view.Controllers
             }
 
         }
-        
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+
+            if (await _LoginHelper.Logout())
+            {
+                return RedirectToAction("Dologin", "Auth");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
     }
 }

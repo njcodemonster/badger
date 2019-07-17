@@ -1,9 +1,13 @@
-﻿$(document).on('click', "#AddItemButton", function () {
+﻿/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get Data of items by vendor id and show in dropdown and fields
+Input: int purchase order id, int vendor id
+Output: string of vendor products
+*/
+$(document).on('click', "#AddItemButton", function () {
     var CurrentPOID = $(this).data("poid");
     var CurrentVendorId = $(this).data("vendorid");
-
-    
-    
 
     $('#modaladdstylec input').val("");
     $('#modaladdstylec #StyleSubType option').each(function () {
@@ -55,6 +59,16 @@
         console.log(data);
     });
 });
+
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Select dropdown data show by id 
+URL:  purchaseorders/lineitems/productid/purchaseorderid
+Input: int product id, int purchase order id
+Output: get data in fields
+*/
 $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
     var SelectedProduct = $(this.options[this.selectedIndex]);
     SelectedProductID = SelectedProduct.data("product_id");
@@ -99,6 +113,14 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
 });
 
 $(document).ready(function () {
+
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: it will show item note
+Input: items note ids comma seperate
+Output: item note data show by item note id
+*/
     var itemids = "";
     $(".item_note").each(function () {
         itemids += $(this).attr('data-itemid') + ",";
@@ -130,6 +152,13 @@ $(document).ready(function () {
 
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: create new item note
+Input:  string note
+Output: item note id
+*/
 $(document).on('change', ".item_note", function () {
     $('.message').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
@@ -158,7 +187,13 @@ $(document).on('change', ".item_note", function () {
 
 });
 
-
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: get item document by item doc id
+Input: int item document id
+Output: get item document data
+*/
 $(document).on("click", "#AddDocument", function () {
     $('#document_form')[0].reset();
     var id = $(this).attr("data-itemid");
@@ -187,6 +222,13 @@ $(document).on("click", "#AddDocument", function () {
     });
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: create new item document
+Input: string file name
+Output: item document id
+*/
 $(document).on("click", "#document_submit", function () {
     $('.message').append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
@@ -221,6 +263,13 @@ $(document).on("click", "#document_submit", function () {
     }
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: update item status by item id
+Input: int item id
+Output: string status
+*/
 $(document).on("change", ".item_status", function () {
     $('.message').append('<div class="spinner-border text-info"></div>');
     //$(".message .spinner-border").removeClass("d-none");
@@ -256,6 +305,13 @@ $(".sku_weight").on("keydown", function (event) {
     return isNumber(event);
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: update all same sku weight by sku id
+Input: int sku id
+Output: string sku
+*/
 $(document).on("change", ".sku_weight", function () {
     var sku_id = $(this).attr('id');
     var sku_weight = $(this).val();
@@ -308,6 +364,13 @@ $(document).on("change", ".sku_weight", function () {
     
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: update item barcode by item id
+Input: int item id
+Output: string item
+*/
 $(document).on("change", ".item_barcode", function () {
     var item_id = $(this).attr('data-itemid');
     var barcode = $(this).val();
@@ -344,7 +407,13 @@ $(document).on("change", ".item_barcode", function () {
     });
 })
 
-
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: status item changed by item id, it will update purchase order line item quantity
+Input: int item id
+Output: string item
+*/
 $(document).on("click", ".item_row_remove", function () {
     $('.message').append('<div class="spinner-border text-info"></div>');
     var trdata = $(this);
@@ -406,6 +475,13 @@ $(document).on("click", ".item_row_remove", function () {
     });
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: update product, sku,item, purchase order line item, product attribute ect by sku id
+Input: int product id, sku id, item id, po line item id etc
+Output: string sku
+*/
 $(document).on("change", ".item_sku", function () {
     var sku_id = $(this).attr('id');
     var sku = $(this).val();
@@ -420,7 +496,6 @@ $(document).on("change", ".item_sku", function () {
         $(this).addClass('errorFeild');
         return false;
     }
-
 
     confirmationBox("SKU Update", "This will all same SKU updates, Do you want to continue?", function (result) {
         console.log(result)
@@ -497,26 +572,35 @@ $(document).on("change", ".item_sku", function () {
 });
 
 
-$(document).on("change", ".expand_vendor", function () {
-    var PO_id = $(this).attr('id');
-   
 
 
-           
-           
+
+$('.card-header').click(function () {
+    var thisPO = $(this);
+    var POid = thisPO.attr("data-POId");
+    if ($("#collapse_" + POid).is(":hidden")) {
+        getPOdetail(POid);
+    } else {
+        $("#collapse_" + POid).html("");
+    }
+});
+
+function getPOdetail(PO_id) {
+
+    $("#collapse_" + PO_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
 
     $.ajax({
-        url: "/purchaseorders/skuupdate/" + PO_id,
+        url: "/PurchaseOrders/lineitemsdetails/" + PO_id,
         dataType: 'json',
         type: 'get',
         contentType: 'application/json',
-        data: JSON.stringify(jsonData),
         processData: false
     }).always(function (data) {
-        console.log(data);
+        //console.log(data);
+        $("#collapse_" + PO_id).html("");
+        $("#collapse_" + PO_id).html(data.responseText);
+
     });
 
-       
-    });
 
-
+}

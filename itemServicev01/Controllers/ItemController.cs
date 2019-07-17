@@ -25,6 +25,15 @@ namespace itemService.Controllers
             _loggerFactory  = loggerFactory;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items  "api/Item/list"
+        URL: api/Item/list
+        Request: Get
+        Input: int Limit
+        output: List of Items
+        */
         [HttpGet("list/{Limit}")]
         public async Task<ActionResult<List<Items>>> GetAsync(int Limit)
         {
@@ -41,7 +50,15 @@ namespace itemService.Controllers
             }
         }
 
-        // GET: /id/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by id "api/Item/list/id/1"
+        URL: api/Item/list/id/1
+        Request: Get
+        Input: string ItemId
+        output: List of Items
+        */
         [HttpGet("list/id/{ItemId}")]
         public async Task<List<Items>> id(string ItemId)
         {   
@@ -59,6 +76,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by barcode "api/Item/list/barcode/1"
+        URL: api/Item/list/barcode/1
+        Request: Get
+        Input: string barcode
+        output: List of Items
+        */
         [HttpGet("list/barcode/{Barcode}")]
         public async Task<List<Items>> barcode(string Barcode)
         {  
@@ -77,6 +103,15 @@ namespace itemService.Controllers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by bagNumber "api/Item/list/bagNumber/1"
+        URL: api/Item/list/bagNumber/1
+        Request: Get
+        Input: string bagNumber
+        output: List of Items
+        */
         [HttpGet("list/bagNumber/{BagNumber}")]
         public async Task<List<Items>> BagNumber(string BagNumber)
         {
@@ -94,6 +129,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by skuFamily and limit "api/Item/list/bagNumber/1/limit"
+        URL: api/Item/list/skuFamily/1/limit
+        Request: Get
+        Input: string skuFamily, int limit
+        output: List of Items
+        */
         [HttpGet("list/skuFamily/{skuFamily}/{Limit}")]
         public async Task<List<Items>> skuFamily(string skuFamily, int Limit )
         {
@@ -108,7 +152,16 @@ namespace itemService.Controllers
                 return ToRetrun;
             }
         }
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by productId and limit "api/Item/list/productId/1/limit"
+        URL: api/Item/list/productId/1/limit
+        Request: Get
+        Input: string productId, int limit
+        output: List of Items
+        */
         [HttpGet("list/productId/{ProductId}/{Limit}")]
         public async Task<List<Items>> productId(string ProductId, int Limit)
         {
@@ -124,6 +177,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-5-19 
+       Action: Get all list of items by statusId and limit "api/Item/list/statusId/1/limit"
+       URL: api/Item/list/statusId/1/limit
+       Request: Get
+       Input: string statusId, int limit
+       output: List of Items
+       */
         [HttpGet("list/statusId/{StatusId}/{Limit}")]
         public async Task<List<Items>> statusId(string StatusId, int Limit)
         {
@@ -139,6 +201,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-5-19 
+       Action: Get all list of items by vendorId and limit "api/Item/list/vendorId/1/limit"
+       URL: api/Item/list/vendorId/1/limit
+       Request: Get
+       Input: string vendorId, int limit
+       output: List of Items
+       */
         [HttpGet("list/vendorId/{VendorId}/{Limit}")]
         public async Task<List<Items>> vendorId(string VendorId, int Limit)
         {
@@ -154,6 +225,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+      Developer: Sajid Khan
+      Date: 7-5-19 
+      Action: Get all list of items by skuId and limit "api/Item/list/skuId/1/limit"
+      URL: api/Item/list/skuId/1/limit
+      Request: Get
+      Input: string skuId, int limit
+      output: List of Items
+      */
         [HttpGet("list/skuId/{SkuId}/{Limit}")]
         public async Task<List<Items>> skuId(string SkuId, int Limit)
         {
@@ -169,6 +249,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+         Developer: Sajid Khan
+         Date: 7-5-19 
+         Action: Get all list of items by publishDate and limit "api/Item/list/publishDate/1/limit"
+         URL: api/Item/list/publishDate/1/limit
+         Request: Get
+         Input: string publishDate, int limit
+         output: List of Items
+         */
         [HttpGet("list/publishDate/{PublishDate}/{Limit}")]
         public async Task<List<Items>> publishDate(string PublishDate, int Limit)
         {
@@ -183,6 +272,16 @@ namespace itemService.Controllers
                 return ToRetrunItems;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by poid and limit "api/Item/list/listforPO/1/limit"
+        URL: api/Item/list/listforPO/1/limit
+        Request: Get
+        Input: int poid, int limit
+        output: List of Items
+        */
         [HttpGet("list/listforPO/{PO_id}")]
         public async Task<List<Items>> GetItemsByPo(int PO_id)
         {
@@ -198,6 +297,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by publishDateRange and limit "api/Item/list/publishDateRange/start/end/limit"
+        URL: api/Item/list/publishDateRange/start/end/limit
+        Request: Get
+        Input: string StartDate, string EndDate, int Limit
+        output: List of Items
+        */
         [HttpGet("list/publishDateRange/{StartDate}/{EndDate}/{Limit}")]
         public async Task<List<Items>> publishDateRange(string StartDate, string EndDate, int Limit)
         {
@@ -213,6 +321,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by raStatus and limit "api/Item/list/raStatus/1/limit"
+        URL: api/Item/list/raStatus/1/limit
+        Request: Get
+        Input: string RaStatus, int Limit
+        output: List of Items
+        */
         [HttpGet("list/raStatus/{RaStatus}/{Limit}")]
         public async Task<List<Items>> raStatus(string RaStatus, int Limit)
         {
@@ -227,7 +344,16 @@ namespace itemService.Controllers
                 return ToRetrunItems;
             }
         }
-        
+
+        /*
+       Developer: Sajid Khan
+       Date: 7-5-19 
+       Action: Get all list of items by publishedBy and limit "api/Item/list/publishedBy/1/limit"
+       URL: api/Item/list/publishedBy/1/limit
+       Request: Get
+       Input: string publishedBy, int Limit
+       output: List of Items
+       */
         [HttpGet("list/publishedBy/{PublishedBy}/{Limit}")]
         public async Task<List<Items>> publishedBy(string PublishedBy, int Limit)
         {
@@ -243,6 +369,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+      Developer: Sajid Khan
+      Date: 7-5-19 
+      Action: Get all list of items by updateDateRange and limit "api/Item/list/updateDateRange/start/end/limit"
+      URL: api/Item/list/updateDateRange/start/end/limit
+      Request: Get
+      Input: string StartDate, string EndDate, int Limit
+      output: List of Items
+      */
         [HttpGet("list/updateDateRange/{StartDate}/{EndDate}/{Limit}")]
         public async Task<List<Items>> updateDateRange(string StartDate, string EndDate, int Limit)
         {
@@ -258,6 +393,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+      Developer: Sajid Khan
+      Date: 7-5-19 
+      Action: Get all list of items by createDateRange and limit "api/Item/list/createDateRange/start/end/limit"
+      URL: api/Item/list/createDateRange/start/end/limit
+      Request: Get
+      Input: string StartDate, string EndDate, int Limit
+      output: List of Items
+      */
         [HttpGet("list/createDateRange/{StartDate}/{EndDate}/{Limit}")]
         public async Task<List<Items>> createDateRange(string StartDate, string EndDate, int Limit)
         {
@@ -273,6 +417,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by afterDate and limit "api/Item/list/afterDate/afterDate/limit"
+        URL: api/Item/list/afterDate/afterDate/limit
+        Request: Get
+        Input: string AfterDate, int Limit
+        output: List of Items
+        */
         [HttpGet("list/afterDate/{AfterDate}/{Limit}")]
         public async Task<List<Items>> afterDate(string AfterDate, int Limit)
         {
@@ -288,6 +441,15 @@ namespace itemService.Controllers
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by product_id and limit "api/Item/list/ProductItemSentToPhotoshoot/product_id"
+        URL: api/Item/list/ProductItemSentToPhotoshoot/product_id
+        Request: Get
+        Input: string product_id
+        output: List of Items
+        */
         [HttpGet("list/ProductItemSentToPhotoshoot/{product_id}")]
         public async Task<string> ProductItemSentToPhotoshoot(string product_id)
         {
@@ -302,8 +464,16 @@ namespace itemService.Controllers
                 return "Failed";
             }
         }
-        
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by beforeDate and limit "api/Item/list/beforeDate/1/limit"
+        URL: api/Item/list/beforeDate/1/limit
+        Request: Get
+        Input: string BeforeDate, int Limit
+        output: List of Items
+        */
         [HttpGet("list/beforeDate/{BeforeDate}/{Limit}")]
         public async Task<List<Items>> beforeDate(string BeforeDate, int Limit)
         {
@@ -319,7 +489,13 @@ namespace itemService.Controllers
             }
         }
 
-
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form(New items Data) from badger api and pass the data to items Repo
+        URL: /item/create/{quantity}
+        Input: HTML form Body Json with the data of new item(s)
+        output: New item id
+        */
         [HttpPost("create/{qty}")]
         public async Task<string> PostAsync([FromBody]   string value,int qty = 0)
         {
@@ -340,7 +516,16 @@ namespace itemService.Controllers
             return NewInsertionID;
         }
 
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update product items by status and limit "api/Item/UpdateProductItemForPhotoshoot/status"
+        URL: api/Item/UpdateProductItemForPhotoshoot/status
+        Request: Post
+        Input: [FromBody] string value, int status
+        output: string
+        */
         [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
         public async Task<string> UpdateProductItemForPhotoshoot([FromBody]   string value, int status)
         {
@@ -380,7 +565,15 @@ namespace itemService.Controllers
         }
 
 
-
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update product items by id and limit "api/Item/update/1"
+        URL: api/Item/update/1
+        Request: Put
+        Input: int id, [FromBody] string value
+        output: string
+        */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
         { 
@@ -405,6 +598,15 @@ namespace itemService.Controllers
             return UpdateResult;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update product items barcode by id and limit "api/Item/updateBarcode/id/barcode"
+        URL: api/Item/updateBarcode/id/barcode
+        Request: Get
+        Input: string Barcode, int id
+        output: string
+        */
         [HttpGet("updateBarcode/{id}/{Barcode}")]
         public async Task<string> updateBarcode(string Barcode, int id)
         {
@@ -426,6 +628,15 @@ namespace itemService.Controllers
             return UpdateResult;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: update product items BagNumber by id and limit "api/Item/updateBagNumber/id/BagNumber"
+        URL: api/Item/updateBagNumber/id/BagNumber
+        Request: Get
+        Input: string BagNumber, int id
+        output: string
+        */
         [HttpGet("updateBagNumber/{id}/{BagNumber}")]
         public async Task<string> updateBagNumber(string BagNumber, int id)
         {
@@ -446,6 +657,15 @@ namespace itemService.Controllers
             return UpdateResult;
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-5-19 
+       Action: update product items slot by id and limit "api/Item/updateSlot/id/slot"
+       URL: api/Item/updateSlot/id/slot
+       Request: Get
+       Input: string Slot, int id
+       output: string
+       */
         [HttpGet("updateSlot/{id}/{Slot}")]
         public async Task<string> updateSlot(string Slot, int id)
         {
@@ -466,8 +686,15 @@ namespace itemService.Controllers
             return UpdateResult;
         }
 
-
-
+        /*
+          Developer: Sajid Khan
+          Date: 7-5-19 
+          Action: update specific product items by id "api/Item/specificUpdate/id"
+          URL: api/Item/specificUpdate/id
+          Request: Put
+          Input: int id, [FromBody] string value
+          output: string
+          */
         [HttpPut("specificUpdate/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {

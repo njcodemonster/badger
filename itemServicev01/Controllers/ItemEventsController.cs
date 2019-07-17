@@ -20,8 +20,17 @@ namespace itemService.Controllers
         {
             _ItemEventsRepository = _ItemEventsReposit;
         }
-        
-        // GET: /id/5
+
+        /*
+         * (There is wrong function argument etc in [HttpGet("list/id/{item_id}")])
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get item events list by id "api/ItemEvents/list/1"
+        URL: api/ItemEvents/list/id/1
+        Request: Get
+        Input: int item_id, string StartDate, string EndDate, int Limit
+        output: List of item events
+        */
         [HttpGet("list/id/{item_id}")]
         public async Task<List<ItemEvents>> id(int item_id, string StartDate, string EndDate, int Limit)
         {   
@@ -37,7 +46,15 @@ namespace itemService.Controllers
             }
         }
 
-        // GET: /id/
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all item status list "api/ItemEvents/list/id/item_id/DateRange/startdate/enddate/limit"
+        URL: api/ItemEvents/list/id/item_id/DateRange/startdate/enddate/limit
+        Request: Get
+        Input: int item_id, string StartDate, string EndDate, int Limit
+        output: List of ItemEvents
+        */
         [HttpGet("list/id/{item_id}/DateRange/{StartDate}/{EndDate}/{Limit}")]
         public async Task<List<ItemEvents>> GetAll(int item_id, string StartDate, string EndDate, int Limit)
         {

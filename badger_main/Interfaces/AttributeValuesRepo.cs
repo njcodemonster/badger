@@ -40,7 +40,13 @@ namespace badgerApi.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
             }
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-8-19 
+            Action: insert NewAttributeValue data to database
+            Input: new attribute value
+            output: attribute id
+         */
         public async Task<string> Create(AttributeValues NewAttributeValue)
         {
             using (IDbConnection conn = Connection)
@@ -49,7 +55,13 @@ namespace badgerApi.Interfaces
                 return result.ToString();
             }
         }
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting AttributeValues from database
+            Input: limit
+            output: AttributeValues list
+         */
         public async Task<List<AttributeValues>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -68,7 +80,13 @@ namespace badgerApi.Interfaces
         }
 
 
-
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: getting AttributeValues by id from database
+            Input: int id
+            output: AttributeValues
+         */
         public async Task<AttributeValues> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -79,6 +97,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: Update AttributeValues to database
+            Input: AttributeValuesToUpdate
+            output: result
+         */
         public async Task<Boolean> Update(AttributeValues AttributeValuesToUpdate)
         {
 
@@ -89,6 +114,13 @@ namespace badgerApi.Interfaces
             }
 
         }
+        /*
+            Developer: Azeem Hassan
+            Date: 7-5-19 
+            Action: UpdateSpecific records to database
+            Input: Dictionary<String, String> ValuePairs, String where condition
+            output: bolean
+         */
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

@@ -1,20 +1,108 @@
 ﻿$(document).ready(function () {
+    /*
+    Developer: Sajid Khan
+    Date: 7-12-19
+    Action: Autocomplete search by vendor name like on greater than three character
+    URL:
+    Input: string
+    output: list of vendors like matched
+    */
 
+    // Single Select
+    $("#poVendor").autocomplete({
+        source: function (request, response) {
+            var jsonData = {};
+            jsonData["columnname"] = 'vendor_name';
+            jsonData["search"] = request.term;
+            console.log(jsonData);
+
+            if (request.term.length > 3) {
+                $.ajax({
+                    url: "/vendor/autosuggest/",
+                    dataType: 'json',
+                    type: 'post',
+                    data: JSON.stringify(jsonData),
+                    contentType: 'application/json',
+                    processData: false,
+                }).always(function (data) {
+                    console.log(data);
+                    if (data.length > 0) {
+                        response(data);
+                        $('#poVendor').removeClass("errorFeild");
+                        $('.errorMsg').remove();
+                    } else {
+                        $('#poVendor').removeClass("errorFeild");
+                        $('.errorMsg').remove();
+                        $('#poVendor').addClass('errorFeild');
+                        $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                    }
+                   
+                });
+            } 
+            if (request.term.length == 0){
+                $('#poVendor').val(""); // display the selected text
+                $('#poVendor').attr("data-val", "");
+            }
+        },
+        select: function (event, ui) {
+            // Set selection
+            $('#poVendor').val(ui.item.label); // display the selected text
+            $('#poVendor').attr("data-val", ui.item.value);
+            // $('#selectuser_id').val(ui.item.value); // save selected id to input
+            return false;
+        },
+        focus: function (event, ui) {
+            event.preventDefault();
+            $("#poVendor").val(ui.item.label);
+        }
+    });
+
+
+    /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action:checking value of input number and dot allow
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poTotalQuantity,#poSubtotal,#poShipping").on("keydown", function (event) {
         if ($(this).val().indexOf('.') > -1 && event.which == 190) {
             return false;
         }
           return onlyNumbersWithDot(event);
     });
-
+     /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action:checking value of input number allow only
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poTotalStyles,#poOrderNumber").on("keydown", function (event) {
         return isNumber(event);
     });
-    //P.O. Number
+      /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action: blocking special characters
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poNumber,#poInvoiceNumber").on("keydown", function (event) {
        return blockspecialcharacter(event)
     });
-    // Order Date : Order Delivery Range
+
+    /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action: allow number and back slash
+        URL:
+        Input:any keypress
+        output: true/false
+    */
     $("#poOrderDate, #poDelieveryRange").on("keypress keyup blur", function (event) {
         $(this).val($(this).val().replace(/[^0-9- \/ ]/g, ''));
         if ((event.which != 32 || $(this).val().indexOf('/') != -1) && (event.which < 45 || event.which > 57)) {
@@ -22,7 +110,14 @@
         }
        
     });
-
+     /*
+        Developer: Azeem Hassan
+        Date: 7-6-19 
+        Action: this function is getting single purchase order data or single purchase order page
+        URL:
+        Input: order id
+        output: single purchase order
+    */
     if (window.location.href.indexOf('PurchaseOrders/Single/') > -1) {
         var id = window.location.href.split('Single/')[1]
         getSinglePurchaseOrder(id)
@@ -35,16 +130,6 @@ var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
 window.purchaseorderrownumber = "";
 $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
     window.purchaseorderrownumber = table.row(this)[0][0];
-});
-
-window.vendor_options = '';
-
-$(document).on('click', '.model_purchase_order', function () {
-
-    if (window.vendor_options != '') {
-        $('#poVendor').empty().append(window.vendor_options);
-    }
-    
 });
 
 $('#poOrderDate').datepicker({
@@ -67,16 +152,26 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
         $(this).parents('.form-group').find('.errorMsg').remove();
     }
 });
-
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action: this function is getting data from purchase order form and parsing to variable and sends to controller
+    URL:/purchaseorders/newpurchaseorder
+    Request: POST
+    Input: new purchase order form data
+    output: new purchase id
+*/
 $(document).on('click', "#NewPurchaseOrderButton", function () {
-
-    $(this).attr('disabled', true);
+    _self = $(this);
+    _self.attr('disabled', true);
     if (emptyFeildValidation('newPurchaseOrderForm') == false) {
-        $(this).attr('disabled', false);
+        _self.attr('disabled', false);
         return false;
     }
 
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
+
+    var vendorname = $("#newPurchaseOrderForm #poVendor").val();
 
     var jsonData = {};
 
@@ -103,7 +198,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
     jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val();
     jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val();
-    jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").val();
+    jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").attr("data-val");
     jsonData["total_styles"] = $("#newPurchaseOrderForm #poTotalStyles").val();
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
     jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
@@ -115,7 +210,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
     console.log(jsonData);
-
+    
+    
     $.ajax({
         url: '/purchaseorders/newpurchaseorder',
         dataType: 'json',
@@ -129,7 +225,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
         if (data != 0 && data > 0) {
             console.log('New row created - ' + data);
-            alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
+            //alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -154,33 +250,39 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     console.log(data);
                     if (data == "0") {
                         console.log("Exception Error");
+                        alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
                         console.log(data.responseText);
                     }
                 });
             }
             $('#purchaseorderlists').DataTable().row.add([
-                $("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text()
+                $("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname
                 , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
             ]).draw();
 
             table.page('last').draw('page');
-            setTimeout(function () {
-               $('#modalPurchaseOrder').modal('hide'); 
-            }, 3000)
-            /*window.vendor_options = '';
 
-            window.vendor_options = $("#poVendor > option").clone();
+            $('#modalPurchaseOrder').modal('hide');
 
-            $('#poVendor').empty().append(window.vendor_options);*/
-
+            alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
+            
             $('#newPurchaseOrderForm')[0].reset();
+            _self.attr('disabled', false);
         } else {
+            _self.attr('disabled', false);
             alertBox('poAlertMsg', 'red', 'Purchase order not inserted.');
         }
     });
 });
-
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action:converting secont to date
+    URL:
+    Input:time in second
+    output: date
+*/
 function timeToDateConvert(timeinseconds) {
     var datetime = new Date(timeinseconds * 1000);
 
@@ -196,18 +298,18 @@ function timeToDateConvert(timeinseconds) {
         month = month;
     }
 
-    /*var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var year = a.getFullYear();
-    var month = months[a.getMonth()];
-    var date = a.getDate();
-    var hour = a.getHours();
-    var min = a.getMinutes();
-    var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;*/
-
     return month + '/' + date + '/' + year;
 }
 
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action:getting data from controller and sending to purchaseOrderData function to show data
+    URL:/purchaseorders/details/
+    REQUEST:GET
+    Input:
+    output: purchase order data
+*/
 
 $(document).on('click', "#EditPurhaseOrder", function () {
     $("#newPurchaseOrderForm input,textarea").val("").removeClass('errorFeild');
@@ -220,7 +322,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     $('.po_section').removeClass('d-none');
 
     $("#modalPurchaseOrder #purchaseOrderModalLongTitle").text("Edit Purhase Order");
-    $('#modalPurchaseOrder input').prop("disabled", "true");
+    $('#modalPurchaseOrder input,#modalPurchaseOrder button').prop("disabled", "true");
     $('#modalPurchaseOrder').modal('show');
     var id = $(this).data("id");
 
@@ -234,13 +336,22 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     }).always(function (data) {
         console.log(data);
         purchaseOrderData(data);
+        $("#modalPurchaseOrder #purchaseOrderModalLongTitle").text("Edit Purhase Order Number ("+$('#newPurchaseOrderForm #poNumber').val()+")");
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "EditPurchaseOrderButton");
         $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").html("Update");
-        $('#modalPurchaseOrder input').removeAttr("disabled");
+        $('#modalPurchaseOrder input,#modalPurchaseOrder button').removeAttr("disabled");
     });
 
 });
-
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action: creating discount 
+    URL:/purchaseorders/discountcreate
+    REQUEST:POST
+    Input:Discount data
+    output: discount id
+*/
 window.discount = "";
 $(document).on("click", "#discount_submit", function () {
 
@@ -279,6 +390,15 @@ $(document).on("click", "#discount_submit", function () {
 });
 
 window.adjustment = "";
+/*
+    Developer: Azeem Hassan
+    Date: 7-6-19 
+    Action: creating ledger 
+    URL:/purchaseorders/ledgercreate
+    REQUEST:POST
+    Input:ledger data
+    output: ledger id
+*/
 $(document).on("click", "#ledger_submit", function () {
 
     var jsonData = {};
@@ -308,30 +428,25 @@ $(document).on("click", "#ledger_submit", function () {
             console.log(e + " -- " + i.po_id + " - " + i.credit + " - " + i.debit + " - " + i.description);
             $("#view_adjustment").append("Adjustment -- Credit - " + i.credit + " Debit - " + i.debit + " - " + i.description + " <br>");
 
-            /*$("#ledger_form").attr("data-adjustment", i.transaction_id);
-
-            if (i.credit > 0) {
-                $('#ledger_adjustment option[value=credit]').attr('selected', 'selected');
-                $("#ledger_amount").val(i.credit);
-            } else {
-                $('#ledger_adjustment option[value=debit]').attr('selected', 'selected');
-                $("#ledger_amount").val(i.debit);
-            }
-            
-            $("#ledger_note").val(i.description);*/
-            
             window.adjustment = jsonData;
 
-            //$("#ledger_submit").attr("id", "update_ledger_submit");
         })
     });
 
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: update purchase orders data with notes and files by poid
+URL: /purchaseorders/updatepurchaseorder/id
+Input: int id
+output: string
+*/
 $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
-
+    var vendorname = $("#newPurchaseOrderForm #poVendor").val();
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     var delieveryRange = $("#newPurchaseOrderForm #poDelieveryRange").val();
@@ -357,7 +472,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
     jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val();
     jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val();
-    jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").val();
+    jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").attr("data-val");
     jsonData["total_styles"] = $("#newPurchaseOrderForm #poTotalStyles").val();
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
     jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
@@ -400,7 +515,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         console.log(data);
 
         if (data.responseText == "Success") {
-            alertBox('poAlertMsg', 'green', 'Purchase order is updated');
+            //alertBox('poAlertMsg', 'green', 'Purchase order is updated');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
 
@@ -425,6 +540,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     console.log(data);
                     if (data == "0") {
                         console.log("Exception Error");
+                        alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
                         console.log(data.responseText);
                     }
@@ -434,16 +550,15 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, $("#newPurchaseOrderForm #poVendor option:selected").text(), $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
 
-
             $("#newPurchaseOrderForm").attr("data-currentid", "");
-            setTimeout(function () {
-                $('#modalPurchaseOrder').modal('hide');
-            }, 3000)
+            $('#modalPurchaseOrder').modal('hide');
+            alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
+
             $('#newPurchaseOrderForm')[0].reset();
         } else {
             alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
@@ -452,6 +567,15 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     })
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: show popup of purchase order form with input empty fields
+URL: 
+Input: 
+output: form input fields
+*/
 $(document).on('click', ".model_purchase_order", function () {
 
     $("#newPurchaseOrderForm .error").remove();
@@ -468,12 +592,28 @@ $(document).on('click', ".model_purchase_order", function () {
     $('.poTracking, #poNotes').val("");
 });
 
-
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: dynamic tracking add more input field
+URL:
+Input:
+output: form input fields
+*/
 $(document).on('click', ".add_tracking", function () {
     //Append a new row of code to the "#items" div
     $("#wrapper_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: remove dynamic tracking field by id
+URL: /purchaseorders/trackingdelete/id
+Input: int id
+output: boolean
+*/
 $(document).on('click', ".remove_tracking", function () {
     var track_id = $(this).parent().children().attr("id");
     var track_number = $(this).parent().children().attr("value");
@@ -503,10 +643,19 @@ $(document).on('click', ".remove_tracking", function () {
     }    
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get purchase order note by id
+URL: /purchaseorders/getnote/id
+Input: int id
+output: dynamic object of purchase order note
+*/
 $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#note_form #po_notes").val("");
     var id = $(this).attr("data-id");
     $("#note_form").attr("data-noteid", id);
+    $("#noteModalLongTitle").text("Notes ("+$(this).parents('tr').find('td:first-child').text()+")");
     $.ajax({
         url: '/purchaseorders/getnote/' + id,
         dataType: 'json',
@@ -522,12 +671,30 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
             $("#note_form").attr("data-noteid", id);
             $("#note_form #po_notes").val(note);
         }
+        $(".poNoteAlertMsg").empty();
         $("#modaladdnote").modal("show");
     });
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: send to new purchase order note data
+URL: /purchaseorders/notecreate
+Input: note data
+output: string of purchase order note
+*/
 $(document).on("click", "#note_submit", function () {
 
+    var _self = $(this);
+
+    if (_self.val() == "") {
+        $(".poNoteAlertMsg").css("color", "red").text("Please fill empty field.");
+        return false;
+    }
+
+    _self.attr("disabled", true);
     var jsonData = {};
 
     jsonData["po_id"] = $("#note_form").attr("data-noteid");
@@ -543,10 +710,27 @@ $(document).on("click", "#note_submit", function () {
         data: JSON.stringify(jsonData),
         processData: false,
     }).always(function (data) {
+        if (data == "0") {
+            _self.attr("disabled", false);
+            alertBox('poAlertMsg', 'red', 'Purchase order note not updated');
+        } else {
+            _self.attr("disabled", false);
+            $("#modaladdnote").modal("hide");
+            alertBox('poAlertMsg', 'green', 'Purchase order note updated successfully.');
+        }
         console.log(data);
-        $("#modaladdnote").modal("hide");
+       
     });
 });
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get purchase order documents data by id
+URL: /purchaseorders/getdocument/id
+Input: int id
+output:string of purchase order documents
+*/
 
 $(document).on("click", "#EditPurhaseOrderDocument", function () {
     $('#document_form')[0].reset();
@@ -554,6 +738,8 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
     $("#document_form").attr("data-documentid", "");
     var id = $(this).attr("data-id");
     $("#document_form").attr("data-documentid", id);
+    $("#documentModalLongTitle").text("Document (" + $(this).parents('tr').find('td:first-child').text()+")");
+
     $.ajax({
         url: '/purchaseorders/getdocument/' + id,
         dataType: 'json',
@@ -567,7 +753,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("File " + (e + 1) + ": <a href=" + i.url + ">" + i.url + "</a> <br>");
+                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -575,11 +761,29 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         } else {
             $(".po_doc_section").addClass('d-none');
         }
+        $(".poDocAlertMsg").empty();
         $("#modaladddocument").modal("show");        
     });
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: send to new purchase order document data
+URL: /purchaseorders/purchaseorder_doc
+Input: document data
+output: string of purchase order document
+*/
 $(document).on("click", "#document_submit", function () {
+    var _self = $(this);
+
+    if (_self.val() == "") {
+        $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
+        return false;
+    }
+
+    _self.attr("disabled", true);
+
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
         var files = $("#poUploadImages")[0].files;
@@ -601,16 +805,28 @@ $(document).on("click", "#document_submit", function () {
         }).always(function (data) {
             console.log(data);
             if (data == "0") {
-                console.log("Exception Error");
+                _self.attr("disabled", false);
+                alertBox('poAlertMsg', 'red', 'Purchase order document not updated');
+              console.log("Exception Error");
             } else {
                 console.log(data.responseText);
+                _self.attr("disabled", false);
                 $("#modaladddocument").modal("hide");
+                alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
             }
         });
     }
 });
 
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Delete purchase order data
+URL: /purchaseorders/delete/id
+Input: int id
+output: string of purchase order
+*/
 $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
@@ -629,6 +845,9 @@ $(document).on('click', "#poDelete", function () {
                     var table = $('#purchaseorderlists').DataTable();
                     table.row(window.purchaseorderrownumber).remove().draw(false);
                     $("#modalPurchaseOrder").modal("hide");
+                    alertBox('poAlertMsg', 'green', 'Purchase order deleted successfully.');
+                } else {
+                    alertBox('poAlertMsg', 'red', 'Purchase order not deleted.');
                 }
 
             });
@@ -637,6 +856,14 @@ $(document).on('click', "#poDelete", function () {
         
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get purchase order data by id
+URL: 
+Input: int id
+output: dynamic object of purchase order data
+*/
 function purchaseOrderData(data) {
     var data = data;
        var podata = data['purchase_order'];
@@ -655,7 +882,8 @@ function purchaseOrderData(data) {
                 //what to do after change
             }).val(startDate + " - " + endDate); 
 
-            $("#newPurchaseOrderForm #poVendor").val(podata.vendor_id);
+            $("#newPurchaseOrderForm #poVendor").val(data["vendor"][0].vendor_name);
+            $("#newPurchaseOrderForm #poVendor").attr("data-val", data["vendor"][0].vendor_id);
             $("#newPurchaseOrderForm #poNumber").val(podata.vendor_po_number);
             $("#newPurchaseOrderForm #poTotalStyles").val(podata.total_styles);
             $("#newPurchaseOrderForm #poInvoiceNumber").val(podata.vendor_invoice_number);
@@ -678,7 +906,7 @@ function purchaseOrderData(data) {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("File "+(e + 1) + ": <a href="+i.url+">" + i.url+"</a> <br>");
+                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -751,8 +979,17 @@ function purchaseOrderData(data) {
         }
 
 }
+
+/*
+Developer: Sajid Khan
+Date: 7-7-19
+Action: Get single page purchase order data by id
+URL:
+Input: int id
+output: dynamic object of purchase order data
+*/
 function getSinglePurchaseOrder(id) {
-    $('.orderNumber').text(id)
+    //$('.orderNumber').text(id)
     $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
@@ -761,12 +998,21 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
+         $('.orderNumber').text(data.purchase_order[0].vendor_po_number)
         purchaseOrderData(data)
 
     })
 
 }
 
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Checkin button click
+URL:
+Input: 
+output: Checkin Model Show
+*/
 $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     console.log($(this).attr("data-ID"));
     var poid = $(this).attr("data-ID");
@@ -775,3 +1021,61 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Add Invoice Model Top Heading
+URL:
+Input:
+output: Add Invoice Adjustment Model Top Heading
+*/
+$(document).on('click', "#add_invoice_adjustment", function () {
+    $("#invoice_ponumber").text(" : "+$('#newPurchaseOrderForm #poNumber').val());
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Add Discount Model Top Heading
+URL:
+Input:
+output: Add Discount Model Top Heading
+*/
+$(document).on('click', "#add_discount", function () {
+    $("#discount_ponumber").text(" : " +$('#newPurchaseOrderForm #poNumber').val());
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Delete Document or Image on click 
+URL:
+Input:
+output: Boolean
+*/
+$(document).on('click', ".podeleteImage", function () {
+    var _this = $(this);
+    var docid = _this.parents('.documentsLink').attr('data-docid');
+    var url = _this.parents('.documentsLink').attr('data-val');
+    var poid = $('#document_form').attr("data-documentid");
+
+    var jsonData = {};
+    jsonData["doc_id"] = docid;
+    jsonData["po_id"] = poid;
+    jsonData["url"] = url;
+    console.log(jsonData);
+
+    $.ajax({
+        url: "/purchaseorders/documentsdelete/" + docid,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText != '0')
+            _this.parents('.documentsLink').remove()
+    });
+});

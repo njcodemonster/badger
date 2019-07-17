@@ -73,11 +73,11 @@
                                 <div class="form-group col-md-8 pt-4">
                                     <div id="po_input_fields_wrap" class="po_input_fields_wrap pb-3">
                                         <!---<div class="pb-3 vendorSkuBox">
-                    <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Vendor Size">
-                    <input type="text" class="form-control d-inline w-25" name="vendorcsize[1]" placeholder="Size">
-                    <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
-                    <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
-                </div>-->
+                                            <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Vendor Size">
+                                            <input type="text" class="form-control d-inline w-25" name="vendorcsize[1]" placeholder="Size">
+                                            <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                                            <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                                        </div>-->
                                     </div>
                                     <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
                                 </div>
@@ -272,16 +272,48 @@
             </td>
         </tr>
     </table>*@
-@{ int First = 0;}
+
+
+<div class="">
+    <div class="accordion" id="accordionpomgmt">
+
+       
+            @foreach (PurchaseOrdersInfo purchaseOrder in Model.POList)
+            {
+                <div class="card POList">
+                    <div class="card-header" id="heading_@purchaseOrder.po_id" data-POid="@purchaseOrder.po_id">
+                        <h2 class="mb-0">
+                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@purchaseOrder.po_id">
+                                <i class="fa fa-plus"></i>
+                                <span class="text-dark font-weight-bold h5">Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a>  </span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse_@purchaseOrder.po_id" class="collapse" aria-labelledby="heading_@purchaseOrder.po_id" data-parent="#accordionpomgmt">
+
+                    </div>
+                </div>
+            }
+
+    </div>
+</div>
+
+
+
+
+
+
+@*
+@{ int First = 0; }
 @foreach (PurchaseOrdersInfo purchaseOrder in Model.POList)
 {
-    
-    <table class="table outerboddy">
+
+    <table class="table outerboddy @purchaseOrder.po_id">
         <tr>
             <td>
                 <h5>Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a>  <span class="expand_vendor" id="@purchaseOrder.po_id">Expand this PO</span></h5>
                 <h5>Vendor Name: <a href="#">@purchaseOrder.vendor</a></h5>
-               
+
             </td>
             <td class="align-middle">
                 <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
@@ -324,7 +356,7 @@
                 @:<div class="card">
                     <div class="card-header" id="headingOne">
                         <h2 class="mb-0">
-                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)" ><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
+                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)"><i class="fa fa-plus"></i> <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span></button>
                             <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
                         </h2>
                         <div class="message"></div>
@@ -419,3 +451,5 @@
         }
 
 }
+
+*@

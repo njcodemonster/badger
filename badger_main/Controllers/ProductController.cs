@@ -32,6 +32,15 @@ namespace badgerApi.Controllers
         }
 
         // GET: api/Product
+        /*
+         Developer: Azeem Hassan
+         Date:7-8-19
+         Action: getting all Products list
+         Request:GET
+         URL: api/Product
+         Input: null
+         output: list of Products
+      */
         [HttpGet("list")]
         public async Task<ActionResult<List<Product>>> GetAsync()
         {
@@ -49,7 +58,15 @@ namespace badgerApi.Controllers
 
 
         }
-        // GET: api/Product/detailpage/1
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: getting ProductDetail by id
+           Request:GET
+           URL: api/Product/detailpage/1
+           Input: int id
+           output: ProductDetails
+        */
         [HttpGet("detailpage/{id}")]
         public async Task<ProductDetailsPageData> GetProductDetailPage(string id)
         {
@@ -81,7 +98,16 @@ namespace badgerApi.Controllers
             return productDetailsPageData;
 
         }
-        // GET: api/Product/list/1
+
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: getting product by id
+           Request:GET
+           URL: api/Product/list/1
+           Input: int id
+           output: product
+        */
         [HttpGet("list/{id}")]
         public async Task<List<Product>> GetAsync(int id)
         {
@@ -128,7 +154,24 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
+        /*
+       Developer: ubaid
+       Date:5-7-19
+       Action:get HTML Form (New Styles Data) from VIEW and pass the data to items API
+       URL: /product/createitems/{quantity}
+       Input: HTML form Body Json with the data of new product
+       output: New item id
+       */
         // POST: api/product/create/items
+        /*
+          Developer: Azeem Hassan
+          Date:7-8-19
+          Action: Inserting new items
+          Request:POST
+          URL:  api/product/create/items
+          Input: FormBody data and quantity
+          output: NewInsertionID
+       */
         [HttpPost("createitems/{qty}")]
         public async Task<string> PostItemsAsync([FromBody]   string value,int qty)
         {
@@ -146,8 +189,15 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
 
-
-        // PUT: api/product/updatespecific/5
+        /*
+         Developer: Azeem Hassan
+         Date:7-8-19
+         Action: Update specific product by id
+         Request:PUT
+         URL:  api/product/updatespecific/5
+         Input: FormBody data and int id
+         output: Success/Failed
+      */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -180,8 +230,17 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
+        /*
+            Developer: Azeem Hassan
+            Date:7-8-19
+            Action: Update specific product attribute by id
+            Request:PUT
+            URL:  api/Product/attribute/updatespecific/5
+            Input: FormBody data and int id
+            output: Success/Failed
+        */
 
-        // PUT: api/Product/attribute/updatespecific/5
+
         [HttpPut("attribute/updatespecific/{id}")]
         public async Task<string> AttributeUpdateSpecific(int id, [FromBody] string value)
         {

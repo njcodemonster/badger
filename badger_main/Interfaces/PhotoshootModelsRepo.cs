@@ -42,6 +42,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Insert new PhotoshootModel data into database
+        Input: PhotoshootModel data
+        output: string of PhotoshootModel data
+        */
         public async Task<string> Create(PhotoshootModels NewModel)
         {
             using (IDbConnection conn = Connection)
@@ -50,6 +57,14 @@ namespace badgerApi.Interfaces
                 return result.ToString() ;
             }
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all PhotoshootModel data from database
+        Input: int limit
+        output: list of PhotoshootModel data
+        */
         public async Task<List<PhotoshootModels>> GetAll(Int32 Limit)
         {
             using (IDbConnection conn = Connection)
@@ -67,6 +82,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get PhotoshootModel data by id from database
+        Input: int id
+        output: list of PhotoshootModel data
+        */
         public async Task<PhotoshootModels> GetById(int id)
         {
             using (IDbConnection conn = Connection)
@@ -77,6 +99,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update PhotoshootModel data by id from database
+        Input: PhotoshootModel data
+        output: Boolean
+        */
         public async Task<Boolean> Update(PhotoshootModels ModelToUpdate)
         {
             
@@ -87,6 +116,14 @@ namespace badgerApi.Interfaces
             }
            
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Update PhotoshootModel data with specific fields by id from database
+        Input: Dictionary<String , String> ValuePairs, String where condition
+        output: Boolean
+        */
         public async Task UpdateSpecific(Dictionary<String , String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();

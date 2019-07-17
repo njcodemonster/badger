@@ -46,6 +46,13 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Matched users data by email and password
+        Input: null
+        output: List of user
+         */
         public async Task<Users> AuthenticateUser(LogiDetails logiDetails)
         {
             IEnumerable<Users> user = new List<Users>();

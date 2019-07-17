@@ -58,6 +58,16 @@ namespace badgerApi.Helper
 
         }
 
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Items by purchase order id
+        URL: 
+        Request: Get
+        Input:  int poid
+        output: dynamic object of items
+        */
         public async Task<List<Items>> GetItemsByOrder(int PO_id)
         {
             var client = new HttpClient();
@@ -72,6 +82,15 @@ namespace badgerApi.Helper
             return JsonConvert.DeserializeObject<List<Items>>(data, settings);
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get All status of items
+        URL: 
+        Request: Get
+        Input:  
+        output: dynamic object of items status
+        */
         public async Task<object> GetAllStatus()
         {
             var client = new HttpClient();
@@ -81,6 +100,15 @@ namespace badgerApi.Helper
             return data;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Item update by id
+        URL: 
+        Request: Put
+        Input:  int id, string data
+        output: string of items data
+        */
         public async Task<string> ItemUpdateById(int id, string json)
         {
             var client = new HttpClient();
@@ -92,6 +120,15 @@ namespace badgerApi.Helper
             return data.ToString();
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: SKU Item update by id
+        URL: 
+        Request: Put
+        Input:  int id, string data
+        output: string of items data
+        */
         public async Task<string> SkuUpdateById(int id, string json)
         {
             var client = new HttpClient();
@@ -102,6 +139,16 @@ namespace badgerApi.Helper
 
             return data.ToString();
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Create New Item data
+        URL: 
+        Request: Post
+        Input:  type json, string data
+        output: dynamic type of items data
+        */
         public async Task<T> GenericPostAsync<T>(T json, String _call)
         {
             var client = new HttpClient();
@@ -118,6 +165,15 @@ namespace badgerApi.Helper
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Product Items by small sku
+        URL: 
+        Request: Get
+        Input:  string product_id
+        output: dynamic object of items product data of small sku
+        */
         public async Task<object> GetProductItemsSmallSku(string product_id)
         {
             var client = new HttpClient();
@@ -127,6 +183,15 @@ namespace badgerApi.Helper
             return data;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Update Product Items photoshoot status
+        URL: 
+        Request: Post
+        Input:  string json , string status
+        output: string of items product data of small sku
+        */
         public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , int status)
         {
             var client = new HttpClient();

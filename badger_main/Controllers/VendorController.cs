@@ -35,11 +35,6 @@ namespace badgerApi.Controllers
         private string event_create_vendor_document = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
         private string event_update_vendor = "Vendor updated by user =%%userid%% with vendor id= %%vendorid%%";
 
-
-
-
-
-
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository)
         {
@@ -554,6 +549,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("updated_at", VendorToUpdate.updated_at.ToString());
                 }
+                if (VendorToUpdate.upload_logo != null)
+                {
+                    ValuesToUpdate.Add("upload_logo", VendorToUpdate.upload_logo);
+                }
 
 
                 await _VendorRepo.UpdateSpecific(ValuesToUpdate, "vendor_id="+id);
@@ -630,6 +629,65 @@ namespace badgerApi.Controllers
             }
 
             return VendorTypes;
+
+        }
+
+        /*
+          Developer: Sajid Khan
+          Date: 7-12-19 
+          Action: Getting vendor name and id by search string
+          URL:  api/vendor/getvendorsbycolumnname/columnname/search
+          Request GET
+          Input: string columnName, string search 
+          output: list of vendor_name and id
+        */
+        [HttpGet("getvendorsbycolumnname/{columnName}/{search}")]
+        public async Task<List<object>> GetVendorsByColumnName(string columnName, string search)
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetVendorsByColumnName(columnName, search);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+
+        /*
+          Developer: Azeem Hassan
+          Date: 7-11-19 
+          Action: checking vendor existance
+          URL:  checkvendorcodeexist/vendorcode
+          Request POST
+          Input: vendorcode
+          output: vendor existance massage
+        */
+        //GET: api/vendor/getvendornameandid
+        [HttpGet("checkvendorcodeexist/{vendorcode}")]
+        public async Task<List<object>> CheckVendorCodeExist(string vendorcode)
+        {
+            dynamic vendorExist = new object();
+            try
+            {
+                vendorExist = await _VendorRepo.CheckVendorCodeExist(vendorcode);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorExist;
 
         }
     }

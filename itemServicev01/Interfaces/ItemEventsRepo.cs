@@ -46,7 +46,15 @@ namespace itemService.Interfaces
                 return new MySqlConnection(_config.GetConnectionString("ItemsDatabase"));
             }
         }
-       
+
+        /*
+         * (There is problem in function arguments are not used in function)
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get All Items Events from database
+        Input: int item_id,string StartDate, string EndDate, int Limit (There is problem in function arguments are not used in function)
+        output: List of item events
+        */
         public async Task<List<ItemEvents>> GetItemHistoryAll(int item_id,string StartDate, string EndDate, int Limit)
         {
             try

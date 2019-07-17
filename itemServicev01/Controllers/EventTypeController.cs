@@ -19,20 +19,48 @@ namespace itemService.Controllers
         {
             _EventTyperepo = EventTyperepo;
         }
-        // GET: api/EventType
+       
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get event type "api/eventtype"
+        URL: api/eventtype
+        Request: Get
+        Input: null
+        output: list of events type
+        */
         [HttpGet]
         public async Task<ActionResult<List<EventTypes>>> GetEventTypes()
         {
             return await _EventTyperepo.GetAllAsync();
         }
 
-        // GET: api/EventType/5
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get event type by id "api/EventType/5"
+        URL: api/EventType/5
+        Request: Get
+        Input: int id
+        output: list of events type
+        */
         [HttpGet("{id}", Name = "Get")]
         public async Task<EventTypes> GetAsync(int id)
         {
             return await _EventTyperepo.GetByID(1);
            
         }
+
+        /*
+         * * (function name is wrong)
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get event type by id "api/EventType/ponka"
+        URL: api/EventType/ponka
+        Request: Get
+        Input: 
+        output: list of events type
+        */
         [HttpGet("ponka")]
         public async Task<ponkaquery> Getponka()
         {
