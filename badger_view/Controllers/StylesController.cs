@@ -183,7 +183,7 @@ namespace badger_view.Controllers
                     
 
                     JObject used_in_obj = new JObject();
-                    used_in_obj.Add("product_id", Int32.Parse(product_id));
+                    used_in_obj.Add("product_id", product_id);
                     used_in_obj.Add("po_id", po_id);
                     used_in_obj.Add("created_at", _common.GetTimeStemp());
                     String used_in_id = await _BadgerApiHelper.GenericPostAsyncString<String>(used_in_obj.ToString(Formatting.None), "/product/createUsedIn");

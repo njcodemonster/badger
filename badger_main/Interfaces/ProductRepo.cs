@@ -408,7 +408,8 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<ProductUsedIn>(NewUsedIn);
+                var result =  await conn.InsertAsync<ProductUsedIn>(NewUsedIn);
+
                 return result.ToString();
             }
 
