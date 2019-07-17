@@ -1,49 +1,23 @@
-﻿
-@{
-    ViewData["Title"] = "Sent to editor Photoshoots";
+﻿@{
+    ViewData["Title"] = "In-Progress Photoshoot";
 }
 @model dynamic
 @section Scripts {
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
+    <script>    
+        $('.photoshootDate').each(function (index, value) {
+            var id = $(this).attr('id');
+            $('#' + id).datepicker({
+                format: 'm/d/yyyy'
+            });
+        });
+    </script>
 }
-<style>
-    .th-dropdown {
-        color: #000;
-    }
+@using CommonHelper;
 
-    #openphotoshot td {
-        min-height: 50px;
-    }
-
-    #openphotoshot td {
-        text-align: left;
-        vertical-align: middle;
-    }
-
-    .add-on .input-group-btn > .btn {
-        border-left-width: 0;
-        left: -2px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    }
-    /* stop the glowing blue shadow */
-    .add-on .form-control:focus {
-        box-shadow: none;
-        -webkit-box-shadow: none;
-        border-color: #cccccc;
-    }
-
-    .shoot-dropdown {
-        background: none !important;
-        color: #000;
-        border: 1px #ccc solid;
-        padding: 5px 15px;
-        border-radius: 5px;
-    }
-</style>
 <div class="row">
     <div class="col-md-8 col-sm-12">
-        <h4 class="">Sent to editor</h4>
+        <h4 class="">In-Progress Photoshoot</h4>
     </div>
 </div>
 
@@ -51,46 +25,43 @@
     <table id="openphotoshot" class="table table-bordered datatable_js_ps" style="width:100%">
         <thead>
             <tr>
-                <th style="width:50px;"> </th>
-                <th style="width:90px;">
-                    <div class="dropdown">
-                        <a class="th-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Actions
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnSentToEditor('0')">Mark selected as "Shoot not started"</a>
-                        </div>
-                    </div>
-                </th>
-                <th>Vendor</th>
-                <th>Style Name</th>
-                <th>Color</th>
-                <th>SKU</th>
-                <th>Item Status</th>
-                <th> Photoshoot Status </th>
+                <th class="text-center">Model</th>
+                <th class="text-center">Scheduled Date</th>
+                <th class="text-center">Styles (count)</th>
+                <th class="text-center">Notes</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (ProductPhotoshootRep photoshoot in Model.Lists)
+            @foreach (ProductPhotoshootSummaryRep photoshoot in Model.Lists)
             {
-
-                <tr style="">
+                <tr id="rowId_@photoshoot.photoshoot_id">
                     <td class="text-center">
-                        <input type="checkbox" name="productAddToShootNotStarted" value="@photoshoot.product_id" class="select-box">
-                    </td>
-                    <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
-                    <td>@photoshoot.vendor_name</td>
-                    <td>@photoshoot.product_name</td>
-                    <td><b>-</b></td>
-                    <td><b>@photoshoot.sku_family</b></td>
-                    <td></td>
-                    <td id="shootRow_@photoshoot.product_id">
-                        <select class="browser-default custom-select" onchange="changeShootStatusOnSendToEditor(@photoshoot.product_id, this.value)">
-                            <option value="0">Shoot not started</option>
-                            <option value="2" selected>Sent to editor</option>
+                        <select class="browser-default custom-select">
+                            <option value="">Choose...</option>
+                            @foreach (dynamic ShootModel in Model.PhotoshootModels)
+                            {
+                                @if (@ShootModel.model_id == @photoshoot.model_id)
+                                {
+                                    <option value="@ShootModel.model_id" selected="selected">@ShootModel.model_name </option>
+                                }
+                                else
+                                {
+                                    <option value="@ShootModel.model_id">@ShootModel.model_name </option>
+                                }
+                            }
                         </select>
                     </td>
+
+                    <td class="text-center">
+                        @{ var scheduled_date = new CommonHelper().ConvertToDate(@photoshoot.scheduled_date); }
+                            <input type="text" value="@scheduled_date" class="photoshootDate browser-default scheduled_date" id="date_@photoshoot.photoshoot_id">
+                    </td>
+                    <td class="text-center"><b>@photoshoot.styles</b></td>
+                    <td class="text-center ps_notes" id="notesRow_@photoshoot.photoshoot_id" >
+                        <textarea class="form-control notes" rows="2" cols="25" data-id="@photoshoot.photoshoot_id"></textarea>
+                    </td>
+                    <td class="text-center"> <input type="button" class="btn btn-default btn-green" value="Edit Photoshoot" onclick="editPhotoshoot(@photoshoot.photoshoot_id)"> </td>
                 </tr>
             }
 

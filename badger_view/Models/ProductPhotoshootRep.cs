@@ -42,8 +42,17 @@ namespace badger_view.Models
         public IEnumerable<ProductPhotoshootRep> photoshootSendToEditor { get; set; }
     }
 
-
-    
-
+    public class ProductPhotoshootSummaryRep
+    {
+        public int photoshoot_id { get; set; }
+        public int styles { get; set; }
+        public double scheduled_date { get; set; }
+        public int model_id { get; set; }
+        public int product_shoot_status_id{ get; set; }
+    }
+    public class ProductPhotoshootSummaryPagerList
+    {
+        public IEnumerable<ProductPhotoshootSummaryRep> productPhotoshootSummary { get; set; }
+    }
 
 }
