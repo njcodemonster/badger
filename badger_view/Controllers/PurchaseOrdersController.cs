@@ -643,9 +643,49 @@ namespace badger_view.Controllers
             
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
-            PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+            PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
 
             return View("PurchaseOrdersManagementViewAjax", PageModal);
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: Purchase Order List & Get first purchase order by id and Get purchase order line item by id & 
+        List all status by purchase order for itemm by using badger api helper
+        URL: /purchaseorders/PurchaseOrdersCheckIn
+        Request: Get
+        Input: Null
+        output: dynamic object of purchase orders management list
+        */
+        public async Task<IActionResult> PurchaseOrdersCheckIn()
+        {
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
+            PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
+            int purchase_order_id = PageModal.POList[0].po_id;
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+
+            return View("PurchaseOrdersCheckIn", PageModal);
+        }
+
+        //purchaseorders/lineitemsdetails/poid
+        [Authorize]
+        [HttpGet("PurchaseOrders/itemsdetails/{po_id}")]
+        public async Task<IActionResult> GetItemsDetailsByPOID(int po_id)
+        {
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+            PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
+
+            return View("PurchaseOrdersCheckInViewAjax", PageModal);
         }
 
         public async Task<IActionResult> InventoryReporting()
@@ -1113,10 +1153,10 @@ namespace badger_view.Controllers
             }
             return updatePOLineItemID;
         }
-        public IActionResult PurchaseOrdersCheckIn()
+        /*public IActionResult PurchaseOrdersCheckIn()
         {
             return View();
-        }
+        }*/
 
         /*
         Developer: Sajid Khan

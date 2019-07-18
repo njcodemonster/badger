@@ -25,6 +25,7 @@ namespace badgerApi.Interfaces
         Task<object> GetPurchaseOrdersPageList(int limit);
         Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
         Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id);
+        Task<List<RaStatus>> GetAllRaStatus();
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -170,11 +171,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                sQuery = "SELECT A.*  FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM productdb.purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A  limit " + Limit + ";";
+                sQuery = "SELECT A.*  FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM productdb.purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A  limit " + Limit + ";";
             }
             else
             {
-                sQuery = "SELECT A.*  FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM productdb.purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
+                sQuery = "SELECT A.*  FROM( SELECT product.product_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM productdb.purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
             }
 
             using (IDbConnection conn = Connection)
@@ -235,5 +236,21 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: Get all Ra status from database
+        Input: null
+        output: List of ra status
+        */
+        public async Task<List<RaStatus>> GetAllRaStatus()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<RaStatus> result = new List<RaStatus>();
+                result = await conn.QueryAsync<RaStatus>("Select ra_status_id, ra_status_name from ra_status;");
+                return result.ToList();
+            }
+        }
     }
 }

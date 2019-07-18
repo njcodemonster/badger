@@ -305,7 +305,33 @@ namespace badgerApi.Controllers
             }
             return ItemUpdate;
         }
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: All Ra status of Purchase Order Management
+        URL: /api/purchaseordermanagement/ListAllRaStatus
+        Request: Get
+        Input: Null
+        output: dynamic object of purchase orders ra status
+        */
+        [HttpGet("ListAllRaStatus")]
+        public async Task<object> ListAllRaStatus()
+        {
+            dynamic AllRaStatus = new object();
+            try
+            {
+                AllRaStatus = await _PurchaseOrdersRepo.GetAllRaStatus();
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for all ra status with message" + ex.Message);
+            }
+            return AllRaStatus;
+
+        }
+
 
     }
 }
