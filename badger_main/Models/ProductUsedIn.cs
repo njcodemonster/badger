@@ -8,7 +8,8 @@ namespace badgerApi.Models
     public partial class ProductUsedIn
     {
         [Key]
-        public int product_id { get; set; }
+        public string product_used_in_id { get; set; }
+        public string product_id { get; set; }
         public int po_id { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
