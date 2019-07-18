@@ -285,9 +285,11 @@
                         <h2 class="mb-0">
                             <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@purchaseOrder.po_id">
                                 <i class="fa fa-plus"></i>
-                                <span class="text-dark font-weight-bold h5">Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a>  </span>
+                                <span class="text-dark font-weight-bold h5">Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a>  @purchaseOrder.po_id</span>
                             </button>
                         </h2>
+                        <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
+
                     </div>
                     <div id="collapse_@purchaseOrder.po_id" class="collapse" aria-labelledby="heading_@purchaseOrder.po_id" data-parent="#accordionpomgmt">
 
