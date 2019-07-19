@@ -22,6 +22,8 @@ namespace badgerApi.Controllers
     {
         private IPhotoshootRepository _PhotoshootRepo;
         private IItemServiceHelper _ItemServiceHelper;
+        private INotesAndDocHelper _NotesAndDoc;
+        private int note_type = 1;
 
         ILoggerFactory _loggerFactory;
         private IEventRepo _eventRepo;
@@ -41,17 +43,24 @@ namespace badgerApi.Controllers
         string event_photoshoot_sent_to_editor = "Photoshoot sent to editor by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_sent_to_editor_id = 19;
 
+        string event_photoshoot_note_create = "Photoshoot note created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
+        int event_photoshoot_note_create_id = 32;
+
+        string event_photoshoot_summmary_update = "Photoshoot summary update by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
+        int event_photoshoot_summmary_update_id = 33;
+
         string user_event_create_photoshoot = "Photoshoot created with photoshoot id = %%pid%%";
         string user_event_photoshoot_started = "Photoshoot started product id = %%pid%%";
         string user_event_photoshoot_not_started = "Photoshoot not started with product id = %%pid%%";
         string user_event_photoshoot_sent_to_editor = "Photoshoot sent to editor with product id = %%pid%%";
 
-        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IItemServiceHelper ItemServiceHelper)
+        public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IItemServiceHelper ItemServiceHelper, INotesAndDocHelper NotesAndDoc)
         {
             _ItemServiceHelper = ItemServiceHelper;
             _eventRepo = eventRepo;
             _PhotoshootRepo = PhotoshootRepo;
             _loggerFactory = loggerFactory;
+            _NotesAndDoc = NotesAndDoc;
         }
 
         /*
@@ -268,12 +277,12 @@ namespace badgerApi.Controllers
             dynamic PhotoshootSummary = new object();
             try
             {
-                PhotoshootSummary = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
+                PhotoshootSummary = await _PhotoshootRepo.GetPhotoshootSummary();
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for SendToEditor Product with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for Summary Page with message" + ex.Message);
 
             }
 
@@ -305,7 +314,7 @@ namespace badgerApi.Controllers
                 int countComma = productId.Count(c => c == ',');
                 if (countComma > 0)
                 {
-                    var ids = productId.Split(",");  
+                    var ids = productId.Split(",");
                     foreach (var product_id in ids)
                     {
                         await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
@@ -419,7 +428,7 @@ namespace badgerApi.Controllers
             return UpdateResult;
         }
 
-      
+
         /*
         Developer: Mohi
         Date: 7-3-19 
@@ -442,7 +451,7 @@ namespace badgerApi.Controllers
                 int countComma = product_id.Count(c => c == ',');
                 if (countComma > 0)
                 {
-                    var ids = product_id.Split(","); 
+                    var ids = product_id.Split(",");
                     foreach (var productID in ids)
                     {
                         object SkuList = await _PhotoshootRepo.GetSkuByProduct(productID);
@@ -470,7 +479,8 @@ namespace badgerApi.Controllers
                             Array.Sort(skuArrayInt);
 
                             List<int> SortedSkuReturnIds = new List<int>();
-                            if (skuArrayInt.Count() > 0) {
+                            if (skuArrayInt.Count() > 0)
+                            {
                                 foreach (var sku_id in skuArrayInt)
                                 {
                                     string index = sku_id.ToString();
@@ -480,7 +490,7 @@ namespace badgerApi.Controllers
                                 var idsAll = string.Join(",", SortedSkuReturnIds.ToArray());
                                 AllSkuIdsList.Add(productID, idsAll.ToString());
                             }
-                            
+
                         }
                     }
                 }
@@ -523,7 +533,7 @@ namespace badgerApi.Controllers
                         }
                     }
                 }
-                 returnValue = await _ItemServiceHelper.SetProductItemStatusForPhotoshootAsync(AllSkuIdsList.ToString(Formatting.None), status);
+                returnValue = await _ItemServiceHelper.SetProductItemStatusForPhotoshootAsync(AllSkuIdsList.ToString(Formatting.None), status);
             }
             catch (Exception ex)
             {
@@ -553,7 +563,7 @@ namespace badgerApi.Controllers
             {
 
                 ProductPhotoshoots PhotoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshoots>(value);
-                
+
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
                 ValuesToUpdate.Add("photoshoot_id", PhotoshootToUpdate.photoshoot_id.ToString());
                 ValuesToUpdate.Add("product_shoot_status_id", PhotoshootToUpdate.product_shoot_status_id.ToString());
@@ -580,10 +590,11 @@ namespace badgerApi.Controllers
                         await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
                     }
                 }
-                else {
+                else
+                {
                     await _eventRepo.AddPhotoshootAsync(Int32.Parse(productId), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
                 }
-                
+
 
             }
             catch (Exception ex)
@@ -595,33 +606,143 @@ namespace badgerApi.Controllers
 
             return UpdateResult;
         }
-         
+
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Update photoshoot fields photoshoot name,   calling from { 'photoshoots/UpdatePhotoshootProductStatus/' }, { 'photoshoots/updateMultiplePhotoshootStatus}
+        URL: /Photoshoots/UpdatePhotoshootProductStatus/
+        Request: PUT
+        Input: FromBody, string productId
+        output: string success or failed
+        */
+        [HttpPut("UpdatePhotoshootSummary/{photoshootId}")]
+        public async Task<string> UpdatePhotoshootSummary(int photoshootId, [FromBody]   string value)
+        {
+            string UpdateResult = "Success";
+            try
+            {
+                JObject PhotoshootToUpdate = JsonConvert.DeserializeObject<JObject>(value);
+                Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+
+                ValuesToUpdate.Add("photoshoot_name", PhotoshootToUpdate.Value<string>("photoshoot_name"));
+                ValuesToUpdate.Add("model_id", PhotoshootToUpdate.Value<string>("model_id"));
+                ValuesToUpdate.Add("shoot_start_date", PhotoshootToUpdate.Value<string>("shoot_start_date"));
+                ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.Value<string>("updated_by"));
+                ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.Value<string>("updated_at"));
+
+                int userId = PhotoshootToUpdate.Value<int>("updated_by");
+                await _PhotoshootRepo.UpdatePhotoshootForSummary(ValuesToUpdate, " photoshoot_id = " + photoshootId.ToString());
+
+                event_photoshoot_summmary_update = event_photoshoot_summmary_update.Replace("%%userid%%", userId.ToString());
+                event_photoshoot_summmary_update = event_photoshoot_summmary_update.Replace("%%pid%%", photoshootId.ToString());
+                await _eventRepo.AddPhotoshootAsync(photoshootId, event_photoshoot_summmary_update_id, photoshootId, event_photoshoot_summmary_update, userId, _common.GetTimeStemp(), table_name);
+                await _eventRepo.AddEventAsync(event_photoshoot_summmary_update_id, userId, photoshootId, event_photoshoot_summmary_update, _common.GetTimeStemp(), user_event_table_name);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for SKU with message" + ex.Message);
+                UpdateResult = "Failed";
+                return UpdateResult;
+            }
+            return UpdateResult;
+
+        }
+
+
+        /*
+       Developer: Mohi
+       Date: 7-16-19 
+       Action: Create photoshoot notes 
+       URL: api/photoshoot/notecreate
+       Request: Post
+       Input: FromBody, string 
+       output: string of Last insert photoshoot note id
+       */
+        [HttpPost("notecreate")]
+        public async Task<string> NoteCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic photoshootNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = photoshootNote.ref_id;
+                string note = photoshootNote.note;
+                int created_by = photoshootNote.created_by;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
+
+                int userId = photoshootNote.created_by;
+
+                event_photoshoot_note_create = event_photoshoot_note_create.Replace("%%userid%%", userId.ToString());
+                event_photoshoot_note_create = event_photoshoot_note_create.Replace("%%pid%%", ref_id.ToString());
+                await _eventRepo.AddPhotoshootAsync(ref_id, event_photoshoot_note_create_id, ref_id, event_photoshoot_note_create, userId, _common.GetTimeStemp(), table_name);
+                await _eventRepo.AddEventAsync(event_photoshoot_note_create_id, userId, ref_id, event_photoshoot_note_create, _common.GetTimeStemp(), user_event_table_name);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Photoshoot Note with message" + ex.Message);
+            }
+            return newNoteID;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-17-19 
+        Action: Get photoshoot note by note id and limit  
+        URL: api/photoshoot/getnote/ref_id/limit
+        Request: Get
+        Input: int ref_id, int limit 
+        output: List of Photoshoot note
+        */
+        [HttpGet("getnote/{ref_id}/{limit}")]
+        public async Task<List<Notes>> GetNoteViewAsync(int ref_id, int limit)
+        {
+            List<Notes> notes = new List<Notes>();
+            try
+            {
+                notes = await _NotesAndDoc.GenericNote<Notes>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for photoshoot Get Note with message" + ex.Message);
+
+            }
+
+            return notes;
+
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-17-19 
+        Action: Get notes of Photoshoot Note by multiple ids with comma seperate
+        URL: api/photoshoot/getitemnotes/ref_ids
+        Request: Get
+        Input: string ids
+        output: string of photoshoot orders note id 
+        */
+        [HttpGet("getitemnotes/{ref_ids}")]
+        public async Task<List<Notes>> GetItemNotesViewAsync(string ref_ids)
+        {
+            List<Notes> notes = new List<Notes>();
+            try
+            {
+                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids, note_type);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for photoshoot Notes with message" + ex.Message);
+
+            }
+            return notes;
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

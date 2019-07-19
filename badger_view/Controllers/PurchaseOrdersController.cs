@@ -643,8 +643,50 @@ namespace badger_view.Controllers
             
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
-
+            PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
+            
             return View("PurchaseOrdersManagementViewAjax", PageModal);
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: Purchase Order List & Get first purchase order by id and Get purchase order line item by id & 
+        List all status by purchase order for itemm by using badger api helper
+        URL: /purchaseorders/PurchaseOrdersCheckIn
+        Request: Get
+        Input: Null
+        output: dynamic object of purchase orders management list
+        */
+        public async Task<IActionResult> PurchaseOrdersCheckIn()
+        {
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/50/false");
+            PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
+            int purchase_order_id = PageModal.POList[0].po_id;
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+
+            return View("PurchaseOrdersCheckIn", PageModal);
+        }
+
+        //purchaseorders/lineitemsdetails/poid
+        [Authorize]
+        [HttpGet("PurchaseOrders/itemsdetails/{po_id}")]
+        public async Task<IActionResult> GetItemsDetailsByPOID(int po_id)
+        {
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+
+            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+            PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
+            PageModal.AllWashTypes = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllWashTypes");
+
+            return View("PurchaseOrdersCheckInViewAjax", PageModal);
         }
 
         public async Task<IActionResult> InventoryReporting()
@@ -672,7 +714,7 @@ namespace badger_view.Controllers
 
             String newPurchaseLedgerID = "0";
 
-            if (json.Value<string>("po_notes") != null)
+            if (json.Value<string>("po_notes") != "")
             {
                 JObject purchaseOrderNote = new JObject();
                 purchaseOrderNote.Add("ref_id", json.Value<string>("po_id"));
@@ -704,7 +746,7 @@ namespace badger_view.Controllers
 
             String newItemID = "0";
 
-            if (json.Value<string>("item_note") != null)
+            if (json.Value<string>("item_note") != "")
             {
                 JObject ItemNotes = new JObject();
                 ItemNotes.Add("ref_id", json.Value<string>("item_id"));
@@ -1112,10 +1154,10 @@ namespace badger_view.Controllers
             }
             return updatePOLineItemID;
         }
-        public IActionResult PurchaseOrdersCheckIn()
+        /*public IActionResult PurchaseOrdersCheckIn()
         {
             return View();
-        }
+        }*/
 
         /*
         Developer: Sajid Khan
@@ -1150,6 +1192,45 @@ namespace badger_view.Controllers
 
             }
             return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-19-19 
+        Action: update Product wash type by id by using badger api helper and login helper  
+        URL: /purchaseorders/productupdate/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of Product
+        */
+        [Authorize]
+        [HttpPost("purchaseorders/productwashtypeupdate/{id}")]
+        public async Task<string> ProductUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string updateSkuID = "0";
+            try
+            {
+                JObject productUpdate = new JObject();
+                id = Int32.Parse(json.Value<string>("product_id"));
+                productUpdate.Add("product_id", json.Value<string>("product_id"));
+                productUpdate.Add("wash_type_id", json.Value<string>("wash_type_id"));
+                productUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                productUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(productUpdate.ToString(Formatting.None), "/product/updatespecific/" + id);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+                updateSkuID = "Failed";
+            }
+            return updateSkuID;
         }
 
     }

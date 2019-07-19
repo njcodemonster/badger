@@ -112,7 +112,7 @@ namespace badger_view.Controllers
             ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SentToEditorPhotoshoot/");
             dynamic photoshootSendToEditorModal = new ExpandoObject();
             photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
-            return View("SendToEditor", photoshootSendToEditorModal);
+            return View("SentToEditor", photoshootSendToEditorModal);
         }
 
 
@@ -145,10 +145,12 @@ namespace badger_view.Controllers
         public async Task<IActionResult> summary()
         {
             SetBadgerHelper();
-            ProductPhotoshootSendToEditorPagerList photoshootSummary = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/summary/");
+            ProductPhotoshootSummaryPagerList photoshootSummary = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSummaryPagerList>("/Photoshoots/summary/");
+            dynamic allPhotoshootModels = await _BadgerApiHelper.GenericGetAsync<dynamic>("/PhotoshootModels/list");
             dynamic photoshootSummaryModal = new ExpandoObject();
-            photoshootSummaryModal.Lists = photoshootSummary.photoshootSendToEditor;
-            return View("summary", photoshootSummaryModal);
+            photoshootSummaryModal.Lists = photoshootSummary.productPhotoshootSummary;
+            photoshootSummaryModal.PhotoshootModels = allPhotoshootModels;
+            return View("Summary", photoshootSummaryModal);
         }
 
         /*
@@ -299,9 +301,70 @@ namespace badger_view.Controllers
             photoshootModel.Add("created_at", _common.GetTimeStemp());
             photoshootModel.Add("updated_at", 0);
 
+            //dynamic photoshootNotes = await _BadgerApiHelper.GenericGetAsync<Object>("/photoshoots/getnote/" + photoshootId.ToString() + "/1");
+
             String returnStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshootModel.ToString(Formatting.None), "/PhotoshootModels/create/");
 
             return returnStatus;
         }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Update photoshoot model, schedule date and photoshoot notes
+        URL: /Photoshoots/EditPhotoshootSummary/
+        Input: FromBody   
+        output: string success or failed
+        */
+        [Authorize]
+        [HttpPost("photoshoots/EditPhotoshootSummary")]
+        public async Task<String> EditPhotoshootSummary([FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            string user_id = await _ILoginHelper.GetLoginUserId();
+
+            JObject photoshoot = new JObject();
+            photoshoot.Add("photoshoot_name", json.Value<string>("photoshootName"));
+            photoshoot.Add("model_id", json.Value<int>("photoshootModelId"));
+            photoshoot.Add("shoot_start_date", json.Value<double>("photoshootScheduledDate"));
+            photoshoot.Add("updated_by", user_id);
+            photoshoot.Add("updated_at", _common.GetTimeStemp());
+            int photoshootId = Int32.Parse(json.Value<string>("photoshootId"));
+
+            String returnStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(photoshoot.ToString(Formatting.None), "/photoshoots/UpdatePhotoshootSummary/" + photoshootId);
+
+            if (json.Value<string>("photoshootNotes") != null)
+            {
+                JObject photoshootNote = new JObject();
+                photoshootNote.Add("ref_id", photoshootId);
+                photoshootNote.Add("note", json.Value<string>("photoshootNotes"));
+                photoshootNote.Add("created_by", Int32.Parse(user_id));
+
+                await _BadgerApiHelper.GenericPostAsyncString<String>(photoshootNote.ToString(Formatting.None), "/photoshoots/notecreate");
+            }
+
+            return returnStatus;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-17-19 
+        Action: Get photoshoot notes by multiple ids by using badger api helper 
+        URL: /photoshoot/getitemnotes/id
+        Request: Get
+        Input: int id
+        output: string of purchase orders item notes
+        */
+        [Authorize]
+        [HttpGet("photoshoots/getphotoshootnotes/{ids}")]
+        public async Task<String> GetPhotoshootNotes(string ids)
+        {
+            SetBadgerHelper();
+
+            dynamic photoshootNote = await _BadgerApiHelper.GenericGetAsync<Object>("/photoshoots/getitemnotes/" + ids.ToString());
+
+            return JsonConvert.SerializeObject(photoshootNote);
+        }
+
     }
 }
