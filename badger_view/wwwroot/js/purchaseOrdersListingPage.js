@@ -1073,6 +1073,6 @@ $(document).on('click', ".podeleteImage", function () {
     }).always(function (data) {
         console.log(data);
         if (data.responseText != '0')
-            _this.parents('.documentsLink').remove()
+            _this.parents('.documentsLink').remove();
     });
 });

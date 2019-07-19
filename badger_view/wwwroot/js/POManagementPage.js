@@ -158,7 +158,7 @@ Input:  string note
 Output: item note id
 */
 $(document).on('change', ".item_note", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
 
@@ -196,7 +196,9 @@ Output: get item document data
 $(document).on("click", "#AddDocument", function () {
     $('#document_form')[0].reset();
     var id = $(this).attr("data-itemid");
+    var productid = $(this).attr("data-productid");
     $("#document_form").attr("data-documentid", id);
+    $("#document_form").attr("data-productid", productid);
     $.ajax({
         url: '/purchaseorders/getitemdocument/' + id,
         dataType: 'json',
@@ -209,7 +211,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("File " + (e + 1) + ": <a href=" + i.url + ">" + i.url + "</a> <br>");
+                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -229,7 +231,7 @@ Input: string file name
 Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $('#document_form').attr("data-productid");
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
@@ -271,7 +273,7 @@ Input: int item id
 Output: string status
 */
 $(document).on("change", ".item_status", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     $('.message-'+po_id).append('<div class="spinner-border text-info"></div>');
     //$(".message .spinner-border").removeClass("d-none");
     var item_id = $(this).attr('data-itemid');
@@ -314,7 +316,7 @@ Input: int sku id
 Output: string sku
 */
 $(document).on("change", ".sku_weight", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     var sku_id = $(this).attr('id');
     var sku_weight = $(this).val();
     var old_sku_weight = $(this).attr("data-weight");
@@ -375,7 +377,7 @@ Input: int item id
 Output: string item
 */
 $(document).on("change", ".item_barcode", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
     var barcode = $(this).val();
 
@@ -419,7 +421,7 @@ Input: int item id
 Output: string item
 */
 $(document).on("click", ".item_row_remove", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     var trdata = $(this);
     var item_id = $(this).attr('data-itemid');
     var polineitem = $(this).attr('data-polineitem');
@@ -492,7 +494,7 @@ Input: int product id, sku id, item id, po line item id etc
 Output: string sku
 */
 $(document).on("change", ".item_sku", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     var sku_id = $(this).attr('id');
     var sku = $(this).val();
     var old_sku = $(this).attr('data-sku');
@@ -663,7 +665,7 @@ Input: int item id
 Output: string item
 */
 $(document).on("change", ".item_bagcode", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
     var bagcode = $(this).val();
 
@@ -707,7 +709,7 @@ Input: int item id
 Output: string status
 */
 $(document).on("change", ".item_ra_status", function () {
-    var po_id = $(this).parents("tr").attr("data-prductid");
+    var po_id = $(this).parents("tr").attr("data-productid");
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     //$(".message .spinner-border").removeClass("d-none");
     var item_id = $(this).attr('data-itemid');
@@ -863,4 +865,69 @@ $(document).on("click", "#weight_submit", function () {
             }
     }, 1000);
    
+});
+
+$(document).on("change", ".wash_type_status", function () {
+        var product_id = $(this).attr("data-productid");
+        $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
+        var wash_type_id = $(this).val();
+
+    console.log(product_id + " -- " + wash_type_id);
+
+            var jsonData = {};
+            jsonData["product_id"] = product_id;
+            jsonData["wash_type_id"] = wash_type_id;
+
+            $.ajax({
+                url: "/purchaseorders/productwashtypeupdate/" + product_id,
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonData),
+                processData: false
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    alertInnerBox('message-' + product_id, 'green', 'Product wash type has been updated successfully');
+                } else {
+                    alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error' + data.responseText);
+                }
+
+            });
+});
+
+
+
+/*
+Developer: Sajid Khan
+Date: 7-19-19
+Action: Delete Document or Image on click 
+URL:
+Input:
+output: Boolean
+*/
+$(document).on('click', ".podeleteImage", function () {
+    var _this = $(this);
+    var docid = _this.parents('.documentsLink').attr('data-docid');
+    var url = _this.parents('.documentsLink').attr('data-val');
+    var poid = $('#document_form').attr("data-documentid");
+
+    var jsonData = {};
+    jsonData["doc_id"] = docid;
+    jsonData["po_id"] = poid;
+    jsonData["url"] = url;
+    console.log(jsonData);
+
+    $.ajax({
+        url: "/purchaseorders/documentsdelete/" + docid,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText != '0')
+            _this.parents('.documentsLink').remove();
+    });
 });

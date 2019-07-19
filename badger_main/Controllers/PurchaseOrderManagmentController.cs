@@ -332,6 +332,31 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: All Wash Types
+        URL: /api/purchaseordermanagement/ListAllWashTypes
+        Request: Get
+        Input: Null
+        output: dynamic list of all Wash Types
+        */
+        [HttpGet("ListAllWashTypes")]
+        public async Task<object> ListAllWashTypes()
+        {
+            dynamic AllRaStatus = new object();
+            try
+            {
+                AllRaStatus = await _PurchaseOrdersRepo.GetAllWashTypes();
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for all ra status with message" + ex.Message);
+            }
+            return AllRaStatus;
+
+        }
 
     }
 }

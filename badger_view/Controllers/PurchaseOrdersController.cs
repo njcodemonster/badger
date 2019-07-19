@@ -644,7 +644,7 @@ namespace badger_view.Controllers
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
-
+            
             return View("PurchaseOrdersManagementViewAjax", PageModal);
         }
 
@@ -663,7 +663,7 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/20/false");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/50/false");
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
             int purchase_order_id = PageModal.POList[0].po_id;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
@@ -684,6 +684,7 @@ namespace badger_view.Controllers
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
+            PageModal.AllWashTypes = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllWashTypes");
 
             return View("PurchaseOrdersCheckInViewAjax", PageModal);
         }
@@ -1191,6 +1192,45 @@ namespace badger_view.Controllers
 
             }
             return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-19-19 
+        Action: update Product wash type by id by using badger api helper and login helper  
+        URL: /purchaseorders/productupdate/id
+        Request: Post
+        Input: int id, FromBody json object
+        output: string of Product
+        */
+        [Authorize]
+        [HttpPost("purchaseorders/productwashtypeupdate/{id}")]
+        public async Task<string> ProductUpdate(int id, [FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string updateSkuID = "0";
+            try
+            {
+                JObject productUpdate = new JObject();
+                id = Int32.Parse(json.Value<string>("product_id"));
+                productUpdate.Add("product_id", json.Value<string>("product_id"));
+                productUpdate.Add("wash_type_id", json.Value<string>("wash_type_id"));
+                productUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                productUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(productUpdate.ToString(Formatting.None), "/product/updatespecific/" + id);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+                updateSkuID = "Failed";
+            }
+            return updateSkuID;
         }
 
     }
