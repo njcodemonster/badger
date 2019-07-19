@@ -148,7 +148,7 @@ function emptyFeildValidation(id){
     var notvalid = true;
     var emailvalid = true;
     $('#'+id+' .required').removeClass('errorFeild');
-    $('#'+id+' .required').each(function (){
+    $('#'+id+' .required:visible').each(function (){
         if($(this).val() == ''){
             notvalid = false;
             $(this).addClass('errorFeild');
