@@ -1,45 +1,7 @@
-﻿/*
-Developer: Sajid Khan
-Date: 7-7-19
-Action: Get Data of items by vendor id and show in dropdown and fields
-Input: int purchase order id, int vendor id
-Output: string of vendor products
-*/
-$(document).on('click', "#AddItemButton", function () {
-    var CurrentPOID = $(this).data("poid");
-    var CurrentVendorId = $(this).data("vendorid");
-
-    $('#modaladdstylec input').val("");
-    $('#modaladdstylec #StyleSubType option').each(function () {
-        if (this.innerText != "Choose..." && this.innerText != "...") {
-            this.remove();
-        }
-    });
-
-    $('#modaladdstylec').modal('show');
-  //  alert("Please wait for the data to load");
-   
-    $.ajax({
-
-        url: '/vendor/products/' + CurrentVendorId,
-        dataType: 'json',
-        type: 'GET',
-        contentType: 'application/json',
-        processData: true,
-
-    }).always(function (data) {
-       // var sku_family = data.vendorSkufamily;
-        data = data.vendorProducts;
-        $('#modaladdstylec #ExistingProductSelect option').remove();
-        $('#modaladdstylec #ExistingProductSelect').append("<option id='-1'>Choose...</option>");
-        var last_sku_family = "";
-
-        $('#po_id').val(CurrentPOID);
-        $('#vendor_id').val(CurrentVendorId);
-        $(".vendorSkuBox_disabled").remove();
-        $(".vendorSkuBox").remove();
+﻿
 
 
+<<<<<<< HEAD
         for (i = 0; i < data.length; i++) {
 
             $('#modaladdstylec #ExistingProductSelect').append("<option data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID +"'  >" + data[i].product_name + "</option>");
@@ -111,6 +73,9 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
 
     });
 });
+=======
+$(document).ready(function () {
+>>>>>>> 54b4d780e59ee63119b4c90669fbd2aecad39559
 
 /*
 Developer: Sajid Khan
@@ -663,6 +628,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
     });
 }
 
+<<<<<<< HEAD
 /*
 Developer: Sajid Khan
 Date: 7-16-19
@@ -937,3 +903,6 @@ $(document).on('click', ".podeleteImage", function () {
             _this.parents('.documentsLink').remove();
     });
 });
+=======
+
+>>>>>>> 54b4d780e59ee63119b4c90669fbd2aecad39559

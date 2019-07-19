@@ -205,7 +205,7 @@ namespace badger_view.Controllers
                         sku_family = sku.Split('-')[0];
                     }
 
-                if (product_type_id == "2") //only for Sizes
+                if (product_type_id == "1") //only for Sizes
                 {
                     /// sizes attribute add from here
                     JObject product_attr = new JObject();
