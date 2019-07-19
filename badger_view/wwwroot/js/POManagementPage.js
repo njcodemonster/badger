@@ -376,7 +376,11 @@ Action: update item barcode by item id
 Input: int item id
 Output: string item
 */
-$(document).on("change", ".item_barcode", function () {
+$(document).on("keydown", ".item_barcode", function (e) {
+    return isNumber(e);
+});
+
+$(document).on("change", ".item_barcode", function (e) {
     var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
     var barcode = $(this).val();
@@ -386,6 +390,7 @@ $(document).on("change", ".item_barcode", function () {
         $(this).addClass('errorFeild');
         return false;
     }
+
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var jsondata = $("input#" + item_id).val();
     var itemdata = JSON.parse(jsondata);
@@ -421,18 +426,18 @@ Input: int item id
 Output: string item
 */
 $(document).on("click", ".item_row_remove", function () {
-    var po_id = $(this).parents("tr").attr("data-productid");
     var trdata = $(this);
     var item_id = $(this).attr('data-itemid');
     var polineitem = $(this).attr('data-polineitem');
     var quantity = $(this).attr('data-quantity');
     var item_status = 5;
     var product_id = $(this).attr('data-productid');
+    var poid = $(this).attr('data-poid');
     confirmationBox(product_id, "Item Remove", "Do you want to remove this item?", function (result) {
         console.log(result)
         if (result == "yes") {
 
-            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+            $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
             var jsondata = $("input#" + item_id).val();
             var itemdata = JSON.parse(jsondata);
             var id = itemdata.item_id
@@ -472,11 +477,12 @@ $(document).on("click", ".item_row_remove", function () {
                                 $(this).attr('data-quantity', quantity)
                             }
                         });
-                        trdata.parents('tr').remove();
-
-                        alertInnerBox('message-' + po_id, 'green', 'Item has been removed successfully');
+                        trdata.parents('tr.remove-' + item_id).remove();
+                        $("#collapse_" + poid).html("");
+                        getPurchaseOrdersItemdetails(poid);
+                        alertInnerBox('message-' + product_id, 'green', 'Item has been removed successfully');
                     } else {
-                        alertInnerBox('message-' + po_id, 'red', 'Item has error' + data.responseText);
+                        alertInnerBox('message-' + product_id, 'red', 'Item has error' + data.responseText);
                     }
 
 

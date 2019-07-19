@@ -48,13 +48,7 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Vendor Name</label>
-                    <select id="poVendor" class="form-control d-inline-block" style="width: 90%">
-                        <option selected>Choose...</option>
-                        @foreach (Vendor vendor in Model.GetVendorsNameAndId)
-                        {
-                            <option value="@vendor.vendor_id">@vendor.vendor_name</option>
-                        }
-                    </select>
+                    <input type="text" class="form-control required d-inline-block autocomplete" id="poVendor" style="width: 90%">
                     <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
                 </div>
                 <div class="form-group col-md-6">
