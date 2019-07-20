@@ -134,6 +134,25 @@ function alertInnerBox(area, action, massage) {
         $('.alert').remove()
     }, 3000)
 }
+
+function confirmationAlertBox(heading, description, callback) {
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
+        '<h4 class="alert-heading">' + heading + '</h4>' +
+        '<p>' + description + '</p>' +
+        '<hr>' +
+        '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
+        '</div>';
+    $('body').prepend(html);
+    $('.confirmDialog').click(function () {
+        $('.confirmationBox').remove();
+        if ($(this).attr('data-val') == 'yes') {
+            return callback('yes');
+        } else {
+            return callback('no');
+        }
+
+    })
+}
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
