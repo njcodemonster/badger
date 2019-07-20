@@ -780,6 +780,39 @@ namespace itemService.Controllers
             }
 
             return UpdateResult;
-        } 
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get sku list by id "api/sku/list/1"
+        URL: api/sku/list/1
+        Request: Get
+        Input: int id
+        output: List of SKU
+        */
+        // GET: api/sku/list/1
+        [HttpGet("checkbarcodeexist/{barcode}")]
+        public async Task<Boolean> CheckBarcodeExist(int barcode)
+        {
+            Boolean result = false;
+            List<Items> ToReturn = new List<Items>();
+            try
+            {
+                ToReturn = await _ItemRepository.CheckBarcodeExist(barcode);
+
+                if (ToReturn.Count > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return result;
+        }
     }
 }

@@ -1233,5 +1233,59 @@ namespace badger_view.Controllers
             return updateSkuID;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-19-19 
+        Action: Get Purchase Order Line Item by product id and by purchase order id by using badger api helper 
+        URL: /purchaseorders/lineitems/productid/poid
+        Request: Get
+        Input: int product id, int purchase order id
+        output: string of purchase orders line items
+        */
+        [HttpGet("purchaseorders/checkskuexist/{sku}")]
+        public async Task<string> CheckSkuExist(string sku)
+        {
+            SetBadgerHelper();
+
+            string result = "false";
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/sku/checkskuexist/" + sku);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+            }
+            return result;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-19-19 
+        Action: Get Purchase Order Line Item by product id and by purchase order id by using badger api helper 
+        URL: /purchaseorders/lineitems/productid/poid
+        Request: Get
+        Input: int product id, int purchase order id
+        output: string of purchase orders line items
+        */
+        [HttpGet("purchaseorders/checkbarcodeexist/{barcode}")]
+        public async Task<string> CheckBarcodeExist(int barcode)
+        {
+            SetBadgerHelper();
+
+            string result = "false";
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkbarcodeexist/" + barcode);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+            }
+            return result;
+        }
+
     }
 }

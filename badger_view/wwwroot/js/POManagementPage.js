@@ -267,8 +267,10 @@ $(document).on("keydown", ".item_barcode", function (e) {
 });
 
 $(document).on("change", ".item_barcode", function (e) {
+    var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
+    var old_barcode = $(this).attr('data-barcode');
     var barcode = $(this).val();
 
     $(this).removeClass('errorFeild');
@@ -277,31 +279,55 @@ $(document).on("change", ".item_barcode", function (e) {
         return false;
     }
 
-    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
-    var jsondata = $("input#" + item_id).val();
-    var itemdata = JSON.parse(jsondata);
-    var id = itemdata.item_id
-    itemdata.barcode = barcode;
-    $("input#" + item_id).val(JSON.stringify(itemdata));
-
-    console.log($("input#" + item_id).val());
+    if (old_barcode == barcode) {
+        _self.removeClass('errorFeild');
+        return false;
+    }
 
     $.ajax({
-        url: "/purchaseorders/itemupdate/" + id,
+        url: "/purchaseorders/checkbarcodeexist/" + barcode,
         dataType: 'json',
-        type: 'post',
+        type: 'Get',
         contentType: 'application/json',
-        data: JSON.stringify(itemdata),
-        processData: false
     }).always(function (data) {
         console.log(data);
-        if (data.responseText == "Success") {
-            alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+        if (data == true) {
+            _self.addClass('errorFeild');
+            alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+            return false;
         } else {
-            alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+            var jsondata = $("input#" + item_id).val();
+            var itemdata = JSON.parse(jsondata);
+            var id = itemdata.item_id
+            itemdata.barcode = barcode;
+            $("input#" + item_id).val(JSON.stringify(itemdata));
+
+            console.log($("input#" + item_id).val());
+
+            $.ajax({
+                url: "/purchaseorders/itemupdate/" + id,
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(itemdata),
+                processData: false
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    _self.attr('data-barcode', barcode);
+                    alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                } else {
+                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                }
+
+            });
         }
-        
     });
+
+
+
+   
 })
 
 /*
@@ -386,6 +412,7 @@ Input: int product id, sku id, item id, po line item id etc
 Output: string sku
 */
 $(document).on("change", ".item_sku", function () {
+    var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
     var sku_id = $(this).attr('id');
     var sku = $(this).val();
@@ -394,85 +421,121 @@ $(document).on("change", ".item_sku", function () {
     var product_id = $(this).attr('data-productid');
     var product_attribute_id = $(this).attr('data-productattributeid');
     var quantity = $(this).attr('data-quantity');
+    var product_id = $(this).attr('data-productid');
 
     $(this).removeClass('errorFeild');
     if (sku == "") {
         $(this).addClass('errorFeild');
         return false;
     }
-    var product_id = $(this).attr('data-productid');
-    confirmationBox(product_id,"SKU Update", "This will all same SKU updates, Do you want to continue?", function (result) {
-        console.log(result)
-        if (result == "yes") {
-            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
-           
-            var jsonData = {};
-            jsonData["sku_id"] = sku_id;
-            jsonData["sku"] = sku;
-            jsonData["quantity"] = quantity;
-            jsonData["line_item_id"] = polineitem_id;
-            jsonData["product_id"] = product_id;
-            jsonData["product_attribute_id"] = product_attribute_id;
 
-            $.ajax({
-                url: "/purchaseorders/skuupdate/" + sku_id,
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(jsonData),
-                processData: false
-            }).always(function (data) {
-                console.log(data);
+    var patt = new RegExp('^([A-Z]{2})([0-9]{3})([-]{1})([0-9]{1})$');
+    var value = sku.toUpperCase();
+    if (patt.test(value) == false) {
+        $(this).addClass('errorFeild');
+        return false;
+    } else {
+        $(this).removeClass('errorFeild');
+    }
 
-                if (data.responseText == "Success") {
+    if (old_sku == sku) {
+        _self.removeClass('errorFeild');
+        return false;
+    }
+
+
+    $.ajax({
+        url: "/purchaseorders/checkskuexist/" + sku,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+        if (data == true) {
+            _self.addClass('errorFeild');
+            alertInnerBox('message-' + po_id, 'red', 'SKU has already exist - ' + sku);
+            //_self.val(old_sku);
+            return false;
+        } else {
+            confirmationBox(product_id, "SKU Update", "This will all same SKU updates, Do you want to continue?", function (result) {
+                console.log(result)
+                if (result == "yes") {
+                    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+
+                    var jsonData = {};
+                    jsonData["sku_id"] = sku_id;
+                    jsonData["sku"] = sku;
+                    jsonData["quantity"] = quantity;
+                    jsonData["line_item_id"] = polineitem_id;
+                    jsonData["product_id"] = product_id;
+                    jsonData["product_attribute_id"] = product_attribute_id;
+
+                    $.ajax({
+                        url: "/purchaseorders/skuupdate/" + sku_id,
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(jsonData),
+                        processData: false
+                    }).always(function (data) {
+                        console.log(data);
+
+                        if (data.responseText == "Success") {
+
+                            $(".item_sku").each(function () {
+                                if ($(this).attr('id') == sku_id) {
+                                    $(this).val(sku);
+                                    $(this).attr('data-sku', sku);
+                                    var item_id = $(this).attr('data-itemid');
+
+                                    var jsondata = $("input#" + item_id).val();
+                                    var itemdata = JSON.parse(jsondata);
+                                    var id = itemdata.item_id
+                                    itemdata.sku = sku;
+                                    itemdata.sku_family = sku;
+                                    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                                    console.log($("input#" + item_id).val());
+
+                                    $.ajax({
+                                        url: "/purchaseorders/itemupdate/" + id,
+                                        dataType: 'json',
+                                        type: 'post',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(itemdata),
+                                        processData: false
+                                    }).always(function (data) {
+                                        console.log(data);
+                                        if (data.responseText == "Success") {
+                                            alertInnerBox('message-' + po_id, 'green', 'SKU has been updated successfully');
+                                        } else {
+                                            alertInnerBox('message-' + po_id, 'red', 'SKU has error' + data.responseText);
+                                        }
+
+                                    });
+                                }
+                            });
+                        }
+
+                    });
+
+                } else {
 
                     $(".item_sku").each(function () {
                         if ($(this).attr('id') == sku_id) {
-                            $(this).val(sku);
-                            $(this).attr('data-sku', sku);
-                            var item_id = $(this).attr('data-itemid');
-
-                            var jsondata = $("input#" + item_id).val();
-                            var itemdata = JSON.parse(jsondata);
-                            var id = itemdata.item_id
-                            itemdata.sku = sku;
-                            itemdata.sku_family = sku;
-                            $("input#" + item_id).val(JSON.stringify(itemdata));
-
-                            console.log($("input#" + item_id).val());
-
-                            $.ajax({
-                                url: "/purchaseorders/itemupdate/" + id,
-                                dataType: 'json',
-                                type: 'post',
-                                contentType: 'application/json',
-                                data: JSON.stringify(itemdata),
-                                processData: false
-                            }).always(function (data) {
-                                console.log(data);
-                                if (data.responseText == "Success") {
-                                    alertInnerBox('message-' + po_id, 'green', 'SKU has been updated successfully');
-                                } else {
-                                    alertInnerBox('message-' + po_id, 'red', 'SKU has error' + data.responseText);
-                                }
-
-                            });
+                            $(this).val(old_sku);
+                            $(this).attr('data-sku', old_sku)
                         }
                     });
                 }
-
-            });
-
-        } else {
-
-            $(".item_sku").each(function () {
-                if ($(this).attr('id') == sku_id) {
-                    $(this).val(old_sku);
-                    $(this).attr('data-sku',old_sku)
-                }
-            });
+            });   
         }
+
     });
+
+
+    
+   
 });
 
 $('.POList .card-header').click(function () {

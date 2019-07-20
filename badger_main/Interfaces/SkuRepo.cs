@@ -20,6 +20,7 @@ namespace badgerApi.Interfaces
         Task<String> Create(Sku NewSku);
         Task<Boolean> Update(Sku SkuToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task<List<Sku>> CheckSkuExist(string sku);
     }
 
     public class SkuRepo : ISkuRepo
@@ -135,6 +136,28 @@ namespace badgerApi.Interfaces
 
             }
 
+        }
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-19-19 
+        Action: Check Sku Exist data from database
+        Input: string sku
+        output: list of sku check
+        */
+        public async Task<List<Sku>> CheckSkuExist(string sku)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Sku> result = new List<Sku>();
+
+                string squery = "Select * from " + TableName + " WHERE sku = '" + sku + "';";
+
+                result = await conn.QueryAsync<Sku>(squery);
+
+                return result.ToList();
+            }
         }
 
     }

@@ -133,7 +133,7 @@ $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
 });
 
 $('#poOrderDate').datepicker({
-    format: 'm/d/yyyy'
+    dateFormat: 'm/d/yy'
 });
 
 $('#poDelieveryRange').daterangepicker({
