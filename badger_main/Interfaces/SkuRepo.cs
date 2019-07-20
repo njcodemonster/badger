@@ -142,7 +142,7 @@ namespace badgerApi.Interfaces
         /*
         Developer: Sajid Khan
         Date: 7-19-19 
-        Action: Check Sku Exist data from database
+        Action: Check Sku already Exist data from database
         Input: string sku
         output: list of sku check
         */

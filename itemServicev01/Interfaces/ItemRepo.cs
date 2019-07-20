@@ -888,10 +888,10 @@ namespace itemService.Interfaces
 
         /*
         Developer: Sajid Khan
-        Date: 7-19-19 
-        Action: Check Barcode Exist data from database
+        Date: 7-20-19 
+        Action: Check Barcode already Exist by barcode data from database
         Input: int barcode
-        output: list of barcode check
+        output: list of barcode
         */
         public async Task<List<Items>> CheckBarcodeExist(int barcode)
         {

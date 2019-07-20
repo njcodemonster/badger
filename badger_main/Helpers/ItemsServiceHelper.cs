@@ -205,12 +205,11 @@ namespace badgerApi.Helper
 
         /*
        Developer: Sajid Khan
-       Date: 7-19-19 
-       Action: Get barcode list by id "api/sku/list/1"
-       URL: api/sku/list/1
+       Date: 7-20-19 
+       Action: Check Barcode already Exist by barcode 
        Request: Get
-       Input: int id
-       output: List of barcode
+       Input: int barcode
+       output: Boolean
        */
         public async Task<Boolean> CheckBarcodeExist(int barcode)
         {

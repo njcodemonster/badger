@@ -784,12 +784,12 @@ namespace itemService.Controllers
 
         /*
         Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Get sku list by id "api/sku/list/1"
-        URL: api/sku/list/1
+        Date: 7-20-19 
+        Action: Check Barcode already exist by barcode 
+        URL: api/item/checkbarcodeexist/12345678
         Request: Get
-        Input: int id
-        output: List of SKU
+        Input: int barcode
+        output: boolean
         */
         // GET: api/sku/list/1
         [HttpGet("checkbarcodeexist/{barcode}")]

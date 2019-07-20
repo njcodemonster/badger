@@ -204,15 +204,14 @@ namespace badgerApi.Controllers
         }
 
         /*
-        Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Get sku list by id "api/sku/list/1"
-        URL: api/sku/list/1
-        Request: Get
-        Input: int id
-        output: List of SKU
-        */
-        // GET: api/sku/list/1
+       Developer: Sajid Khan
+       Date: 7-20-19 
+       Action: Check Sku already Exist or not by sku "api/purchaseorders/checkskuexist/1"
+       URL: api/purchaseorders/checkskuexist/1
+       Request: Get
+       Input: string sku
+       output: boolean
+       */
         [HttpGet("checkskuexist/{sku}")]
         public async Task<Boolean> CheckSkuExist(string sku)
         {

@@ -567,12 +567,12 @@ namespace badgerApi.Controllers
 
         /*
         Developer: Sajid Khan
-        Date: 7-5-19 
-        Action: Get sku list by id "api/sku/list/1"
-        URL: api/sku/list/1
+        Date: 7-20-19 
+        Action: Check Barcode already Exist or not by barcode "api/purchaseorders/checkbarcodeexist/1"
+        URL: api/purchaseorders/checkbarcodeexist/1
         Request: Get
-        Input: int id
-        output: List of SKU
+        Input: int barcode
+        output: boolean
         */
         [HttpGet("checkbarcodeexist/{barcode}")]
         public async Task<Boolean> CheckBarcodeExist(int barcode)

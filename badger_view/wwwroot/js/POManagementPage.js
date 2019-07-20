@@ -538,6 +538,13 @@ $(document).on("change", ".item_sku", function () {
    
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get All purchase orders data in po management page
+Output: string html data
+*/
 $('.POList .card-header').click(function () {
     var thisPO = $(this);
     var POid = thisPO.attr("data-POId");
@@ -548,6 +555,12 @@ $('.POList .card-header').click(function () {
     }
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get single Product Detail by purchase order id in po management page
+Output: string html data
+*/
 function getPOdetail(PO_id) {
 
     $("#collapse_" + PO_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
@@ -566,6 +579,13 @@ function getPOdetail(PO_id) {
     });
 }
 
+
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get All purchase orders data in po management checkin page
+Output: string html data
+*/
 $('.POListCheckIn .card-header .card-box').click(function () {
     var thisPO = $(this);
     var POid = thisPO.attr("data-POId");
@@ -584,6 +604,12 @@ $('.POListCheckIn .card-header .card-box').click(function () {
     }
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get single Product Detail by purchase order id n po management checkin page
+Output: string html data
+*/
 function getPurchaseOrdersItemdetails(PO_id) {
     $("#collapse_" + PO_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>').show();
 
@@ -616,8 +642,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
 Developer: Sajid Khan
 Date: 7-16-19
 Action: update item bagcode by item id
-Input: int item id
-Output: string item
+Output: string string
 */
 $(document).on("change", ".item_bagcode", function () {
     var po_id = $(this).parents("tr").attr("data-productid");
@@ -660,7 +685,6 @@ $(document).on("change", ".item_bagcode", function () {
 Developer: Sajid Khan
 Date: 7-5-19
 Action: update ra status by item id
-Input: int item id
 Output: string status
 */
 $(document).on("change", ".item_ra_status", function () {
@@ -699,7 +723,6 @@ $(document).on("change", ".item_ra_status", function () {
 Developer: Sajid Khan
 Date: 7-18-19
 Action: Onclick add weight button popup show on sku weight model
-Input: 
 Output: load sku weight data in model
 */
 $(document).on("click", "#sku_weight", function () {
@@ -761,9 +784,8 @@ $(document).on("click", "#sku_weight", function () {
 /*
 Developer: Sajid Khan
 Date: 7-18-19
-Action: Onclick add weight button popup show on sku weight model
-Input:
-Output: load sku weight data in model
+Action: Update Weight Submit form data
+Output: string 
 */
 $(document).on("click", "#weight_submit", function () {
 
@@ -808,20 +830,27 @@ $(document).on("click", "#weight_submit", function () {
         }
     });
 
-   var  prevNowPlaying = setInterval(function () { 
+   var checkInterval = setInterval(function () { 
             if (result) {
                 $('#modaladdweight').modal('hide');
                 alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
-                clearInterval(prevNowPlaying);
+                clearInterval(checkInterval);
             } else if (result == "error") {
                 //$('#modaladdweight').modal('show');
                 alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
-                clearInterval(prevNowPlaying);
+                clearInterval(checkInterval);
             }
     }, 1000);
    
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Product Wash type status change 
+output: Boolean
+*/
 $(document).on("change", ".wash_type_status", function () {
         var product_id = $(this).attr("data-productid");
         $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
@@ -857,8 +886,6 @@ $(document).on("change", ".wash_type_status", function () {
 Developer: Sajid Khan
 Date: 7-19-19
 Action: Delete Document or Image on click 
-URL:
-Input:
 output: Boolean
 */
 $(document).on('click', ".podeleteImage", function () {
