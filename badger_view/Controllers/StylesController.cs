@@ -241,7 +241,7 @@ namespace badger_view.Controllers
 
                         product_attr.Add("attribute_id", attribute_id);
                         product_attr.Add("product_id", Int32.Parse(product_id));
-                        product_attr.Add("value", style_size);
+                        product_attr.Add("value", style_vendor_size);
 
                         product_attr.Add("created_by", user_id);
                         product_attr.Add("created_at", _common.GetTimeStemp());
