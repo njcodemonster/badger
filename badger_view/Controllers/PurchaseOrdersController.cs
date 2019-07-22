@@ -1198,7 +1198,7 @@ namespace badger_view.Controllers
         Developer: Sajid Khan
         Date: 7-19-19 
         Action: update Product wash type by id by using badger api helper and login helper  
-        URL: /purchaseorders/productupdate/id
+        URL: /purchaseorders/productwashtypeupdate/id
         Request: Post
         Input: int id, FromBody json object
         output: string of Product
@@ -1231,6 +1231,60 @@ namespace badger_view.Controllers
                 updateSkuID = "Failed";
             }
             return updateSkuID;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check sku Already exist or not by sku by using badger api helper 
+        URL: /purchaseorders/checkskuexist/sku
+        Request: Get
+        Input: string sku
+        output: string true/false
+        */
+        [HttpGet("purchaseorders/checkskuexist/{sku}")]
+        public async Task<string> CheckSkuExist(string sku)
+        {
+            SetBadgerHelper();
+
+            string result = "false";
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/sku/checkskuexist/" + sku);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+            }
+            return result;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check Barcode Already exist or not by barcode by using badger api helper 
+        URL: /purchaseorders/checkbarcodeexist/12345678
+        Request: Get
+        Input: int barcode
+        output: string true/false
+        */
+        [HttpGet("purchaseorders/checkbarcodeexist/{barcode}")]
+        public async Task<string> CheckBarcodeExist(int barcode)
+        {
+            SetBadgerHelper();
+
+            string result = "false";
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkbarcodeexist/" + barcode);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+            }
+            return result;
         }
 
     }

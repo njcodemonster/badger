@@ -53,7 +53,7 @@
                                     <button type="button" class="btn btn-outline-success">Edit Fabric</button>
                                 </td>
                                 <td>
-                                        <div class="size-@LineItem.product_id"></div>
+                                        <div class="item-sizes size-@LineItem.product_id"></div>
                                         <!--XS (<span class="xs_quantity"></span>) &nbsp; S (<span class="s_quantity"></span>) &nbsp; M (<span class="m_quantity"></span>) &nbsp; L (<span class="l_quantity"></span>)-->
                                 </td>
                                 <td>
@@ -91,10 +91,9 @@
                     <tr>
                         <th>Size</th>
                         <th>Status</th>
-                        <th style="width:300px;">RA Status</th>
-                        <th style="width:325px;">Notes</th>
+                        <th>RA Status</th>
+                        <th>Notes</th>
                         <th>Image</th>
-                        <!-- th>Weight</th-->
                         <th>SKU</th>
                         <th>Barcode</th>
                         <th>Bag Code</th>
@@ -124,7 +123,7 @@
                                         @:<div class="card-header" id="headingsize-@LineItem.product_id">
                                             @:<table class="table table-borderless">
                                             }
-                                                  <tr data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
+                                                  <tr class="remove-@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
                                                       @if (i == 1 && DisplayTimes != 1)
                                                       {
                                                           <td style="position: absolute; left: -25px; top: 5px;"><button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button></td>
@@ -171,14 +170,11 @@
                                                       <td>
                                                           <a href="javscript:void(0)" id="AddDocument" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id"><i class="fa fa-upload h3"></i></a>
                                                       </td>
-                                                      <!--td>
-                                                        <input type="text" data-weight="@LineItem.weight" value="@LineItem.weight" id="@LineItem.EndItems[i-1].sku_id" data-productid="@LineItem.product_id" class="form-control sku_weight" />
-                                                      </td-->
                                                       <td>
                                                           <input type="text" data-quantity="@DisplayTimes" data-sku="@LineItem.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" maxlength="7" />
                                                       </td>
                                                       <td>
-                                                          <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" value="@LineItem.EndItems[i-1].barcode" maxlength="8" />
+                                                          <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" data-barcode="@LineItem.EndItems[i-1].barcode" value="@LineItem.EndItems[i-1].barcode" maxlength="8" />
                                                       </td>
                                                       <td>
                                                           <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_bagcode" value="@LineItem.EndItems[i-1].bag_code" />
@@ -190,7 +186,7 @@
                                                           <button type="button" class="btn btn-success btn-sm">Go Live</button>
                                                       </td>
                                                       <td>
-                                                          <button type="button" data-itemid="@LineItem.EndItems[i-1].item_id" data-polineitem="@LineItem.line_item_id" data-quantity="@DisplayTimes" data-productid="@LineItem.product_id" class="btn btn-danger btn-sm item_row_remove">Remove</button>
+                                                          <button type="button" data-itemid="@LineItem.EndItems[i-1].item_id" data-polineitem="@LineItem.line_item_id" data-quantity="@DisplayTimes" data-productid="@LineItem.product_id" data-poid="@LineItem.EndItems[i-1].pO_id" class="btn btn-danger btn-sm item_row_remove">Remove</button>
                                                       </td>
                                                   </tr>
 

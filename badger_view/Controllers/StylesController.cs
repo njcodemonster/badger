@@ -228,15 +228,15 @@ namespace badger_view.Controllers
                         sku_family = sku.Split('-')[0];
                     }
 
-                    if (product_type_id == "2") //only for Sizes
-                    {
-                        /// sizes attribute add from here
-                        JObject product_attr = new JObject();
-                        Int16 attribute_id = 3;
-                        if (style_size == "XS") { attribute_id = 3; }
-                        if (style_size == "S") { attribute_id = 4; }
-                        if (style_size == "M") { attribute_id = 5; }
-                        if (style_size == "L") { attribute_id = 6; }
+                if (product_type_id == "1") //only for Sizes
+                {
+                    /// sizes attribute add from here
+                    JObject product_attr = new JObject();
+                    Int16 attribute_id = 3;
+                    if (style_size == "XS") { attribute_id = 3; }
+                    if (style_size == "S") { attribute_id = 4; }
+                    if (style_size == "M") { attribute_id = 5; }
+                    if (style_size == "L") { attribute_id = 6; }
 
 
                         product_attr.Add("attribute_id", attribute_id);

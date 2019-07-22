@@ -43,6 +43,7 @@ namespace badgerApi.Helper
         Task<string> SkuUpdateById(int id, string json);
         Task<T> GenericPostAsync<T>(T json, String _call);
         Task<string> SetProductItemStatusForPhotoshootAsync(string json, int status);
+        Task<Boolean> CheckBarcodeExist(int barcode);
 
     }
         public class ItemsServiceHelper:IItemServiceHelper
@@ -202,6 +203,27 @@ namespace badgerApi.Helper
             return data;
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-20-19 
+       Action: Check Barcode already Exist by barcode 
+       Request: Get
+       Input: int barcode
+       output: Boolean
+       */
+        public async Task<Boolean> CheckBarcodeExist(int barcode)
+        {
+            Boolean result = false;
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/checkbarcodeexist/"+barcode.ToString(), HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            if (data == "true")
+            {
+                result = true;
+            }
+            return result;
+         }
 
     }
 }

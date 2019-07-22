@@ -203,5 +203,38 @@ namespace badgerApi.Controllers
         {
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-20-19 
+       Action: Check Sku already Exist or not by sku "api/purchaseorders/checkskuexist/1"
+       URL: api/purchaseorders/checkskuexist/1
+       Request: Get
+       Input: string sku
+       output: boolean
+       */
+        [HttpGet("checkskuexist/{sku}")]
+        public async Task<Boolean> CheckSkuExist(string sku)
+        {
+            Boolean result = false;
+            List<Sku> ToReturn = new List<Sku>();
+            try
+            {
+                ToReturn = await _SkuRepo.CheckSkuExist(sku);
+
+                if (ToReturn.Count > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return result;
+        }
+
+        
     }
 }
