@@ -49,9 +49,6 @@ function getPhotoshootProducts(photoshootId) {
 /**********************************************************/
 
 
-$('#photoshootDate').datepicker({
-    format: 'm/d/yyyy'
-});
 var datatable_js_ps = $('.datatable_js_ps').DataTable();
 
 
@@ -516,3 +513,60 @@ function addNewPhotoshootModel() {
         });
     }
 }
+
+function editPhotoshoot(photoshootId) {
+    var jsonData = {};
+
+    var photoshootScheduledDate = $("#rowId_" + photoshootId + " .scheduled_date").val();
+    var shoot_start_date = new Date(photoshootScheduledDate);
+    shoot_date_milliseconds = shoot_start_date.getTime();
+    shoot_date_seconds = shoot_date_milliseconds / 1000;
+
+    jsonData["photoshootId"]            = photoshootId;
+    jsonData["photoshootModelId"]       = $("#rowId_" + photoshootId + " .custom-select").val();
+    jsonData["photoshootScheduledDate"] = shoot_date_seconds;
+    jsonData["photoshootNotes"]         = $("#rowId_" + photoshootId + " .notes").val();
+    jsonData["photoshootName"]     = $("#rowId_" + photoshootId + " .custom-select option:selected").text() + photoshootScheduledDate;
+
+    $.ajax({
+        url: '/Photoshoots/EditPhotoshootSummary/',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+
+    }).always(function (data) {
+        
+    });
+
+    console.log(jsonData);
+}
+
+$(document).ready(function () {
+
+    var photoshootids = [];
+    $(".ps_notes textarea").each(function () {
+        console.log($(this).val())
+        photoshootids.push($(this).attr('data-id'));
+    })
+    if (photoshootids.length > 0) {
+        photoshootids = photoshootids.join(",");
+        $.ajax({
+            url: '/photoshoots/getphotoshootnotes/' + photoshootids,
+            dataType: 'json',
+            type: 'Get',
+            contentType: 'application/json',
+        }).always(function (data) {
+            if (data.length > 0) {
+                $(data).each(function (e, i) {
+                    $(".ps_notes textarea").each(function () {
+                        if ($(this).attr('data-id') == i.ref_id) {
+                            $(this).val(i.note);
+                        }
+                    });
+                });
+            }
+        });
+    }
+});
+

@@ -22,6 +22,7 @@ namespace badgerApi.Interfaces
         Task<String> Create(Photoshoots NewPhotoshoot);
         Task<Boolean> Update(Photoshoots PhotoshootToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task UpdatePhotoshootForSummary(Dictionary<String, String> ValuePairs, String where);
         Task<Object> GetPhotoshootDetailsRep(Int32 id);
         Task<Object> GetPhotoshootProducts(Int32 photoshootId);
         Task<Object> GetAllPhotoshootsAndModels();
@@ -38,6 +39,7 @@ namespace badgerApi.Interfaces
     {
         private readonly IConfiguration _config;
         private string TableName = "product_photoshoots";
+        private string TablePhotoshoots = "photoshoots";
         private string TableProducts = "product";
         private string TableAttributes = "product_attributes";
         
@@ -348,11 +350,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.vendor_color_name as color, p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND  p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 2 Limit " + Limit.ToString(); 
+                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND  ps.product_shoot_status_id = 2 AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2 Limit " + Limit.ToString(); 
             }
             else
             {
-                sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id , p.vendor_color_name as color, p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name` FROM product_photoshoots ps  , product p, vendor v WHERE  p.product_id = ps.product_id  AND  p.`vendor_id` = v.`vendor_id` AND ps.product_shoot_status_id = 2 ";
+                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND  ps.product_shoot_status_id = 2 AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2;  ";
             }
 
             using (IDbConnection conn = Connection)
@@ -376,14 +378,33 @@ namespace badgerApi.Interfaces
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
             
-            sQuery = "SELECT pp.`photoshoot_id`, COUNT(pp.`photoshoot_id`) AS COUNT, p.photoshoot_name, pm.`model_name`, pp.product_shoot_status_id FROM `photoshoots` p, `product_photoshoots` pp, `photoshoot_models` pm WHERE  p.`photoshoot_id` = pp.`photoshoot_id` AND pm.`model_id` = p.`model_id`  AND pp.product_shoot_status_id IN(1,2)  GROUP BY  p.`photoshoot_id` ORDER BY  p.`photoshoot_id`";
+            sQuery = "SELECT pp.`photoshoot_id`, COUNT(pp.`photoshoot_id`) AS styles, p.`shoot_start_date` AS scheduled_date, p.`model_id`, pp.product_shoot_status_id FROM `photoshoots` p, `product_photoshoots` pp WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pp.product_shoot_status_id IN (1, 2) GROUP BY p.`photoshoot_id` ORDER BY p.`photoshoot_id` DESC";
 
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
-                photoshootsDetails.photoshootSendToEditor = photoshootsModelList;
+                photoshootsDetails.productPhotoshootSummary = photoshootsModelList;
             }
             return photoshootsDetails;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-16-19 
+        Action: update photoshoots specific values using common function UpdateAsync 
+        Input: Dictionary<String , String> ValuePairs, String where condition
+        output: 
+*/
+        public async Task UpdatePhotoshootForSummary(Dictionary<String, String> ValuePairs, String where)
+        {
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TablePhotoshoots, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
+            }
+
         }
     }
 }

@@ -133,7 +133,7 @@ $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
 });
 
 $('#poOrderDate').datepicker({
-    format: 'm/d/yyyy'
+    dateFormat: 'm/d/yy'
 });
 
 $('#poDelieveryRange').daterangepicker({
@@ -205,7 +205,6 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["shipping"] = $("#newPurchaseOrderForm #poShipping").val();
     jsonData["po_status"] = 1;
     jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
-    jsonData["created_by"] = 2;
 
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
@@ -477,9 +476,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
     jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
     jsonData["shipping"] = $("#newPurchaseOrderForm #poShipping").val();
-    jsonData["po_status"] = 1;
     jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
-    jsonData["updated_by"] = 2;
 
     jsonData["old_note"] = window.notes;
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
@@ -1076,6 +1073,6 @@ $(document).on('click', ".podeleteImage", function () {
     }).always(function (data) {
         console.log(data);
         if (data.responseText != '0')
-            _this.parents('.documentsLink').remove()
+            _this.parents('.documentsLink').remove();
     });
 });

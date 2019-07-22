@@ -1,15 +1,11 @@
-﻿
-
-
-$(document).ready(function () {
-
-/*
+﻿/*
 Developer: Sajid Khan
 Date: 7-5-19
 Action: it will show item note
 Input: items note ids comma seperate
 Output: item note data show by item note id
 */
+function get_all_notes_by_ids() {
     var itemids = "";
     $(".item_note").each(function () {
         itemids += $(this).attr('data-itemid') + ",";
@@ -38,8 +34,7 @@ Output: item note data show by item note id
 
         });
     }
-
-});
+}
 
 /*
 Developer: Sajid Khan
@@ -49,7 +44,8 @@ Input:  string note
 Output: item note id
 */
 $(document).on('change', ".item_note", function () {
-    $('.message').append('<div class="spinner-border text-info"></div>');
+    var po_id = $(this).parents("tr").attr("data-productid");
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
 
     jsonData["item_id"] = $(this).attr('data-itemid');
@@ -68,9 +64,9 @@ $(document).on('change', ".item_note", function () {
         console.log(data);
         if (data == "0") {
             $(this).val("");
-            alertBox('message', 'red', 'Item note has error' + data.responseText);
+            alertInnerBox('message-' + po_id, 'red', 'Item note has error' + data.responseText);
         } else {
-            alertBox('message', 'green', 'Item note has been updated successfully');
+            alertInnerBox('message-' + po_id, 'green', 'Item note has been updated successfully');
         }
     });
 
@@ -86,7 +82,9 @@ Output: get item document data
 $(document).on("click", "#AddDocument", function () {
     $('#document_form')[0].reset();
     var id = $(this).attr("data-itemid");
+    var productid = $(this).attr("data-productid");
     $("#document_form").attr("data-documentid", id);
+    $("#document_form").attr("data-productid", productid);
     $.ajax({
         url: '/purchaseorders/getitemdocument/' + id,
         dataType: 'json',
@@ -99,7 +97,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("File " + (e + 1) + ": <a href=" + i.url + ">" + i.url + "</a> <br>");
+                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -119,7 +117,8 @@ Input: string file name
 Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
-    $('.message').append('<div class="spinner-border text-info"></div>');
+    var po_id = $('#document_form').attr("data-productid");
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
         var files = $("#poUploadImages")[0].files;
@@ -142,9 +141,9 @@ $(document).on("click", "#document_submit", function () {
             console.log(data);
             if (data == "0") {
                 console.log("Exception Error");
-                alertBox('message', 'red', 'Item document has error' + data.responseText);
+                alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
             } else {
-                alertBox('message', 'green', 'Item document has been updated successfully');
+                alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
                 console.log(data.responseText);
                 $("#modaladddocument").modal("hide");
             }
@@ -160,7 +159,8 @@ Input: int item id
 Output: string status
 */
 $(document).on("change", ".item_status", function () {
-    $('.message').append('<div class="spinner-border text-info"></div>');
+    var po_id = $(this).parents("tr").attr("data-productid");
+    $('.message-'+po_id).append('<div class="spinner-border text-info"></div>');
     //$(".message .spinner-border").removeClass("d-none");
     var item_id = $(this).attr('data-itemid');
     var item_status = $(this).val();
@@ -182,9 +182,9 @@ $(document).on("change", ".item_status", function () {
     }).always(function (data) {
         console.log(data);
         if (data.responseText == "Success") {
-            alertBox('message', 'green', 'Item status has been updated successfully');
+            alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
         } else {
-            alertBox('message', 'green', 'Item status has error' + data.responseText);
+            alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
         }
 
     });
@@ -202,6 +202,7 @@ Input: int sku id
 Output: string sku
 */
 $(document).on("change", ".sku_weight", function () {
+    var po_id = $(this).parents("tr").attr("data-productid");
     var sku_id = $(this).attr('id');
     var sku_weight = $(this).val();
     var old_sku_weight = $(this).attr("data-weight");
@@ -209,10 +210,11 @@ $(document).on("change", ".sku_weight", function () {
         return false;
     }
     console.log(sku_id + " -- " + sku_weight);
-    confirmationBox("SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
+    var product_id = $(this).attr('data-productid');
+    confirmationBox(product_id,"SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
         console.log(result)       
         if (result == "yes") {
-            $('.message').append('<div class="spinner-border text-info"></div>');
+            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             var jsonData = {};
             jsonData["sku_id"] = sku_id;
             jsonData["weight"] = sku_weight;
@@ -234,10 +236,10 @@ $(document).on("change", ".sku_weight", function () {
                         }
                     });
 
-                    alertBox('message', 'green', 'SKU weight has been updated successfully');
+                    alertInnerBox('message-' + po_id, 'green', 'SKU weight has been updated successfully');
 
                 } else {
-                    alertBox('message', 'red', 'SKU weight has error' + data.responseText);
+                    alertInnerBox('message-' + po_id, 'red', 'SKU weight has error' + data.responseText);
                 }
             });
         } else {
@@ -260,8 +262,15 @@ Action: update item barcode by item id
 Input: int item id
 Output: string item
 */
-$(document).on("change", ".item_barcode", function () {
+$(document).on("keydown", ".item_barcode", function (e) {
+    return isNumber(e);
+});
+
+$(document).on("change", ".item_barcode", function (e) {
+    var _self = $(this);
+    var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
+    var old_barcode = $(this).attr('data-barcode');
     var barcode = $(this).val();
 
     $(this).removeClass('errorFeild');
@@ -269,31 +278,56 @@ $(document).on("change", ".item_barcode", function () {
         $(this).addClass('errorFeild');
         return false;
     }
-    $('.message').append('<div class="spinner-border text-info"></div>');
-    var jsondata = $("input#" + item_id).val();
-    var itemdata = JSON.parse(jsondata);
-    var id = itemdata.item_id
-    itemdata.barcode = barcode;
-    $("input#" + item_id).val(JSON.stringify(itemdata));
 
-    console.log($("input#" + item_id).val());
+    if (old_barcode == barcode) {
+        _self.removeClass('errorFeild');
+        return false;
+    }
 
     $.ajax({
-        url: "/purchaseorders/itemupdate/" + id,
+        url: "/purchaseorders/checkbarcodeexist/" + barcode,
         dataType: 'json',
-        type: 'post',
+        type: 'Get',
         contentType: 'application/json',
-        data: JSON.stringify(itemdata),
-        processData: false
     }).always(function (data) {
         console.log(data);
-        if (data.responseText == "Success") {
-            alertBox('message', 'green', 'Item barcode has been updated successfully');
+        if (data == true) {
+            _self.addClass('errorFeild');
+            alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+            return false;
         } else {
-            alertBox('message', 'red', 'Item barcode has error' + data.responseText);
+            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+            var jsondata = $("input#" + item_id).val();
+            var itemdata = JSON.parse(jsondata);
+            var id = itemdata.item_id
+            itemdata.barcode = barcode;
+            $("input#" + item_id).val(JSON.stringify(itemdata));
+
+            console.log($("input#" + item_id).val());
+
+            $.ajax({
+                url: "/purchaseorders/itemupdate/" + id,
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(itemdata),
+                processData: false
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    _self.attr('data-barcode', barcode);
+                    alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                } else {
+                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                }
+
+            });
         }
-        
     });
+
+
+
+   
 })
 
 /*
@@ -304,63 +338,69 @@ Input: int item id
 Output: string item
 */
 $(document).on("click", ".item_row_remove", function () {
-    $('.message').append('<div class="spinner-border text-info"></div>');
     var trdata = $(this);
-
     var item_id = $(this).attr('data-itemid');
-
     var polineitem = $(this).attr('data-polineitem');
     var quantity = $(this).attr('data-quantity');
-
     var item_status = 5;
-    var jsondata = $("input#" + item_id).val();
-    var itemdata = JSON.parse(jsondata);
-    var id = itemdata.item_id
-    itemdata.item_status_id = item_status;
-    $("input#" + item_id).val(JSON.stringify(itemdata));
+    var product_id = $(this).attr('data-productid');
+    var poid = $(this).attr('data-poid');
+    confirmationBox(product_id, "Item Remove", "Do you want to remove this item?", function (result) {
+        console.log(result)
+        if (result == "yes") {
 
-    console.log($("input#" + item_id).val());
+            $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
+            var jsondata = $("input#" + item_id).val();
+            var itemdata = JSON.parse(jsondata);
+            var id = itemdata.item_id
+            itemdata.item_status_id = item_status;
+            $("input#" + item_id).val(JSON.stringify(itemdata));
 
-    $.ajax({
-        url: "/purchaseorders/itemupdate/" + id,
-        dataType: 'json',
-        type: 'post',
-        contentType: 'application/json',
-        data: JSON.stringify(itemdata),
-        processData: false
-    }).always(function (data) {
-        console.log(data);
+            console.log($("input#" + item_id).val());
 
-        var jsonData = {};
-        jsonData["line_item_id"] = polineitem;
-        quantity = (quantity - 1);
-        jsonData["line_item_ordered_quantity"] = quantity;
+            $.ajax({
+                url: "/purchaseorders/itemupdate/" + id,
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(itemdata),
+                processData: false
+            }).always(function (data) {
+                console.log(data);
 
-        $.ajax({
-            url: "/purchaseorders/polineitemupdate/" + polineitem,
-            dataType: 'json',
-            type: 'post',
-            contentType: 'application/json',
-            data: JSON.stringify(jsonData),
-            processData: false
-        }).always(function (data) {
-            console.log(data);
+                var jsonData = {};
+                jsonData["line_item_id"] = polineitem;
+                quantity = (quantity - 1);
+                jsonData["line_item_ordered_quantity"] = quantity;
 
-            if (data.responseText == "Success") {
-                $(".item_row_remove").each(function () {
-                    if ($(this).attr('data-polineitem') == polineitem) {
-                        $(this).attr('data-quantity', quantity)
+                $.ajax({
+                    url: "/purchaseorders/polineitemupdate/" + polineitem,
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(jsonData),
+                    processData: false
+                }).always(function (data) {
+                    console.log(data);
+
+                    if (data.responseText == "Success") {
+                        $(".item_row_remove").each(function () {
+                            if ($(this).attr('data-polineitem') == polineitem) {
+                                $(this).attr('data-quantity', quantity)
+                            }
+                        });
+                        trdata.parents('tr.remove-' + item_id).remove();
+                        $("#collapse_" + poid).html("");
+                        getPurchaseOrdersItemdetails(poid);
+                        alertInnerBox('message-' + product_id, 'green', 'Item has been removed successfully');
+                    } else {
+                        alertInnerBox('message-' + product_id, 'red', 'Item has error' + data.responseText);
                     }
+
+
                 });
-                trdata.parents('tr').remove();
-
-                alertBox('message', 'green', 'Item has been removed successfully');
-            } else {
-                alertBox('message', 'red', 'Item has error' + data.responseText);
-            }
-
-            
-        });
+            });
+        }
     });
 });
 
@@ -372,6 +412,8 @@ Input: int product id, sku id, item id, po line item id etc
 Output: string sku
 */
 $(document).on("change", ".item_sku", function () {
+    var _self = $(this);
+    var po_id = $(this).parents("tr").attr("data-productid");
     var sku_id = $(this).attr('id');
     var sku = $(this).val();
     var old_sku = $(this).attr('data-sku');
@@ -379,6 +421,7 @@ $(document).on("change", ".item_sku", function () {
     var product_id = $(this).attr('data-productid');
     var product_attribute_id = $(this).attr('data-productattributeid');
     var quantity = $(this).attr('data-quantity');
+    var product_id = $(this).attr('data-productid');
 
     $(this).removeClass('errorFeild');
     if (sku == "") {
@@ -386,85 +429,123 @@ $(document).on("change", ".item_sku", function () {
         return false;
     }
 
-    confirmationBox("SKU Update", "This will all same SKU updates, Do you want to continue?", function (result) {
-        console.log(result)
-        if (result == "yes") {
-            $('.message').append('<div class="spinner-border text-info"></div>');
-           
-            var jsonData = {};
-            jsonData["sku_id"] = sku_id;
-            jsonData["sku"] = sku;
-            jsonData["quantity"] = quantity;
-            jsonData["line_item_id"] = polineitem_id;
-            jsonData["product_id"] = product_id;
-            jsonData["product_attribute_id"] = product_attribute_id;
+    var patt = new RegExp('^([A-Z]{2})([0-9]{3})([-]{1})([0-9]{1})$');
+    var value = sku.toUpperCase();
+    if (patt.test(value) == false) {
+        $(this).addClass('errorFeild');
+        return false;
+    } else {
+        $(this).removeClass('errorFeild');
+    }
 
-            $.ajax({
-                url: "/purchaseorders/skuupdate/" + sku_id,
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(jsonData),
-                processData: false
-            }).always(function (data) {
-                console.log(data);
+    if (old_sku == sku) {
+        _self.removeClass('errorFeild');
+        return false;
+    }
 
-                if (data.responseText == "Success") {
+
+    $.ajax({
+        url: "/purchaseorders/checkskuexist/" + sku,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+        if (data == true) {
+            _self.addClass('errorFeild');
+            alertInnerBox('message-' + po_id, 'red', 'SKU has already exist - ' + sku);
+            //_self.val(old_sku);
+            return false;
+        } else {
+            confirmationBox(product_id, "SKU Update", "This will all same SKU updates, Do you want to continue?", function (result) {
+                console.log(result)
+                if (result == "yes") {
+                    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+
+                    var jsonData = {};
+                    jsonData["sku_id"] = sku_id;
+                    jsonData["sku"] = sku;
+                    jsonData["quantity"] = quantity;
+                    jsonData["line_item_id"] = polineitem_id;
+                    jsonData["product_id"] = product_id;
+                    jsonData["product_attribute_id"] = product_attribute_id;
+
+                    $.ajax({
+                        url: "/purchaseorders/skuupdate/" + sku_id,
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(jsonData),
+                        processData: false
+                    }).always(function (data) {
+                        console.log(data);
+
+                        if (data.responseText == "Success") {
+
+                            $(".item_sku").each(function () {
+                                if ($(this).attr('id') == sku_id) {
+                                    $(this).val(sku);
+                                    $(this).attr('data-sku', sku);
+                                    var item_id = $(this).attr('data-itemid');
+
+                                    var jsondata = $("input#" + item_id).val();
+                                    var itemdata = JSON.parse(jsondata);
+                                    var id = itemdata.item_id
+                                    itemdata.sku = sku;
+                                    itemdata.sku_family = sku;
+                                    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                                    console.log($("input#" + item_id).val());
+
+                                    $.ajax({
+                                        url: "/purchaseorders/itemupdate/" + id,
+                                        dataType: 'json',
+                                        type: 'post',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(itemdata),
+                                        processData: false
+                                    }).always(function (data) {
+                                        console.log(data);
+                                        if (data.responseText == "Success") {
+                                            alertInnerBox('message-' + po_id, 'green', 'SKU has been updated successfully');
+                                        } else {
+                                            alertInnerBox('message-' + po_id, 'red', 'SKU has error' + data.responseText);
+                                        }
+
+                                    });
+                                }
+                            });
+                        }
+
+                    });
+
+                } else {
 
                     $(".item_sku").each(function () {
                         if ($(this).attr('id') == sku_id) {
-                            $(this).val(sku);
-                            $(this).attr('data-sku', sku);
-                            var item_id = $(this).attr('data-itemid');
-
-                            var jsondata = $("input#" + item_id).val();
-                            var itemdata = JSON.parse(jsondata);
-                            var id = itemdata.item_id
-                            itemdata.sku = sku;
-                            itemdata.sku_family = sku;
-                            $("input#" + item_id).val(JSON.stringify(itemdata));
-
-                            console.log($("input#" + item_id).val());
-
-                            $.ajax({
-                                url: "/purchaseorders/itemupdate/" + id,
-                                dataType: 'json',
-                                type: 'post',
-                                contentType: 'application/json',
-                                data: JSON.stringify(itemdata),
-                                processData: false
-                            }).always(function (data) {
-                                console.log(data);
-                                if (data.responseText == "Success") {
-                                    alertBox('message', 'green', 'SKU has been updated successfully');
-                                } else {
-                                    alertBox('message', 'red', 'SKU has error' + data.responseText);
-                                }
-
-                            });
+                            $(this).val(old_sku);
+                            $(this).attr('data-sku', old_sku)
                         }
                     });
                 }
-
-            });
-
-        } else {
-
-            $(".item_sku").each(function () {
-                if ($(this).attr('id') == sku_id) {
-                    $(this).val(old_sku);
-                    $(this).attr('data-sku',old_sku)
-                }
-            });
+            });   
         }
+
     });
+
+
+    
+   
 });
 
 
-
-
-
-$('.card-header').click(function () {
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get All purchase orders data in po management page
+Output: string html data
+*/
+$('.POList .card-header').click(function () {
     var thisPO = $(this);
     var POid = thisPO.attr("data-POId");
     if ($("#collapse_" + POid).is(":hidden")) {
@@ -474,6 +555,12 @@ $('.card-header').click(function () {
     }
 });
 
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get single Product Detail by purchase order id in po management page
+Output: string html data
+*/
 function getPOdetail(PO_id) {
 
     $("#collapse_" + PO_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>');
@@ -488,10 +575,341 @@ function getPOdetail(PO_id) {
         //console.log(data);
         $("#collapse_" + PO_id).html("");
         $("#collapse_" + PO_id).html(data.responseText);
-
+        get_all_notes_by_ids();
     });
-
-
 }
 
 
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get All purchase orders data in po management checkin page
+Output: string html data
+*/
+$('.POListCheckIn .card-header .card-box').click(function () {
+    var thisPO = $(this);
+    var POid = thisPO.attr("data-POId");
+
+    console.log($("#collapse_" + POid));
+    console.log($("#collapse_" + POid).is(":visible"))
+    console.log($("#collapse_" + POid).is(":hidden"))
+
+    if ($("#collapse_" + POid).is(":hidden")) {
+        getPurchaseOrdersItemdetails(POid);
+        $("#collapse_" + POid).attr('data-colapse', true);
+    } else if ($("#collapse_" + POid).attr('data-colapse')) {
+        $("#collapse_" + POid).hide();
+    } else {
+        $("#collapse_" + POid).html("");
+    }
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Get single Product Detail by purchase order id n po management checkin page
+Output: string html data
+*/
+function getPurchaseOrdersItemdetails(PO_id) {
+    $("#collapse_" + PO_id).html('<div style="width:100%;height: 100px;z-index: 999; text-align:center;"><div class= "spinner-border" role = "status" style = " " ><span class="sr-only">Loading...</span></div></div>').show();
+
+    $.ajax({
+        url: "/PurchaseOrders/itemsdetails/" + PO_id,
+        dataType: 'json',
+        type: 'get',
+        contentType: 'application/json',
+        processData: false
+    }).always(function (data) {
+        //console.log(data);
+        $("#collapse_" + PO_id).html("");
+        $("#collapse_" + PO_id).html(data.responseText);
+        get_all_notes_by_ids();
+
+        $(".POListCheckIn .card .collapse").each(function () {
+            var product_id = $(this).attr("id").replace("collapseOne", "-");
+            var appendData = "";
+            $(".item_sizes").each(function () {
+                if ($(this).attr("data-orderproduct") == product_id) {
+                    appendData += $(this).attr("data-size") + " (" + $(this).text() + ") ";
+                }
+            })
+            $(".size" + product_id).text(appendData);
+        });
+    });
+}
+
+/*
+Developer: Sajid Khan
+Date: 7-16-19
+Action: update item bagcode by item id
+Output: string string
+*/
+$(document).on("change", ".item_bagcode", function () {
+    var po_id = $(this).parents("tr").attr("data-productid");
+    var item_id = $(this).attr('data-itemid');
+    var bagcode = $(this).val();
+
+    $(this).removeClass('errorFeild');
+    if (bagcode.length < 1) {
+        $(this).addClass('errorFeild');
+        return false;
+    }
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+    var jsondata = $("input#" + item_id).val();
+    var itemdata = JSON.parse(jsondata);
+    var id = itemdata.item_id
+    itemdata.bag_code = bagcode;
+    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+    console.log($("input#" + item_id).val());
+
+    $.ajax({
+        url: "/purchaseorders/itemupdate/" + id,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(itemdata),
+        processData: false
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText == "Success") {
+            alertInnerBox('message-' + po_id, 'green', 'Item bag code has been updated successfully');
+        } else {
+            alertInnerBox('message-' + po_id, 'red', 'Item bag code has error' + data.responseText);
+        }
+
+    });
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-5-19
+Action: update ra status by item id
+Output: string status
+*/
+$(document).on("change", ".item_ra_status", function () {
+    var po_id = $(this).parents("tr").attr("data-productid");
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+    //$(".message .spinner-border").removeClass("d-none");
+    var item_id = $(this).attr('data-itemid');
+    var ra_status = $(this).val();
+    var jsondata = $("input#" + item_id).val();
+    var itemdata = JSON.parse(jsondata);
+    var id = itemdata.item_id
+    itemdata.ra_status = parseInt(ra_status);
+    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+    console.log($("input#" + item_id).val());
+
+    $.ajax({
+        url: "/purchaseorders/itemupdate/" + id,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(itemdata),
+        processData: false
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText == "Success") {
+            alertInnerBox('message-' + po_id, 'green', 'Ra status has been updated successfully');
+        } else {
+            alertInnerBox('message-' + po_id, 'red', 'Ra status has error' + data.responseText);
+        }
+
+    });
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-18-19
+Action: Onclick add weight button popup show on sku weight model
+Output: load sku weight data in model
+*/
+$(document).on("click", "#sku_weight", function () {
+    $('.sku_weight_field').addClass("d-none");
+    $('#weight_form input').val("");
+
+    var productid = $(this).attr("data-productid");
+    $('#weight_form').attr("data-productid", productid);
+
+    var sku = $(this).attr("data-sku");
+    var img_src = $(".img-"+productid).attr("src");
+    console.log(sku + " -- " + img_src);
+
+    $("#weight_form .weight_image").attr("src", img_src);
+    $("#weight_form .weight_sku").text(sku);
+
+    $(".table-data-" + productid + " tbody tr").each(function () {
+        var weight = $(this).attr("data-weight");
+        var size = $(this).attr("data-size");
+        var skuid = $(this).attr("data-skuid");
+
+        if (productid == $(this).attr("data-productid")) {
+            console.log(size + " -- " + weight + " --- " + skuid)
+            if (size.toLowerCase() == "x") {
+                $("#weight_form #x_weight").parents(".x").removeClass("d-none");
+                $("#weight_form #x_weight").val(weight);
+                $("#weight_form #x_weight").attr("data-skuid",skuid);
+            }
+
+            if (size.toLowerCase() == "xs") {
+                $("#weight_form #xs_weight").parents(".xs").removeClass("d-none");
+                $("#weight_form #xs_weight").val(weight);
+                $("#weight_form #xs_weight").attr("data-skuid", skuid);
+            }
+
+            if (size.toLowerCase() == "s") {
+                $("#weight_form #s_weight").parents(".s").removeClass("d-none");
+                $("#weight_form #s_weight").val(weight);
+                $("#weight_form #s_weight").attr("data-skuid", skuid);
+            }
+
+            if (size.toLowerCase() == "m") {
+                $("#weight_form #m_weight").parents(".m").removeClass("d-none");
+                $("#weight_form #m_weight").val(weight);
+                $("#weight_form #m_weight").attr("data-skuid", skuid);
+            }
+
+            if (size.toLowerCase() == "l") {
+                $("#weight_form #l_weight").parents(".l").removeClass("d-none");
+                $("#weight_form #l_weight").val(weight);
+                $("#weight_form #l_weight").attr("data-skuid", skuid);
+            }
+
+        }
+    });
+    $('#modaladdweight').modal('show');
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-18-19
+Action: Update Weight Submit form data
+Output: string 
+*/
+$(document).on("click", "#weight_submit", function () {
+
+    var productid = $('#weight_form').attr("data-productid");
+    var result = false;
+    var error = "";
+    $('#weight_form input').each(function () {
+        var sku_weight = $(this).val();
+        var sku_id = $(this).attr("data-skuid");
+
+        if ( (sku_id != 0 && sku_id != "") && (sku_weight != 0 && sku_weight != "") ) {
+
+            var jsonData = {};
+            jsonData["sku_id"] = sku_id;
+            jsonData["weight"] = sku_weight;
+
+            $.ajax({
+                url: "/purchaseorders/skuweightupdate/" + sku_id,
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonData),
+                processData: false
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    result = true;
+                    $(".table-data-" + productid + " tbody tr").each(function () {
+
+                        if ($(this).attr("data-skuid") == sku_id) {
+                            $(this).attr("data-skuid", sku_id);
+                            $(this).attr("data-weight", sku_weight);
+                        }
+
+                    });
+                } else {
+                    result = "error";
+                    error = data.responseText;
+                    console.log(error);
+                }
+            });           
+        }
+    });
+
+   var checkInterval = setInterval(function () { 
+            if (result) {
+                $('#modaladdweight').modal('hide');
+                alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
+                clearInterval(checkInterval);
+            } else if (result == "error") {
+                //$('#modaladdweight').modal('show');
+                alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
+                clearInterval(checkInterval);
+            }
+    }, 1000);
+   
+});
+
+
+/*
+Developer: Sajid Khan
+Date: 7-20-19
+Action: Product Wash type status change 
+output: Boolean
+*/
+$(document).on("change", ".wash_type_status", function () {
+        var product_id = $(this).attr("data-productid");
+        $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
+        var wash_type_id = $(this).val();
+
+    console.log(product_id + " -- " + wash_type_id);
+
+            var jsonData = {};
+            jsonData["product_id"] = product_id;
+            jsonData["wash_type_id"] = wash_type_id;
+
+            $.ajax({
+                url: "/purchaseorders/productwashtypeupdate/" + product_id,
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonData),
+                processData: false
+            }).always(function (data) {
+                console.log(data);
+                if (data.responseText == "Success") {
+                    alertInnerBox('message-' + product_id, 'green', 'Product wash type has been updated successfully');
+                } else {
+                    alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error' + data.responseText);
+                }
+
+            });
+});
+
+
+
+/*
+Developer: Sajid Khan
+Date: 7-19-19
+Action: Delete Document or Image on click 
+output: Boolean
+*/
+$(document).on('click', ".podeleteImage", function () {
+    var _this = $(this);
+    var docid = _this.parents('.documentsLink').attr('data-docid');
+    var url = _this.parents('.documentsLink').attr('data-val');
+    var poid = $('#document_form').attr("data-documentid");
+
+    var jsonData = {};
+    jsonData["doc_id"] = docid;
+    jsonData["po_id"] = poid;
+    jsonData["url"] = url;
+    console.log(jsonData);
+
+    $.ajax({
+        url: "/purchaseorders/documentsdelete/" + docid,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText != '0')
+            _this.parents('.documentsLink').remove();
+    });
+});

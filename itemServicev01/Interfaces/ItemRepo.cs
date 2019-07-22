@@ -37,7 +37,7 @@ namespace itemService.Interfaces
         Task<Boolean> Update(Items ItemToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
         Task SetProductItemSentToPhotoshoot(string product_id);
-
+        Task<List<Items>> CheckBarcodeExist(int barcode);
         Task<String> SetProductItemForPhotoshoot(int skuId, int status);
 
     }
@@ -884,7 +884,28 @@ namespace itemService.Interfaces
             }
 
             return ToReturn;
-        } 
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check Barcode already Exist by barcode data from database
+        Input: int barcode
+        output: list of barcode
+        */
+        public async Task<List<Items>> CheckBarcodeExist(int barcode)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Items> result = new List<Items>();
+
+                string squery = "Select * from " + TableName + " WHERE barcode = '" + barcode + "';";
+
+                result = await conn.QueryAsync<Items>(squery);
+
+                return result.ToList();
+            }
+        }
 
     }
 }

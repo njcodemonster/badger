@@ -114,19 +114,39 @@ function alertBox(area, action, massage) {
         $('.alert').remove()
     }, 3000)
 }
+
+/*
+  Developed By: Sajid Khan
+  Date: 7-16-19 
+  action:  alert function for any event success or failed. give area action and massage to print for inner body box
+*/
+function alertInnerBox(area, action, massage) {
+    var color = 'success'
+    if (action == 'red')
+        color = 'danger'
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" class="alert alert-' + color + ' alert-dismissible">' +
+        '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+        massage +
+        '</div>';
+    $('.' + area).html('');
+    $('.' + area).append(html);
+    setTimeout(function () {
+        $('.alert').remove()
+    }, 3000)
+}
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
   action:  aler for confirmation  yes or no .give heading description and return callback
 */
-function confirmationBox(heading,description,callback) {
+function confirmationBox(area,heading,description,callback) {
     var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
         '<h4 class="alert-heading">' + heading + '</h4>' +
         '<p>' + description + '</p>' +
         '<hr>' +
         '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
         '</div>';
-    $('body').prepend(html);
+    $('#collapseOne'+area).prepend(html);
     $('.confirmDialog').click(function () {
          $('.confirmationBox').remove();
         if ($(this).attr('data-val') == 'yes') {

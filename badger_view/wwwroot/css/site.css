@@ -318,3 +318,12 @@ label.error {
     text-align: center;
     min-height: 100px;
 }
+.btn-green {
+    background-color: #01BACF;
+    color: #fff;
+}
+
+
+.item-sizes {
+    font-size:20px;
+}
