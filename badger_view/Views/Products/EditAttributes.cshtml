@@ -3,6 +3,9 @@
 }
 @model ProductDetailsPageData ;
 @section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/lib/bootstrap/dist/css/bootstrap-tagsinput.css" />
+    <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/productDetails.js" asp-append-version="true"></script>
     
 }
@@ -95,8 +98,8 @@
                     </tr>
                 </table>
             </div>
-            <div class="col-md-6">
-                <table class="table borderless">
+            <div class="col-md-5">
+                <table class="table borderless productDetails">
                     <tr>
                         <td>
                             <label>Product details</label>
@@ -107,6 +110,7 @@
                         <td>
                             <input type="text" id="main_page_bulit1" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
+                        
                     </tr>
                     <tr>
                         <td>
@@ -117,6 +121,7 @@
                         <td>
                             <input type="text" id="main_page_bulit3" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                         </td>
+                        <td><i class="fa fa-plus addMorePoints" aria-hidden="true"></i></td>
                     </tr>
                 </table>
             </div>
@@ -128,12 +133,29 @@
     <div class="col-md-6">
         <div class="row table-bordered shadow ml-2 mr-1 mt-4 mb-4 p-2" style="min-height: 500px;">
             <div class="col-md-12">
-                <table class="table borderless">
+                <table class="table borderless productImageArea">
                     <tr>
                         <td>
                             <h5>Product Photos:</h5>
                             <img src="~/images/sample-dress.jpg" height="300" />
                         </td>
+                        <td class="viewImage">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                            <img src="/images/sample-dress.jpg" width="100" height="150">
+                        </td>
+
                     </tr>
                     <tr>
                         <td>
@@ -159,7 +181,12 @@
                                         <option value="@Shootstatus.Key">@Shootstatus.Value</option>
                                     }
                                 }
-                            </select>
+                            </select> 
+                        </td>
+                        <td colspan="2">
+                            <div class="productUploadImg">
+                                <input class="fileUpload" onchange="readURL(this);" type="file" multiple />
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>Drag and drop or <span style="color:#2196f3b8">browse file</span></div>
                         </td>
                     </tr>
                 </table>
@@ -178,6 +205,9 @@
                         </td>
                     </tr>
                 </table>
+                <div><label> Products Tags:</label></div>
+                <div><input type="text" class="form-control current_tags" value="dummy text1,dummy text2,dummy text3"></div>
+
             </div>
         </div>
 

@@ -1,4 +1,7 @@
-﻿var color_added = new Array();
+﻿﻿$(document).ready(function () {
+    $(".current_tags").tagsinput('items');
+})
+var color_added = new Array();
 var color_removed = new Array();
 var tag_added = new Array();
 var tag_removed = new Array();
@@ -122,3 +125,23 @@ $(document).on("click", "#mainSaveButton", function () {
     }).always(function (data) { });
     console.log(datatosend);
 });
+$(document).on("click", ".addMorePoints", function () {
+    $(this).removeClass('fa-plus addMorePoints').addClass('fa-minus removeMorePoints');
+    var html = '<tr><td><input type="text" id="main_page_bulit3" data-realvalue="None" value="None" class="form-control"></td><td><i class="fa fa-plus addMorePoints" aria-hidden="true"></i></td></tr>'
+    $('.productDetails tbody').append(html);
+})
+$(document).on("click", ".removeMorePoints", function () {
+    $(this).parents('tr').remove()
+})
+
+function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.productImageArea .viewImage').append('<img id="" src="'+e.target.result+'" width="100" height="150">')
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
