@@ -913,3 +913,11 @@ $(document).on('click', ".podeleteImage", function () {
             _this.parents('.documentsLink').remove();
     });
 });
+
+$(document).on('change', '.checkrastatus', function (e) {
+
+    if ($(this).is(':checked')) {
+        $(this).hide();
+        $(this).parents("td").find("select.item_ra_status:first").removeClass("d-none");
+    }
+});

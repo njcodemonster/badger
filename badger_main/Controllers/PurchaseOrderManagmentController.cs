@@ -358,5 +358,34 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: All Wash Types
+        URL: /api/purchaseordermanagement/ListAllWashTypes
+        Request: Get
+        Input: Null
+        output: dynamic list of all Wash Types
+        */
+        [HttpGet("GetItemsGroupByProductId/{poid}")]
+        public async Task<List<Items>> GetItemsGroupByProductId(int poid)
+        {
+            List<Items> ToRetrunItems = new List<Items>();
+            try
+            {
+                ToRetrunItems = await _ItemsHelper.GetItemsGroupByProductId(poid);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for all ra status with message" + ex.Message);
+            }
+            return ToRetrunItems;
+
+        }
+
+
+        
+
     }
 }

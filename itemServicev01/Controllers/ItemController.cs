@@ -297,6 +297,33 @@ namespace itemService.Controllers
             }
         }
 
+        
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by poid and limit "api/Item/list/listforPO/1/limit"
+        URL: api/Item/list/listforPO/1/limit
+        Request: Get
+        Input: int poid, int limit
+        output: List of Items
+        */
+        [HttpGet("list/getitemsgroupbyproductid/{PO_id}")]
+        public async Task<List<Items>> GetItemsGroupByProductId(int PO_id)
+        {
+            List<Items> ToRetrunItems = new List<Items>();
+            try
+            {
+                ToRetrunItems = await _ItemRepository.GetItemGroupByProductId(PO_id);
+                return ToRetrunItems;
+            }
+            catch (Exception skuFamilyException)
+            {
+                return ToRetrunItems;
+            }
+        }
+
+
+
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
@@ -616,7 +643,7 @@ namespace itemService.Controllers
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
                 ValuesToUpdate.Add("barcode", Barcode);
 
-                 await _ItemRepository.UpdateSpeific(ValuesToUpdate, "item_id=" + id);
+                await _ItemRepository.UpdateSpeific(ValuesToUpdate, "item_id=" + id);
             }
             catch (Exception ex)
             {
@@ -624,7 +651,7 @@ namespace itemService.Controllers
                 logger.LogInformation("Problem happened in updating  item barcode with message" + ex.Message);
                 UpdateResult = "Failed";
             }
-            
+
             return UpdateResult;
         }
 
