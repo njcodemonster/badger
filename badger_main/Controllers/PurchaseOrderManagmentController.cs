@@ -360,12 +360,12 @@ namespace badgerApi.Controllers
 
         /*
         Developer: Sajid Khan
-        Date: 7-16-19 
-        Action: All Wash Types
-        URL: /api/purchaseordermanagement/ListAllWashTypes
+        Date: 7-27-19 
+        Action: Get Items and group product by Purchase order id 
+        URL: /api/GetItemsGroupByProductId/poid
         Request: Get
-        Input: Null
-        output: dynamic list of all Wash Types
+        Input: int poid
+        output: dynamic list of all items
         */
         [HttpGet("GetItemsGroupByProductId/{poid}")]
         public async Task<List<Items>> GetItemsGroupByProductId(int poid)

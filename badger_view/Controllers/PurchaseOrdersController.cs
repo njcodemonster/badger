@@ -1075,23 +1075,32 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             string loginUserId = await _LoginHelper.GetLoginUserId();
             string updateItemID = "0";
-            dynamic poLineitems = new ExpandoObject();
             try
             {
                 updateItemID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/" + id.ToString());
 
                 if (updateItemID == "Success") {
 
-                    string po_id = json.Value<string>("pO_id");
-                    string ra_status = json.Value<string>("ra_status");
+                    int po_id = json.Value<int>("pO_id");
+                    int ra_status = json.Value<int>("ra_status");
+
+                    dynamic result = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/" + po_id);
 
                     JObject purchaseOrdersData = new JObject();
                     purchaseOrdersData.Add("po_id", po_id);
-                    purchaseOrdersData.Add("po_status", 3);
 
-                    if (ra_status != "0")
+                    if (result.itemstatus > 0)
+                    {
+                        purchaseOrdersData.Add("po_status", 3);
+                    }
+
+                    if (result.rastatusone > 0)
                     {
                         purchaseOrdersData.Add("ra_flag", 1);
+                    }
+                    else
+                    {
+                        purchaseOrdersData.Add("ra_flag", 0);
                     }
 
                     purchaseOrdersData.Add("updated_by", Int32.Parse(loginUserId));

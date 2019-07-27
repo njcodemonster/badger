@@ -320,9 +320,9 @@ namespace badgerApi.Interfaces
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
-        Action: Get purchase order page list data and limit from database
-        Input: int limit
-        output: Dynamic object of purchase order
+        Action: Get purchase order list data by search (purchase order and invoice) from database
+        Input: string search
+        output: Dynamic object of purchase order and invoice
         */
         public async Task<object> SearchByPOAndInvoice(string search)
         {

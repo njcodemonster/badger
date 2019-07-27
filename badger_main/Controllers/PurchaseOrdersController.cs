@@ -14,6 +14,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Collections;
+using System.Dynamic;
 
 namespace badgerApi.Controllers
 {
@@ -451,7 +452,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("deleted", PurchaseOrdersToUpdate.deleted.ToString());
                 }
-                if (PurchaseOrdersToUpdate.ra_flag != 0)
+                if (PurchaseOrdersToUpdate.ra_flag == 0 || PurchaseOrdersToUpdate.ra_flag == 1)
                 {
                     ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
                 }                
@@ -799,7 +800,68 @@ namespace badgerApi.Controllers
             }
             return ProductList;
         }
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-27-19 
+        Action: Get Item status count response "api/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/poid"
+        URL: api/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/poid
+        Request: Get
+        Input: int poid
+        output: Dynamic count item status response
+        */
+        [HttpGet("GetItemsByPurchaseOrderStatusCountResponse/{poid}")]
+        public async Task<object> GetItemsByPurchaseOrderStatusCountResponse(int poid)
+        {
+            dynamic countData = new ExpandoObject();
+            dynamic ProductList = new object();
+
+            int CountRaStatusOne = 0;
+            int CountRaStatusZero = 0;
+            int CountItemStatusDefault = 0;
+            int CountItemStatus = 0;
+
+            int rastatus = 0;
+            int itemstatus = 0;
+            try
+            {
+                ProductList = await _ItemsHelper.GetItemsByOrder(poid);
+                int TotalItemCount = ProductList.Count;
+                for (var i=0; i< (TotalItemCount-1); i++) {
+                    rastatus = ProductList[i].ra_status;
+                    itemstatus = ProductList[i].item_status_id;
+                    if (rastatus == 0) {
+                        CountRaStatusZero++;
+                    }
+                    if(rastatus == 1)
+                    {
+                        CountRaStatusOne++;
+                    }
+
+                    if (itemstatus == 1)
+                    {
+                        CountItemStatusDefault++;
+                    }
+
+                    if(itemstatus > 1)
+                    {
+                        CountItemStatus++;
+                    }
+
+                }
+                countData.rastatuszero = CountRaStatusZero;
+                countData.rastatusone = CountRaStatusOne;
+                countData.itemstatusdefault = CountItemStatusDefault;
+                countData.itemstatus = CountItemStatus;
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return countData;
+        }
 
 
     }
