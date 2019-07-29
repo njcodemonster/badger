@@ -1,4 +1,7 @@
-﻿var color_added = new Array();
+﻿﻿$(document).ready(function () {
+    $(".current_tags").tagsinput('items');
+})
+var color_added = new Array();
 var color_removed = new Array();
 var tag_added = new Array();
 var tag_removed = new Array();
@@ -99,6 +102,9 @@ $(document).on("change", ".tagsData", function () {
 });
 
 $(document).on("click", "#mainSaveButton", function () {
+    if (emptyFeildValidation('productDetailPage') == false) {
+        return false;
+    }
     datatosend = {};
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
@@ -122,3 +128,104 @@ $(document).on("click", "#mainSaveButton", function () {
     }).always(function (data) { });
     console.log(datatosend);
 });
+$(document).on("click", ".addMorePoints", function () {
+    $(this).removeClass('fa-plus addMorePoints').addClass('fa-minus removeMorePoints');
+    var html = '<tr><td><input type="text" id="main_page_bulit3" data-realvalue="None" value="None" class="form-control"></td><td><i class="fa fa-plus addMorePoints" aria-hidden="true"></i></td></tr>'
+    $('.productDetails tbody').append(html);
+})
+$(document).on("click", ".removeMorePoints", function () {
+    $(this).parents('tr').remove()
+})
+
+function readURLAndUploadImg(event) {
+   /* if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var count = $('.productImageArea .viewImage span').length;
+            $('.productImageArea .viewImage').append(' <span id="div'+count+'" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+e.target.result+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
+            if ($('.productImageArea .proBigImage span').length == 0) {
+                $('.productImageArea .proBigImage').append('<span id="dopBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+e.target.result+'" height="300" /></span>')
+
+            }
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }*/  
+    var files = event.target.files; //FileList object
+    
+    for(var i = 0; i< files.length; i++)
+    {
+        var file = files[i];
+        
+        //Only pics
+        if(!file.type.match('image'))
+          continue;
+        
+        var picReader = new FileReader();
+        
+        picReader.addEventListener("load",function(event){
+            var picFile = event.target;
+            var count = $('.productImageArea .viewImage span').length;
+            $('.productImageArea .viewImage').append(' <span id="div'+count+'" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+picFile.result+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
+              if ($('.productImageArea .proBigImage span').length == 0) {
+                $('.productImageArea .proBigImage').append('<span id="dopBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+picFile.result+'" height="300" /></span>')
+
+            }
+        
+        });
+        
+         //Read the image
+        picReader.readAsDataURL(file);
+    } 
+    var formData = new FormData();
+    for (var i = 0; i != files.length; i++) {
+        formData.append("productImages", files[i]);
+    }
+    $.ajax({
+        url: "/product/InsertattributeImages",
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        processData: false,
+        contentType: false,
+    }).always(function (data) {
+        console.log(data);
+    });
+
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("imageSrc", ev.target.attributes.src.value);
+    ev.dataTransfer.setData("dragid", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("imageSrc");
+    var dragId = ev.dataTransfer.getData("dragid");
+    //ev.target.appendChild(document.getElementById(data));
+    dropValue = ev.target.attributes.src.value;
+     $('#'+dragId).attr('src',dropValue)
+    ev.target.attributes.src.value = data;
+}
+
+$(document).on("click", ".viewImage img", function () {
+    var currentSrc = $(this).attr('src')
+    var dropSrc = $('#dopBox img').attr('src')
+    $(this).attr('src', dropSrc)
+    $('#dopBox img').attr('src',currentSrc)
+
+})
+
+$(document).on('keydown', "#product_cost,#product_retail,#product_discount", function (e) {
+    return onlyNumbersWithDot(e)
+})
+$(document).on('change', ".required", function (e) {
+    $(this).removeClass('errorFeild');
+    $('.errorMsg').remove();
+})
