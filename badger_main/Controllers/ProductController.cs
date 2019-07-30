@@ -412,7 +412,7 @@ namespace badgerApi.Controllers
           output: 
           */
         // POST: api/product/createProductImage   
-        [HttpPost("product/createProductImage")]
+        [HttpPost("createProductImage")]
         public async Task<string> createProductImage([FromBody]   string value)
         {
             string NewInsertionID = "0";

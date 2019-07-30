@@ -200,7 +200,7 @@ $(document).on('click', "#EditVendor", function () {
         var addresses = vendorData.Addresses;
         var reps = vendorData.Reps;
         var notes = vendorNoteAndDoc.note;
-        var documents = vendor.upload_logo
+        var documents = vendor.logo
         $("#newVendorForm").data("currentID",vendor.vendor_id);
         $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name+")");
         if(notes.length > 0)
@@ -271,9 +271,9 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
     jsonData["address_id"] = $('#newVendorForm').attr('data-address-id');
     if ($('.documentsLink').text() != '') {
-        jsonData["upload_logo"] = $('.documentsLink').attr('data-val');
+        jsonData["logo"] = $('.documentsLink').attr('data-val');
     } else {
-        jsonData["upload_logo"] = '';
+        jsonData["logo"] = '';
     }
      if($('#vendorNotes').val() != $('#vendorNotes').attr('data-value')) {
          jsonData["vendor_notes"] = $('#vendorNotes').val();

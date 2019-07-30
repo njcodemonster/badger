@@ -549,9 +549,9 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("updated_at", VendorToUpdate.updated_at.ToString());
                 }
-                if (VendorToUpdate.upload_logo != null)
+                if (VendorToUpdate.logo != null)
                 {
-                    ValuesToUpdate.Add("upload_logo", VendorToUpdate.upload_logo);
+                    ValuesToUpdate.Add("logo", VendorToUpdate.logo);
                 }
 
 

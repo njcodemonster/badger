@@ -13,5 +13,7 @@ namespace badger_view.Models
         public int isprimary { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
+        public int created_by { get; set; }
+        
     }
 }
