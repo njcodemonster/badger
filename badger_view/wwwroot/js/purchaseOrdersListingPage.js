@@ -1002,7 +1002,9 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
-         $('.orderNumber').text(data.purchase_order[0].vendor_po_number)
+        $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
+
+        $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
         purchaseOrderData(data)
 
     })

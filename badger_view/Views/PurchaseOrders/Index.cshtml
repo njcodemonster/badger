@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Purchase Orders";
 }
 
@@ -56,75 +55,75 @@
                 {
                     pinkbgclass = " class=pinkbgclass ";
                 }
-                
-                    <tr @pinkbgclass>
-                        <td>@purchaseOrders.vendor_po_number</td>
+
+                <tr @pinkbgclass>
+                    <td>@purchaseOrders.vendor_po_number</td>
+                    <td>
+                        @purchaseOrders.custom_order_date
+                    </td>
+                    <td>@purchaseOrders.vendor</td>
+                    <td>@purchaseOrders.total_styles</td>
+                    <td>5</td>
+                    <td>3</td>
+                    @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
+                    {
+                        <td class="text-danger font-weight-bold">@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td class="text-danger font-weight-bold">@purchaseOrders.num_of_days</td>
+                        <td class="text-danger font-weight-bold"> <span>Not Recieved</span> </td>
+                    }
+                    else
+                    {
+                        <td>@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td>@purchaseOrders.num_of_days</td>
                         <td>
-                            @purchaseOrders.custom_order_date
+                            @if (@purchaseOrders.po_status == 1)
+                            {
+                                <span>Open</span>
+                            }
+
+                            @if (@purchaseOrders.po_status == 3)
+                            {
+                                <span>In Progress</span>
+                            }
+                            @if (@purchaseOrders.po_status == 5)
+                            {
+                                <span>Not Recieved</span>
+                            }
+                            @if (@purchaseOrders.po_status == 6)
+                            {
+                                <span>Recieved</span>
+                            }
                         </td>
-                        <td>@purchaseOrders.vendor</td>
-                        <td>@purchaseOrders.total_styles</td>
-                        <td>5</td>
-                        <td>3</td>
-                        @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
+                    }
+                    <td>
+                        @if (@purchaseOrders.po_status == 5)
                         {
-                            <td class="text-danger font-weight-bold">@purchaseOrders.custom_delivery_window_start_end</td>
-                            <td class="text-danger font-weight-bold">@purchaseOrders.num_of_days</td>
-                            <td class="text-danger font-weight-bold"> <span>Not Recieved</span> </td>
+                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checked-in</button>
                         }
                         else
                         {
-                            <td>@purchaseOrders.custom_delivery_window_start_end</td>
-                            <td>@purchaseOrders.num_of_days</td>
-                            <td>
-                                @if (@purchaseOrders.po_status == 1)
-                                {
-                                    <span>Open</span>
-                                }
-
-                                @if (@purchaseOrders.po_status == 3)
-                                {
-                                    <span>In Progress</span>
-                                }
-                                @if (@purchaseOrders.po_status == 5)
-                                {
-                                    <span>Not Recieved</span>
-                                }
-                                @if (@purchaseOrders.po_status == 6)
-                                {
-                                    <span>Recieved</span>
-                                }
-                            </td>
+                            <button type="button" class="btn btn-success btn-sm">Checked-in</button>
                         }
-                        <td>
-                            @if (@purchaseOrders.po_status == 5)
-                            {
-                                <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checked-in</button>
-                            }
-                            else
-                            {
-                                <button type="button" class="btn btn-success btn-sm">Checked-in</button>
-                            }
 
-                        </td>
-                        <td>
-                            <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0)">Claim</a>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0)">Claim</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
+                    </td>
+                    <td>
+                        <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)">Claim</a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)">Claim</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
         <tfoot>
             <tr>
                 <th>P.O. Number</th>
@@ -168,7 +167,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
                                     <input type="text" class="form-control required d-inline-block autocomplete" id="poVendor" style="width: 90%">
-                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>                                    
+                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Order Delivery Range</label>
@@ -257,7 +256,6 @@
         </div>
     </div>
 
-    <!-- Modal Vendor -->
     <!-- Modal Vendor -->
     <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -531,7 +529,7 @@
                             </div>
 
                             <div class="wrapper_product"></div>
-                            
+
                         </form>
                     </div>
                 </div>
