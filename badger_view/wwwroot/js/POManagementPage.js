@@ -841,11 +841,13 @@ $(document).on("click", "#weight_submit", function () {
     var productid = $('#weight_form').attr("data-productid");
     var result = false;
     var error = "";
+    var sku_weight = "";
+    var sku_id = "";
     $('#weight_form input').each(function () {
-        var sku_weight = $(this).val();
-        var sku_id = $(this).attr("data-skuid");
+        sku_weight = $(this).val();
+        sku_id = $(this).attr("data-skuid");
 
-        if ( (sku_id != 0 && sku_id != "") && (sku_weight != 0 && sku_weight != "") ) {
+        if ( (sku_id != 0 || sku_id != "") && (sku_weight != 0 || sku_weight != "") ) {
 
             var jsonData = {};
             jsonData["sku_id"] = sku_id;
@@ -857,7 +859,8 @@ $(document).on("click", "#weight_submit", function () {
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(jsonData),
-                processData: false
+                processData: false,
+                async: false,
             }).always(function (data) {
                 console.log(data);
                 if (data.responseText == "Success") {
@@ -880,7 +883,8 @@ $(document).on("click", "#weight_submit", function () {
     });
 
    var checkInterval = setInterval(function () { 
-            if (result) {
+       if (result) {
+           $("#sku_weight[data-productid='"+productid+"']").addClass("btn-primary").removeClass("btn-success").text("Edit Weight")
                 $('#modaladdweight').modal('hide');
                 alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
                 clearInterval(checkInterval);

@@ -57,7 +57,15 @@
                                         <!--XS (<span class="xs_quantity"></span>) &nbsp; S (<span class="s_quantity"></span>) &nbsp; M (<span class="m_quantity"></span>) &nbsp; L (<span class="l_quantity"></span>)-->
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-success" id="sku_weight" data-sku="@LineItem.sku" data-productid="@LineItem.product_id">ADD WEIGHT</button>
+                                    @if (LineItem.weight > 0)
+                                    {
+                                        <button type="button" class="btn btn-primary" id="sku_weight" data-sku="@LineItem.sku" data-productid="@LineItem.product_id">Edit WEIGHT</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-success" id="sku_weight" data-sku="@LineItem.sku" data-productid="@LineItem.product_id">ADD WEIGHT</button>
+                                    }
+
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-outline-success">Edit Style</button>
