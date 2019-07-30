@@ -89,18 +89,15 @@ namespace badger_view.Controllers
         [HttpPost("/product/InsertattributeImages")]
         public async Task<string> InsertattributeImages(productFileData productFiles)
         {
+            SetBadgerHelper();
             string messageDocuments = "";
             List<IFormFile> files = productFiles.productImages;
+            string loginUserId = await _LoginHelper.GetLoginUserId();
             try
             {
                 foreach (var formFile in files)
                 {
-                    //if (formFile.Length > 0)
-                    //{
-
-                    //    awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
-                    //    messageDocuments = "image upload";
-                    //}
+                   
                     if (formFile.Length > 0)
                     {
                         string Fill_path = formFile.FileName;
@@ -125,6 +122,7 @@ namespace badger_view.Controllers
                                 productDocuments.Add("isprimary", Int32.Parse(productFiles.product_primary));
                                 productDocuments.Add("created_at", 0);
                                 productDocuments.Add("updated_at", 0);
+                                productDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 messageDocuments = await _BadgerApiHelper.GenericPostAsyncString<String>(productDocuments.ToString(Formatting.None), "/product/createProductImage");
 
                             }
