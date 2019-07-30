@@ -546,7 +546,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             }
 
 
-            if (window.purchaseorderrownumber >= 0) {
+            if (window.purchaseorderrownumber!= "" && window.purchaseorderrownumber >= 0) {
 
                 $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping +'" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
@@ -556,8 +556,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             $("#newPurchaseOrderForm").attr("data-currentid", "");
             $('#modalPurchaseOrder').modal('hide');
             alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
-
-            $('#newPurchaseOrderForm')[0].reset();
+            if (window.purchaseorderrownumber != "" && window.purchaseorderrownumber >= 0) {
+                $('#newPurchaseOrderForm')[0].reset();
+            }
         } else {
             alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
@@ -692,7 +693,7 @@ $(document).on("click", "#note_submit", function () {
 
     var _self = $(this);
 
-    if (_self.val() == "") {
+    if ($("#po_notes").val() == "") {
         $(".poNoteAlertMsg").css("color", "red").text("Please fill empty field.");
         return false;
     }
