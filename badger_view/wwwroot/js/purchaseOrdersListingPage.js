@@ -193,6 +193,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         order_date_seconds = order_date_milliseconds / 1000;
 
     var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+    var shipping = $("#newPurchaseOrderForm #poShipping").val();
 
     jsonData["vendor_po_delievery_range"] = $("#newPurchaseOrderForm #poDelieveryRange").val();
     jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
@@ -203,7 +204,6 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
     jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
     jsonData["shipping"] = $("#newPurchaseOrderForm #poShipping").val();
-    jsonData["po_status"] = 1;
     jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
 
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
@@ -257,7 +257,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
             }
             $('#purchaseorderlists').DataTable().row.add([
                 $("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname
-                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
+                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Not Recieved", '<button type="button" class="btn btn-warning btn-sm" data-shipping="'+shipping+'"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
             ]).draw();
 
             table.page('last').draw('page');
@@ -312,8 +312,7 @@ function timeToDateConvert(timeinseconds) {
 
 $(document).on('click', "#EditPurhaseOrder", function () {
     $("#newPurchaseOrderForm input,textarea").val("").removeClass('errorFeild');
-    +    $('.errorMsg').remove();
-
+    $('.errorMsg').remove();
     $(".error").remove();
     $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
     $('.poTracking, #poNotes').val("");
@@ -446,7 +445,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
     var vendorname = $("#newPurchaseOrderForm #poVendor").val();
-    var jsonData = {};
+  
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     var delieveryRange = $("#newPurchaseOrderForm #poDelieveryRange").val();
     delieveryRange = delieveryRange.split("-");
@@ -466,6 +465,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     order_date_seconds = order_date_milliseconds / 1000;
 
     var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+    var shipping = $("#newPurchaseOrderForm #poShipping").val();
+
+    var jsonData = {};
 
     jsonData["vendor_po_delievery_range"] = $("#newPurchaseOrderForm #poDelieveryRange").val();
     jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
@@ -477,7 +479,6 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     jsonData["subtotal"] = $("#newPurchaseOrderForm #poSubtotal").val();
     jsonData["shipping"] = $("#newPurchaseOrderForm #poShipping").val();
     jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
-
     jsonData["old_note"] = window.notes;
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
@@ -547,7 +548,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping +'" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
@@ -600,6 +601,11 @@ output: form input fields
 $(document).on('click', ".add_tracking", function () {
     //Append a new row of code to the "#items" div
     $("#wrapper_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
+});
+
+$(document).on('click', ".add_checkin_tracking", function () {
+    //Append a new row of code to the "#items" div
+    $("#wrapper_checkin_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
 });
 
 
@@ -828,7 +834,7 @@ $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
 
-    confirmationBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
+    confirmationAlertBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
 
         if (result == "yes") {
             $.ajax({
@@ -1006,17 +1012,175 @@ function getSinglePurchaseOrder(id) {
 Developer: Sajid Khan
 Date: 7-13-19
 Action: Checkin button click
-URL:
-Input: 
 output: Checkin Model Show
 */
-$(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
-    console.log($(this).attr("data-ID"));
+$(document).on('click', "#EditPurhaseOrderCheckedIn", function (){
+
+    var producthtml = "";
+    var po_number = $(this).parents("tr").children("td:first").text();
+    var vendor = $(this).parents("tr").children("td:nth-child(3)").text();
+    console.log(po_number + " -- " + vendor);
+    $("#checkinModalLongTitle").text("Purchase Order #" + po_number + " - " + vendor+" - Check-in");
     var poid = $(this).attr("data-ID");
-    $("#checkin_form").attr("data-poid", poid);
-    $("#modalcheckin").modal("show")
+    var shipping = $(this).attr("data-shipping");
+    $("#checkin_form #poShipping").val(shipping);
+    $('.loading').removeClass("d-none");
+    $.ajax({
+        url: '/purchaseorders/PurchaseOrderItemDetails/' + poid,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+        if (data != "0") {
+
+            if (data.itemsList.length > 0) {
+                $(data.itemsList).each(function (e, i) {
+                    console.log(i.product_name + " (" + i.small_sku + ")-" + i.size);
+                    producthtml += "<div class='form-row align-items-center product_name_with_small_sku_size'><div class='form-group col-md-6' ><label>" + i.product_name + " (" + i.small_sku + ")-" + i.size + "</label></div><div class='form-group col-md-6'><input type='text' class='form-control' name='item_barcode' id='item_barcode' data-itemid=" + i.item_id + " value=" + i.barcode + "></div></div>";
+                });
+            }
+
+            $(".po_doc_section").empty();
+            if (data.documents.length > 0) {
+
+                $(data.documents).each(function (e, i) {
+                    $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            } else {
+                $(".po_doc_section").addClass('d-none');
+            }
+
+
+            $(".poTracking").val("");
+            $("#wrapper_checkin_tracking").empty().html("");
+            if (data.tracking.length > 0) {
+                $(data.tracking).each(function (e, i) {
+                    if (e == 0) {
+                        $(".poTracking").val(i.tracking_number);
+                        $(".poTracking").attr("id", i.po_tracking_id);
+                    } else {
+                        $("#wrapper_checkin_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" id="' + i.po_tracking_id + '" value="' + i.tracking_number + '" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
+                    }
+                });
+            }
+
+        }
+
+        $('.loading').addClass("d-none");
+        $(".wrapper_product").empty().html(producthtml);
+        $("#checkin_form").attr("data-poid", poid);
+        $("#modalcheckin").modal("show");
+    });
+});
+
+/*
+Developer: Sajid Khan
+Date: 7-13-19
+Action: Checkin button click submit form data to item and purchase order update with status
+output: Success or failed alert show
+*/
+$(document).on('click', ".submit-check-in", function () {
+    var po_id = $("#checkin_form").attr("data-poid");
+    var shipping = $("#checkin_form #poShipping").val(); 
+
+    console.log(po_id + " -- " + shipping);
+
+    var jsonData = {};
+
+    jsonData["shipping"] = shipping;
+
+    jsonData['tracking'] = [];
+
+    $('#checkin_form .poTracking').each(function () {
+        var tracking_json = {};
+
+        tracking_json['track'] = $(this).val();
+        if ($(this).attr("id") == "undefined") {
+            tracking_json['id'] = "";
+        } else {
+            tracking_json['id'] = $(this).attr("id");
+        }
+
+        jsonData['tracking'].push(tracking_json);
+    });
+
+    console.log(jsonData['tracking']);
+
+    jsonData['items_barcodes'] = [];
+   
+    $(".product_name_with_small_sku_size :input").each(function () {
+
+        if ($(this).val().length == 8) {
+
+            var jsonItemData = {
+                "item_id": $(this).attr("data-itemid"),
+                "barcode": $(this).val()
+            };
+            jsonData['items_barcodes'].push(jsonItemData);
+        }
+        
+    })
+
+    console.log(jsonData);
+
+    $.ajax({
+        url: '/purchaseorders/updatepurchaseordercheckin/' + po_id,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+
+    }).always(function (data) {
+        console.log(data);
+
+        if (data.responseText == "Success") {
+
+            var fileLength = $("#checkin_form #poUploadImage")[0].files.length;
+            if (fileLength != 0) {
+                var files = $("#checkin_form #poUploadImage")[0].files;
+
+                var formData = new FormData();
+                formData.append('po_id', po_id);
+
+                for (var i = 0; i != files.length; i++) {
+                    formData.append("purchaseOrderDocuments", files[i]);
+                }
+
+                $.ajax({
+                    url: "/purchaseorders/purchaseorder_doc",
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                }).always(function (data) {
+                    console.log(data);
+                    if (data == "0") {
+                        console.log("Exception Error");
+                        alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
+                    } else {
+                        console.log(data.responseText);
+                    }
+                });
+            }
+            $('#modalcheckin').modal('hide');
+            alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
+
+            $('#checkin_form')[0].reset();
+        } else {
+            alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
+        }
+
+    })
+
 
 });
+
 
 
 /*
@@ -1035,8 +1199,6 @@ $(document).on('click', "#add_invoice_adjustment", function () {
 Developer: Sajid Khan
 Date: 7-13-19
 Action: Add Discount Model Top Heading
-URL:
-Input:
 output: Add Discount Model Top Heading
 */
 $(document).on('click', "#add_discount", function () {
@@ -1047,8 +1209,6 @@ $(document).on('click', "#add_discount", function () {
 Developer: Sajid Khan
 Date: 7-13-19
 Action: Delete Document or Image on click 
-URL:
-Input:
 output: Boolean
 */
 $(document).on('click', ".podeleteImage", function () {

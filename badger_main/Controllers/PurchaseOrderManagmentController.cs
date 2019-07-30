@@ -358,5 +358,34 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-27-19 
+        Action: Get Items and group product by Purchase order id 
+        URL: /api/GetItemsGroupByProductId/poid
+        Request: Get
+        Input: int poid
+        output: dynamic list of all items
+        */
+        [HttpGet("GetItemsGroupByProductId/{poid}")]
+        public async Task<List<Items>> GetItemsGroupByProductId(int poid)
+        {
+            List<Items> ToRetrunItems = new List<Items>();
+            try
+            {
+                ToRetrunItems = await _ItemsHelper.GetItemsGroupByProductId(poid);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for all ra status with message" + ex.Message);
+            }
+            return ToRetrunItems;
+
+        }
+
+
+        
+
     }
 }

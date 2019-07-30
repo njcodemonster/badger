@@ -39,7 +39,7 @@ namespace itemService.Interfaces
         Task SetProductItemSentToPhotoshoot(string product_id);
         Task<List<Items>> CheckBarcodeExist(int barcode);
         Task<String> SetProductItemForPhotoshoot(int skuId, int status);
-
+        Task<List<Items>> GetItemGroupByProductId(int PO_id);
     }
     public class ItemRepo : ItemRepository
     {
@@ -142,6 +142,31 @@ namespace itemService.Interfaces
 
 
                 string QueryWhereClause = "where item_status_id <> 5 AND PO_id=" + PO_id.ToString();
+                using (IDbConnection conn = Connection)
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause;
+                    var result = await conn.QueryAsync<Items>(Query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get items by PO_id to database
+        Input: int PO_id
+        output: List of items
+        */
+        public async Task<List<Items>> GetItemGroupByProductId(int PO_id)
+        {
+            try
+            {
+                string QueryWhereClause = "where item_status_id <> 5 AND PO_id=" + PO_id.ToString()+" GROUP BY product_id";
                 using (IDbConnection conn = Connection)
                 {
                     string Query = "SELECT * from items " + QueryWhereClause;

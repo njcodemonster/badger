@@ -120,8 +120,8 @@ namespace badger_view.Controllers
                                 int product_id = Int32.Parse(productFiles.product_id);
                                 JObject productDocuments = new JObject();
                                 productDocuments.Add("product_id", product_id);
-                                productDocuments.Add("product_image_url", Fill_path);
                                 productDocuments.Add("product_image_title", productFiles.product_title);
+                                productDocuments.Add("product_image_url", Fill_path);                                
                                 productDocuments.Add("isprimary", Int32.Parse(productFiles.product_primary));
                                 productDocuments.Add("created_at", 0);
                                 productDocuments.Add("updated_at", 0);

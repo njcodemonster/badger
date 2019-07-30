@@ -130,7 +130,8 @@
                                                       }
                                                       <td>@LineItem.Size<input type="hidden" id="@LineItem.EndItems[i-1].item_id" value="@LineItem.EndItems[i - 1]" /></td>
                                                       <td>
-                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                          <input type="checkbox" class="checkitemstatus" style="float:left;width:10%;transform: scale(1.5);margin-top: 13px;" data-status="@LineItem.Size-@LineItem.product_id">
+                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id"  style="float:right;width:80%;" data-status="@LineItem.Size-@LineItem.product_id">
                                                               @foreach (dynamic _status in Model.AllItemStatus)
                                                               {
                                                                   if (@_status.item_status_id == @LineItem.EndItems[i - 1].item_status_id)
@@ -149,20 +150,37 @@
                                                           </select>
                                                       </td>
                                                       <td>
-                                                          <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id">
-                                                              @foreach (dynamic _rastatus in Model.AllRaStatus)
-                                                              {
-                                                                  if (@_rastatus.ra_status_id == @LineItem.EndItems[i - 1].ra_status)
-                                                                  {
-                                                                      <option value="@_rastatus.ra_status_id" selected>@_rastatus.ra_status_name</option>
-                                                                  }
-                                                                  else
+                                                          @if (@LineItem.EndItems[i - 1].ra_status == 0)
+                                                          {
+                                                              <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
+
+                                                              <select class="form-control item_ra_status d-none" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                                  <option value="0"> Default RA </option>
+                                                                  @foreach (dynamic _rastatus in Model.AllRaStatus)
                                                                   {
                                                                       <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
                                                                   }
-
+                                                              </select>
+                                                          }
+                                                          else
+                                                          {
+                                                      <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                          <option value="0"> Default RA </option>
+                                                          @foreach (dynamic _rastatus in Model.AllRaStatus)
+                                                          {                                                                
+                                                              if (@_rastatus.ra_status_id == @LineItem.EndItems[i - 1].ra_status)
+                                                              {
+                                                                  <option value="@_rastatus.ra_status_id" selected>@_rastatus.ra_status_name</option>
                                                               }
-                                                          </select>
+                                                              else
+                                                              {
+                                                                  <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
+                                                              }
+
+                                                          }
+                                                      </select>
+                                                          }
+
                                                       </td>
                                                       <td>
                                                           <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="50"></textarea>
@@ -223,284 +241,3 @@
             </div>
         </div>
         }
-
-
-
-<!-- div class="card-body table-responsive">
-    <div class="accordion" id="accordionpoinnercheck">
-        <div class="card">
-            <div class="card-header" id="headinginnerOne">
-                <div class="float-left table-responsive">
-                    <table class="table table-borderless m-0">
-                        <tr>
-                            <td>
-                                <img src="~/images/sample-dress.jpg" style="height: 100px;" />
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-link mt-0 pt-0" data-toggle="collapse" data-target="#collapseinnerOne"><i class="fa fa-plus"></i></button>
-                            </td>
-                            <td>
-                                <span class="text-dark font-weight-bold h5">Drive You Made Blouse (DMB109) in Ivory (WH101)</span>
-                            </td>
-                            <td>
-                                <a href="#" class="h5 text-primary">Edit Attribute</a>
-                            </td>
-                            <td>
-                                <img src="~/images/check-green.jpg" />
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-success">Edit Fabric</button>
-                            </td>
-                            <td>
-                                XS (1) &nbsp; S (2) &nbsp; M (1) &nbsp; L (1)
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-success">ADD WEIGHT</button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-success">Edit Style</button>
-                            </td>
-                            <td>
-                                <select class="form-control">
-                                    <option>Option 1</option>
-                                    <option>Option 2</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div id="collapseinnerOne" class="collapse show" aria-labelledby="headinginnerOne" data-parent="#accordionpoinnercheck">
-                <div class="card-body table-responsive">
-                    <table class="table text-center borderless" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Size</th>
-                                <th>Status</th>
-                                <th>RA Status</th>
-                                <th>Notes</th>
-                                <th>Image</th>
-                                <th>SKU</th>
-                                <th>Barcode</th>
-                                <th>Bag Number</th>
-                                <th>Save</th>
-                                <th>Go live</th>
-                                <th>Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-
-                                <td>XS</td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox">
-                                    <select class="form-control d-inline">
-                                        <option selected>Choose...</option>
-                                        <option>...</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" style="margin: 0 auto; vertical-align: middle; position: relative;">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" cols="50"></textarea>
-                                </td>
-                                <td>
-                                    <a href="#"><i class="fa fa-upload h3"></i></a>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary btn-sm">Save</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-success btn-sm">Go Live</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                </td>
-                            </tr>
-                            <tr>
-
-                                <td>XS</td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox">
-                                    <select class="form-control d-inline">
-                                        <option selected>Choose...</option>
-                                        <option>...</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" style="margin: 0 auto; vertical-align: middle; position: relative;">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" cols="50"></textarea>
-                                </td>
-                                <td>
-                                    <a href="#"><i class="fa fa-upload h3"></i></a>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary btn-sm">Save</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-success btn-sm">Go Live</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                </td>
-                            </tr>
-                            <tr>
-
-                                <td>XS</td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox">
-                                    <select class="form-control d-inline">
-                                        <option selected>Choose...</option>
-                                        <option>...</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" style="margin: 0 auto; vertical-align: middle; position: relative;">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" cols="50"></textarea>
-                                </td>
-                                <td>
-                                    <a href="#"><i class="fa fa-upload h3"></i></a>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" />
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary btn-sm">Save</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-success btn-sm">Go Live</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="11">
-                                    <div class="accordion" id="accordionsize1">
-                                        <div class="card border-0">
-                                            <div class="card-header" id="headingsizeOne">
-                                                <table class="table table-borderless">
-                                                    <tr>
-                                                        <td style="position: absolute; left: -25px; top: 5px;"><button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapsesizeOne"><i class="fa fa-plus"></i></button></td>
-                                                        <td>XS</td>
-                                                        <td>
-                                                            <input class="form-check-input" type="checkbox">
-                                                            <select class="form-control d-inline">
-                                                                <option selected>Choose...</option>
-                                                                <option>...</option>
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-check-input" type="checkbox" style="margin: 0 auto; vertical-align: middle; position: relative;">
-                                                        </td>
-                                                        <td>
-                                                            <textarea class="form-control" cols="50"></textarea>
-                                                        </td>
-                                                        <td>
-                                                            <a href="#"><i class="fa fa-upload h3"></i></a>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" class="form-control" />
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" class="form-control" />
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" class="form-control" />
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-primary btn-sm">Save</button>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-success btn-sm">Go Live</button>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-
-                                            </div>
-                                            <div id="collapsesizeOne" class="collapse" aria-labelledby="headingsizeOne" data-parent="#accordionsize1">
-                                                <div class="card-body">
-                                                    <table class="table table-borderless">
-                                                        <tr>
-                                                            <td>XS</td>
-                                                            <td>
-                                                                <input class="form-check-input" type="checkbox">
-                                                                <select class="form-control d-inline">
-                                                                    <option selected>Choose...</option>
-                                                                    <option>...</option>
-                                                                </select>
-                                                            </td>
-                                                            <td>
-                                                                <input class="form-check-input" type="checkbox" style="margin: 0 auto; vertical-align: middle; position: relative;">
-                                                            </td>
-                                                            <td>
-                                                                <textarea class="form-control" cols="50"></textarea>
-                                                            </td>
-                                                            <td>
-                                                                <a href="#"><i class="fa fa-upload h3"></i></a>
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" class="form-control" />
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" class="form-control" />
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" class="form-control" />
-                                                            </td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-primary btn-sm">Save</button>
-                                                            </td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-success btn-sm">Go Live</button>
-                                                            </td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-danger btn-sm">Remove</button>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div -->
