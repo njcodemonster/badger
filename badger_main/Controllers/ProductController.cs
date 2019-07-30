@@ -406,10 +406,10 @@ namespace badgerApi.Controllers
         /*
           Developer: Azeem hassan
           Date:28-7-19
-          Action: 
+          Action: sending data to db to insert image data
           URL: /product/createProductImage
-          Input: 
-          output: 
+          Input: image data
+          output: new insertion id
           */
         // POST: api/product/createProductImage   
         [HttpPost("createProductImage")]
