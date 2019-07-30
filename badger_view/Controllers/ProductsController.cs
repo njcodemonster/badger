@@ -19,6 +19,9 @@ namespace badger_view.Controllers
     public class productFileData
     {
         public List<IFormFile> productImages { get; set; }
+        public string product_id { get; set; }
+        public string product_title { get; set; }
+        public string product_primary { get; set; }
     }
     public class ProductsController : Controller
     {
@@ -88,17 +91,52 @@ namespace badger_view.Controllers
         {
             string messageDocuments = "";
             List<IFormFile> files = productFiles.productImages;
-
-            foreach (var formFile in files)
+            try
             {
-                if (formFile.Length > 0)
+                foreach (var formFile in files)
                 {
-                    
-                    awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
-                    messageDocuments = "image upload";
+                    //if (formFile.Length > 0)
+                    //{
+
+                    //    awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                    //    messageDocuments = "image upload";
+                    //}
+                    if (formFile.Length > 0)
+                    {
+                        string Fill_path = formFile.FileName;
+                        Fill_path = UploadPath + Fill_path;
+                        if (System.IO.File.Exists(Fill_path))
+                        {
+                            messageDocuments += "File Already Exists: " + Fill_path + " \r\n";
+                        }
+                        else
+                        {
+                            using (var stream = new FileStream(Fill_path, FileMode.Create))
+                            {
+                                messageDocuments += Fill_path + " \r\n";
+
+                                //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                                await formFile.CopyToAsync(stream);
+                                int product_id = Int32.Parse(productFiles.product_id);
+                                JObject productDocuments = new JObject();
+                                productDocuments.Add("product_id", product_id);
+                                productDocuments.Add("product_image_url", Fill_path);
+                                productDocuments.Add("product_image_title", productFiles.product_title);
+                                productDocuments.Add("isprimary", Int32.Parse(productFiles.product_primary));
+                                productDocuments.Add("created_at", 0);
+                                productDocuments.Add("updated_at", 0);
+                                messageDocuments = await _BadgerApiHelper.GenericPostAsyncString<String>(productDocuments.ToString(Formatting.None), "/product/createProductImage");
+
+                            }
+                        }
+                    }
                 }
+                return messageDocuments;
             }
-            return messageDocuments;
+            catch (Exception ex)
+            {
+                return "0";
+            }
         }
     }
 }
