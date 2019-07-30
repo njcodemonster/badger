@@ -994,6 +994,8 @@ output: dynamic object of purchase order data
 */
 function getSinglePurchaseOrder(id) {
     //$('.orderNumber').text(id)
+    $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').prop("disabled", "true");
+
     $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
@@ -1003,9 +1005,9 @@ function getSinglePurchaseOrder(id) {
     }).always(function (data) {
         console.log(data);
         $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
-
         $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
-        purchaseOrderData(data)
+        purchaseOrderData(data);
+        $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
     })
 
