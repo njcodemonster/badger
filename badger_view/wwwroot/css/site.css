@@ -487,5 +487,17 @@ label.error {
 .viewImage img {
     margin: 5px;
     border: 1px solid #80808069;
-    cursor: pointer;
+    cursor:pointer;
+}
+/*loading image*/
+.loaderBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 100;
+    background: black;
+    opacity: 0.70;
+    z-index: 9;
+    display: none;
 }

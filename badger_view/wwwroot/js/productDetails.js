@@ -138,20 +138,7 @@ $(document).on("click", ".removeMorePoints", function () {
 })
 
 function readURLAndUploadImg(event) {
-   /* if (input.files && input.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            var count = $('.productImageArea .viewImage span').length;
-            $('.productImageArea .viewImage').append(' <span id="div'+count+'" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+e.target.result+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
-            if ($('.productImageArea .proBigImage span').length == 0) {
-                $('.productImageArea .proBigImage').append('<span id="dopBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+e.target.result+'" height="300" /></span>')
-
-            }
-        };
-
-        reader.readAsDataURL(input.files[0]);
-    }*/  
+    $('.loaderBox').show() 
     var files = event.target.files; //FileList object
     
     for(var i = 0; i< files.length; i++)
@@ -181,6 +168,9 @@ function readURLAndUploadImg(event) {
     var formData = new FormData();
     for (var i = 0; i != files.length; i++) {
         formData.append("productImages", files[i]);
+        formData.append("product_id", $('#product_name').attr('data-id'));
+        formData.append("product_title", 'my test');
+        formData.append("product_primary", '0');
     }
     $.ajax({
         url: "/product/InsertattributeImages",
@@ -191,7 +181,9 @@ function readURLAndUploadImg(event) {
         contentType: false,
     }).always(function (data) {
         console.log(data);
+        $('.loaderBox').hide() 
     });
+
 
 }
 
