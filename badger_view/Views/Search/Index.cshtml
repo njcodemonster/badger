@@ -57,7 +57,16 @@
                                 @purchaseOrders.vendor_invoice_number
                             }
                         </td>
-                        <td>@purchaseOrders.vendor_order_number</td>
+                        <td>
+                            @if (ViewBag.SearchKey == purchaseOrders.vendor_order_number)
+                            {
+                                <strong>@purchaseOrders.vendor_order_number</strong>
+                            }
+                            else
+                            {
+                                @purchaseOrders.vendor_order_number
+                            }
+                        </td>
                         <td>@purchaseOrders.vendor</td>
                         <td>@purchaseOrders.custom_order_date</td>
                         <td><a asp-controller="PurchaseOrders" asp-action="Single" asp-route-id="@purchaseOrders.po_id" target="_blank" class="btn btn-warning btn-sm">View PO</a>

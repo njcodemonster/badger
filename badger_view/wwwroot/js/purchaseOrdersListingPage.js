@@ -1008,6 +1008,10 @@ function getSinglePurchaseOrder(id) {
 
 }
 
+$(document).on("keydown", "#item_barcode", function (e) {
+    return isNumber(e);
+});
+
 /*
 Developer: Sajid Khan
 Date: 7-13-19
@@ -1037,7 +1041,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function (){
             if (data.itemsList.length > 0) {
                 $(data.itemsList).each(function (e, i) {
                     console.log(i.product_name + " (" + i.small_sku + ")-" + i.size);
-                    producthtml += "<div class='form-row align-items-center product_name_with_small_sku_size'><div class='form-group col-md-6' ><label>" + i.product_name + " (" + i.small_sku + ")-" + i.size + "</label></div><div class='form-group col-md-6'><input type='text' class='form-control' name='item_barcode' id='item_barcode' data-itemid=" + i.item_id + " value=" + i.barcode + "></div></div>";
+                    producthtml += "<div class='form-row align-items-center product_name_with_small_sku_size'><div class='form-group col-md-6' ><label>" + i.product_name + " (" + i.small_sku + ")-" + i.size + "</label></div><div class='form-group col-md-6'><input type='text' class='form-control' name='item_barcode' id='item_barcode' data-itemid=" + i.item_id + " value=" + i.barcode + " maxlength='8'></div></div>";
                 });
             }
 

@@ -88,10 +88,10 @@ function onlyNumbersWithDot(e) {
   Date: 7-3-19 
   action:  check email valid
 */
-function allLetterAllow(event){
-  var inputValue = event.which;
+function allLetterAllow(event) {
+    var inputValue = event.which; console.log(inputValue);
         // allow letters and whitespaces only.
-        if(!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8) { 
+    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39) { 
           return false
         }
 }
