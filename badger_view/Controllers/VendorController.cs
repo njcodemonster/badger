@@ -135,7 +135,7 @@ namespace badger_view.Controllers
                                 int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();
                                 vendorDocuments.Add("vendor_id", ref_id);
-                                vendorDocuments.Add("upload_logo", Fill_path);
+                                vendorDocuments.Add("logo", Fill_path);
                                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/"+ vendorLogo.Vendor_id);
                             }
                         }
@@ -170,7 +170,7 @@ namespace badger_view.Controllers
                 int ref_id = Int32.Parse(vendor_id);
                 JObject vendorDocuments = new JObject();
                 vendorDocuments.Add("vendor_id", ref_id);
-                vendorDocuments.Add("upload_logo", "");
+                vendorDocuments.Add("logo", "");
                 System.IO.File.Delete(fileName);
                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id);
                 return "file deleted successfully";
@@ -277,7 +277,7 @@ namespace badger_view.Controllers
             vendor.Add("vendor_code", json.Value<string>("vendor_code"));
             vendor.Add("our_customer_number", json.Value<string>("our_customer_number"));
             vendor.Add("vendor_description", json.Value<string>("vendor_description"));
-            vendor.Add("upload_logo", json.Value<string>("upload_logo"));
+            vendor.Add("logo", json.Value<string>("logo"));
             vendor.Add("vendor_type", json.Value<Int32>("vendor_type"));
             vendor.Add("updated_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);

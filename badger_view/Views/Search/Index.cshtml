@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewData["Title"] = "Search";
+}
+
+@model dynamic
+@section Scripts {
+
+}
+
+@{
+    if (ViewBag.SearchKey != null)
+    {
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <h4 class="text-info">Multiple PO/Invoice matches for search "@ViewBag.SearchKey":</h4>
+            </div>
+        </div>
+    }
+}
+
+<div class="table-responsive pt-5">
+    <table id="purchaseorderlists" class="table table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>PO Number</th>
+                <th>Invoice Number</th>
+                <th>Order Number</th>
+                <th>Vendor</th>
+                <th>Order Date</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.PurchaseOrdersLists.Count > 0)
+            {
+                @foreach (PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
+                {
+                    <tr>
+                        <td>
+                            @if (ViewBag.SearchKey == purchaseOrders.vendor_po_number)
+                            {
+                                <strong>@purchaseOrders.vendor_po_number</strong>
+                            }
+                            else
+                            {
+                                @purchaseOrders.vendor_po_number
+                            }
+                        </td>
+                        <td>
+                            @if (ViewBag.SearchKey == purchaseOrders.vendor_invoice_number)
+                            {
+                                <strong>@purchaseOrders.vendor_invoice_number</strong>
+                            }
+                            else
+                            {
+                                @purchaseOrders.vendor_invoice_number
+                            }
+                        </td>
+                        <td>
+                            @if (ViewBag.SearchKey == purchaseOrders.vendor_order_number)
+                            {
+                                <strong>@purchaseOrders.vendor_order_number</strong>
+                            }
+                            else
+                            {
+                                @purchaseOrders.vendor_order_number
+                            }
+                        </td>
+                        <td>@purchaseOrders.vendor</td>
+                        <td>@purchaseOrders.custom_order_date</td>
+                        <td><a asp-controller="PurchaseOrders" asp-action="Single" asp-route-id="@purchaseOrders.po_id" target="_blank" class="btn btn-warning btn-sm">View PO</a>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6"> No Record Found.</td></tr>
+            }
+
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>PO Number</th>
+                <th>Invoice Number</th>
+                <th>Order Number</th>
+                <th>Vendor</th>
+                <th>Order Date</th>
+                <th> </th>
+            </tr>
+        </tfoot>
+    </table>
+
+</div>
+
+
+@section page_popup_area{
+
+}

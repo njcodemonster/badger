@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Purchase Orders";
 }
 
@@ -13,7 +12,7 @@
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
-
+<div class="loading d-none"></div>
 <div class="row">
     <div class="col-md-3 col-sm-12">
         <h4 class="text-info">Open Purchase Orders (@Model.PurchaseOrdersCount)</h4>
@@ -42,8 +41,8 @@
                 <th>Status</th>
                 <th>Check-in</th>
                 <th>Edit P.O.</th>
-                <th></th>
-                <th></th>
+                <th>Note</th>
+                <th>Upload</th>
                 <th>Inspect</th>
                 <th>Go Live</th>
             </tr>
@@ -51,7 +50,13 @@
         <tbody>
             @foreach (PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
             {
-                <tr>
+                string pinkbgclass = "";
+                @if (@purchaseOrders.ra_flag == 1)
+                {
+                    pinkbgclass = " class=pinkbgclass ";
+                }
+
+                <tr @pinkbgclass>
                     <td>@purchaseOrders.vendor_po_number</td>
                     <td>
                         @purchaseOrders.custom_order_date
@@ -60,21 +65,46 @@
                     <td>@purchaseOrders.total_styles</td>
                     <td>5</td>
                     <td>3</td>
-                    <td>@purchaseOrders.custom_delivery_window_start_end</td>
-                    <td>@purchaseOrders.num_of_days</td>
+                    @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
+                    {
+                        <td class="text-danger font-weight-bold">@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td class="text-danger font-weight-bold">@purchaseOrders.num_of_days</td>
+                        <td class="text-danger font-weight-bold"> <span>Not Recieved</span> </td>
+                    }
+                    else
+                    {
+                        <td>@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td>@purchaseOrders.num_of_days</td>
+                        <td>
+                            @if (@purchaseOrders.po_status == 1)
+                            {
+                                <span>Open</span>
+                            }
+
+                            @if (@purchaseOrders.po_status == 3)
+                            {
+                                <span>In Progress</span>
+                            }
+                            @if (@purchaseOrders.po_status == 5)
+                            {
+                                <span>Not Recieved</span>
+                            }
+                            @if (@purchaseOrders.po_status == 6)
+                            {
+                                <span>Recieved</span>
+                            }
+                        </td>
+                    }
                     <td>
-                        @if (@purchaseOrders.po_status == 1)
+                        @if (@purchaseOrders.po_status == 5)
                         {
-                            <span>Open</span>
+                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checked-in</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success btn-sm">Checked-in</button>
                         }
 
-                        @if (@purchaseOrders.po_status == 3)
-                        {
-                            <span>In Process</span>
-                        }
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-success btn-sm" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checked-in</button>
                     </td>
                     <td>
                         <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
@@ -137,7 +167,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
                                     <input type="text" class="form-control required d-inline-block autocomplete" id="poVendor" style="width: 90%">
-                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>                                    
+                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Order Delivery Range</label>
@@ -226,7 +256,6 @@
         </div>
     </div>
 
-    <!-- Modal Vendor -->
     <!-- Modal Vendor -->
     <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -468,7 +497,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Purchase Order #294854 - Stylestalker - Check-in</h5>
+                    <h5 class="modal-title" id="checkinModalLongTitle"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -478,49 +507,34 @@
                         <form id="checkin_form" data-poid="">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label>Tracking Number</label>
-                                    <input type="text" class="form-control">
+                                    <label>Tracking #</label>
+                                    <input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%">
+                                    <a href="#" class="h4 add_checkin_tracking">+</a>
+
+                                    <div id="wrapper_checkin_tracking"></div>
+
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label>Upload Invoices</label>
-                                    <input type="file" class="form-control">
+                                    <label>Upload Images</label>
+                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
+
+                                    <div class="po_doc_section d-none"></div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Shipping &amp; Handling</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control required" id="poShipping">
                                 </div>
                             </div>
-                            <div class="form-row align-items-center">
-                                <div class="form-group col-md-5">
-                                    <label>Light My Fire Dress (VS-1181-1) - XS</label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-row align-items-center">
-                                <div class="form-group col-md-5">
-                                    <label>Light My Fire Dress (VS-1181-1) - XS</label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-row align-items-center">
-                                <div class="form-group col-md-5">
-                                    <label>Light My Fire Dress (VS-1181-1) - XS</label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
+
+                            <div class="wrapper_product"></div>
+
                         </form>
                     </div>
                 </div>
                 <div class="modal-footer" style="margin: 0 auto;">
-                    <button type="button" class="btn btn-success">Check-in</button>
+                    <button type="button" class="btn btn-success submit-check-in">Check-in</button>
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
