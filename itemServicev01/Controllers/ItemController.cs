@@ -297,6 +297,33 @@ namespace itemService.Controllers
             }
         }
 
+        
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get all list of items by poid and limit "api/Item/list/listforPO/1/limit"
+        URL: api/Item/list/listforPO/1/limit
+        Request: Get
+        Input: int poid, int limit
+        output: List of Items
+        */
+        [HttpGet("list/getitemsgroupbyproductid/{PO_id}")]
+        public async Task<List<Items>> GetItemsGroupByProductId(int PO_id)
+        {
+            List<Items> ToRetrunItems = new List<Items>();
+            try
+            {
+                ToRetrunItems = await _ItemRepository.GetItemGroupByProductId(PO_id);
+                return ToRetrunItems;
+            }
+            catch (Exception skuFamilyException)
+            {
+                return ToRetrunItems;
+            }
+        }
+
+
+
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
@@ -616,7 +643,7 @@ namespace itemService.Controllers
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
                 ValuesToUpdate.Add("barcode", Barcode);
 
-                 await _ItemRepository.UpdateSpeific(ValuesToUpdate, "item_id=" + id);
+                await _ItemRepository.UpdateSpeific(ValuesToUpdate, "item_id=" + id);
             }
             catch (Exception ex)
             {
@@ -624,7 +651,7 @@ namespace itemService.Controllers
                 logger.LogInformation("Problem happened in updating  item barcode with message" + ex.Message);
                 UpdateResult = "Failed";
             }
-            
+
             return UpdateResult;
         }
 
@@ -780,6 +807,39 @@ namespace itemService.Controllers
             }
 
             return UpdateResult;
-        } 
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check Barcode already exist by barcode 
+        URL: api/item/checkbarcodeexist/12345678
+        Request: Get
+        Input: int barcode
+        output: boolean
+        */
+        // GET: api/sku/list/1
+        [HttpGet("checkbarcodeexist/{barcode}")]
+        public async Task<Boolean> CheckBarcodeExist(int barcode)
+        {
+            Boolean result = false;
+            List<Items> ToReturn = new List<Items>();
+            try
+            {
+                ToReturn = await _ItemRepository.CheckBarcodeExist(barcode);
+
+                if (ToReturn.Count > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return result;
+        }
     }
 }

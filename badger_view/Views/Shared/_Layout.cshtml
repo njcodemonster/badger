@@ -50,8 +50,8 @@
                         </div>
                     </li>
                 </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search anything" aria-label="Search">
+                <form class="form-inline my-2 my-lg-0" asp-controller="Search" asp-action="Index">
+                    <input class="form-control mr-sm-2" type="text" name="search" id="search" placeholder="Search anything" aria-label="Search">
                     <button class="btn btn-warning my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 <ul class="navbar-nav">

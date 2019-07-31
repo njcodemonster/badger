@@ -217,7 +217,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
                 }
-
+                if (ProductToUpdate.wash_type_id != 0)
+                {
+                    ValuesToUpdate.Add("wash_type_id", ProductToUpdate.wash_type_id.ToString());
+                }
                 await _ProductRepo.UpdateSpecific(ValuesToUpdate, "Product_id=" + id);
             }
             catch (Exception ex)
@@ -392,6 +395,31 @@ namespace badgerApi.Controllers
             {
                 ProductUsedIn newProductUsedIn = JsonConvert.DeserializeObject<ProductUsedIn>(value);
                 NewInsertionID = await _ProductRepo.CreateProductUsedIn(newProductUsedIn);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+        /*
+          Developer: Azeem hassan
+          Date:28-7-19
+          Action: 
+          URL: /product/createProductImage
+          Input: 
+          output: 
+          */
+        // POST: api/product/createProductImage   
+        [HttpPost("createProductImage")]
+        public async Task<string> createProductImage([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                Productimages newProductImage = JsonConvert.DeserializeObject<Productimages>(value);
+                NewInsertionID = await _ProductRepo.CreateProductImages(newProductImage);
             }
             catch (Exception ex)
             {

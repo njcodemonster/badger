@@ -43,7 +43,9 @@ namespace badgerApi.Helper
         Task<string> SkuUpdateById(int id, string json);
         Task<T> GenericPostAsync<T>(T json, String _call);
         Task<string> SetProductItemStatusForPhotoshootAsync(string json, int status);
-
+        Task<Boolean> CheckBarcodeExist(int barcode);
+        Task<List<Items>> GetItemsGroupByProductId(int PO_id);
+        Task<string> ItemSpecificUpdateById(int id, string json);
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
@@ -81,6 +83,31 @@ namespace badgerApi.Helper
             };
             return JsonConvert.DeserializeObject<List<Items>>(data, settings);
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Items by purchase order id
+        URL: 
+        Request: Get
+        Input:  int poid
+        output: dynamic object of items
+        */
+        public async Task<List<Items>> GetItemsGroupByProductId(int PO_id)
+        {
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/list/getitemsgroupbyproductid/" + PO_id.ToString(), HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<List<Items>>(data, settings);
+        }
+
+
 
         /*
         Developer: Sajid Khan
@@ -202,6 +229,46 @@ namespace badgerApi.Helper
             return data;
         }
 
+        /*
+       Developer: Sajid Khan
+       Date: 7-20-19 
+       Action: Check Barcode already Exist by barcode 
+       Request: Get
+       Input: int barcode
+       output: Boolean
+       */
+        public async Task<Boolean> CheckBarcodeExist(int barcode)
+        {
+            Boolean result = false;
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/checkbarcodeexist/"+barcode.ToString(), HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            if (data == "true")
+            {
+                result = true;
+            }
+            return result;
+        }
 
+        /*
+        Developer: Sajid Khan
+        Date: 7-24-19 
+        Action: Barcode Item update by id
+        URL: 
+        Request: Put
+        Input:  int id, string data
+        output: string of items data
+        */
+        public async Task<string> ItemSpecificUpdateById(int id, string json)
+        {
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/specificUpdate/" + id.ToString(), json);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+        }
     }
 }

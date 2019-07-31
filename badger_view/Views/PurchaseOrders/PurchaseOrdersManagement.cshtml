@@ -15,7 +15,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O. &lt;number&gt;</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O (<span class="poNumber"></span>)</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -27,7 +27,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Link to existing product</label>
                                     <select id="ExistingProductSelect" class="form-control">
-                                        <option selected>Choose...</option>
+                                        <option selected data-name=""  value="">Choose...</option>
                                         <option>...</option>
                                     </select>
                                 </div>
@@ -35,29 +35,29 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Style Name</label>
-                                    <input name="StyleName" id="product_tytle" type="text" class="form-control">
+                                    <input name="StyleName" id="product_title" type="text" class="form-control required">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Color Name</label>
-                                    <input name="ColorName" id="product_color" type="text" class="form-control">
+                                    <input name="ColorName" id="product_color" type="text" class="form-control required">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Unit Cost</label>
-                                    <input name="UnitCost" id="product_unit_cost" type="text" class="form-control">
+                                    <input name="UnitCost" id="product_unit_cost" type="text" class="form-control required">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Retail</label>
-                                    <input name="RetailCost" id="product_retail" type="text" class="form-control">
+                                    <input name="RetailCost" id="product_retail" type="text" class="form-control required">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Type</label>
-                                    <select id="StyleType" class="form-control">
-
-                                        <option value="1" selected>Colothing</option>
+                                    <select id="StyleType" class="form-control required">
+                                        <option selected value="">Choose...</option>
+                                        <option value="1">Colothing</option>
                                         <option value="2">Accessories</option>
                                     </select>
                                 </div>
@@ -69,8 +69,8 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-8 pt-4">
+                            <div class="form-row vendorSkuArea">
+                                <div class="col-md-8 pt-4">
                                     <div id="po_input_fields_wrap" class="po_input_fields_wrap pb-3">
                                         <!---<div class="pb-3 vendorSkuBox">
                                             <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Vendor Size">
@@ -88,15 +88,15 @@
                                     <textarea class="form-control"></textarea>
                                 </div>
                                 <div class="form-group col-md-4 text-center">
-                                    <button type="button" id="AddNewStyleButton" class="btn btn-success btn-sm">Add another style</button><br />
-                                    <button type="button" id="AddStyleButton" class="btn btn-primary btn-sm mt-2">Add and view P.O.</button><br />
+                                    <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
+                                    <button type="button" id="AddStyleButton" data-action="closepop" class="btn btn-primary btn-sm mt-2 AddNewStyleButton">Add and view P.O.</button><br />
                                     <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-8">
                                     <label>Upload Files</label>
-                                    <input type="file" id="StyleImage" class="form-control" />
+                                    <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
                                 </div>
                             </div>
                             <input id="po_id" name="po_id" type="hidden" class="form-control">
@@ -105,6 +105,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <div class="poAlertMsg"></div>
                     <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
@@ -129,7 +130,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Link to existing product</label>
                                     <select id="inputState" class="form-control">
-                                        <option selected>Choose...</option>
+                                        <option selected value="">Choose...</option>
                                         <option> ... </option>
                                     </select>
                                 </div>
@@ -158,14 +159,14 @@
                                 <div class="form-group col-md-6">
                                     <label>Type</label>
                                     <select id="inputState" class="form-control">
-                                        <option selected>Choose...</option>
+                                        <option selected  value="">Choose...</option>
                                         <option>...</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Subtype</label>
                                     <select id="inputState" class="form-control">
-                                        <option selected>Choose...</option>
+                                        <option selected  value="">Choose...</option>
                                         <option>...</option>
                                     </select>
                                 </div>
@@ -288,7 +289,7 @@
                                 <span class="text-dark font-weight-bold h5">Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a>  @purchaseOrder.po_id</span>
                             </button>
                         </h2>
-                        <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
+                        <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
 
                     </div>
                     <div id="collapse_@purchaseOrder.po_id" class="collapse" aria-labelledby="heading_@purchaseOrder.po_id" data-parent="#accordionpomgmt">
