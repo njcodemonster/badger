@@ -118,9 +118,16 @@
         Input: order id
         output: single purchase order
     */
-    if (window.location.href.indexOf('PurchaseOrders/Single/') > -1) {
-        var id = window.location.href.split('Single/')[1]
-        getSinglePurchaseOrder(id)
+    if (window.location.href.indexOf('PurchaseOrders/Single') > -1) {
+        var id = window.location.href.split('Single/')[1];
+
+        if (id != undefined && id != "") {
+            $('.loading').removeClass("d-none");
+            getSinglePurchaseOrder(id);
+        } else {
+            window.location = location.protocol + "//" + location.host;
+        }
+        
     }
 
 })
@@ -850,6 +857,10 @@ $(document).on('click', "#poDelete", function () {
                     table.row(window.purchaseorderrownumber).remove().draw(false);
                     $("#modalPurchaseOrder").modal("hide");
                     alertBox('poAlertMsg', 'green', 'Purchase order deleted successfully.');
+
+                    if (window.location.href.indexOf('PurchaseOrders/Single') > -1) {
+                        window.location = location.protocol + "//" + location.host;
+                    }
                 } else {
                     alertBox('poAlertMsg', 'red', 'Purchase order not deleted.');
                 }
@@ -1004,10 +1015,32 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
-        $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
-        $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
-        purchaseOrderData(data);
-        $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
+
+        if (data.purchase_order[0].po_status == 4) {
+
+            alert("This P.O does not exist.");
+            window.location = location.protocol + "//" + location.host;
+            return false;
+
+        } else {
+
+            $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
+            $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
+
+            purchaseOrderData(data);
+
+            $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
+
+            if (data.purchase_order[0].po_status == 5) {
+                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data.purchase_order[0].shipping + '" data-ID="' + data.purchase_order[0].po_id + '" id = "EditPurhaseOrderCheckedIn">Checked-in</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
+            } else {
+                $('.checkin_btn').html('<button type="button" class="btn btn-success btn-sm">Checked-in</button>  <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
+            }
+
+            $('.loading').addClass("d-none");
+        }
+
+        
 
     })
 

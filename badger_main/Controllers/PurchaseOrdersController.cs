@@ -420,6 +420,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("good_condition", PurchaseOrdersToUpdate.good_condition.ToString());
                 }
+                if (PurchaseOrdersToUpdate.total_styles != 0)
+                {
+                    ValuesToUpdate.Add("total_styles", PurchaseOrdersToUpdate.total_styles.ToString());
+                }                
                 if (PurchaseOrdersToUpdate.total_quantity != 0)
                 {
                     ValuesToUpdate.Add("total_quantity", PurchaseOrdersToUpdate.total_quantity.ToString());

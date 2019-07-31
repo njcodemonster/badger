@@ -11,6 +11,7 @@
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
 }
+<div class="loading d-none"></div>
 <div class="row">
     <div class="col-md-3 col-sm-10  col-xs-10">
         <h4 class="text-dark">Purchase Order #: <a href="#" class="orderNumber"></a></h4>
@@ -30,12 +31,13 @@
         </span>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 text-right">
-        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalcheckin">
+        <div class="checkin_btn"></div>
+        <!-- button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalcheckin">
             Check-in
-        </button>
+        </button
         <button type="button" class="btn btn-danger btn-sm">
             Delete this P.O.
-        </button>
+        </button>-->
     </div>
 </div>
 <div class="row pt-5">
@@ -184,6 +186,55 @@
 </div>
 
 @section page_popup_area{
+
+    <!-- Modal Check-in -->
+    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkinModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="checkin_form" data-poid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Tracking #</label>
+                                    <input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%">
+                                    <a href="#" class="h4 add_checkin_tracking">+</a>
+
+                                    <div id="wrapper_checkin_tracking"></div>
+
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Upload Images</label>
+                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
+
+                                    <div class="po_doc_section d-none"></div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Shipping &amp; Handling</label>
+                                    <input type="text" class="form-control required" id="poShipping">
+                                </div>
+                            </div>
+
+                            <div class="wrapper_product"></div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin: 0 auto;">
+                    <button type="button" class="btn btn-success submit-check-in">Check-in</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Modal Add Style Item Clothing -->
