@@ -130,7 +130,7 @@ namespace badger_view.Controllers
                             {
                                 messageDocuments += Fill_path + " \r\n";
 
-                                //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
                                 int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();

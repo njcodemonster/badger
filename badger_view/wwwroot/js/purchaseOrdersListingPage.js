@@ -546,7 +546,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             }
 
 
-            if (window.purchaseorderrownumber >= 0) {
+            if (window.purchaseorderrownumber!= "" && window.purchaseorderrownumber >= 0) {
 
                 $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping +'" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
@@ -556,8 +556,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             $("#newPurchaseOrderForm").attr("data-currentid", "");
             $('#modalPurchaseOrder').modal('hide');
             alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
-
-            $('#newPurchaseOrderForm')[0].reset();
+            if (window.purchaseorderrownumber != "" && window.purchaseorderrownumber >= 0) {
+                $('#newPurchaseOrderForm')[0].reset();
+            }
         } else {
             alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
@@ -692,7 +693,7 @@ $(document).on("click", "#note_submit", function () {
 
     var _self = $(this);
 
-    if (_self.val() == "") {
+    if ($("#po_notes").val() == "") {
         $(".poNoteAlertMsg").css("color", "red").text("Please fill empty field.");
         return false;
     }
@@ -993,6 +994,8 @@ output: dynamic object of purchase order data
 */
 function getSinglePurchaseOrder(id) {
     //$('.orderNumber').text(id)
+    $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').prop("disabled", "true");
+
     $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
@@ -1001,12 +1004,18 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
-         $('.orderNumber').text(data.purchase_order[0].vendor_po_number)
-        purchaseOrderData(data)
+        $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
+        $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
+        purchaseOrderData(data);
+        $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
     })
 
 }
+
+$(document).on("keydown", "#item_barcode", function (e) {
+    return isNumber(e);
+});
 
 /*
 Developer: Sajid Khan
@@ -1037,7 +1046,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function (){
             if (data.itemsList.length > 0) {
                 $(data.itemsList).each(function (e, i) {
                     console.log(i.product_name + " (" + i.small_sku + ")-" + i.size);
-                    producthtml += "<div class='form-row align-items-center product_name_with_small_sku_size'><div class='form-group col-md-6' ><label>" + i.product_name + " (" + i.small_sku + ")-" + i.size + "</label></div><div class='form-group col-md-6'><input type='text' class='form-control' name='item_barcode' id='item_barcode' data-itemid=" + i.item_id + " value=" + i.barcode + "></div></div>";
+                    producthtml += "<div class='form-row align-items-center product_name_with_small_sku_size'><div class='form-group col-md-6' ><label>" + i.product_name + " (" + i.small_sku + ")-" + i.size + "</label></div><div class='form-group col-md-6'><input type='text' class='form-control' name='item_barcode' id='item_barcode' data-itemid=" + i.item_id + " value=" + i.barcode + " maxlength='8'></div></div>";
                 });
             }
 

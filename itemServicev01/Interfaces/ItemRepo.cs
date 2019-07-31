@@ -139,8 +139,6 @@ namespace itemService.Interfaces
         {
             try
             {
-
-
                 string QueryWhereClause = "where item_status_id <> 5 AND PO_id=" + PO_id.ToString();
                 using (IDbConnection conn = Connection)
                 {
