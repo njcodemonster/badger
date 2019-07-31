@@ -17,65 +17,66 @@
         });
     </script>
 }
-    <div class="row">
-        <div class="col-md-8 col-sm-12">
-            <h4 class="">Photo Management - Shoot not started <!-- (5 styles) --></h4>
-        </div>
+<div class="row">
+    <div class="col-md-8 col-sm-12">
+        <h4 class="">Photo Management - Shoot not started <!-- (5 styles) --></h4>
     </div>
+</div>
 
-    <div class="table-responsive pt-5">
-        <table id="openphotoshot" class="table table-bordered datatable_js_ps" style="width:100%">
-            <thead>
-                <tr>
-                    <th style="width:50px;"> </th>
-                    <th style="width:90px;">
-                        <div class="dropdown">
-                            <a class="th-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Actions
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item select_menu" href="#" onclick="selectAllCheckbox()">Select All</a>
-                                <a class="dropdown-item unselect_menu" href="#" onclick="unselectAllCheckbox()">Unselect All</a>
-                                <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
-                            </div>
+<div class="table-responsive pt-5">
+    <table id="openphotoshot" class="table table-bordered datatable_js_ps" style="width:100%">
+        <thead>
+            <tr>
+                <th style="width:50px;"> </th>
+                <th style="width:90px;">
+                    <div class="dropdown">
+                        <a class="th-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item select_menu" href="#" onclick="selectAllCheckbox()">Select All</a>
+                            <a class="dropdown-item unselect_menu" href="#" onclick="unselectAllCheckbox()">Unselect All</a>
+                            <a class="dropdown-item" href="#" onclick="moveSelectedToPhotoshoot()">Move selected to photoshoot</a>
                         </div>
-                    </th>
-                    <th>Vendor</th>
-                    <th>Style Name</th>
-                    <th>Color</th>
-                    <th>SKU</th>
-                    <th>Item Status</th>
-                    <th> Photoshoot Status </th>
+                    </div>
+                </th>
+                <th>Vendor</th>
+                <th>Style Name</th>
+                <th>Color</th>
+                <th>SKU</th>
+                <th>Item Status</th>
+                <th> Photoshoot Status </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ProductPhotoshootRep photoshoot in Model.Lists)
+            {
+
+                <tr style="" id="tableRow_@photoshoot.product_id">
+                    <td class="text-center">
+                        <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
+                    </td>
+                    <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
+                    <td>@photoshoot.vendor_name</td>
+                    <td class="productName">@photoshoot.product_name</td>
+                    <td><b>@photoshoot.color</b></td>
+                    <td><b>@photoshoot.sku_family</b></td>
+                    <td>@photoshoot.po_status</td>
+                    <td id="shootRow_@photoshoot.product_id">
+
+                        <select class="browser-default custom-select" onchange="AddToShootSingle(@photoshoot.product_id, this.value)">
+                            <option value="0" selected>Shoot not started</option>
+                            <option value="1">Add to photoshoot</option>
+                        </select>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (ProductPhotoshootRep photoshoot in Model.Lists)
-                {
+            }
 
-                    <tr style="" id="tableRow_@photoshoot.product_id">
-                        <td class="text-center">
-                            <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" class="select-box">
-                        </td>
-                        <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
-                        <td>@photoshoot.vendor_name</td>
-                        <td class="productName">@photoshoot.product_name</td>
-                        <td><b>@photoshoot.color</b></td>
-                        <td><b>@photoshoot.sku_family</b></td>
-                        <td>@photoshoot.po_status</td>
-                        <td id="shootRow_@photoshoot.product_id">
+        </tbody>
+    </table>
+</div>
 
-                            <select class="browser-default custom-select" onchange="AddToShootSingle(@photoshoot.product_id, this.value)">
-                                <option value="0" selected>Shoot not started</option>
-                                <option value="1">Add to photoshoot</option>
-                            </select>
-                        </td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-    </div>
-
+@section page_popup_area{
     <!-- Modal PS -->
     <div class="modal fade" id="modalAddNewPhotoshoot" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -137,7 +138,6 @@
         </div>
     </div>
 
-
     <!-- Modal Add Model -->
     <div class="modal fade" id="modaladdmodel" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -178,3 +178,4 @@
             </div>
         </div>
     </div>
+}

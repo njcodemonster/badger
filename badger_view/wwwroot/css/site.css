@@ -322,3 +322,6 @@ label.error {
     background-color: #01BACF;
     color: #fff;
 }
+#AddModelBtnDiv {
+    text-align:right;
+}
