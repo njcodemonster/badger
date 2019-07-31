@@ -167,9 +167,17 @@ namespace badger_view.Controllers
             else{
                 try
                 {  // add new product in product table
-
                     product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
+                }
+                catch (Exception ex)
+                {
+                    var logger = _loggerFactory.CreateLogger("internal_error_log");
+                    logger.LogInformation("Problem happened in making new Product, no product id genrated ");
 
+                }
+
+                if (Int32.Parse(product_id) > 1)
+                {
                     JObject productPhotoshoot = new JObject();
                     productPhotoshoot.Add("photoshoot_id", 0);
                     productPhotoshoot.Add("product_id", product_id);
@@ -207,11 +215,7 @@ namespace badger_view.Controllers
                         used_in_obj.Add("created_at", _common.GetTimeStemp());
                         String used_in_id = await _BadgerApiHelper.GenericPostAsyncString<String>(used_in_obj.ToString(Formatting.None), "/product/createUsedIn");
                     }
-                    else {
-                    var logger = _loggerFactory.CreateLogger("internal_error_log");
-                    logger.LogInformation("Problem happened in making new Product, no product id genrated ");
-
-                    }
+                   
             }
            
 
