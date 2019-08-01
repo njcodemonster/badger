@@ -417,10 +417,10 @@ namespace badgerApi.Interfaces
         }
         /*
        Developer: Azeem hassan
-       Date: 7-7-19 
-       Action: 
-       Input: 
-       output: 
+       Date: 7-28-19 
+       Action: insert data to db
+       Input: image data
+       output: insertion id
        */
         public async Task<string> CreateProductImages(Productimages NewProductImages)
         {

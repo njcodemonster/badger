@@ -84,7 +84,15 @@ namespace badger_view.Controllers
             ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
             return View("EditAttributes", productDetailsPageData);
         }
-
+        /*
+           Developer: Azeem Hassan
+           Date: 7-30-19
+           Request: POST
+           Action:send images to badger api to insert attr images
+           URL: /product/InsertattributeImages
+           Input: image data
+           output: massage
+       */
         [Authorize]
         [HttpPost("/product/InsertattributeImages")]
         public async Task<string> InsertattributeImages(productFileData productFiles)

@@ -21,6 +21,12 @@
   <ItemGroup>
     <Compile Remove="Models\VendorNote.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="uploads\coauts2.jpg" />
+    <None Remove="uploads\image-1.jpeg" />
+    <None Remove="uploads\image-2.jpg" />
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="uploads\" />
   </ItemGroup>

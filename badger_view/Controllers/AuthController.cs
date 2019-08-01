@@ -66,8 +66,9 @@ namespace badger_view.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
+           string user_id = await _LoginHelper.GetLoginUserId();
 
-            if (await _LoginHelper.Logout())
+            if (await _LoginHelper.Logout(user_id))
             {
                 return RedirectToAction("Dologin", "Auth");
             }
