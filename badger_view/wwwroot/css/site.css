@@ -501,3 +501,6 @@ label.error {
     z-index: 9;
     display: none;
 }
+#AddModelBtnDiv {
+    text-align:right;
+}

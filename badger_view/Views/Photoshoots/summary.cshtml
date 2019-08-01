@@ -4,23 +4,34 @@
 @model dynamic
 @section Scripts {
     <script src="~/js/jquery-ui.js"></script>
-    <script src="~/lib/date-picker/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="~/lib/date-picker/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
+    <!-- <script src="~/lib/date-picker/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="~/lib/date-picker/css/gijgo.min.css" rel="stylesheet" type="text/css" /> -->
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
     <script>
         $('.photoshootDate').each(function (index, value) {
             var id = $(this).attr('id');
             $('#' + id).datepicker({
-                format: 'm/d/yyyy'
+                onClose: function (date, datepicker) {
+                    if (date != "") {
+                        editPhotoshootSummary(id.replace("date_",""));
+                    }
+                },
+                dateFormat: 'm/d/yy',
+
             });
         });
     </script>
 }
-@using CommonHelper;
-
+@using CommonHelper;    
 <div class="row">
     <div class="col-md-8 col-sm-12">
         <h4 class="">In-Progress Photoshoot</h4>
+    </div>
+    <div class="col-md-4 col-sm-12 " id="AddModelBtnDiv">
+        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modaladdmodel">
+            Add a Model
+        </button>
     </div>
 </div>
 
@@ -40,7 +51,7 @@
             {
                 <tr id="rowId_@photoshoot.photoshoot_id">
                     <td class="text-center">
-                        <select class="browser-default custom-select">
+                        <select class="browser-default custom-select" onchange="editPhotoshootSummary(@photoshoot.photoshoot_id);">
                             <option value="">Choose...</option>
                             @foreach (dynamic ShootModel in Model.PhotoshootModels)
                             {
@@ -58,13 +69,17 @@
 
                     <td class="text-center">
                         @{ var scheduled_date = new CommonHelper().ConvertToDate(@photoshoot.scheduled_date); }
-                        <input type="text" value="@scheduled_date" class="photoshootDate browser-default scheduled_date" id="date_@photoshoot.photoshoot_id">
+                        <input type="text" value="@scheduled_date" class="photoshootDate browser-default scheduled_date form-control" id="date_@photoshoot.photoshoot_id" >
                     </td>
                     <td class="text-center"><b>@photoshoot.styles</b></td>
                     <td class="text-center ps_notes" id="notesRow_@photoshoot.photoshoot_id">
-                        <textarea class="form-control notes" rows="2" cols="25" data-id="@photoshoot.photoshoot_id"></textarea>
+                        <textarea class="form-control notes" rows="2" cols="25" data-id="@photoshoot.photoshoot_id" onblur="AddPhotoshootSummaryNotes(@photoshoot.photoshoot_id);"></textarea>
                     </td>
-                    <td class="text-center"> <input type="button" class="btn btn-default btn-green" value="Edit Photoshoot" onclick="editPhotoshoot(@photoshoot.photoshoot_id)"> </td>
+                    <td class="text-center">
+                        <a class=""  asp-controller="Photoshoots" asp-action="shootInProgress/@photoshoot.photoshoot_id">
+                                <input type="button" class="btn btn-default btn-green" value="Edit Photoshoot">
+                        </a>
+                    </td>
                 </tr>
             }
 
@@ -72,15 +87,50 @@
     </table>
 </div>
 
-<div class="loading-box">
-    <div class="inner-loading"><div class="spinner-border  text-light" role="status" style=" "><span class="sr-only">Loading...</span></div></div>
-</div>
-<script>
-    function selectAllCheckbox() {
-        $(".select-box").attr("checked", true);
-    }
+@section page_popup_area{
 
-    function addNewPhotoshoot() {
-        $("#modalAddNewPhotoshoot").modal('show');
-    }
-</script> 
+    <div class="loading-box">
+        <div class="inner-loading"><div class="spinner-border  text-light" role="status" style=" "><span class="sr-only">Loading...</span></div></div>
+    </div>
+
+    <!-- Modal Add Model -->
+    <div class="modal fade" id="modaladdmodel" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="">Add a new Model</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="NewModelForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-control" id="model_name">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label>Height</label>
+                                    <input type="text" class="form-control" id="model_height">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label>Hair</label>
+                                    <input type="text" class="form-control" id="model_hair">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Ethnicity</label>
+                                    <input type="text" class="form-control" id="model_ethnicity">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addNewPhotoshootModel('summary');" style="margin: 0 auto;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

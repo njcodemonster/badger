@@ -63,7 +63,8 @@ namespace badger_view.Controllers
         output: dynamic ExpandoObject of ProductPhotoshoot
         */
         [Authorize]
-        public async Task<IActionResult> shootInProgress()
+        [HttpGet("photoshoots/shootInProgress/{selectPhotoshootId}")]
+        public async Task<IActionResult> shootInProgress(string selectPhotoshootId)
         {
             SetBadgerHelper();
             
@@ -71,6 +72,22 @@ namespace badger_view.Controllers
             
             dynamic photoshootInProgressModal   = new ExpandoObject();
             photoshootInProgressModal.Lists     = photoshootInProgress.photoshootsInprogress;
+            photoshootInProgressModal.SelectedPhotoshoot = selectPhotoshootId;
+
+            return View("ShootInProgress", photoshootInProgressModal);
+        }
+
+        [Authorize]
+        [HttpGet("photoshoots/shootInProgress/")]
+        public async Task<IActionResult> shootInProgress()
+        {
+            SetBadgerHelper();
+
+            ProductPhotoshootInProgressPagerList photoshootInProgress = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootInProgressPagerList>("/Photoshoots/inprogress/");
+            string selectPhotoshootId = "0";
+            dynamic photoshootInProgressModal = new ExpandoObject();
+            photoshootInProgressModal.Lists = photoshootInProgress.photoshootsInprogress;
+            photoshootInProgressModal.SelectedPhotoshoot = selectPhotoshootId;
 
             return View("ShootInProgress", photoshootInProgressModal);
         }
@@ -311,7 +328,7 @@ namespace badger_view.Controllers
         /*
         Developer: Mohi
         Date: 7-3-19 
-        Action: Update photoshoot model, schedule date and photoshoot notes
+        Action: Update photoshoot model, schedule date 
         URL: /Photoshoots/EditPhotoshootSummary/
         Input: FromBody   
         output: string success or failed
@@ -332,6 +349,25 @@ namespace badger_view.Controllers
             int photoshootId = Int32.Parse(json.Value<string>("photoshootId"));
 
             String returnStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(photoshoot.ToString(Formatting.None), "/photoshoots/UpdatePhotoshootSummary/" + photoshootId);
+            return returnStatus;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Add photoshoot notes
+        URL: /Photoshoots/AddPhotoshootNotes/
+        Input: FromBody   
+        output: string success or failed
+        */
+        [Authorize]
+        [HttpPost("photoshoots/AddPhotoshootNotes")]
+        public async Task<String> AddPhotoshootNotes([FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            string user_id = await _ILoginHelper.GetLoginUserId();
+            int photoshootId = Int32.Parse(json.Value<string>("photoshootId"));
+            string returnStatus = "0";
 
             if (json.Value<string>("photoshootNotes") != null)
             {
@@ -340,7 +376,7 @@ namespace badger_view.Controllers
                 photoshootNote.Add("note", json.Value<string>("photoshootNotes"));
                 photoshootNote.Add("created_by", Int32.Parse(user_id));
 
-                await _BadgerApiHelper.GenericPostAsyncString<String>(photoshootNote.ToString(Formatting.None), "/photoshoots/notecreate");
+                returnStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshootNote.ToString(Formatting.None), "/photoshoots/notecreate");
             }
 
             return returnStatus;
