@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Logs\BadgerAPIFunctional-20190718.txt" />
+    <None Remove="Logs\BadgerAPIFunctional-20190719.txt" />
+    <None Remove="Logs\BadgerAPIFunctional-20190731.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
     <Folder Include="Uploads\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

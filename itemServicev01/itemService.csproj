@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Logs\BadgerServiceFunctional-20190718.txt" />
+    <None Remove="Logs\BadgerServiceFunctional-20190719.txt" />
+    <None Remove="Logs\BadgerServiceFunctional-20190731.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Dapper.Contrib" Version="1.60.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -17,6 +23,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
   </ItemGroup>
 
 </Project>
