@@ -202,3 +202,11 @@ function emptyFeildValidation(id){
         notvalid = false
     return notvalid;
 }
+$(document).on('click', '.collapsButton', function (e) {
+    if ($(this).find('.fa').hasClass('fa-minus')) {
+        $(this).find('.fa').addClass('fa-plus').removeClass('fa-minus')
+    } else {
+        $(this).find('.fa').addClass('fa-minus').removeClass('fa-plus')
+
+    }
+})
