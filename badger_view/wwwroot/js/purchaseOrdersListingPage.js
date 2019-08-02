@@ -165,24 +165,33 @@ $('#purchaseorderlists').on('page.dt', function () {
                      // plist += '["'+ data.vendor_po_number+ '","' + data.custom_order_date + '","' + data.vendor + '","' + data.total_styles + '","' + 1 + '","' + 2 + '","' + 3 + '","' + data.custom_delivery_window_start_end + '","' + data.num_of_days + '","open", "A", "A", "A", "A", "A"],';
                 })*/
                 /*var arr = [];
-
+                */
                 for (var i = 0; i < data.PurchaseOrdersLists.length; i++) {
                     var data2 = data.PurchaseOrdersLists[i];
-                    var n = [];
-                    n.push(data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", "3", data2.custom_delivery_window_start_end, data2.num_of_days, "open", "A", "A", "A", "A", "A");
-                    arr[i] = n;
+                    var statusButton = '';
+                    if (data2.po_status == '5') {
+                        statusButton = "<button type='button' class='btn btn-success btn-sm'>Checked-in</button>";
+                    } else {
+                        statusButton = '<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data2.shipping + '" data-id="' + data2.po_id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>'
+                    }
+                    var status = getPoStatusById(data2.po_status);
+                    $('#purchaseorderlists').DataTable().row.add([data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", data2.custom_delivery_window_start_end, data2.num_of_days, status, statusButton, "<button type='button' id='EditPurhaseOrder' data-id='" + data2.po_id +"' class='btn btn-light btn-sm'>Edit</button>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderNote'><i class='fa fa-edit h3'></i></a>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderDocument'><i class='fa fa-upload h3'></i></a>", "<a href='javascript: void (0)'>Claim</a>", "<a href='javascript: void (0)'>Claim</a>"]).draw();
                 }
-
-                console.log(arr);
-               var plist = (JSON.stringify(arr));
-                console.log(plist);
-                var table4 = $('#purchaseorderlists').DataTable();
-                table4.rows.add(plist).draw();*/
             }
         });
     }
 });
-
+function getPoStatusById(po_status) {
+    if (po_status == 1) {
+        return '<span>Open</span>';
+    } else if (po_status == 3) {
+        return '<span>In Progress</span>';
+    } else if (po_status == 6) {
+        return '<span>Recieved</span>';
+    } else {
+        return '<span>Not Recieved</span>';
+    }
+}
 $('#poOrderDate').datepicker({
     dateFormat: 'm/d/yy'
 });
