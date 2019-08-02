@@ -139,6 +139,50 @@ $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
     window.purchaseorderrownumber = table.row(this)[0][0];
 });
 
+$('#purchaseorderlists').on('page.dt', function () {
+
+    var info = table.page.info();
+
+    console.log('Showing page: ' + (info.page + 1) + ' of ' + info.pages);
+
+    if (info.pages == (info.page + 1)) {
+        console.log("Load more...");
+        var start_total = info.recordsTotal; //table4.column(0).data().length;
+        console.log(start_total);
+        $.ajax({
+            url: "/purchaseorders/listpagination/" + start_total + "/20/true",
+            type: 'GET',
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+        }).always(function (data) {
+            console.log(data);
+            window.d = data;
+            if (data.PurchaseOrdersLists.length > 0) {
+                /*data.PurchaseOrdersLists.forEach(function (data) {
+                    plist.push(data.vendor_po_number,data.custom_order_date ,data.vendor, data.total_styles ,"1","2","3",data.custom_delivery_window_start_end,data.num_of_days,"open","A","A","A","A","A");
+                   // plist += "[" + data.vendor_po_number + "," + data.custom_order_date + "," + data.vendor + "," + data.total_styles + ",1 ,2 ,3," + data.custom_delivery_window_start_end + "," + data.num_of_days + ",open,A, A, A, A, A],";
+                     // plist += '["'+ data.vendor_po_number+ '","' + data.custom_order_date + '","' + data.vendor + '","' + data.total_styles + '","' + 1 + '","' + 2 + '","' + 3 + '","' + data.custom_delivery_window_start_end + '","' + data.num_of_days + '","open", "A", "A", "A", "A", "A"],';
+                })*/
+                /*var arr = [];
+
+                for (var i = 0; i < data.PurchaseOrdersLists.length; i++) {
+                    var data2 = data.PurchaseOrdersLists[i];
+                    var n = [];
+                    n.push(data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", "3", data2.custom_delivery_window_start_end, data2.num_of_days, "open", "A", "A", "A", "A", "A");
+                    arr[i] = n;
+                }
+
+                console.log(arr);
+               var plist = (JSON.stringify(arr));
+                console.log(plist);
+                var table4 = $('#purchaseorderlists').DataTable();
+                table4.rows.add(plist).draw();*/
+            }
+        });
+    }
+});
+
 $('#poOrderDate').datepicker({
     dateFormat: 'm/d/yy'
 });
