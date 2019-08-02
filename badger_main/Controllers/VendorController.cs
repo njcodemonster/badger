@@ -123,19 +123,19 @@ namespace badgerApi.Controllers
           Developer: Azeem Hassan
           Date: 7-5-19 
           Action: getting vendor count
-          URL:  api/vendor/count
+          URL:  api/vendor/listpageview/start/limit
           Request GET
           Input: null
           output: vendor count
         */
         // GET: api/vendor/listpageview/10
-        [HttpGet("listpageview/{limit}")]
-        public async Task<object> listpageviewAsync(int limit)
+        [HttpGet("listpageview/{start}/{limit}")]
+        public async Task<object> listpageviewAsync(int start, int limit)
         {
             dynamic vPageList = new object();
             try
             {
-                vPageList = await _VendorRepo.GetVendorPageList(limit);
+                vPageList = await _VendorRepo.GetVendorPageList(start,limit);
                 string  vPageCount = await _VendorRepo.Count();
                 vPageList.Count = vPageCount;
                 vPageList.VendorType = await _VendorRepo.GetVendorTypes();

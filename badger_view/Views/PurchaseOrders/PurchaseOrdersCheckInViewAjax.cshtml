@@ -61,7 +61,7 @@
     First = 1;
     String Current_product = "";
     <div class="card-body table-responsive">
-        <div class="accordion" id="accordionpoinnercheck">
+        <div class="accordion panel-group" id="accordionpoinnercheck">
             @foreach (dynamic LineItem in Model.FirstPOInfor.LineItemDetails)
             {
                 @if (Current_product != (String)LineItem.product_id)
@@ -76,11 +76,12 @@
                 @:</div>
                 @:</div>
             }
-            if (First == 1)
-            {
-                First = 2;
-            }
-            @:<div class="card">
+                    if (First == 1)
+                    {
+                        First = 2;
+                    }
+
+             @:<div class="card">
                 <div class="card-header" id="headinginner@(LineItem.product_id)">
                     <div class="float-left table-responsive">
                         <table class="table table-borderless m-0">
@@ -177,7 +178,7 @@
                     {
                         @:<tr data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
                             @:<td colspan="11">
-                                @:<div class="accordion" id="accordionsize-@LineItem.product_id">
+                                @:<div class="accordion" id="accordionsize-@LineItem.product_id-@LineItem.sku">
                                     @:<div class="card border-0">
                                         @:<div class="card-header" id="headingsize-@LineItem.product_id">
                                             @:<table class="table tble_list table-borderless">
@@ -273,7 +274,7 @@
                     {
                     @:</table>
                         @:</div>
-                        @:<div id="collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku" class="collapse" aria-labelledby="headingsize-@LineItem.product_id" data-parent="#accordionsize-@LineItem.product_id">
+                        @:<div id="collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku" class="collapse" aria-labelledby="headingsize-@LineItem.product_id" data-parent="#accordionsize-@LineItem.product_id-@LineItem.sku">
                             @: <div class="card-body">
                         @:<table class="table table-borderless tble_list">
                         }
@@ -290,15 +291,14 @@
 
                 }
             }
-@if (outputEnd)
-{
-    @:</tbody>
+            @if (outputEnd)
+            {
+                @:</tbody>
                 @:</table>
                 @:</div>
                 @:</div>
-                @:</div>
+                @:</div>             
             }
-
-            </div>
-        </div>
-        }
+      </div>
+    </div>
+ }

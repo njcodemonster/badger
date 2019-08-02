@@ -332,7 +332,7 @@ $(document).on("change", ".item_barcode", function (e) {
         _self.removeClass('errorFeild');
         return false;
     }
-
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     $.ajax({
         url: "/purchaseorders/checkbarcodeexist/" + barcode,
         dataType: 'json',
@@ -345,7 +345,6 @@ $(document).on("change", ".item_barcode", function (e) {
             alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
             return false;
         } else {
-            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             var jsondata = $("input#" + item_id).val();
             var itemdata = JSON.parse(jsondata);
             var id = itemdata.item_id
@@ -996,4 +995,4 @@ $(document).on('change', '.checkitemstatus', function (e) {
         })
     }
 
-})
+});
