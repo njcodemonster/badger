@@ -70,7 +70,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/20/true");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/30/true");
 
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
@@ -134,14 +134,14 @@ namespace badger_view.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
-        Action: View Single Purchase Orders List & Get Note,Document,Tracking,Ledger and Discount by using badger api helper   
-        URL: /purchaseorders/details/id
+        Action: View Purchase Orders List & Get Note,Document,Tracking,Ledger and Discount by using badger api helper   
+        URL: /purchaseorders/listpagination/start/end/boolean
         Request: Get
-        Input: int id
+        Input: int start, int limit, boolean
         output: Dynamic object of purchase orders
         */
         [Authorize]
-        [HttpGet("purchaseorders/listpagination/{start}/{limit}/{boolencount}")]
+        [HttpGet("purchaseorders/listpagination/{start}/{limit}/{count}")]
         public async Task<string> ListPagination(int start, int limit, Boolean count)
         {
             SetBadgerHelper();
