@@ -178,7 +178,7 @@
                     {
                         @:<tr data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
                             @:<td colspan="11">
-                                @:<div class="accordion" id="accordionsize-@LineItem.product_id">
+                                @:<div class="accordion" id="accordionsize-@LineItem.product_id-@LineItem.sku">
                                     @:<div class="card border-0">
                                         @:<div class="card-header" id="headingsize-@LineItem.product_id">
                                             @:<table class="table tble_list table-borderless">
@@ -274,7 +274,7 @@
                     {
                     @:</table>
                         @:</div>
-                        @:<div id="collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku" class="collapse" aria-labelledby="headingsize-@LineItem.product_id" data-parent="#accordionsize-@LineItem.product_id">
+                        @:<div id="collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku" class="collapse" aria-labelledby="headingsize-@LineItem.product_id" data-parent="#accordionsize-@LineItem.product_id-@LineItem.sku">
                             @: <div class="card-body">
                         @:<table class="table table-borderless tble_list">
                         }
