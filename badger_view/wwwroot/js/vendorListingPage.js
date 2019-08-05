@@ -225,8 +225,8 @@ $(document).on('click', "#EditVendor", function () {
         $('.documentsLink').remove();
         if (documents != '' && documents != null) {
             //for (var i = 0; i < documents.length; i++) {
-
-                var html = '<a onclick="return false" class="documentsLink" data-val="'+documents+'" href="">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
+            url = "https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/"+documents;
+                var html = '<a href="'+url+'" target="_blank" class="documentsLink" data-val="'+documents+'" href="">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
             //}
             $('#vendorDocument').parent('div').append(html)
         }
