@@ -94,7 +94,7 @@
 
     @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne@(LineItem.product_id)" data-parent="#accordionpoinnercheck">
         @:<div class="table-responsive">
-            @:<table class="table text-center borderless table-data-@LineItem.product_id">
+            @:<table class="table text-center po_tble_list borderless table-data-@LineItem.product_id">
                 <thead>
                     <tr>
                         <th></th>
@@ -134,7 +134,7 @@
                                                       <td>
                                                           @if (i == 1 && DisplayTimes != 1)
                                                           {
-                                                              <button type="button" style="padding-left:0px;padding-right:0px;" aria-expanded="true" aria-controls="collapseOne"  class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
+                                                              <button type="button" style="padding:0px;" aria-expanded="true" aria-controls="collapseOne"  class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
                                                           }
                                                           </td>
                                                       <td>
@@ -142,7 +142,7 @@
                                                       </td>
                                                       <td>
                                                           <input type="checkbox" class="checkitemstatus" style="float:left;width:10%;transform: scale(1.5);margin-top: 13px;" data-status="@LineItem.Size-@LineItem.product_id">
-                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id"  style="float:right;width:80%;" data-status="@LineItem.Size-@LineItem.product_id">
+                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id"  style="float:right;width: 150px; font-size:13px;" data-status="@LineItem.Size-@LineItem.product_id">
                                                               @foreach (dynamic _status in Model.AllItemStatus)
                                                               {
                                                                   if (@_status.item_status_id == @LineItem.EndItems[i - 1].item_status_id)
@@ -165,7 +165,7 @@
                                                           {
                                                               <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
 
-                                                              <select class="form-control item_ra_status d-none" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                              <select class="form-control item_ra_status d-none" data-itemid="@LineItem.EndItems[i-1].item_id" style="width:150px;margin:0 auto;font-size:13px;">
                                                                   <option value="0"> Default RA </option>
                                                                   @foreach (dynamic _rastatus in Model.AllRaStatus)
                                                                   {
@@ -175,7 +175,7 @@
                                                           }
                                                           else
                                                           {
-                                                      <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                      <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id" style="width: 150px;margin:0 auto;font-size:13px;">
                                                           <option value="0"> Default RA </option>
                                                           @foreach (dynamic _rastatus in Model.AllRaStatus)
                                                           {                                                                

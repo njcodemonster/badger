@@ -504,3 +504,8 @@ label.error {
 #AddModelBtnDiv {
     text-align:right;
 }
+
+.po_tble_list input[type=text] {
+    width:100px;
+}
+
