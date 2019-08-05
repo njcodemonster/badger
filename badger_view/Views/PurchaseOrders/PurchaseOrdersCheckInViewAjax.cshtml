@@ -145,10 +145,11 @@
                 </div>
 
     @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne@(LineItem.product_id)" data-parent="#accordionpoinnercheck">
-        @:<div class="card-body table-responsive">
-            @:<table class="table text-center tble_list borderless table-data-@LineItem.product_id" style="width:100%">
+        @:<div class="table-responsive">
+            @:<table class="table text-center borderless table-data-@LineItem.product_id">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Size</th>
                         <th>Status</th>
                         <th>RA Status</th>
@@ -174,21 +175,19 @@
                 @while (i < DisplayTimes)
                 {
                     i++;
-                    @if (i == 1 && DisplayTimes != 1)
-                    {
-                        @:<tr data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
-                            @:<td colspan="11">
-                                @:<div class="accordion" id="accordionsize-@LineItem.product_id-@LineItem.sku">
-                                    @:<div class="card border-0">
-                                        @:<div class="card-header" id="headingsize-@LineItem.product_id">
-                                            @:<table class="table tble_list table-borderless">
-                                            }
-                                                  <tr class="remove-@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
+                    string displaycheck = "";
+                   @if(i != 1 && DisplayTimes > 1)
+                   {
+                       displaycheck = "display:none";
+                   }
+                                                  <tr class="remove-@LineItem.EndItems[i-1].item_id" style="@displaycheck" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
                                                       <td>
                                                           @if (i == 1 && DisplayTimes != 1)
-                                                          {<button type="button" style="padding-left:0px;padding-right:0px;" class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
-                                                              <!-- td style="position: absolute; left: -25px; top: 5px;"><button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button></!==td -->
+                                                          {
+                                                              <button type="button" style="padding-left:0px;padding-right:0px;" class="btn btn-link collapsButton collapseAreaButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
                                                           }
+                                                          </td>
+                                                      <td>
                                                           @LineItem.Size<input type="hidden" id="@LineItem.EndItems[i-1].item_id" value="@LineItem.EndItems[i - 1]" />
                                                       </td>
                                                       <td>
@@ -245,7 +244,7 @@
 
                                                       </td>
                                                       <td>
-                                                          <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="50"></textarea>
+                                                          <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="20"></textarea>
                                                       </td>
                                                       <td>
                                                           <a href="javscript:void(0)" id="AddDocument" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id"><i class="fa fa-upload h3"></i></a>
@@ -270,24 +269,6 @@
                                                       </td>
                                                   </tr>
 
-                    @if (i == 1 && DisplayTimes != 1)
-                    {
-                    @:</table>
-                        @:</div>
-                        @:<div id="collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku" class="collapse" aria-labelledby="headingsize-@LineItem.product_id" data-parent="#accordionsize-@LineItem.product_id-@LineItem.sku">
-                            @: <div class="card-body">
-                        @:<table class="table table-borderless tble_list">
-                        }
-
-                    @if (i == DisplayTimes && DisplayTimes != 1)
-                    {
-                                        @:</table>
-                                    @:</div>
-                                @:</div>
-                            @:</div>
-                            @:</td>
-                    @:</tr>
-                    }
 
                 }
             }

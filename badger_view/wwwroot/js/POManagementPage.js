@@ -996,3 +996,8 @@ $(document).on('change', '.checkitemstatus', function (e) {
     }
 
 });
+
+$(document).on('click', '.collapseAreaButton', function (e) {
+    var attr = $(this).parents('tr').attr('data-sku')
+	$(this).parents('tr').siblings('tr[data-sku="'+attr+'"]').slideToggle('500','linear');
+});
