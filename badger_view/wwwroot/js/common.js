@@ -203,11 +203,27 @@ function emptyFeildValidation(id){
         notvalid = false
     return notvalid;
 }
-$(document).on('click', '.collapsButton', function (e) {
-    if ($(this).find('.fa').hasClass('fa-minus')) {
-        $(this).find('.fa').addClass('fa-plus').removeClass('fa-minus')
-    } else {
-        $(this).find('.fa').addClass('fa-minus').removeClass('fa-plus')
 
+
+
+$(document).on('click', '.collapsButton', function (e) {
+   // console.log($(this).attr("aria-expanded"));
+
+   if ($(this).find('.fa').hasClass('fa-minus')) {
+        $(this).find('.fa').addClass('fa-plus').removeClass('fa-minus');
+    } else {
+        $(this).find('.fa').addClass('fa-minus').removeClass('fa-plus');
     }
-})
+
+    $('.collapsed').each(function () {
+        $(this).find('.fa').addClass('fa-plus').removeClass('fa-minus');
+    });
+ 
+});
+
+
+/*$('.collapse').on('shown.bs.collapse', function () {
+    $(this).find(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
+}).on('hidden.bs.collapse', function () {
+    $(this).find(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
+});*/

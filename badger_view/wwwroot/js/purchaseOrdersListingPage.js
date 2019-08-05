@@ -314,10 +314,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     }
                 });
             }
-            $('#purchaseorderlists').DataTable().row.add([
-                $("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname
-                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Not Recieved", '<button type="button" class="btn btn-warning btn-sm" data-shipping="'+shipping+'"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
-            ]).draw();
+            $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Not Recieved", '<button type="button" class="btn btn-warning btn-sm" data-shipping="'+shipping+'"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
 
             table.page('last').draw('page');
 
@@ -543,6 +540,8 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     jsonData['tracking'] = [];
 
+    var postatus = $('#po_status').val();
+
     $('.poTracking').each(function () {
         var tracking_json = {};
 
@@ -607,7 +606,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber!= "" && window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping +'" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", getPoStatusById(postatus), '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping +'" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
@@ -959,6 +958,7 @@ function purchaseOrderData(data) {
             $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
             $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
+            $("#newPurchaseOrderForm #po_status").val(podata.po_status);
         }
         window.notes = "";
         var note = data['notes'];
