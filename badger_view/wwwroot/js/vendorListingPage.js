@@ -332,6 +332,9 @@ $(document).on('click', "#EditVendorButton", function () {
                         contentType: false,
                     }).always(function (data) {
                         console.log(data);
+                        if (data.responseText.indexOf('File Already') > -1) {
+                            alertBox('vendorAlertMsg', 'red', 'logo already exist');
+                        }
                     });
                 }
                     $('#newVendorModal').modal('hide'); 

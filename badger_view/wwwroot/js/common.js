@@ -101,6 +101,7 @@ function allLetterAllow(event) {
   action:  alert function for any event success or failed. give area action and massage to print
 */
 function alertBox(area, action, massage) {
+    $('.alert').remove()
     var color = 'success'
     if (action == 'red')
         color = 'danger'
