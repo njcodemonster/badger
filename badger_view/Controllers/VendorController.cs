@@ -165,7 +165,7 @@ namespace badger_view.Controllers
                                 int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();
                                 vendorDocuments.Add("vendor_id", ref_id);
-                                vendorDocuments.Add("logo", Fill_path);
+                                vendorDocuments.Add("logo", formFile.FileName);
                                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/"+ vendorLogo.Vendor_id);
                             }
                         }
