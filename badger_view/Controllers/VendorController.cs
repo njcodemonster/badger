@@ -201,7 +201,7 @@ namespace badger_view.Controllers
                 JObject vendorDocuments = new JObject();
                 vendorDocuments.Add("vendor_id", ref_id);
                 vendorDocuments.Add("logo", "");
-                System.IO.File.Delete(fileName);
+                System.IO.File.Delete(UploadPath+fileName);
                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id);
                 return "file deleted successfully";
             }

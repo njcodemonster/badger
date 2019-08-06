@@ -583,7 +583,9 @@ $(document).on('change', "#vendortype", function () {
    Request: POST
    output: massage
 */
-$(document).on('click', ".deleteImage", function () {
+$(document).on('click', ".deleteImage", function (event) {
+    event.stopPropagation();
+    event.preventDefault();
     var jsonData = {};
     var _this = $(this);
     jsonData["vendorDocuments"] = $(this).parents('.documentsLink').attr('data-val');
