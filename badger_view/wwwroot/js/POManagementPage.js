@@ -80,6 +80,7 @@ Input: int item document id
 Output: get item document data
 */
 $(document).on("click", "#AddDocument", function () {
+    $(".poDocAlertMsg").text("");
     $('#document_form')[0].reset();
     var id = $(this).attr("data-itemid");
     var productid = $(this).attr("data-productid");
@@ -97,7 +98,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -118,6 +119,12 @@ Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
     var po_id = $('#document_form').attr("data-productid");
+    $(".poDocAlertMsg").text("");
+    if ($('#poUploadImages').val() == "") {
+        $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
+        return false;
+    }
+
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
@@ -143,9 +150,16 @@ $(document).on("click", "#document_submit", function () {
                 console.log("Exception Error");
                 alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
             } else {
-                alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
-                console.log(data.responseText);
-                $("#modaladddocument").modal("hide");
+                if (data.responseText.indexOf('File Already') > -1) {
+                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                    $('.message-' + po_id).empty().html("");
+                } else {
+                    alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
+                    console.log(data.responseText);
+                    $("#modaladddocument").modal("hide");
+                }
+
+               
             }
         });
     }
@@ -938,7 +952,10 @@ Date: 7-19-19
 Action: Delete Document or Image on click 
 output: Boolean
 */
-$(document).on('click', ".podeleteImage", function () {
+$(document).on('click', ".podeleteImage", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');

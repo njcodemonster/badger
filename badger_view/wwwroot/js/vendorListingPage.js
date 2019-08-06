@@ -226,7 +226,7 @@ $(document).on('click', "#EditVendor", function () {
         if (documents != '' && documents != null) {
             //for (var i = 0; i < documents.length; i++) {
             url = "https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/"+documents;
-                var html = '<a href="'+url+'" target="_blank" class="documentsLink" data-val="'+documents+'" href="">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
+                var html = '<a href="'+url+'" target="_blank" class="documentsLink" data-val="'+documents+'">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
             //}
             $('#vendorDocument').parent('div').append(html)
         }
