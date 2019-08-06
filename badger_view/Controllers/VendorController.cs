@@ -160,7 +160,7 @@ namespace badger_view.Controllers
                             {
                                 messageDocuments += Fill_path + " \r\n";
 
-                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                                //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                 await formFile.CopyToAsync(stream);
                                 int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();
@@ -201,7 +201,7 @@ namespace badger_view.Controllers
                 JObject vendorDocuments = new JObject();
                 vendorDocuments.Add("vendor_id", ref_id);
                 vendorDocuments.Add("logo", "");
-                System.IO.File.Delete(fileName);
+                System.IO.File.Delete(UploadPath+fileName);
                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id);
                 return "file deleted successfully";
             }
