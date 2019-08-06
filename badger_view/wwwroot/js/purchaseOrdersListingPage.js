@@ -795,6 +795,7 @@ output:string of purchase order documents
 */
 
 $(document).on("click", "#EditPurhaseOrderDocument", function () {
+    $(".poDocAlertMsg").text("");
     $('#document_form')[0].reset();
     $("#document_form #po_document").val("");
     $("#document_form").attr("data-documentid", "");
@@ -815,7 +816,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                $(".po_doc_section").append("<a href='uploads/"+i.url+"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -838,8 +839,8 @@ output: string of purchase order document
 */
 $(document).on("click", "#document_submit", function () {
     var _self = $(this);
-
-    if (_self.val() == "") {
+    $(".poDocAlertMsg").text("");
+    if ($('#poUploadImages').val() == "") {
         $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
         return false;
     }
@@ -873,8 +874,15 @@ $(document).on("click", "#document_submit", function () {
             } else {
                 console.log(data.responseText);
                 _self.attr("disabled", false);
-                $("#modaladddocument").modal("hide");
-                alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
+                if (data.responseText.indexOf('File Already') > -1) {
+                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                } else {                    
+                    $("#modaladddocument").modal("hide");
+                    alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
+                }
+
+
+               
             }
         });
     }
@@ -973,7 +981,7 @@ function purchaseOrderData(data) {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
+                $(".po_doc_section").append("<a href='uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -1139,7 +1147,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function (){
             if (data.documents.length > 0) {
 
                 $(data.documents).each(function (e, i) {
-                    $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                    $(".po_doc_section").append("<a href='uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
                 });
 
                 $(".po_doc_section").removeClass('d-none');
@@ -1305,7 +1313,9 @@ Date: 7-13-19
 Action: Delete Document or Image on click 
 output: Boolean
 */
-$(document).on('click', ".podeleteImage", function () {
+$(document).on('click', ".podeleteImage", function (e) {
+    e.preventDefault();
+    e.stopPropagation();    
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');

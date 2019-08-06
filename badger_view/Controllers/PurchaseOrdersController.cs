@@ -364,7 +364,7 @@ namespace badger_view.Controllers
 
                                 JObject purchaseOrderDocuments = new JObject();
                                 purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
-                                purchaseOrderDocuments.Add("url", Fill_path);
+                                purchaseOrderDocuments.Add("url", formFile.FileName);
                                 purchaseOrderDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
@@ -1040,7 +1040,7 @@ namespace badger_view.Controllers
 
                                 JObject itemDocuments = new JObject();
                                 itemDocuments.Add("ref_id", purchaseorderfile.po_id);
-                                itemDocuments.Add("url", Fill_path);
+                                itemDocuments.Add("url", formFile.FileName);
                                 itemDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocuments.ToString(Formatting.None), "/purchaseordermanagement/documentcreate");
 
@@ -1288,9 +1288,9 @@ namespace badger_view.Controllers
 
             if (fileName != null || fileName != string.Empty)
             {
-                if ((System.IO.File.Exists(fileName)))
+                if ((System.IO.File.Exists(UploadPath+fileName)))
                 {
-                    System.IO.File.Delete(fileName);
+                    System.IO.File.Delete(UploadPath+fileName);
                 }
 
             }
