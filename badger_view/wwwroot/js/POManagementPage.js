@@ -996,18 +996,24 @@ $(document).on('change', '.checkrastatus', function (e) {
     }
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 08-07-19
+Action: When checked checkbox than checked status dropdown status changed
+*/
 $(document).on('change', '.checkitemstatus', function (e) {
     var checkdata = $(this).attr("data-status");
     if ($(this).is(':checked')) {
         $(".checkitemstatus").each(function () {
             if ($(this).attr("data-status") == checkdata) {
-                $(this).attr("checked", true);
+                $(this).prop('checked',true);
             }
         })
     } else {
         $(".checkitemstatus").each(function () {
             if ($(this).attr("data-status") == checkdata) {
-                $(this).attr("checked", false);
+                $(this).prop('checked',false);
             }
         })
     }
