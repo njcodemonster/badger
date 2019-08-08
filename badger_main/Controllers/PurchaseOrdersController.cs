@@ -12,6 +12,9 @@ using Newtonsoft.Json.Linq;
 using System.Data;
 using Dapper;
 using MySql.Data.MySqlClient;
+using System.Linq;
+using System.Collections;
+using System.Dynamic;
 
 namespace badgerApi.Controllers
 {
@@ -22,6 +25,7 @@ namespace badgerApi.Controllers
         private readonly IConfiguration _config;
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
         ILoggerFactory _loggerFactory;
+
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
         IEventRepo _eventRepo;
@@ -145,13 +149,13 @@ namespace badgerApi.Controllers
         Input: int limit and boolean (true/false)
         output: list of dynamic Object of Purchase Orders
         */
-        [HttpGet("listpageview/{limit}/{countNeeded}")]
-        public async Task<object> ListPageViewAsync(int limit,Boolean countNeeded)
+        [HttpGet("listpageview/{start}/{limit}/{countNeeded}")]
+        public async Task<object> ListPageViewAsync(int start,int limit,Boolean countNeeded)
         {
             dynamic poPageList = new object();
             try
             {
-                poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(limit);
+                poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(start,limit);
                 if (countNeeded)
                 {
                     string poPageCount = await _PurchaseOrdersRepo.Count();
@@ -416,6 +420,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("good_condition", PurchaseOrdersToUpdate.good_condition.ToString());
                 }
+                if (PurchaseOrdersToUpdate.total_styles != 0)
+                {
+                    ValuesToUpdate.Add("total_styles", PurchaseOrdersToUpdate.total_styles.ToString());
+                }                
                 if (PurchaseOrdersToUpdate.total_quantity != 0)
                 {
                     ValuesToUpdate.Add("total_quantity", PurchaseOrdersToUpdate.total_quantity.ToString());
@@ -448,6 +456,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("deleted", PurchaseOrdersToUpdate.deleted.ToString());
                 }
+                if (PurchaseOrdersToUpdate.ra_flag == 0 || PurchaseOrdersToUpdate.ra_flag == 1)
+                {
+                    ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
+                }                
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -591,7 +603,270 @@ namespace badgerApi.Controllers
             }
             return result;
         }
-        
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-24-19 
+        Action: Get smallest sku by product ids with comma separate "api/purchaseorders/checkbarcodeexist/1"
+        URL: api/purchaseorders/checkbarcodeexist/ids
+        Request: Get
+        Input: string product_ids
+        output: string product id and sku
+        */
+        [HttpGet("smallestsku/{product_ids}")]
+        public async Task<string> SmallestSku(string product_ids)
+        {
+            string result = "";
+            string sku;
+            List<int> skuIdReturnList = new List<int>();
+            JObject AllSkuIdsList = new JObject();
+            try
+            {
+                int countComma = product_ids.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    var ids = product_ids.Split(",");
+                    foreach (var productID in ids)
+                    {
+                        object SkuList = await _PurchaseOrdersRepo.GetSkuByProduct(productID);
+                        IEnumerable SkuListEnum = SkuList as IEnumerable;
+                        List<string> skuListInt = new List<string>();
+                        IDictionary<string, string> skuSortLink = new Dictionary<string, string>();
+                        if (SkuListEnum != null)
+                        {
+                            foreach (dynamic element in SkuListEnum)
+                            {
+                                sku = element.sku;
+                                int countDash = sku.Count(c => c == '-');
+                                if (countDash > 0)
+                                {
+                                    skuListInt.Add(sku.Split('-').Last().ToString());
+                                    skuSortLink[sku.Split('-').Last()] = sku;
+                                }
+                                else
+                                {
+                                    skuListInt.Add(element.sku_id.ToString());
+                                    skuSortLink[element.sku_id.ToString()] = sku;
+                                }
+                            }
+                            string[] skuArrayInt = skuListInt.ToArray();
+                            Array.Sort(skuArrayInt);
+
+                            if (skuArrayInt.Count() > 0)
+                            {
+                                int i = 0;
+                                foreach (var sku_id in skuArrayInt)
+                                {
+                                    if (i == 0)
+                                    {
+                                        string index = sku_id.ToString();
+                                        AllSkuIdsList.Add(productID, skuSortLink[index]);
+                                    }
+                                    i++;
+
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+                else
+                {
+                    object SkuList = await _PurchaseOrdersRepo.GetSkuByProduct(product_ids);
+                    IEnumerable SkuListEnum = SkuList as IEnumerable;
+                    List<string> skuListInt = new List<string>();
+                    IDictionary<string, string> skuSortLink = new Dictionary<string, string>();
+                    if (SkuListEnum != null)
+                    {
+                        foreach (dynamic element in SkuListEnum)
+                        {
+                            sku = element.sku;
+                            int countDash = sku.Count(c => c == '-');
+                            if (countDash > 0)
+                            {
+                                skuListInt.Add(sku.Split('-').Last().ToString());
+                                skuSortLink[sku.Split('-').Last()] = sku;
+                            }
+                            else
+                            {
+                                skuListInt.Add(element.sku_id.ToString());
+                                skuSortLink[element.sku_id.ToString()] = sku;
+                            }
+                        }
+                        string[] skuArrayInt = skuListInt.ToArray();
+                        Array.Sort(skuArrayInt);
+
+                        if (skuArrayInt.Count() > 0)
+                        {
+                            int i = 0;
+                            foreach (var sku_id in skuArrayInt)
+                            {
+                                if (i == 0)
+                                {
+                                    string index = sku_id.ToString();
+                                    AllSkuIdsList.Add(product_ids, skuSortLink[index]);
+                                }
+                                i++;
+
+                            }
+
+                        }
+
+                    }
+                }
+                result = AllSkuIdsList.ToString(Formatting.None);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return result;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Get Product Name And Size By Product Id And Sku Id "api/purchaseorders/GetNameAndSizeByProductAndSku/productid/sku"
+        URL: api/purchaseorders/GetNameAndSizeByProductAndSku/productid/sku
+        Request: Get
+        Input: string product_id, string sku
+        output: Dynamic object list of product detail
+        */
+        [HttpGet("GetNameAndSizeByProductAndSku/{product_id}/{sku}")]
+        public async Task<object> GetNameAndSizeByProductAndSku(string product_id, string sku)
+        {
+            dynamic ProductList = new object();
+            try
+            {
+                ProductList = await _PurchaseOrdersRepo.GetNameAndSizeByProductAndSku(product_id,sku);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ProductList;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-24-19 
+        Action: Item barcode update by id 
+        URL: api/purchaseorders/ItemBarcodeUpdateWithStatus/id
+        Request: Post
+        Input: int id, FromBody string value
+        output: string of item update
+        */
+        [HttpPost("ItemSpecificUpdateById/{id}")]
+        public async Task<string> ItemSpecificUpdateById(int id, [FromBody] string value)
+        {
+            string ItemUpdate = "0";
+            try
+            {
+                ItemUpdate = await _ItemsHelper.ItemSpecificUpdateById(id, value);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Purchase Order Document create with message" + ex.Message);
+            }
+            return ItemUpdate;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Get Product Name And Size By Product Id And Sku Id "api/purchaseorders/GetNameAndSizeByProductAndSku/productid/sku"
+        URL: api/purchaseorders/GetNameAndSizeByProductAndSku/productid/sku
+        Request: Get
+        Input: string product_id, string sku
+        output: Dynamic object list of product detail
+        */
+        [HttpGet("searchbypoandinvoice/{search}")]
+        public async Task<object> SearchByPOAndInvoice(string search)
+        {
+            dynamic ProductList = new object();
+            try
+            {
+                ProductList = await _PurchaseOrdersRepo.SearchByPOAndInvoice(search);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ProductList;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-27-19 
+        Action: Get Item status count response "api/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/poid"
+        URL: api/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/poid
+        Request: Get
+        Input: int poid
+        output: Dynamic count item status response
+        */
+        [HttpGet("GetItemsByPurchaseOrderStatusCountResponse/{poid}")]
+        public async Task<object> GetItemsByPurchaseOrderStatusCountResponse(int poid)
+        {
+            dynamic countData = new ExpandoObject();
+            dynamic ProductList = new object();
+
+            int CountRaStatusOne = 0;
+            int CountRaStatusZero = 0;
+            int CountItemStatusDefault = 0;
+            int CountItemStatus = 0;
+
+            int rastatus = 0;
+            int itemstatus = 0;
+            try
+            {
+                ProductList = await _ItemsHelper.GetItemsByOrder(poid);
+                int TotalItemCount = ProductList.Count;
+                for (var i=0; i< (TotalItemCount-1); i++) {
+                    rastatus = ProductList[i].ra_status;
+                    itemstatus = ProductList[i].item_status_id;
+                    if (rastatus == 0) {
+                        CountRaStatusZero++;
+                    }
+                    if(rastatus == 1)
+                    {
+                        CountRaStatusOne++;
+                    }
+
+                    if (itemstatus == 1)
+                    {
+                        CountItemStatusDefault++;
+                    }
+
+                    if(itemstatus > 1)
+                    {
+                        CountItemStatus++;
+                    }
+
+                }
+                countData.rastatuszero = CountRaStatusZero;
+                countData.rastatusone = CountRaStatusOne;
+                countData.itemstatusdefault = CountItemStatusDefault;
+                countData.itemstatus = CountItemStatus;
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return countData;
+        }
+
 
     }
 }

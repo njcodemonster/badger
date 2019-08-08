@@ -88,10 +88,10 @@ function onlyNumbersWithDot(e) {
   Date: 7-3-19 
   action:  check email valid
 */
-function allLetterAllow(event){
-  var inputValue = event.which;
+function allLetterAllow(event) {
+    var inputValue = event.which; console.log(inputValue);
         // allow letters and whitespaces only.
-        if(!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8) { 
+    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39) { 
           return false
         }
 }
@@ -101,6 +101,7 @@ function allLetterAllow(event){
   action:  alert function for any event success or failed. give area action and massage to print
 */
 function alertBox(area, action, massage) {
+    $('.alert').remove()
     var color = 'success'
     if (action == 'red')
         color = 'danger'
@@ -202,3 +203,27 @@ function emptyFeildValidation(id){
         notvalid = false
     return notvalid;
 }
+
+
+
+$(document).on('click', '.collapsButton', function (e) {
+   // console.log($(this).attr("aria-expanded"));
+
+   if ($(this).find('.fa').hasClass('fa-minus')) {
+        $(this).find('.fa').addClass('fa-plus').removeClass('fa-minus');
+    } else {
+        $(this).find('.fa').addClass('fa-minus').removeClass('fa-plus');
+    }
+
+    $('.collapsed').each(function () {
+        $(this).find('.fa').addClass('fa-plus').removeClass('fa-minus');
+    });
+ 
+});
+
+
+/*$('.collapse').on('shown.bs.collapse', function () {
+    $(this).find(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
+}).on('hidden.bs.collapse', function () {
+    $(this).find(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
+});*/

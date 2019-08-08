@@ -80,6 +80,7 @@ Input: int item document id
 Output: get item document data
 */
 $(document).on("click", "#AddDocument", function () {
+    $(".poDocAlertMsg").text("");
     $('#document_form')[0].reset();
     var id = $(this).attr("data-itemid");
     var productid = $(this).attr("data-productid");
@@ -97,7 +98,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -118,6 +119,12 @@ Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
     var po_id = $('#document_form').attr("data-productid");
+    $(".poDocAlertMsg").text("");
+    if ($('#poUploadImages').val() == "") {
+        $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
+        return false;
+    }
+
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
@@ -143,9 +150,16 @@ $(document).on("click", "#document_submit", function () {
                 console.log("Exception Error");
                 alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
             } else {
-                alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
-                console.log(data.responseText);
-                $("#modaladddocument").modal("hide");
+                if (data.responseText.indexOf('File Already') > -1) {
+                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                    $('.message-' + po_id).empty().html("");
+                } else {
+                    alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
+                    console.log(data.responseText);
+                    $("#modaladddocument").modal("hide");
+                }
+
+               
             }
         });
     }
@@ -159,35 +173,84 @@ Input: int item id
 Output: string status
 */
 $(document).on("change", ".item_status", function () {
+    var result = false;
     var po_id = $(this).parents("tr").attr("data-productid");
-    $('.message-'+po_id).append('<div class="spinner-border text-info"></div>');
-    //$(".message .spinner-border").removeClass("d-none");
-    var item_id = $(this).attr('data-itemid');
-    var item_status = $(this).val();
-    var jsondata = $("input#" + item_id).val();
-    var itemdata = JSON.parse(jsondata);
-    var id = itemdata.item_id
-    itemdata.item_status_id = parseInt(item_status);
-    $("input#" + item_id).val(JSON.stringify(itemdata));
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
 
-    console.log($("input#" + item_id).val());
+    if ($(this).parents("td").find(".checkitemstatus").is(':checked')) {
+        var checkdata = $(this).parents("td").find(".checkitemstatus").attr("data-status");
+        var item_status = $(this).val();
 
-    $.ajax({
-        url: "/purchaseorders/itemupdate/" + id,
-        dataType: 'json',
-        type: 'post',
-        contentType: 'application/json',
-        data: JSON.stringify(itemdata),
-        processData: false
-    }).always(function (data) {
-        console.log(data);
-        if (data.responseText == "Success") {
-            alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
-        } else {
-            alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
-        }
+        $('.item_status').each(function () {
+            if ($(this).attr("data-status") == checkdata) {
 
-    });
+                $(this).val(item_status);
+                //$('.item_status option[value=' + item_status + ']').prop("selected", true);
+                var item_id = $(this).attr('data-itemid');
+                var jsondata = $("input#" + item_id).val();
+                var itemdata = JSON.parse(jsondata);
+                itemdata.item_status_id = item_status;
+                $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                console.log($("input#" + item_id).val());
+
+                $.ajax({
+                    url: "/purchaseorders/itemupdate/" + item_id,
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(itemdata),
+                    processData: false
+                }).always(function (data) {
+                    console.log(data);
+                    if (data.responseText == "Success") {
+                        result = true;
+                    } else {
+                        result = "error";
+                    }
+
+                });
+            }
+        });
+
+        var checkInterval = setInterval(function () {
+            if (result) {
+                alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
+                clearInterval(checkInterval);
+            } else if (result == "error") {
+                alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
+                clearInterval(checkInterval);
+            }
+        }, 1000);
+
+    } else {
+        var item_id = $(this).attr('data-itemid');
+        var item_status = $(this).val();
+        var jsondata = $("input#" + item_id).val();
+        var itemdata = JSON.parse(jsondata);
+        var id = itemdata.item_id
+        itemdata.item_status_id = parseInt(item_status);
+        $("input#" + item_id).val(JSON.stringify(itemdata));
+
+        console.log($("input#" + item_id).val());
+
+        $.ajax({
+            url: "/purchaseorders/itemupdate/" + id,
+            dataType: 'json',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(itemdata),
+            processData: false
+        }).always(function (data) {
+            console.log(data);
+            if (data.responseText == "Success") {
+                alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
+            } else {
+                alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
+            }
+
+        });
+    }
 });
 
 $(".sku_weight").on("keydown", function (event) {
@@ -283,7 +346,7 @@ $(document).on("change", ".item_barcode", function (e) {
         _self.removeClass('errorFeild');
         return false;
     }
-
+    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     $.ajax({
         url: "/purchaseorders/checkbarcodeexist/" + barcode,
         dataType: 'json',
@@ -296,7 +359,6 @@ $(document).on("change", ".item_barcode", function (e) {
             alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
             return false;
         } else {
-            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             var jsondata = $("input#" + item_id).val();
             var itemdata = JSON.parse(jsondata);
             var id = itemdata.item_id
@@ -792,11 +854,13 @@ $(document).on("click", "#weight_submit", function () {
     var productid = $('#weight_form').attr("data-productid");
     var result = false;
     var error = "";
+    var sku_weight = "";
+    var sku_id = "";
     $('#weight_form input').each(function () {
-        var sku_weight = $(this).val();
-        var sku_id = $(this).attr("data-skuid");
+        sku_weight = $(this).val();
+        sku_id = $(this).attr("data-skuid");
 
-        if ( (sku_id != 0 && sku_id != "") && (sku_weight != 0 && sku_weight != "") ) {
+        if ( (sku_id != 0 || sku_id != "") && (sku_weight != 0 || sku_weight != "") ) {
 
             var jsonData = {};
             jsonData["sku_id"] = sku_id;
@@ -808,7 +872,8 @@ $(document).on("click", "#weight_submit", function () {
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(jsonData),
-                processData: false
+                processData: false,
+                async: false,
             }).always(function (data) {
                 console.log(data);
                 if (data.responseText == "Success") {
@@ -831,7 +896,8 @@ $(document).on("click", "#weight_submit", function () {
     });
 
    var checkInterval = setInterval(function () { 
-            if (result) {
+       if (result) {
+           $("#sku_weight[data-productid='"+productid+"']").addClass("btn-primary").removeClass("btn-success").text("Edit Weight")
                 $('#modaladdweight').modal('hide');
                 alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
                 clearInterval(checkInterval);
@@ -880,15 +946,16 @@ $(document).on("change", ".wash_type_status", function () {
             });
 });
 
-
-
 /*
 Developer: Sajid Khan
 Date: 7-19-19
 Action: Delete Document or Image on click 
 output: Boolean
 */
-$(document).on('click', ".podeleteImage", function () {
+$(document).on('click', ".podeleteImage", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');
@@ -912,4 +979,37 @@ $(document).on('click', ".podeleteImage", function () {
         if (data.responseText != '0')
             _this.parents('.documentsLink').remove();
     });
+});
+
+
+/*
+Developer: Sajid Khan
+Date: 7-26-19
+Action: When ra status zero than check box show and when checked checkbox than ra status dropdown show and hide checkbox
+output: ra status dropdown show on checkbox checked and hide checkbox
+*/
+$(document).on('change', '.checkrastatus', function (e) {
+
+    if ($(this).is(':checked')) {
+        $(this).hide();
+        $(this).parents("td").find("select.item_ra_status:first").removeClass("d-none");
+    }
+});
+
+$(document).on('change', '.checkitemstatus', function (e) {
+    var checkdata = $(this).attr("data-status");
+    if ($(this).is(':checked')) {
+        $(".checkitemstatus").each(function () {
+            if ($(this).attr("data-status") == checkdata) {
+                $(this).attr("checked", true);
+            }
+        })
+    } else {
+        $(".checkitemstatus").each(function () {
+            if ($(this).attr("data-status") == checkdata) {
+                $(this).attr("checked", false);
+            }
+        })
+    }
+
 });

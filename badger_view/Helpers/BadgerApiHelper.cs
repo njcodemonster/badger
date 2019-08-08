@@ -30,6 +30,25 @@ namespace badger_view.Helpers
         Input: Any Type and URL
         output: json object 
         */
+        public async Task<string> GenericGetsAsync(String _call)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.GetAsync(BadgerAPIURL + _call, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
+
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: data sends to badger api
+        Request: Get 
+        Input: Any Type and URL
+        output: json object 
+        */
         public async Task<T> GenericGetAsync<T>(String _call)
         {
             var client = new HttpClient();

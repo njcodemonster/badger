@@ -478,15 +478,19 @@ Action: it will add new photoshoot model
 Input: Name, height, hair, Ethnicity
 Output: it will add new model & update models in Add new photoshoot modals 
 */
-function addNewPhotoshootModel() {
-    $("#_modal_loader").fadeIn(200);
+function addNewPhotoshootModel(callFrom) {
     var name    = $("#model_name").val();
     var height  = $("#model_height").val();
     var hair    = $("#model_hair").val();
     var ethnicity = $("#model_ethnicity").val();
 
     if (name != '' && height != '' && hair != '' && ethnicity != '') {
-
+        if (callFrom == "summary") {
+            var htmlLoader = $(".loading-box ");
+            htmlLoader.css("visibility", "visible");
+        } else {
+            $("#_modal_loader").fadeIn(200);
+        }
         var jsonData = {};
         jsonData["model_name"] = name;
         jsonData["model_height"] = height;
@@ -501,22 +505,45 @@ function addNewPhotoshootModel() {
             processData: false,
 
         }).always(function (data) {
-            if (data != "0") {
-                $("#modaladdmodel").modal('hide');
-                $("#AllModels").append(new Option(name, data));
-                //$('#AllModels').val(data);
-                $('#NewModelForm')[0].reset();
-                $("#_modal_loader").fadeOut(200);
-            } else {
-                
+            if (callFrom == "summary") {
+                if (data != "0") {
+                    $("#openphotoshot .custom-select").each(function () {
+                        console.log($(this).val());
+                        $(this).append(new Option(name, data));
+                    })
+                    $("#modaladdmodel").modal('hide');
+                    $('#NewModelForm')[0].reset();
+                    htmlLoader.css("visibility", "hidden");
+                } else {
+
+                }
             }
+            else {
+                if (data != "0") {
+                    $("#modaladdmodel").modal('hide');
+                    $("#AllModels").append(new Option(name, data));
+                    //$('#AllModels').val(data);
+                    $('#NewModelForm')[0].reset();
+                    $("#_modal_loader").fadeOut(200);
+                } else {
+
+                }
+            }
+            
         });
     }
 }
 
-function editPhotoshoot(photoshootId) {
-    var jsonData = {};
+/*
+Developer: Mohi
+Date: 7-19-19
+Action: it will update photoshoot model & schedule date 
+Input: Photoshootid
+Output: 
+*/
 
+function editPhotoshootSummary(photoshootId) {
+    var jsonData = {};
     var photoshootScheduledDate = $("#rowId_" + photoshootId + " .scheduled_date").val();
     var shoot_start_date = new Date(photoshootScheduledDate);
     shoot_date_milliseconds = shoot_start_date.getTime();
@@ -538,12 +565,37 @@ function editPhotoshoot(photoshootId) {
     }).always(function (data) {
         
     });
-
-    console.log(jsonData);
 }
 
-$(document).ready(function () {
+function AddPhotoshootSummaryNotes(photoshootId) {
+    var jsonData = {};
+    
+    jsonData["photoshootId"] = photoshootId;
+    jsonData["photoshootNotes"] = $("#rowId_" + photoshootId + " .notes").val();
 
+    $.ajax({
+        url: '/Photoshoots/AddPhotoshootNotes/',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+
+    }).always(function (data) {
+
+    });
+}
+
+
+
+/*
+Developer: Mohi
+Date: 7-18-19
+Action: it will first select all photoshoot ids and get their note
+Input: photoshootids
+Output: it will add notes into note textarea
+*/
+
+$(document).ready(function () { 
     var photoshootids = [];
     $(".ps_notes textarea").each(function () {
         console.log($(this).val())

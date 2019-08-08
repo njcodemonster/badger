@@ -10,7 +10,7 @@
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
 }
-
+<div class="loading d-none"></div>
 <div class="row">
     <div class="col-md-2 col-sm-12">
         <h4 class="text-info">Vendors (@Model.VendorCount)</h4>
@@ -40,7 +40,7 @@
                     <td class="vendorName">@vendor.vendor_name</td>
                     <td>@vendor.vendor_code</td>
                     <td>@vendor.order_count</td>
-                    <td><a href="#" data-toggle="modal" data-target="#modalpo1">@vendor.last_order</a></td>
+                    <td><a href="/PurchaseOrders/Single/@vendor.last_order" target="_blank" >@vendor.last_order</a></td>
                     <td>
                         <button type="button" id="EditVendor" data-ID="@vendor.vendor_id" class="btn btn-light btn-sm">Edit</button>
                     </td>

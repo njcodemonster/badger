@@ -183,20 +183,29 @@ namespace badger_view.Controllers
             else{
                 try
                 {  // add new product in product table
-
                     product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/create");
-
                 }
                 catch (Exception ex)
                 {
                     var logger = _loggerFactory.CreateLogger("internal_error_log");
-                    logger.LogInformation("Problem happened in making new Product with message" + ex.Message);
+                    logger.LogInformation("Problem happened in making new Product, no product id genrated ");
+
                 }
 
-                    if (Int32.Parse(product_id) > 1)
-                    {
+                if (Int32.Parse(product_id) > 1)
+                {
+                    JObject productPhotoshoot = new JObject();
+                    productPhotoshoot.Add("photoshoot_id", 0);
+                    productPhotoshoot.Add("product_id", product_id);
+                    productPhotoshoot.Add("product_shoot_status_id", 0);
+                    productPhotoshoot.Add("updated_by", 0);
+                    productPhotoshoot.Add("updated_at", 0);
+                    productPhotoshoot.Add("created_by", user_id);
+                    productPhotoshoot.Add("created_at", _common.GetTimeStemp());
+                    await _BadgerApiHelper.GenericPostAsyncString<String>(productPhotoshoot.ToString(Formatting.None), "/photoshoots/addNewPhotoshootProduct");
 
-                        JObject product_attr_value_color = new JObject();
+
+                JObject product_attr_value_color = new JObject();
                         product_attr_value_color.Add("product_id", Int32.Parse(product_id));
                         product_attr_value_color.Add("attribute_id", color_attribute_id);
                         product_attr_value_color.Add("value_id", attr_value_id_color);
@@ -222,11 +231,7 @@ namespace badger_view.Controllers
                         used_in_obj.Add("created_at", _common.GetTimeStemp());
                         String used_in_id = await _BadgerApiHelper.GenericPostAsyncString<String>(used_in_obj.ToString(Formatting.None), "/product/createUsedIn");
                     }
-                    else {
-                    var logger = _loggerFactory.CreateLogger("internal_error_log");
-                    logger.LogInformation("Problem happened in making new Product, no product id genrated ");
-
-                    }
+                   
             }
            
 

@@ -8,12 +8,13 @@ Output: string of style
 */
 $(document).on('click', ".AddNewStyleButton", function () {
     var action = $(this).attr('data-action');
+     
     var newVendorForm = $("#newAddStyleForm input");
     if (emptyFeildValidation('newAddStyleForm') == false) {
         return false;
     }
     var jsonData = {};
-
+    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
     if (selectedProject.data("product_id") > 0) {
         jsonData["product_id"] = selectedProject.data("product_id");
@@ -76,6 +77,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
                 $('#modaladdstylec').modal('hide')
             }
         }
+        $('.poAlertMsg').html('')
     });
 });
 
@@ -173,6 +175,7 @@ Output: get data in fields
 */
 $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
     var SelectedProduct = $(this.options[this.selectedIndex]);
+     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     SelectedProductID = SelectedProduct.data("product_id");
     SelectedProductTytle = $(this.options[this.selectedIndex]).val();
     $('#modaladdstylec #product_title').val($(this.options[this.selectedIndex]).attr('data-name'));
@@ -209,7 +212,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
             $(wrapper).append('<div class="pb-2 vendorSkuBox_disabled form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" placeholder="Vendor Size"  disabled /></div><div class="form-group col-md-3"><input type="text" class="form-control d-inline" name="csku[' + x + ']" placeholder="SKU" value = "' + sku_sizes[x] + '"  disabled /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline " name="cqty[' + x + ']" placeholder="Qty" value="' + data[x].line_item_ordered_quantity + '"  disabled />  '); // add input boxes.
 
         }
-
+         $('.poAlertMsg').html('')
 
     });
 });
@@ -312,7 +315,14 @@ $(document).on('change', "#StyleType", function (event) {
     if ($(this).val() == '2') {
         $('.vendorSkuArea').hide();
     } else {
-      $('.vendorSkuArea').show();
+        $('.vendorSkuArea').show();
+        if ($('.vendorSkuArea #styleVendorSize').length == 0) {
+            var sku_sizes = ["", "XS", "S", "M", "L"];
+            for (x = 1; x < 5; x++) {
+                $("#po_input_fields_wrap").append('<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSize" id="styleSize" placeholder="Size" value = "' + sku_sizes[x] + '" /></div> <div class="form-group col-md-3"><input type="text" maxlength="7" style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+
+            }
+        }
     }
 });
 

@@ -35,6 +35,7 @@ namespace badgerApi.Interfaces
         Task<IEnumerable<AllTags>> GetAllProductTags();
         Task<Int32> GetProductShootStatus(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
+        Task<string> CreateProductImages(Productimages NewProductImages);
     }
     public class ProductRepo : IProductRepository
     {
@@ -413,6 +414,21 @@ namespace badgerApi.Interfaces
                 return result.ToString();
             }
 
+        }
+        /*
+       Developer: Azeem hassan
+       Date: 7-28-19 
+       Action: insert data to db
+       Input: image data
+       output: insertion id
+       */
+        public async Task<string> CreateProductImages(Productimages NewProductImages)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                long result = conn.Insert<Productimages>(NewProductImages);
+                return result.ToString();
+            }
         }
 
     }

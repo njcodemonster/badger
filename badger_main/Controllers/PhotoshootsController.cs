@@ -34,6 +34,9 @@ namespace badgerApi.Controllers
         string event_create_photoshoot = "Photoshoot created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_created_id = 16;
 
+        string event_add_product_photoshoot = "Photoshoot product added by user =%%userid%% with product id = %%pid%%"; ///event_add_product_photoshoot
+        int event_add_product_photoshoot_id = 34;
+
         string event_photoshoot_started = "Photoshoot started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_started_id = 17;
 
@@ -742,6 +745,42 @@ namespace badgerApi.Controllers
 
             }
             return notes;
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create new photoshoot product 
+        URL: /Photoshoots/addNewPhotoshootProduct/1
+        Request: POST
+        Input: FromBody
+        output: string success or failed
+        */
+        [HttpPost("addNewPhotoshootProduct/")]
+        public async Task<string> addNewPhotoshootProduct([FromBody]   string value)
+        {
+            string Result = "success";
+            try
+            {
+                ProductPhotoshoots newPhotoshoots = JsonConvert.DeserializeObject<ProductPhotoshoots>(value);
+                await _PhotoshootRepo.CreatePhotoshootProduct(newPhotoshoots);
+                int userId = newPhotoshoots.created_by;
+                int productId = newPhotoshoots.product_id;
+
+                event_add_product_photoshoot = event_add_product_photoshoot.Replace("%%userid%%", userId.ToString());
+                event_add_product_photoshoot = event_add_product_photoshoot.Replace("%%pid%%", productId.ToString());
+
+                await _eventRepo.AddPhotoshootAsync(productId, event_add_product_photoshoot_id, productId, event_add_product_photoshoot, userId, _common.GetTimeStemp(), table_name);
+                await _eventRepo.AddEventAsync(event_add_product_photoshoot_id, userId, productId, event_add_product_photoshoot, _common.GetTimeStemp(), user_event_table_name);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in add new Photoshoots product with message" + ex.Message);
+                Result = "failed";
+            }
+            return Result;
         }
     }
 

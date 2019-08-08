@@ -20,6 +20,7 @@ namespace badgerApi.Interfaces
         Task<List<Photoshoots>> GetAll(Int32 Limit);
         Task<string> Count();
         Task<String> Create(Photoshoots NewPhotoshoot);
+        Task<String> CreatePhotoshootProduct(ProductPhotoshoots NewPhotoshoot);
         Task<Boolean> Update(Photoshoots PhotoshootToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task UpdatePhotoshootForSummary(Dictionary<String, String> ValuePairs, String where);
@@ -74,6 +75,22 @@ namespace badgerApi.Interfaces
             {
                 var result = await conn.InsertAsync<Photoshoots>(NewPhotoshoot);
                 return result.ToString() ;
+            }
+        }
+
+        /*
+        Developer: Mohi
+        Date: 7-3-19 
+        Action: Create photoshoot product in product_photoshoot
+        Input: FromBody
+        output: 
+        */
+        public async Task<string> CreatePhotoshootProduct(ProductPhotoshoots NewPhotoshoot)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<ProductPhotoshoots>(NewPhotoshoot);
+                return result.ToString();
             }
         }
 
@@ -378,7 +395,7 @@ namespace badgerApi.Interfaces
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
             
-            sQuery = "SELECT pp.`photoshoot_id`, COUNT(pp.`photoshoot_id`) AS styles, p.`shoot_start_date` AS scheduled_date, p.`model_id`, pp.product_shoot_status_id FROM `photoshoots` p, `product_photoshoots` pp WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pp.product_shoot_status_id IN (1, 2) GROUP BY p.`photoshoot_id` ORDER BY p.`photoshoot_id` DESC";
+            sQuery = "SELECT pp.`photoshoot_id`, COUNT(pp.`photoshoot_id`) AS styles, p.`shoot_start_date` AS scheduled_date, p.`model_id`, pp.product_shoot_status_id FROM `photoshoots` p, `product_photoshoots` pp WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pp.product_shoot_status_id IN (1) GROUP BY p.`photoshoot_id` ORDER BY p.`photoshoot_id` DESC";
 
             using (IDbConnection conn = Connection)
             {
