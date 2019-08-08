@@ -102,15 +102,16 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             int user_id = Int32.Parse(await _ILoginHelper.GetLoginUserId());
-            
+
+            String product_id = "";
 
             JObject product = new JObject();
-            List<JObject> style_attr = new List<JObject>();
+           
             JObject allData = JObject.Parse(json.ToString());
+
             JArray vendor_style_sku_data = (JArray)allData["vendor_style_sku"];
 
             Int32 product_id_current = json.Value<Int32>("product_id");
-            String product_id = "";
             Int32 po_id = json.Value<Int32>("po_id");
             Int32 vendor_id = json.Value<Int32>("vendor_id");
             string product_name = json.Value<string>("product_name");
@@ -128,15 +129,30 @@ namespace badger_view.Controllers
             string product_retail = json.Value<string>("product_retail");
             string product_url_handle = product_name.Replace(' ', '-').ToLower();
             string product_type_id = json.Value<string>("product_type_id");
+
+
+
+            //default values FIXED hardcoded
+
             int size_and_fit_id = 0;
             int wash_type_id = 0;
             int product_discount = 20;
             int published_status = 0;
             int is_on_site_status = 0;
-            String attr_value_id_color = "15";
-            string color_attribute_id = "1"; // color attribute id
+            String attr_value_id_color = "15"; // blank entry for color
+            int color_attribute_id = 1; // color attribute id
 
-          
+
+            // item insert default values
+            string item_status_id = "1"; // Not Recieved
+
+            int ra_status = 0;
+            int barcode = 0;
+            int slot_number = 0;
+            int bag_code = 0;
+            
+
+
             product.Add("vendor_id", vendor_id);
             product.Add("product_name", product_name);
             product.Add("vendor_color_name", vendor_color_name);
@@ -292,12 +308,12 @@ namespace badger_view.Controllers
 
 
                     JObject items = new JObject();
-                    items.Add("barcode", 0);
-                    items.Add("slot_number", 0);
-                    items.Add("bag_code", 0);
-                    items.Add("item_status_id", 1);
-                    items.Add("ra_status", 0);
-                    items.Add("sku", sku);
+                    items.Add("barcode", barcode); // 0
+                    items.Add("slot_number", slot_number); // 0
+                    items.Add("bag_code", bag_code); // 0
+                    items.Add("item_status_id", item_status_id); // 1
+                    items.Add("ra_status", ra_status); // 0
+                    items.Add("sku", sku); 
                     items.Add("sku_id", sku_id);
                     items.Add("sku_family", sku_family);
                     items.Add("product_id", product_id);

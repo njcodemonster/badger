@@ -16,6 +16,7 @@ namespace badgerApi.Interfaces
     public interface IAttributesRepository
     {
         Task<Attributes> GetById(int id);
+        Task<List<Attributes>> GetByTypeId(int attribute_type_id);
         Task<List<Attributes>> GetAll(Int32 Limit);
         Task<String> Create(Attributes NewAttribute);
         Task<Boolean> Update(Attributes AttributesToUpdate);
@@ -80,6 +81,25 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+           Developer: Ubaid
+           Date: 5-8-19 
+           Action: getting attributes with type id from database
+           Input: type id
+           output: attributes list
+        */
+        public async Task<List<Attributes>> GetByTypeId(Int32 attribute_type_id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Attributes> result = new List<Attributes>();
+                
+                    result = await conn.QueryAsync<Attributes>("Select * from " + TableName + " Where attribute_type_id=" + attribute_type_id.ToString() + ";");
+                
+               
+                return result.ToList();
+            }
+        }
 
         /*
             Developer: Azeem Hassan
