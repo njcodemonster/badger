@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using Newtonsoft.Json;
+
 namespace badgerApi.Interfaces
 {
     public interface IProductRepository
@@ -36,6 +38,7 @@ namespace badgerApi.Interfaces
         Task<Int32> GetProductShootStatus(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
+        Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
     }
     public class ProductRepo : IProductRepository
     {
@@ -429,6 +432,32 @@ namespace badgerApi.Interfaces
                 long result = conn.Insert<Productimages>(NewProductImages);
                 return result.ToString();
             }
+        }
+
+        /*
+       Developer: Sajid Khan
+       Date: 8-6-19 
+       Action: 
+       Input: 
+       output: 
+       */
+        public async Task<bool> UpadateImagePrimary(int product_image_id, int is_primary)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String updateQuery = "update product_images set isprimary = "+ is_primary + " where product_image_id = "+ product_image_id;
+                    var updateResult = await conn.QueryAsync<object>(updateQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
         }
 
     }

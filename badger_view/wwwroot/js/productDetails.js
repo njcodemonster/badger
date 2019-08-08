@@ -146,7 +146,10 @@ function readURLAndUploadImg(event) {
         formData.append("productImages", files[i]);
         formData.append("product_id", $('#product_name').attr('data-id'));
         formData.append("product_title", files[i].name.split('.')[0]);
-        formData.append("product_primary", '0');
+        if ($('#dropBox img'), hasClass('dummyImage')) 
+            formData.append("product_primary", '1');
+        else
+            formData.append("product_primary", '0');
     }
     $.ajax({
         url: "/product/InsertattributeImages",
@@ -176,9 +179,9 @@ function readURLAndUploadImg(event) {
                 var dataImg_id = event.target.dataImg_id;
                 
                 var count = $('.productImageArea .viewImage span').length;
-                $('.productImageArea .viewImage').append(' <span id="div'+count+'" ondrop="drop(event)" ondragover="allowDrop(event)"><img data-filename="'+event.target.fileName+'" src="'+picFile.result+'" data-imageId="'+dataImg_id+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
+                $('.productImageArea .viewImage').append(' <span id="div' + count +'" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" data-filename="'+event.target.fileName+'" src="'+picFile.result+'" data-imageId="'+dataImg_id+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
                     if ($('.productImageArea .proBigImage span').length == 0) {
-                    $('.productImageArea .proBigImage').append('<span id="dopBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+picFile.result+'" data-filename="'+event.target.fileName+'" data-imageId="'+dataImg_id+'" height="300" /></span>')
+                    $('.productImageArea .proBigImage').append('<span id="dropBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" src="'+picFile.result+'" data-filename="'+event.target.fileName+'" data-imageId="'+dataImg_id+'" height="300" /></span>')
 
                 }
             });
@@ -209,19 +212,42 @@ function drop(ev) {
     dropValue = ev.target.attributes.src.value;
     dropfilename = $('#' + dragId).attr('data-filename')
     dropimageid = $('#' + dragId).attr('data-imageid')
-    $('#' + dragId).attr('src', dropValue).attr('data-filename', ev.target.attributes["data-filename"].value).attr('data-imageid', ev.target.attributes["data-imageid"].value)
+    if (ev.target.attributes.class.value.indexOf('dummyImage') == -1) {
+        $('#' + dragId).attr('src', dropValue).attr('data-filename', ev.target.attributes["data-filename"].value).attr('data-imageid', ev.target.attributes["data-imageid"].value)
+    } else {
+        $('#' + dragId).parent('span').remove();
+    }
     ev.target.attributes.src.value = data;
     ev.target.attributes["data-filename"].value = dropfilename;
     ev.target.attributes["data-imageid"].value = dropimageid;
+    if (ev.toElement.parentElement.id == 'dropBox') {
+          $('.loaderBox').show() 
+        var imageData = [];
+        var jsonData = {};
+        jsonData["dataImage"] = [];
+        jsonData["dataImage"].push({ product_img_id: $('#' + dragId).attr('data-imageid'), is_primary: "0" });
+        jsonData["dataImage"].push({ product_img_id: ev.target.attributes["data-imageid"].value, is_primary: "1" });
+        $.ajax({
+            url: "/product/UpdateProductImagePrimary",
+            dataType: 'json',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+        }).always(function (data) {
+            console.log(data);
+            $('.loaderBox').hide() 
+        })
+    }
 }
 
-$(document).on("click", ".viewImage img", function () {
+/*$(document).on("click", ".viewImage img", function () {
     var currentSrc = $(this).attr('src')
-    var dropSrc = $('#dopBox img').attr('src')
+    var dropSrc = $('#dropBox img').attr('src')
     $(this).attr('src', dropSrc)
-    $('#dopBox img').attr('src',currentSrc)
+    $('#dropBox img').attr('src',currentSrc)
 
-})
+})*/
 
 $(document).on('keydown', "#product_cost,#product_retail,#product_discount", function (e) {
     return onlyNumbersWithDot(e)

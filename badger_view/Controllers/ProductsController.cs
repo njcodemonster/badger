@@ -128,11 +128,44 @@ namespace badger_view.Controllers
                                 productImageDetails.Add("image_id", img_id);
                                 productImageDetails.Add("product_name", formFile.FileName);
                                 productDetailArray.Add(productImageDetails);
-                          
                     }
                 }
                 string data = JsonConvert.SerializeObject(productDetailArray);
                 return data;
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+        }
+
+        /*
+          Developer: Azeem Hassan
+          Date: 7-30-19
+          Request: POST
+          Action:send images to badger api to insert attr images
+          URL: /product/InsertattributeImages
+          Input: image data
+          output: massage
+      */
+        [Authorize]
+        [HttpPost("/product/UpdateProductImagePrimary")]
+        public async Task<string> UpdateProductImagePrimary([FromBody]   JObject json)
+        {
+            SetBadgerHelper();
+            string result = "0";
+            try {
+                JObject imageData = JObject.Parse(json.ToString());
+                JArray imageDataArray = (JArray)imageData["dataImage"];
+
+                for (int i = 0; i < imageDataArray.Count; i++)
+                {
+                    JObject imageObj = new JObject();
+                    imageObj.Add("product_img_id", imageDataArray[i].Value<string>("product_img_id"));
+                    imageObj.Add("is_primary", imageDataArray[i].Value<string>("is_primary"));
+                    result = await _BadgerApiHelper.GenericPostAsyncString<String>(imageObj.ToString(Formatting.None), "/product/updateProductImagePrimary");
+                }
+                return result;
             }
             catch (Exception ex)
             {
