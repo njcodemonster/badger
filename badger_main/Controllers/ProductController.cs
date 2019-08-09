@@ -430,6 +430,35 @@ namespace badgerApi.Controllers
         }
 
         /*
+         Developer: Azeem hassan
+         Date:28-7-19
+         Action: sending data to db to insert image data
+         URL: /product/createProductImage
+         Input: image data
+         output: new insertion id
+         */
+        // POST: api/product/updateProductImagePrimary   
+        [HttpPost("updateProductImagePrimary")]
+        public async Task<Boolean> updateProductImagePrimary([FromBody]   string value)
+        {
+            Boolean updateResult = false;
+            try
+            {
+                dynamic dataImage = JsonConvert.DeserializeObject<Object>(value);
+                int product_img_id = dataImage.product_img_id;
+                int is_primary = dataImage.is_primary;
+
+                updateResult = await _ProductRepo.UpadateImagePrimary(product_img_id, is_primary);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return updateResult;
+        }
+
+        /*
           Developer: Sajid Khan
           Date: 7-12-19 
           Action: Getting vendor name and id by search string
