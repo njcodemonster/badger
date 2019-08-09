@@ -13,10 +13,11 @@ $(document).ready(function () {
             // { "orderable": true, "targets": [1, 2, 3] }
         ]
     });
-
-
     general_search();
+});
 
+$(document).on('click', "#general_search_btn", function () {
+    $("#general_search").autocomplete("search", $("#general_search").val()); 
 });
 
 
@@ -26,7 +27,6 @@ function general_search() {
     var general_search = $('#general_search');
     general_search.autocomplete({
         source: function (request, response) {
-
             var jsonData = {};
             jsonData["search"] = request.term;
             console.log(jsonData);
