@@ -146,7 +146,7 @@ function readURLAndUploadImg(event) {
         formData.append("productImages", files[i]);
         formData.append("product_id", $('#product_name').attr('data-id'));
         formData.append("product_title", files[i].name.split('.')[0]);
-        if ($('#dropBox img'), hasClass('dummyImage')) 
+        if ($('#dropBox img').hasClass('dummyImage')) 
             formData.append("product_primary", '1');
         else
             formData.append("product_primary", '0');
@@ -179,9 +179,12 @@ function readURLAndUploadImg(event) {
                 var dataImg_id = event.target.dataImg_id;
                 
                 var count = $('.productImageArea .viewImage span').length;
-                $('.productImageArea .viewImage').append(' <span id="div' + count +'" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" data-filename="'+event.target.fileName+'" src="'+picFile.result+'" data-imageId="'+dataImg_id+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
-                    if ($('.productImageArea .proBigImage span').length == 0) {
-                    $('.productImageArea .proBigImage').append('<span id="dropBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" src="'+picFile.result+'" data-filename="'+event.target.fileName+'" data-imageId="'+dataImg_id+'" height="300" /></span>')
+                if ($('#dropBox img').hasClass('dummyImage')) {
+                    $('.productImageArea .proBigImage').find('#dropBox').remove();
+                    $('.productImageArea .proBigImage').append('<span id="dropBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" src="' + picFile.result + '" data-filename="' + event.target.fileName + '" data-imageId="' + dataImg_id + '" height="300" width="230" /></span>')
+
+                } else {
+                    $('.productImageArea .viewImage').append(' <span id="div' + count + '" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" data-filename="' + event.target.fileName + '" src="' + picFile.result + '" data-imageId="' + dataImg_id + '" id="drag' + count + '" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
 
                 }
             });

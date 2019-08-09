@@ -112,7 +112,7 @@ namespace badger_view.Controllers
                        
                               
                                 JObject productImageDetails = new JObject();
-                                //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                                
                                 int product_id = Int32.Parse(productFiles.product_id);
                                 JObject productDocuments = new JObject();
