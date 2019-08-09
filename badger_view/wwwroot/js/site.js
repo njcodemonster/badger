@@ -6,16 +6,121 @@
 // Initiate data table
 
 $(document).ready(function () {
-    $('#openpo,#vendorListingArea').DataTable({ "aaSorting": [] });
+    $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
         "columnDefs": [
             { "orderable": false, "targets": [0, 1, 7] },
             // { "orderable": true, "targets": [1, 2, 3] }
         ]
     });
+
+
+    // General Search
+    var general_search = $('#general_search');
+    general_search.autocomplete({
+        source: function (request, response) {
+
+            var jsonData = {};
+            jsonData["search"] = request.term;
+            console.log(jsonData);
+            var newData = [];
+
+            if (request.term.length > 3) {
+                $.ajax({
+                    url: "/search/autosuggest/",
+                    dataType: 'json',
+                    type: 'post',
+                    data: JSON.stringify(jsonData),
+                    contentType: 'application/json',
+                    processData: false,
+                }).always(function (data) {
+                    console.log(data);
+
+                        /********** Barcode **********************/
+                        if (data.barcodeList.length > 0) {
+                            newData = data.barcodeList;
+                        }
+
+                        /********** SKU **********************/
+                        if (data.skuList.length > 0) {
+                            newData = data.skuList;
+                        }
+
+                        /********** Vendor **********************/
+                        if (data.vendorList.length > 0 && data.productList.length == 0) {
+                            newData = data.vendorList;
+                        }
+
+                        /********** Product **********************/
+                        if (data.productList.length > 0 && data.vendorList.length == 0) {
+                            newData = data.productList;
+                        }
+
+                        /********** Vendor & Product **********************/
+                        if (data.productList.length > 0 && data.vendorList.length > 0) {
+                            newData = data.vendorList.concat(data.productList);
+                        }
+
+                        response(newData);
+                });
+            }
+        },
+        select: function (event, ui) {
+            console.log(ui.item);
+            general_search.val(ui.item.label);
+            return false;
+        },
+        focus: function (event, ui) {
+            general_search.val(ui.item.label);
+            return false;
+        }
+    });
+
+    general_search.data("ui-autocomplete")._renderItem = function (ul, item) {
+
+        var $li = $('<li>'),
+            $img = $('<img style="width:35px;height:35px;padding-right:4px;">');
+
+        if (item.type == 'vendor') {
+            $img.attr({
+                src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
+                alt: item.label
+            });
+        } else {
+            $img.attr({
+                src: 'uploads/' + item.image,
+                alt: item.label
+            });
+        }
+       
+
+        $li.attr('data-value', item.label);
+
+        if (item.type == 'barcode') {
+            $li.append('<a href="#barcode">');
+        }
+
+        if (item.type == 'sku') {
+            $li.append('<a href="#sku">');
+        }
+
+        if (item.type == 'vendor') {
+            $li.append('<a href="#vendor">');
+        }
+
+        if (item.type == 'product') {
+            $li.append('<a href="#product">');
+        }
+
+        if (item.image != null) {
+            $li.find('a').append($img).append(item.label);
+        } else {
+            $li.find('a').append(item.label);
+        }
+        return $li.appendTo(ul);
+    };
+
 });
-
-
 
 // Accordian PO Mgmt
 

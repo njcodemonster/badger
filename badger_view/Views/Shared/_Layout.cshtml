@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css" />
     <!-- Font Awesome -->
     <link rel="stylesheet" href="~/lib/fontawesome/css/all.css">
-   
+
+    <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
+
     @RenderSection("Head_Scripts", required: false)
 </head>
 <body>
@@ -60,8 +62,8 @@
                         </a>
                     </li>
                 </ul>
-                <form class="form-inline my-2 my-lg-0" asp-controller="Search" asp-action="Index">
-                    <input class="form-control mr-sm-2" type="text" name="search" id="search" placeholder="Search anything" aria-label="Search">
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="text" name="search" id="general_search" placeholder="Search anything" aria-label="Search">
                     <button class="btn btn-warning my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 <ul class="navbar-nav">
@@ -113,7 +115,7 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/moment.min.js" asp-append-version="true"></script>
-   
+    <script src="~/js/jquery-ui.js"></script>
     @RenderSection("Scripts", required: false)
 
 

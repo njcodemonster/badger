@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommonHelper;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.RegularExpressions;
+
 namespace badger_view.Controllers
 {
     public class SearchController : Controller
@@ -35,14 +37,78 @@ namespace badger_view.Controllers
         }
 
         [Authorize]
+        [HttpPost("search/autosuggest")]
+        public async Task<String> AutoSuggest([FromBody] JObject json)
+        {
+            SetBadgerHelper();
+
+            dynamic multipleObject = new ExpandoObject();
+            dynamic xobject = new object();
+            string search = json.Value<string>("search");
+            int searchLength = search.Length;
+
+            Boolean checkPattern = false;
+            int[] values = null;
+
+            /*********   Barcode  *********************/
+            if (searchLength == 8)
+            {
+                checkPattern = Regex.IsMatch(search, "^([0-9]{8})+$");
+                if (checkPattern == true)
+                {
+                    multipleObject.barcodeList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/purchaseorders/getbarcode/" + search);
+                }
+            }
+            else
+            {
+                multipleObject.barcodeList = xobject;
+            }
+           
+            /*********   SKU  *********************/
+            if (searchLength >= 5 && searchLength <= 8)
+            {
+                checkPattern = Regex.IsMatch(search, "(^([a-zA-Z]{2}[0-9]{3})|([A-Z]{2}[0-9]{3}-[0-9]{1}))+$");
+                if (checkPattern == true)
+                {
+                    multipleObject.skuList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/sku/getsku/"+search);
+                }
+                else
+                {
+                    multipleObject.skuList = xobject;
+                }
+            }
+            else
+            {
+                multipleObject.skuList = xobject;
+            }
+
+            /********* Vendor & Product *********************/
+            checkPattern = Regex.IsMatch(search, "^[a-zA-Z_ ]+$");
+            if (checkPattern)
+            {
+                multipleObject.vendorList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendor/"+search);
+                multipleObject.productList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getproduct/"+search);                
+            }
+            else
+            {
+                multipleObject.vendorList = xobject;
+                multipleObject.productList = xobject;
+            }
+
+            return JsonConvert.SerializeObject(multipleObject);
+
+        }
+
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(string search)
         {
             ViewBag.SearchKey = search;
 
             SetBadgerHelper();
-
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/searchbypoandinvoice/" + search);
+            return View();
+           /* PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/searchbypoandinvoice/" + search);
 
             string NewDateFormat = "";
 
@@ -71,7 +137,7 @@ namespace badger_view.Controllers
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
 
-            return View("Index", PurchaseOrdersPageModal);
+            return View("Index", PurchaseOrdersPageModal);*/
         }
     }
 }

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using System.Dynamic;
+
 namespace badgerApi.Interfaces
 {
     public interface IProductRepository
@@ -36,6 +38,7 @@ namespace badgerApi.Interfaces
         Task<Int32> GetProductShootStatus(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
+        Task<Object> GetProduct(string product_name);
     }
     public class ProductRepo : IProductRepository
     {
@@ -429,6 +432,25 @@ namespace badgerApi.Interfaces
                 long result = conn.Insert<Productimages>(NewProductImages);
                 return result.ToString();
             }
+        }
+
+        /*
+        Developer: Azeem hassan
+        Date: 7-28-19 
+        Action: insert data to db
+        Input: image data
+        output: insertion id
+        */
+        public async Task<Object> GetProduct(string product_name)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id as value, product_name as label, product_vendor_image as image,'product' as type FROM " + TableName + " WHERE product_name LIKE '%" + product_name + "%';";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
         }
 
     }
