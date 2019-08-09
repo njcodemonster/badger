@@ -871,8 +871,8 @@ namespace badgerApi.Controllers
 
         /*
         Developer: Sajid Khan
-        Date: 7-20-19 
-        Action: Check Sku already Exist or not by sku "api/purchaseorders/getbarcode/12345678"
+        Date: 08-09-19 
+        Action:Get item with barcode data by barcode "api/purchaseorders/getbarcode/12345678"
         URL: api/purchaseorders/getbarcode/12346578
         Request: Get
         Input: int barcode

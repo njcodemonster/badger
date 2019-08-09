@@ -843,8 +843,8 @@ namespace itemService.Controllers
 
         /*
         Developer: Sajid Khan
-        Date: 7-20-19 
-        Action: Check Barcode already exist by barcode 
+        Date: 08-09-19 
+        Action: get item data with Barcode by barcode 
         URL: api/item/getbarcode/12345678
         Request: Get
         Input: int barcode

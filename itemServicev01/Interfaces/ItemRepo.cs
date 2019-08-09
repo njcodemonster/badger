@@ -916,7 +916,7 @@ namespace itemService.Interfaces
         Date: 7-20-19 
         Action: Check Barcode already Exist by barcode data from database
         Input: int barcode
-        output: list of barcode
+        output: dynamic list of barcode
         */
         public async Task<List<Items>> CheckBarcodeExist(int barcode)
         {
@@ -934,10 +934,10 @@ namespace itemService.Interfaces
 
         /*
         Developer: Sajid Khan
-        Date: 8-8-19 
+        Date: 08-09-19 
         Action: Get barcode by barcode from database 
         Input:  int barcode
-        output: list of barcode data
+        output: dynamic list of barcode data
         */
         public async Task<Object> GetBarcode(int barcode)
         {

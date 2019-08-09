@@ -422,12 +422,12 @@ namespace badgerApi.Interfaces
 
         }
         /*
-       Developer: Azeem hassan
-       Date: 7-28-19 
-       Action: insert data to db
-       Input: image data
-       output: insertion id
-       */
+        Developer: Azeem hassan
+        Date: 7-28-19 
+        Action: insert product image data to db
+        Input: image data
+        output: insertion id
+        */
         public async Task<string> CreateProductImages(Productimages NewProductImages)
         {
             using (IDbConnection conn = Connection)
@@ -438,9 +438,9 @@ namespace badgerApi.Interfaces
         }
 
         /*
-        Developer: Azeem hassan
-        Date: 7-28-19 
-        Action: insert data to db
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get product data by product name to db
         Input: image data
         output: insertion id
         */
@@ -457,12 +457,12 @@ namespace badgerApi.Interfaces
         }
 
         /*
-       Developer: Sajid Khan
-       Date: 8-6-19 
-       Action: 
-       Input: 
-       output: 
-       */
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: update product image as primary in database
+        Input: int product_image_id, int is_primary
+        output: boolean
+        */
         public async Task<bool> UpadateImagePrimary(int product_image_id, int is_primary)
         {
             Boolean res = false;

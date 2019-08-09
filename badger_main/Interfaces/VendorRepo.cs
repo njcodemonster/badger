@@ -320,12 +320,12 @@ namespace badgerApi.Interfaces
             return vendorDetails;
         }
         /*
-            Developer: Azeem Hassan
-            Date: 7-11-19 
-            Action: get all vendor code
-            Input: vendorcode
-            output: list of vendor code data
-         */
+        Developer: Azeem Hassan
+        Date: 7-11-19 
+        Action: get all vendor code
+        Input: vendorcode
+        output: list of vendor code data
+        */
         public async Task<Object> CheckVendorCodeExist(string vendorcode)
         {
             dynamic vendorDetails = new ExpandoObject();
@@ -338,6 +338,13 @@ namespace badgerApi.Interfaces
             return vendorDetails;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get all vendor data by vendor name
+        Input: string vendor
+        output: dynamic list of vendor data
+        */
         public async Task<Object> GetVendor(string vendor)
         {
             dynamic vendorDetails = new ExpandoObject();

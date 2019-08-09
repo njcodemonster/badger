@@ -164,10 +164,10 @@ namespace badgerApi.Interfaces
 
         /*
         Developer: Sajid Khan
-        Date: 8-8-19 
+        Date: 08-09-19 
         Action: Get All sku by sku from database 
         Input: string sku
-        output: list of sku data
+        output: dynamic list of sku data
         */
         public async Task<Object> GetSku(string sku)
         {

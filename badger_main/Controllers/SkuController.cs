@@ -237,8 +237,8 @@ namespace badgerApi.Controllers
 
         /*
         Developer: Sajid Khan
-        Date: 7-20-19 
-        Action: Check Sku already Exist or not by sku "api/purchaseorders/getsku/sk100-1"
+        Date: 08-09-19 
+        Action: Get Sku data by sku "api/purchaseorders/getsku/sk100-1"
         URL: api/purchaseorders/getsku/sk100-1
         Request: Get
         Input: string sku
