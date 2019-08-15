@@ -26,6 +26,7 @@ namespace CommonHelper
                 }
                 request.Key = fileNameInS3; //file name up in S3  
                 request.InputStream = localFilePath;
+                request.CannedACL = S3CannedACL.PublicRead;
                 utility.Upload(request); //commensing the transfer  
 
                 return true; //indicate that the file was sent  

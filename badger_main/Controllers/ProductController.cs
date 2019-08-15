@@ -33,14 +33,14 @@ namespace badgerApi.Controllers
 
         // GET: api/Product
         /*
-         Developer: Azeem Hassan
-         Date:7-8-19
-         Action: getting all Products list
-         Request:GET
-         URL: api/Product
-         Input: null
-         output: list of Products
-      */
+        Developer: Azeem Hassan
+        Date:7-8-19
+        Action: getting all Products list
+        Request:GET
+        URL: api/Product
+        Input: null
+        output: list of Products
+        */
         [HttpGet("list")]
         public async Task<ActionResult<List<Product>>> GetAsync()
         {
@@ -55,17 +55,16 @@ namespace badgerApi.Controllers
                 logger.LogInformation("Problem happened in selecting the data for get all with message" + ex.Message);
                 return ToReturn;
             }
-
-
         }
+
         /*
-           Developer: Azeem Hassan
-           Date:7-8-19
-           Action: getting ProductDetail by id
-           Request:GET
-           URL: api/Product/detailpage/1
-           Input: int id
-           output: ProductDetails
+        Developer: Azeem Hassan
+        Date:7-8-19
+        Action: getting ProductDetail by id
+        Request:GET
+        URL: api/Product/detailpage/1
+        Input: int id
+        output: ProductDetails
         */
         [HttpGet("detailpage/{id}")]
         public async Task<ProductDetailsPageData> GetProductDetailPage(string id)
@@ -100,13 +99,13 @@ namespace badgerApi.Controllers
         }
 
         /*
-           Developer: Azeem Hassan
-           Date:7-8-19
-           Action: getting product by id
-           Request:GET
-           URL: api/Product/list/1
-           Input: int id
-           output: product
+        Developer: Azeem Hassan
+        Date:7-8-19
+        Action: getting product by id
+        Request:GET
+        URL: api/Product/list/1
+        Input: int id
+        output: product
         */
         [HttpGet("list/{id}")]
         public async Task<List<Product>> GetAsync(int id)
@@ -155,23 +154,13 @@ namespace badgerApi.Controllers
         }
 
         /*
-       Developer: ubaid
-       Date:5-7-19
-       Action:get HTML Form (New Styles Data) from VIEW and pass the data to items API
-       URL: /product/createitems/{quantity}
-       Input: HTML form Body Json with the data of new product
-       output: New item id
-       */
-        // POST: api/product/create/items
-        /*
-          Developer: Azeem Hassan
-          Date:7-8-19
-          Action: Inserting new items
-          Request:POST
-          URL:  api/product/create/items
-          Input: FormBody data and quantity
-          output: NewInsertionID
-       */
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Styles Data) from VIEW and pass the data to items API
+        URL: /product/createitems/{quantity}
+        Input: HTML form Body Json with the data of new product
+        output: New item id
+        */
         [HttpPost("createitems/{qty}")]
         public async Task<string> PostItemsAsync([FromBody]   string value,int qty)
         {
@@ -190,14 +179,14 @@ namespace badgerApi.Controllers
         }
 
         /*
-         Developer: Azeem Hassan
-         Date:7-8-19
-         Action: Update specific product by id
-         Request:PUT
-         URL:  api/product/updatespecific/5
-         Input: FormBody data and int id
-         output: Success/Failed
-      */
+        Developer: Azeem Hassan
+        Date:7-8-19
+        Action: Update specific product by id
+        Request:PUT
+        URL:  api/product/updatespecific/5
+        Input: FormBody data and int id
+        output: Success/Failed
+        */
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
         {
@@ -234,16 +223,14 @@ namespace badgerApi.Controllers
         }
 
         /*
-            Developer: Azeem Hassan
-            Date:7-8-19
-            Action: Update specific product attribute by id
-            Request:PUT
-            URL:  api/Product/attribute/updatespecific/5
-            Input: FormBody data and int id
-            output: Success/Failed
+        Developer: Azeem Hassan
+        Date:7-8-19
+        Action: Update specific product attribute by id
+        Request:PUT
+        URL:  api/Product/attribute/updatespecific/5
+        Input: FormBody data and int id
+        output: Success/Failed
         */
-
-
         [HttpPut("attribute/updatespecific/{id}")]
         public async Task<string> AttributeUpdateSpecific(int id, [FromBody] string value)
         {
@@ -302,13 +289,13 @@ namespace badgerApi.Controllers
         }
 
         /*
-       Developer: ubaid
-       Date:5-7-19
-       Action:get HTML Form (New Styles Attributes Values Data) from VIEW and pass the data to API product Repo 
-       URL: /product/createAttributesValues
-       Input: HTML form Body Json with the data of new Attribute values and product_id and new Attribute_id
-       output: New Attribute value id
-       */
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Styles Attributes Values Data) from VIEW and pass the data to API product Repo 
+        URL: /product/createAttributesValues
+        Input: HTML form Body Json with the data of new Attribute values and product_id and new Attribute_id
+        output: New Attribute value id
+        */
         // POST: api/product/create
         [HttpPost("createAttributesValues")]
         public async Task<string> PostAsyncAttributesValues([FromBody]   string value)
@@ -328,12 +315,12 @@ namespace badgerApi.Controllers
         }
 
         /*
-       Developer: ubaid
-       Date:5-7-19
-       Action:get HTML Form (New Styles SKU Data) from VIEW and pass the data to API product Repo 
-       URL: /product/createSku
-       Input: HTML form Body Json with the data of new SKU values and product_id
-       output: New SKU id
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Styles SKU Data) from VIEW and pass the data to API product Repo 
+        URL: /product/createSku
+        Input: HTML form Body Json with the data of new SKU values and product_id
+        output: New SKU id
        */
         // POST: api/product/create
         [HttpPost("createSku")]
@@ -354,13 +341,13 @@ namespace badgerApi.Controllers
         }
 
         /*
-          Developer: ubaid
-          Date:5-7-19
-          Action:get HTML Form (New Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
-          URL: /product/createLineitems
-          Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
-          output: New LINE ITEM id
-          */
+        Developer: ubaid
+        Date:5-7-19
+        Action:get HTML Form (New Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
+        URL: /product/createLineitems
+        Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
+        output: New LINE ITEM id
+        */
         // POST: api/product/create   // purchase order line items
         [HttpPost("createLineitems")]
         public async Task<string> PostAsyncLineitem([FromBody]   string value)
@@ -379,13 +366,13 @@ namespace badgerApi.Controllers
             return NewInsertionID;
         }
         /*
-          Developer: ubaid
-          Date:13-7-19
-          Action:get HTML Form (POid and product id) from VIEW and pass the data to API product Repo 
-          URL: /product/createUsedIn
-          Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
-          output: New LINE ITEM id
-          */
+        Developer: ubaid
+        Date:13-7-19
+        Action:get HTML Form (POid and product id) from VIEW and pass the data to API product Repo 
+        URL: /product/createUsedIn
+        Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
+        output: New LINE ITEM id
+        */
         // POST: api/product/createUsedIn   
         [HttpPost("createUsedIn")]
         public async Task<string> PostAsyncUsedIn([FromBody]   string value)
@@ -403,14 +390,15 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
         /*
-          Developer: Azeem hassan
-          Date:28-7-19
-          Action: sending data to db to insert image data
-          URL: /product/createProductImage
-          Input: image data
-          output: new insertion id
-          */
+        Developer: Azeem hassan
+        Date:28-7-19
+        Action: sending data to db to insert image data
+        URL: /product/createProductImage
+        Input: FromBody string value
+        output: new insertion id
+        */
         // POST: api/product/createProductImage   
         [HttpPost("createProductImage")]
         public async Task<string> createProductImage([FromBody]   string value)
@@ -427,6 +415,64 @@ namespace badgerApi.Controllers
                 logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
             }
             return NewInsertionID;
+        }
+
+        /*
+        Developer: Azeem hassan
+        Date:28-7-19
+        Action: sending data to db to update image as primary
+        URL: /product/updateProductImagePrimary
+        Input: FromBody string value
+        output: boolean
+        */
+        // POST: api/product/updateProductImagePrimary   
+        [HttpPost("updateProductImagePrimary")]
+        public async Task<Boolean> updateProductImagePrimary([FromBody]   string value)
+        {
+            Boolean updateResult = false;
+            try
+            {
+                dynamic dataImage = JsonConvert.DeserializeObject<Object>(value);
+                int product_img_id = dataImage.product_img_id;
+                int is_primary = dataImage.is_primary;
+
+                updateResult = await _ProductRepo.UpadateImagePrimary(product_img_id, is_primary);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return updateResult;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Getting list of product by product_name string
+        URL:  api/product/getproduct/product_name
+        Request GET
+        Input: string product_name 
+        output: dynamic list of products
+        */
+        [HttpGet("getproduct/{product_name}")]
+        public async Task<List<object>> GetProduct(string product_name)
+        {
+            dynamic productDetails = new object();
+            try
+            {
+                productDetails = await _ProductRepo.GetProduct(product_name);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return productDetails;
+
         }
     }
 }

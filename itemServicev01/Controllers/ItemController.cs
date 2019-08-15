@@ -818,7 +818,6 @@ namespace itemService.Controllers
         Input: int barcode
         output: boolean
         */
-        // GET: api/sku/list/1
         [HttpGet("checkbarcodeexist/{barcode}")]
         public async Task<Boolean> CheckBarcodeExist(int barcode)
         {
@@ -840,6 +839,34 @@ namespace itemService.Controllers
 
             }
             return result;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get item data with Barcode by barcode 
+        URL: api/item/getbarcode/12345678
+        Request: Get
+        Input: int barcode
+        output: boolean
+        */
+        [HttpGet("getbarcode/{barcode}")]
+        public async Task<object> GetBarcode(int barcode)
+        {
+            dynamic barcodeDetails = new object();
+            try
+            {
+                barcodeDetails = await _ItemRepository.GetBarcode(barcode);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get barcode with message" + ex.Message);
+
+            }
+
+            return barcodeDetails;
         }
     }
 }

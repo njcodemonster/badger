@@ -75,7 +75,7 @@
                             </td>
                             <td>
                                 <img src="~/images/@Model.Product.product_vendor_image" height="100" />
-                                WS114
+                                @Model.Product.sku_family
                             </td>
                         </tr>
                         <tr>
@@ -123,7 +123,7 @@
                             <td>
                                 <input type="text" id="main_page_bulit3" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
                             </td>
-                            <td><i class="fa fa-plus addMorePoints" aria-hidden="true"></i></td>
+                            <td><!-- <i class="fa fa-plus addMorePoints" aria-hidden="true"></i>--></td>
                         </tr>
                     </table>
                 </div>
@@ -139,12 +139,37 @@
                         <tr>
                             <td class="proBigImage">
                                 <h5>Product Photos:</h5>
-                                <span id="dopBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="~/images/sample-dress.jpg" height="300" width="230" /></span>
+                                <span id="dropBox" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    @{
+                                        string productPrimaryImage = Model.product_Images.Where(x => x.isprimary == 1).Select(X => X.product_image_url).DefaultIfEmpty("None").First();
+                                        int product_image_id = Model.product_Images.Where(x => x.isprimary == 1).Select(X => X.product_image_id).DefaultIfEmpty(0).First();
+                                    }
+                                    @if(productPrimaryImage != "None"){
+                                        <img src="https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/@productPrimaryImage" class="productImage"  data-imageid="@product_image_id" data-filename="@productPrimaryImage" height="300" width="230" />
+                                    }else{
+                                        <img src="~/images/defaultimage.png" data-filename="defaultimage" data-imageid="0" class="dummyImage" height="300" width="230" />
+                                    }
+                                </span>
                             </td>
                             <td class="viewImage">
-                                <span id="div0" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="/images/sample-dress.jpg" id="drag0" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>
-                                <span id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="/images/sample-dress.jpg" id="drag1" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>
-
+                                @if (Model.product_Images.Count() > 1 || productPrimaryImage != "None")
+                                {
+                                    @foreach (dynamic productimages in Model.product_Images)
+                                    {
+                                        @if (productimages.isprimary == 0)
+                                        {
+                                            <span id="div_@productimages.product_image_id" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                <img data-imageid="@productimages.product_image_id" class="productImage" data-filename="@productimages.product_image_url" src="https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/@productimages.product_image_url" id="drag_@productimages.product_image_id" draggable="true" ondragstart="drag(event)" width="130" height="200">
+                                            </span>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                   // <span id="div_1" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                        //<img src="~/images/defaultimage.png" id="drag_1" draggable="true" ondragstart="drag(event)" width="130" height="200">
+                                    //</span>
+                                }
                             </td>
 
                         </tr>
@@ -154,10 +179,10 @@
 
                                 @{
                                     Dictionary<int, string> shoteStatus = new Dictionary<int, string>();
-                                    shoteStatus.Add(1, "Shoot Not Statted");
+                                    shoteStatus.Add(0, "Shoot Not Statted");
+                                    shoteStatus.Add(1, "In Progress");
                                     shoteStatus.Add(2, "Sent to Editor");
-                                    shoteStatus.Add(3, "In Progress");
-                                    shoteStatus.Add(4, "Compleate");
+                                    shoteStatus.Add(3, "Complete");
                                 }
                                 <select class="form-control required" id="product_shoot_status" data-RealValue="@Model.shootstatus">
 

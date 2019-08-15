@@ -607,8 +607,8 @@ namespace badgerApi.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-24-19 
-        Action: Get smallest sku by product ids with comma separate "api/purchaseorders/checkbarcodeexist/1"
-        URL: api/purchaseorders/checkbarcodeexist/ids
+        Action: Get smallest sku by product ids with comma separate "api/purchaseorders/smallestsku/1"
+        URL: api/purchaseorders/smallestsku/ids
         Request: Get
         Input: string product_ids
         output: string product id and sku
@@ -865,6 +865,35 @@ namespace badgerApi.Controllers
 
             }
             return countData;
+        }
+
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action:Get item with barcode data by barcode "api/purchaseorders/getbarcode/12345678"
+        URL: api/purchaseorders/getbarcode/12346578
+        Request: Get
+        Input: int barcode
+        output: dynamic list of barcode
+        */
+        [HttpGet("getbarcode/{barcode}")]
+        public async Task<object> GetBarcode(int barcode)
+        {
+            dynamic barcodeDetails = new object();
+            try
+            {
+                barcodeDetails = await _ItemsHelper.GetBarcode(barcode);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get sku with message" + ex.Message);
+
+            }
+
+            return barcodeDetails;
         }
 
 
