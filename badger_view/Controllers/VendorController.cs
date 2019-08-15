@@ -63,7 +63,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
            
-            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/200");
+            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/0/0");
 
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
@@ -72,6 +72,36 @@ namespace badger_view.Controllers
        
             return View("Index",VendorPageModal);
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get List of limit range data show by using badger api helper   
+        URL: /vendor/listpagination/{start}/{limit}"
+        Request: Get
+        Input: int start, int limit
+        output: Dynamic object of vendors
+        */
+        [Authorize]
+        [HttpGet("vendor/listpagination/{start}/{limit}")]
+        public async Task<string> ListPagination(int start, int limit)
+        {
+            SetBadgerHelper();
+
+            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/"+start+"/"+limit);
+
+            dynamic VendorPageModal = new ExpandoObject();
+            VendorPageModal.VendorCount = vendorPagerList.Count;
+            VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
+            VendorPageModal.VendorType = vendorPagerList.vendorType;
+
+            return JsonConvert.SerializeObject(VendorPageModal);
+        }
+
+
+
+
+
         /*
             Developer: Azeem Hassan
             Date: 7-3-19 
@@ -135,7 +165,7 @@ namespace badger_view.Controllers
                                 int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                                 JObject vendorDocuments = new JObject();
                                 vendorDocuments.Add("vendor_id", ref_id);
-                                vendorDocuments.Add("logo", Fill_path);
+                                vendorDocuments.Add("logo", formFile.FileName);
                                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/"+ vendorLogo.Vendor_id);
                             }
                         }
@@ -171,7 +201,7 @@ namespace badger_view.Controllers
                 JObject vendorDocuments = new JObject();
                 vendorDocuments.Add("vendor_id", ref_id);
                 vendorDocuments.Add("logo", "");
-                System.IO.File.Delete(fileName);
+                System.IO.File.Delete(UploadPath+fileName);
                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id);
                 return "file deleted successfully";
             }

@@ -186,13 +186,69 @@ debugger;
 
 })
 
-var table = $('#purchaseorderlists').DataTable({ "aaSorting": [] });
+var table = $('#purchaseorderlists').DataTable({
+    "aaSorting": [],
+    "lengthMenu": [50, 100, 200],
+    "pageLength": 50
+});
 
 window.purchaseorderrownumber = "";
 $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
     window.purchaseorderrownumber = table.row(this)[0][0];
 });
 
+window.checkpaginationload = true;
+$('#purchaseorderlists').on('page.dt', function () {
+
+    var info = table.page.info();
+
+    console.log('Showing page: ' + (info.page + 1) + ' of ' + info.pages);
+
+    /*if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
+        console.log("Load more...");
+        $('.loading').removeClass("d-none");
+        var start_total = info.recordsTotal; //table4.column(0).data().length;
+        console.log(start_total);
+        $.ajax({
+            url: "/purchaseorders/listpagination/" + start_total + "/30/true",
+            type: 'GET',
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+        }).always(function (data) {
+            console.log(data);
+            if (data.PurchaseOrdersLists.length == 0) {
+                window.checkpaginationload = false;
+                $('.loading').addClass("d-none");
+            }
+            if (data.PurchaseOrdersLists.length > 0) {
+                for (var i = 0; i < data.PurchaseOrdersLists.length; i++) {
+                    var data2 = data.PurchaseOrdersLists[i];
+                    var statusButton = '';
+                    if (data2.po_status == '5') {
+                        statusButton = '<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data2.shipping + '" data-id="' + data2.po_id + '" id="EditPurhaseOrderCheckedIn">Checkin</button>'
+                    } else {
+                        statusButton = "<button type='button' class='btn btn-success btn-sm'>Checked-In</button>";                        
+                    }
+                    var status = getPoStatusById(data2.po_status);
+                    $('#purchaseorderlists').DataTable().row.add([data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", data2.custom_delivery_window_start_end, data2.num_of_days, status, statusButton, "<button type='button' id='EditPurhaseOrder' data-id='" + data2.po_id +"' class='btn btn-light btn-sm'>Edit</button>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderNote'><i class='fa fa-edit h3'></i></a>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderDocument'><i class='fa fa-upload h3'></i></a>", "<a href='javascript: void (0)'>Claim</a>", "<a href='javascript: void (0)'>Claim</a>"]).draw(false);
+                }
+                $('.loading').addClass("d-none");
+            }
+        });
+    }*/
+});
+function getPoStatusById(po_status) {
+    if (po_status == 1) {
+        return '<span>Open</span>';
+    } else if (po_status == 3) {
+        return '<span>In Progress</span>';
+    } else if (po_status == 6) {
+        return '<span>Recieved</span>';
+    } else {
+        return '<span>Not Recieved</span>';
+    }
+}
 $('#poOrderDate').datepicker({
     dateFormat: 'm/d/yy'
 });
@@ -316,10 +372,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     }
                 });
             }
-            $('#purchaseorderlists').DataTable().row.add([
-                $("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname
-                , $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Not Recieved", '<button type="button" class="btn btn-warning btn-sm" data-shipping="'+shipping+'"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'
-            ]).draw();
+            $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Not Recieved", '<button type="button" class="btn btn-warning btn-sm" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
 
             table.page('last').draw('page');
 
@@ -545,6 +598,8 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     jsonData['tracking'] = [];
 
+    var postatus = $('#po_status').val();
+
     $('.poTracking').each(function () {
         var tracking_json = {};
 
@@ -609,7 +664,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber!= "" && window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Open", '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping +'" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checked-in</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", getPoStatusById(postatus), '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping + '" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
 
                 window.purchaseorderrownumber = "";
             }
@@ -798,6 +853,7 @@ output:string of purchase order documents
 */
 
 $(document).on("click", "#EditPurhaseOrderDocument", function () {
+    $(".poDocAlertMsg").text("");
     $('#document_form')[0].reset();
     $("#document_form #po_document").val("");
     $("#document_form").attr("data-documentid", "");
@@ -818,7 +874,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                $(".po_doc_section").append("<a href='uploads/"+i.url+"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -841,8 +897,8 @@ output: string of purchase order document
 */
 $(document).on("click", "#document_submit", function () {
     var _self = $(this);
-
-    if (_self.val() == "") {
+    $(".poDocAlertMsg").text("");
+    if ($('#poUploadImages').val() == "") {
         $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
         return false;
     }
@@ -876,8 +932,15 @@ $(document).on("click", "#document_submit", function () {
             } else {
                 console.log(data.responseText);
                 _self.attr("disabled", false);
-                $("#modaladddocument").modal("hide");
-                alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
+                if (data.responseText.indexOf('File Already') > -1) {
+                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                } else {                    
+                    $("#modaladddocument").modal("hide");
+                    alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
+                }
+
+
+               
             }
         });
     }
@@ -978,6 +1041,7 @@ function purchaseOrderData(data) {
                     }
                 });
             }
+            $("#newPurchaseOrderForm #po_status").val(podata.po_status);
         }
         window.notes = "";
         var note = data['notes'];
@@ -992,7 +1056,7 @@ function purchaseOrderData(data) {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
+                $(".po_doc_section").append("<a href='uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -1103,9 +1167,9 @@ function getSinglePurchaseOrder(id) {
             $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
             if (data.purchase_order[0].po_status == 5) {
-                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data.purchase_order[0].shipping + '" data-ID="' + data.purchase_order[0].po_id + '" id = "EditPurhaseOrderCheckedIn">Checked-in</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
+                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data.purchase_order[0].shipping + '" data-ID="' + data.purchase_order[0].po_id + '" id = "EditPurhaseOrderCheckedIn">Checkin</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
             } else {
-                $('.checkin_btn').html('<button type="button" class="btn btn-success btn-sm">Checked-in</button>  <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
+                $('.checkin_btn').html('<button type="button" class="btn btn-success btn-sm">Checked-In</button>  <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
             }
 
             $('.loading').addClass("d-none");
@@ -1158,7 +1222,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function (){
             if (data.documents.length > 0) {
 
                 $(data.documents).each(function (e, i) {
-                    $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                    $(".po_doc_section").append("<a href='uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
                 });
 
                 $(".po_doc_section").removeClass('d-none');
@@ -1324,7 +1388,9 @@ Date: 7-13-19
 Action: Delete Document or Image on click 
 output: Boolean
 */
-$(document).on('click', ".podeleteImage", function () {
+$(document).on('click', ".podeleteImage", function (e) {
+    e.preventDefault();
+    e.stopPropagation();    
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using System.Dynamic;
 
 namespace badgerApi.Interfaces
 {
@@ -21,6 +22,7 @@ namespace badgerApi.Interfaces
         Task<Boolean> Update(Sku SkuToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<List<Sku>> CheckSkuExist(string sku);
+        Task<Object> GetSku(string sku);
     }
 
     public class SkuRepo : ISkuRepo
@@ -158,6 +160,27 @@ namespace badgerApi.Interfaces
 
                 return result.ToList();
             }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get All sku by sku from database 
+        Input: string sku
+        output: dynamic list of sku data
+        */
+        public async Task<Object> GetSku(string sku)
+        {
+            dynamic skuDetails = new ExpandoObject();
+
+            string sQuery = "SELECT sku_id as value,sku as label,'sku' as type FROM " + TableName + " WHERE LOWER(sku) LIKE '"+sku.ToLower()+"%';";
+
+            using (IDbConnection conn = Connection)
+            {
+                skuDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return skuDetails;
         }
 
     }

@@ -98,11 +98,11 @@
                     <td>
                         @if (@purchaseOrders.po_status == 5)
                         {
-                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checked-in</button>
+                        <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checkin</button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-success btn-sm">Checked-in</button>
+                    <button type="button" class="btn btn-success btn-sm">Checked-In</button>
                         }
 
                     </td>
@@ -137,8 +137,8 @@
                 <th>Status</th>
                 <th>Check-in</th>
                 <th>Edit P.O.</th>
-                <th></th>
-                <th></th>
+                <th>Note</th>
+                <th>Upload</th>
                 <th>Inspect</th>
                 <th>Go Live</th>
             </tr>
@@ -177,6 +177,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>P.O. Number</label>
+                                    <input type="hidden" id="po_status" style="display:none;">
                                     <input type="text" class="form-control required" id="poNumber">
                                 </div>
                                 <div class="form-group col-md-6">

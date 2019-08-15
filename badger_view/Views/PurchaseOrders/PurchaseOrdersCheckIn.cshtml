@@ -228,6 +228,7 @@
                                 <div class="form-group col-md-12">
                                     <label>Document</label>
                                     <input type="file" class="form-control" id="poUploadImages" name="poUploadImages">
+                                    <div class="poDocAlertMsg"></div>
                                 </div>
                             </div>
                         </form>
@@ -317,7 +318,7 @@
             <div class="card POListCheckIn">
                 <div class="card-header" id="heading_@purchaseOrder.po_id" data-POid="@purchaseOrder.po_id">
                     <div class="row">
-                        <a class="card-box" data-POid="@purchaseOrder.po_id" data-toggle="collapse" data-target="#collapse_@purchaseOrder.po_id" style="cursor: pointer;"><i class="fa fa-plus"></i></a>
+                        <a class="card-box collapsButton" data-POid="@purchaseOrder.po_id" data-toggle="collapse" data-target="#collapse_@purchaseOrder.po_id" style="cursor: pointer;"><i class="fa fa-plus"></i></a>
 
                         <div class="col-md-3 col-sm-10  col-xs-10">
                             <h5>Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a></h5>
@@ -337,16 +338,16 @@
                                 <b>Go Live</b><br /><a href="#">Claim</a>
                             </span>
                             <span class="d-inline-block pl-4 align-top pt-2">
-                                <b>@purchaseOrder.total_styles total styles, 5 have photos, 3 are live</b>
+                                <b> @purchaseOrder.total_styles total styles  <!-- , 5 have photos, 3 are live--></b>
                             </span>
                         </div>
                         <input type="hidden" id="allBarcodeRanges" value="@ViewBag.allBarcodeRanges" />
-                        <div class="col-md-2 col-sm-12 col-xs-12 text-right">
+                        @*<div class="col-md-2 col-sm-12 col-xs-12 text-right">
                             <form action="">
                                 <input type="text" placeholder="Quick Find" name="search" class="pl-1 pr-1">
                                 <button type="submit" class=""><i class="fa fa-search"></i></button>
                             </form>
-                        </div>
+                        </div>*@
                     </div>
                 </div>
 

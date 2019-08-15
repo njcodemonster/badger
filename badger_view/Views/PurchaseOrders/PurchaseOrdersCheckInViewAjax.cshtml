@@ -1,58 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
-<style>
-
-    .tble_list tr th:first-child,
-    .tble_list tr td:first-child{
-        width:100px;
-    }
-
-    .tble_list .card-header{
-        padding:0;
-    }
-
-    .tble_list tr th{
-        width:100px;
-    }
-    
-    .tble_list tr td {
-        width:100px;
-    }
-
-    .tble_list tr th:nth-child(4) {
-        width:150px;
-    }
-
-    .tble_list tr td:nth-child(4){
-           width:185px;
-    }
-    .tble_list tr th:nth-child(9),
-    .tble_list tr th:nth-child(10),
-    .tble_list tr th:nth-child(11),
-    .tble_list tr td:nth-child(9),
-    .tble_list tr td:nth-child(10),
-    .tble_list tr td:nth-child(11){
-        width:85px;
-    }
-
-     .tble_list input[type=text] {
-        width:100px;
-     }
-
-     .tble_list .marginleft{ 
-         margin-left: 35px; 
-
-     }
-
-    .tble_list select{
-        width:100px !important;
-    }
-
-
-</style>
-
 @{ int First = 0;}
 @if (First == 0)
 {
@@ -61,7 +9,7 @@
     First = 1;
     String Current_product = "";
     <div class="card-body table-responsive">
-        <div class="accordion" id="accordionpoinnercheck">
+        <div class="accordion panel-group" id="accordionpoinnercheck">
             @foreach (dynamic LineItem in Model.FirstPOInfor.LineItemDetails)
             {
                 @if (Current_product != (String)LineItem.product_id)
@@ -76,11 +24,13 @@
                 @:</div>
                 @:</div>
             }
+
             if (First == 1)
             {
                 First = 2;
             }
-            @:<div class="card">
+
+             @:<div class="card">
                 <div class="card-header" id="headinginner@(LineItem.product_id)">
                     <div class="float-left table-responsive">
                         <table class="table table-borderless m-0">
@@ -89,7 +39,7 @@
                                     <img src="@LineItem.product_vendor_image" style="height: 100px;" class="img-@LineItem.product_id" />
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-link mt-0 pt-0" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)"><i class="fa fa-plus"></i></button>
+                                    <button type="button" class="btn btn-link mt-0 pt-0 collapsButton" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)" aria-expanded="true"><i class="fa fa-minus"></i></button>
                                 </td>
                                 <td>
                                     <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_color_name) in @LineItem.Color (@LineItem.sku)</span>
@@ -144,10 +94,11 @@
                 </div>
 
     @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne@(LineItem.product_id)" data-parent="#accordionpoinnercheck">
-        @:<div class="card-body table-responsive">
-            @:<table class="table text-center tble_list borderless table-data-@LineItem.product_id" style="width:100%">
+        @:<div class="table-responsive">
+            @:<table class="table text-center po_tble_list borderless table-data-@LineItem.product_id">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Size</th>
                         <th>Status</th>
                         <th>RA Status</th>
@@ -173,26 +124,26 @@
                 @while (i < DisplayTimes)
                 {
                     i++;
-                    @if (i == 1 && DisplayTimes != 1)
-                    {
-                        @:<tr data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
-                            @:<td colspan="11">
-                                @:<div class="accordion" id="accordionsize-@LineItem.product_id">
-                                    @:<div class="card border-0">
-                                        @:<div class="card-header" id="headingsize-@LineItem.product_id">
-                                            @:<table class="table tble_list table-borderless">
-                                            }
-                                                  <tr class="remove-@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
+                    string displaycheck = "";
+                    string target_id = "";
+                   @if(i != 1 && DisplayTimes > 1)
+                   {
+                       target_id = "collapsesize-"+LineItem.product_id+"-"+LineItem.Size+"-"+LineItem.sku;
+                       displaycheck = "collapse hide";
+                   }
+                                                  <tr class="remove-@LineItem.EndItems[i-1].item_id @displaycheck" id="@target_id" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
                                                       <td>
                                                           @if (i == 1 && DisplayTimes != 1)
-                                                          {<button type="button" style="padding-left:0px;padding-right:0px;" class="btn btn-link" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
-                                                              <!-- td style="position: absolute; left: -25px; top: 5px;"><button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button></!==td -->
+                                                          {
+                                                              <button type="button" style="padding:0px;" aria-expanded="true" aria-controls="collapseOne"  class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
                                                           }
+                                                          </td>
+                                                      <td>
                                                           @LineItem.Size<input type="hidden" id="@LineItem.EndItems[i-1].item_id" value="@LineItem.EndItems[i - 1]" />
                                                       </td>
                                                       <td>
                                                           <input type="checkbox" class="checkitemstatus" style="float:left;width:10%;transform: scale(1.5);margin-top: 13px;" data-status="@LineItem.Size-@LineItem.product_id">
-                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id"  style="float:right;width:80%;" data-status="@LineItem.Size-@LineItem.product_id">
+                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id"  style="float:right;width: 150px; font-size:13px;" data-status="@LineItem.Size-@LineItem.product_id">
                                                               @foreach (dynamic _status in Model.AllItemStatus)
                                                               {
                                                                   if (@_status.item_status_id == @LineItem.EndItems[i - 1].item_status_id)
@@ -215,7 +166,7 @@
                                                           {
                                                               <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
 
-                                                              <select class="form-control item_ra_status d-none" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                              <select class="form-control item_ra_status d-none" data-itemid="@LineItem.EndItems[i-1].item_id" style="width:150px;margin:0 auto;font-size:13px;">
                                                                   <option value="0"> Default RA </option>
                                                                   @foreach (dynamic _rastatus in Model.AllRaStatus)
                                                                   {
@@ -225,7 +176,7 @@
                                                           }
                                                           else
                                                           {
-                                                      <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id">
+                                                      <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id" style="width: 150px;margin:0 auto;font-size:13px;">
                                                           <option value="0"> Default RA </option>
                                                           @foreach (dynamic _rastatus in Model.AllRaStatus)
                                                           {                                                                
@@ -244,7 +195,7 @@
 
                                                       </td>
                                                       <td>
-                                                          <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="50"></textarea>
+                                                          <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="20"></textarea>
                                                       </td>
                                                       <td>
                                                           <a href="javscript:void(0)" id="AddDocument" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id"><i class="fa fa-upload h3"></i></a>
@@ -269,36 +220,17 @@
                                                       </td>
                                                   </tr>
 
-                    @if (i == 1 && DisplayTimes != 1)
-                    {
-                    @:</table>
-                        @:</div>
-                        @:<div id="collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku" class="collapse" aria-labelledby="headingsize-@LineItem.product_id" data-parent="#accordionsize-@LineItem.product_id">
-                            @: <div class="card-body">
-                        @:<table class="table table-borderless tble_list">
-                        }
-
-                    @if (i == DisplayTimes && DisplayTimes != 1)
-                    {
-                                        @:</table>
-                                    @:</div>
-                                @:</div>
-                            @:</div>
-                            @:</td>
-                    @:</tr>
-                    }
 
                 }
             }
-@if (outputEnd)
-{
-    @:</tbody>
+            @if (outputEnd)
+            {
+                @:</tbody>
                 @:</table>
                 @:</div>
                 @:</div>
-                @:</div>
+                @:</div>             
             }
-
-            </div>
-        </div>
-        }
+      </div>
+    </div>
+ }

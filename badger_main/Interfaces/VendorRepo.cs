@@ -22,7 +22,7 @@ namespace badgerApi.Interfaces
         Task<Boolean> Update(Vendor VendorToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
-        Task<object> GetVendorPageList(int limit);
+        Task<object> GetVendorPageList(int start, int limit);
         Task<Object> GetVendorDetailsAdressRep(Int32 id);
         Task<Object> GetVendorDetailsRep(Int32 id);
         Task<Object> GetVendorDetailsAddress(Int32 id);
@@ -31,6 +31,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorLastSku(String id);
         Task<Object> GetVendorsByColumnName(string columnName, string search);
         Task<Object> CheckVendorCodeExist(string vendorcode);
+        Task<Object> GetVendor(string vendor);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -204,14 +205,14 @@ namespace badgerApi.Interfaces
             Input: limit
             output: vendorsinfo
          */
-        public async Task<object> GetVendorPageList(int limit)
+        public async Task<object> GetVendorPageList(int start, int limit)
         {
 
             dynamic vPageList = new ExpandoObject();
             string sQuery = "";
             if(limit > 0)
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + limit+";";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + start + "," + limit + ";";
             }
             else
             {
@@ -319,16 +320,35 @@ namespace badgerApi.Interfaces
             return vendorDetails;
         }
         /*
-            Developer: Azeem Hassan
-            Date: 7-11-19 
-            Action: get all vendor code
-            Input: vendorcode
-            output: list of vendor code data
-         */
+        Developer: Azeem Hassan
+        Date: 7-11-19 
+        Action: get all vendor code
+        Input: vendorcode
+        output: list of vendor code data
+        */
         public async Task<Object> CheckVendorCodeExist(string vendorcode)
         {
             dynamic vendorDetails = new ExpandoObject();
             string sQuery = "SELECT vendor_code FROM " + TableName + " WHERE vendor_code = '" + vendorcode + "'";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get all vendor data by vendor name
+        Input: string vendor
+        output: dynamic list of vendor data
+        */
+        public async Task<Object> GetVendor(string vendor)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "SELECT vendor_id as value, vendor_name as label, logo as image,'vendor' as type FROM " + TableName + " WHERE vendor_name LIKE '%" + vendor + "%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);

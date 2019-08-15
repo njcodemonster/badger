@@ -30,7 +30,7 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private IItemServiceHelper _ItemsHelper;
         IEventRepo _eventRepo;
-        
+
         private int note_type = 4;
 
         private int event_type_po_id = 2;
@@ -62,7 +62,7 @@ namespace badgerApi.Controllers
             }
         }
 
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo,iBarcodeRangeRepo barcodeRangeRepo)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo, iBarcodeRangeRepo barcodeRangeRepo)
         {
             _eventRepo = eventRepo;
             _config = config;
@@ -152,12 +152,12 @@ namespace badgerApi.Controllers
         output: list of dynamic Object of Purchase Orders
         */
         [HttpGet("listpageview/{start}/{limit}/{countNeeded}")]
-        public async Task<object> ListPageViewAsync(int start,int limit,Boolean countNeeded)
+        public async Task<object> ListPageViewAsync(int start, int limit, Boolean countNeeded)
         {
             dynamic poPageList = new object();
             try
             {
-                poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(start,limit);
+                poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(start, limit);
                 if (countNeeded)
                 {
                     string poPageCount = await _PurchaseOrdersRepo.Count();
@@ -265,7 +265,7 @@ namespace badgerApi.Controllers
                 int created_by = PurchaseOrdersToUpdate.created_by;
                 double created_at = _common.GetTimeStemp();
 
-                NewInsertionID =  await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
+                NewInsertionID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
 
                 event_create_purchase_orders_documentcreate = event_create_purchase_orders_documentcreate.Replace("%%userid%%", created_by.ToString()).Replace("%%documentid%%", NewInsertionID);
 
@@ -296,7 +296,7 @@ namespace badgerApi.Controllers
             List<Notes> notes = new List<Notes>();
             try
             {
-                 notes = await _NotesAndDoc.GenericNote<Notes>(ref_id, note_type, limit);
+                notes = await _NotesAndDoc.GenericNote<Notes>(ref_id, note_type, limit);
             }
             catch (Exception ex)
             {
@@ -359,8 +359,8 @@ namespace badgerApi.Controllers
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
 
                 event_update_purchase_orders = event_update_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
-                
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders ,PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
 
                 _eventRepo.AddEventAsync(event_type_po_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
@@ -425,7 +425,7 @@ namespace badgerApi.Controllers
                 if (PurchaseOrdersToUpdate.total_styles != 0)
                 {
                     ValuesToUpdate.Add("total_styles", PurchaseOrdersToUpdate.total_styles.ToString());
-                }                
+                }
                 if (PurchaseOrdersToUpdate.total_quantity != 0)
                 {
                     ValuesToUpdate.Add("total_quantity", PurchaseOrdersToUpdate.total_quantity.ToString());
@@ -461,7 +461,7 @@ namespace badgerApi.Controllers
                 if (PurchaseOrdersToUpdate.ra_flag == 0 || PurchaseOrdersToUpdate.ra_flag == 1)
                 {
                     ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
-                }                
+                }
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -485,7 +485,8 @@ namespace badgerApi.Controllers
 
                 await _PurchaseOrdersRepo.UpdateSpecific(ValuesToUpdate, "po_id=" + id);
 
-                if (PurchaseOrdersToUpdate.po_status == 4) {
+                if (PurchaseOrdersToUpdate.po_status == 4)
+                {
                     event_delete_purchase_orders = event_delete_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
 
                     _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_delete_id, id, event_delete_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
@@ -591,7 +592,7 @@ namespace badgerApi.Controllers
         [HttpGet("checkbarcodeexist/{barcode}")]
         public async Task<Boolean> CheckBarcodeExist(int barcode)
         {
-            Boolean result = false;            
+            Boolean result = false;
             try
             {
                 result = await _ItemsHelper.CheckBarcodeExist(barcode);
@@ -609,8 +610,8 @@ namespace badgerApi.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-24-19 
-        Action: Get smallest sku by product ids with comma separate "api/purchaseorders/checkbarcodeexist/1"
-        URL: api/purchaseorders/checkbarcodeexist/ids
+        Action: Get smallest sku by product ids with comma separate "api/purchaseorders/smallestsku/1"
+        URL: api/purchaseorders/smallestsku/ids
         Request: Get
         Input: string product_ids
         output: string product id and sku
@@ -743,7 +744,7 @@ namespace badgerApi.Controllers
             dynamic ProductList = new object();
             try
             {
-                ProductList = await _PurchaseOrdersRepo.GetNameAndSizeByProductAndSku(product_id,sku);
+                ProductList = await _PurchaseOrdersRepo.GetNameAndSizeByProductAndSku(product_id, sku);
 
             }
             catch (Exception ex)
@@ -833,13 +834,15 @@ namespace badgerApi.Controllers
             {
                 ProductList = await _ItemsHelper.GetItemsByOrder(poid);
                 int TotalItemCount = ProductList.Count;
-                for (var i=0; i< (TotalItemCount-1); i++) {
+                for (var i = 0; i < (TotalItemCount - 1); i++)
+                {
                     rastatus = ProductList[i].ra_status;
                     itemstatus = ProductList[i].item_status_id;
-                    if (rastatus == 0) {
+                    if (rastatus == 0)
+                    {
                         CountRaStatusZero++;
                     }
-                    if(rastatus == 1)
+                    if (rastatus == 1)
                     {
                         CountRaStatusOne++;
                     }
@@ -849,7 +852,7 @@ namespace badgerApi.Controllers
                         CountItemStatusDefault++;
                     }
 
-                    if(itemstatus > 1)
+                    if (itemstatus > 1)
                     {
                         CountItemStatus++;
                     }
@@ -869,6 +872,37 @@ namespace badgerApi.Controllers
             return countData;
         }
 
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action:Get item with barcode data by barcode "api/purchaseorders/getbarcode/12345678"
+        URL: api/purchaseorders/getbarcode/12346578
+        Request: Get
+        Input: int barcode
+        output: dynamic list of barcode
+        */
+        [HttpGet("getbarcode/{barcode}")]
+        public async Task<object> GetBarcode(int barcode)
+        {
+            dynamic barcodeDetails = new object();
+            try
+            {
+                barcodeDetails = await _ItemsHelper.GetBarcode(barcode);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get sku with message" + ex.Message);
+
+            }
+
+            return barcodeDetails;
+        }
+
+
+
         /*
         Developer: Rizwan Ali
         Date: 9-8-19 
@@ -885,7 +919,7 @@ namespace badgerApi.Controllers
             try
             {
                 poPageList = await _BarcodeRangeRepo.GetBarcodeRangeList();
-              
+
             }
             catch (Exception ex)
             {
@@ -898,4 +932,5 @@ namespace badgerApi.Controllers
 
         }
     }
+    
 }

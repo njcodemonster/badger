@@ -70,7 +70,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/true");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
 
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
@@ -134,14 +134,14 @@ namespace badger_view.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
-        Action: View Single Purchase Orders List & Get Note,Document,Tracking,Ledger and Discount by using badger api helper   
-        URL: /purchaseorders/details/id
+        Action: View Purchase Orders List & Get Note,Document,Tracking,Ledger and Discount by using badger api helper   
+        URL: /purchaseorders/listpagination/start/end/boolean
         Request: Get
-        Input: int id
+        Input: int start, int limit, boolean
         output: Dynamic object of purchase orders
         */
         [Authorize]
-        [HttpGet("purchaseorders/listpagination/{start}/{limit}/{boolencount}")]
+        [HttpGet("purchaseorders/listpagination/{start}/{limit}/{count}")]
         public async Task<string> ListPagination(int start, int limit, Boolean count)
         {
             SetBadgerHelper();
@@ -366,7 +366,7 @@ namespace badger_view.Controllers
 
                                 JObject purchaseOrderDocuments = new JObject();
                                 purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
-                                purchaseOrderDocuments.Add("url", Fill_path);
+                                purchaseOrderDocuments.Add("url", formFile.FileName);
                                 purchaseOrderDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
@@ -1043,7 +1043,7 @@ namespace badger_view.Controllers
 
                                 JObject itemDocuments = new JObject();
                                 itemDocuments.Add("ref_id", purchaseorderfile.po_id);
-                                itemDocuments.Add("url", Fill_path);
+                                itemDocuments.Add("url", formFile.FileName);
                                 itemDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocuments.ToString(Formatting.None), "/purchaseordermanagement/documentcreate");
 
@@ -1291,9 +1291,9 @@ namespace badger_view.Controllers
 
             if (fileName != null || fileName != string.Empty)
             {
-                if ((System.IO.File.Exists(fileName)))
+                if ((System.IO.File.Exists(UploadPath+fileName)))
                 {
-                    System.IO.File.Delete(fileName);
+                    System.IO.File.Delete(UploadPath+fileName);
                 }
 
             }

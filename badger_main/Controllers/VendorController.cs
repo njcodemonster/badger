@@ -123,19 +123,19 @@ namespace badgerApi.Controllers
           Developer: Azeem Hassan
           Date: 7-5-19 
           Action: getting vendor count
-          URL:  api/vendor/count
+          URL:  api/vendor/listpageview/start/limit
           Request GET
           Input: null
           output: vendor count
         */
         // GET: api/vendor/listpageview/10
-        [HttpGet("listpageview/{limit}")]
-        public async Task<object> listpageviewAsync(int limit)
+        [HttpGet("listpageview/{start}/{limit}")]
+        public async Task<object> listpageviewAsync(int start, int limit)
         {
             dynamic vPageList = new object();
             try
             {
-                vPageList = await _VendorRepo.GetVendorPageList(limit);
+                vPageList = await _VendorRepo.GetVendorPageList(start,limit);
                 string  vPageCount = await _VendorRepo.Count();
                 vPageList.Count = vPageCount;
                 vPageList.VendorType = await _VendorRepo.GetVendorTypes();
@@ -690,5 +690,34 @@ namespace badgerApi.Controllers
             return vendorExist;
 
         }
- }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Getting vendor data by vendor name
+        URL:  api/vendor/GetVendor/vendor_name
+        Request GET
+        Input: string vendor
+        output: dynamic list of vendor data 
+        */
+        [HttpGet("getvendor/{vendor}")]
+        public async Task<List<object>> GetVendor(string vendor)
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetVendor(vendor);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+    }
 }
