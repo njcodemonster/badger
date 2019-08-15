@@ -105,7 +105,7 @@
                         <tr>
                             <td class="form-group">
                                 <label>Product details</label>
-                                <textarea class="form-control required" id="main_page_paragraph" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
+                                <textarea class="form-control required" id="main_page_paragraph" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==1 ).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
                             </td>
                         </tr>
                         <tr>
