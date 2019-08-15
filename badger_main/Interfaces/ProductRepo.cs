@@ -11,6 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using Newtonsoft.Json;
+
+using System.Dynamic;
+
 namespace badgerApi.Interfaces
 {
     public interface IProductRepository
@@ -36,6 +40,8 @@ namespace badgerApi.Interfaces
         Task<Int32> GetProductShootStatus(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
+        Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
+        Task<Object> GetProduct(string product_name);
     }
     public class ProductRepo : IProductRepository
     {
@@ -416,12 +422,12 @@ namespace badgerApi.Interfaces
 
         }
         /*
-       Developer: Azeem hassan
-       Date: 7-28-19 
-       Action: insert data to db
-       Input: image data
-       output: insertion id
-       */
+        Developer: Azeem hassan
+        Date: 7-28-19 
+        Action: insert product image data to db
+        Input: image data
+        output: insertion id
+        */
         public async Task<string> CreateProductImages(Productimages NewProductImages)
         {
             using (IDbConnection conn = Connection)
@@ -429,6 +435,51 @@ namespace badgerApi.Interfaces
                 long result = conn.Insert<Productimages>(NewProductImages);
                 return result.ToString();
             }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get product data by product name to db
+        Input: image data
+        output: insertion id
+        */
+        public async Task<Object> GetProduct(string product_name)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id as value, product_name as label, product_vendor_image as image,'product' as type FROM " + TableName + " WHERE product_name LIKE '%" + product_name + "%';";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: update product image as primary in database
+        Input: int product_image_id, int is_primary
+        output: boolean
+        */
+        public async Task<bool> UpadateImagePrimary(int product_image_id, int is_primary)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String updateQuery = "update product_images set isprimary = "+ is_primary + " where product_image_id = "+ product_image_id;
+                    var updateResult = await conn.QueryAsync<object>(updateQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
         }
 
     }

@@ -140,37 +140,16 @@ $(document).on("click", ".removeMorePoints", function () {
 function readURLAndUploadImg(event) {
     $('.loaderBox').show() 
     var files = event.target.files; //FileList object
-    
-    for(var i = 0; i< files.length; i++)
-    {
-        var file = files[i];
-        
-        //Only pics
-        if(!file.type.match('image'))
-          continue;
-        
-        var picReader = new FileReader();
-        
-        picReader.addEventListener("load",function(event){
-            var picFile = event.target;
-            var count = $('.productImageArea .viewImage span').length;
-            $('.productImageArea .viewImage').append(' <span id="div'+count+'" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+picFile.result+'" id="drag'+count+'" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
-              if ($('.productImageArea .proBigImage span').length == 0) {
-                $('.productImageArea .proBigImage').append('<span id="dopBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img src="'+picFile.result+'" height="300" /></span>')
-
-            }
-        
-        });
-        
-         //Read the image
-        picReader.readAsDataURL(file);
-    } 
     var formData = new FormData();
     for (var i = 0; i != files.length; i++) {
+          
         formData.append("productImages", files[i]);
         formData.append("product_id", $('#product_name').attr('data-id'));
-        formData.append("product_title", 'my test');
-        formData.append("product_primary", '0');
+        formData.append("product_title", files[i].name.split('.')[0]);
+        if ($('#dropBox img').hasClass('dummyImage')) 
+            formData.append("product_primary", '1');
+        else
+            formData.append("product_primary", '0');
     }
     $.ajax({
         url: "/product/InsertattributeImages",
@@ -179,12 +158,44 @@ function readURLAndUploadImg(event) {
         dataType: 'json',
         processData: false,
         contentType: false,
-    }).always(function (data) {
-        console.log(data);
+    }).always(function (imageData) {
+        console.log(imageData);
+        for(var i = 0; i< files.length; i++)
+        {
+            var file = files[i];
+            window.currentFilename = file.name.split('.')[0];
+            //Only pics
+            if(!file.type.match('image'))
+                continue;
+        
+            var picReader = new FileReader();
+            picReader.fileName = file.name;
+            if (file.name == imageData[i].product_name) {
+                picReader.dataImg_id = imageData[i].image_id
+            }
+            picReader.addEventListener("load",function(event){
+                var picFile = event.target;
+                console.log(event.target.fileName);
+                var dataImg_id = event.target.dataImg_id;
+                
+                var count = $('.productImageArea .viewImage span').length;
+                if ($('#dropBox img').hasClass('dummyImage')) {
+                    $('.productImageArea .proBigImage').find('#dropBox').remove();
+                    $('.productImageArea .proBigImage').append('<span id="dropBox" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" src="' + picFile.result + '" data-filename="' + event.target.fileName + '" data-imageId="' + dataImg_id + '" height="300" width="230" /></span>')
+
+                } else {
+                    $('.productImageArea .viewImage').append(' <span id="div' + count + '" ondrop="drop(event)" ondragover="allowDrop(event)"><img class="productImage" data-filename="' + event.target.fileName + '" src="' + picFile.result + '" data-imageId="' + dataImg_id + '" id="drag' + count + '" draggable="true" ondragstart="drag(event)" width="130" height="200"></span>')
+
+                }
+            });
+        
+                //Read the image
+            picReader.readAsDataURL(file);
+        } 
         $('.loaderBox').hide() 
     });
-
-
+    
+  
 }
 
 function allowDrop(ev) {
@@ -202,17 +213,44 @@ function drop(ev) {
     var dragId = ev.dataTransfer.getData("dragid");
     //ev.target.appendChild(document.getElementById(data));
     dropValue = ev.target.attributes.src.value;
-     $('#'+dragId).attr('src',dropValue)
+    dropfilename = $('#' + dragId).attr('data-filename')
+    dropimageid = $('#' + dragId).attr('data-imageid')
+    if (ev.target.attributes.class.value.indexOf('dummyImage') == -1) {
+        $('#' + dragId).attr('src', dropValue).attr('data-filename', ev.target.attributes["data-filename"].value).attr('data-imageid', ev.target.attributes["data-imageid"].value)
+    } else {
+        $('#' + dragId).parent('span').remove();
+    }
     ev.target.attributes.src.value = data;
+    ev.target.attributes["data-filename"].value = dropfilename;
+    ev.target.attributes["data-imageid"].value = dropimageid;
+    if (ev.toElement.parentElement.id == 'dropBox') {
+          $('.loaderBox').show() 
+        var imageData = [];
+        var jsonData = {};
+        jsonData["dataImage"] = [];
+        jsonData["dataImage"].push({ product_img_id: $('#' + dragId).attr('data-imageid'), is_primary: "0" });
+        jsonData["dataImage"].push({ product_img_id: ev.target.attributes["data-imageid"].value, is_primary: "1" });
+        $.ajax({
+            url: "/product/UpdateProductImagePrimary",
+            dataType: 'json',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+        }).always(function (data) {
+            console.log(data);
+            $('.loaderBox').hide() 
+        })
+    }
 }
 
-$(document).on("click", ".viewImage img", function () {
+/*$(document).on("click", ".viewImage img", function () {
     var currentSrc = $(this).attr('src')
-    var dropSrc = $('#dopBox img').attr('src')
+    var dropSrc = $('#dropBox img').attr('src')
     $(this).attr('src', dropSrc)
-    $('#dopBox img').attr('src',currentSrc)
+    $('#dropBox img').attr('src',currentSrc)
 
-})
+})*/
 
 $(document).on('keydown', "#product_cost,#product_retail,#product_discount", function (e) {
     return onlyNumbersWithDot(e)

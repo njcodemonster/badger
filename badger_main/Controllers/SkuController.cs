@@ -203,7 +203,7 @@ namespace badgerApi.Controllers
         {
         }
 
-        /*
+       /*
        Developer: Sajid Khan
        Date: 7-20-19 
        Action: Check Sku already Exist or not by sku "api/purchaseorders/checkskuexist/1"
@@ -235,6 +235,32 @@ namespace badgerApi.Controllers
             return result;
         }
 
-        
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get Sku data by sku "api/purchaseorders/getsku/sk100-1"
+        URL: api/purchaseorders/getsku/sk100-1
+        Request: Get
+        Input: string sku
+        output: dynamic list of sku
+        */
+        [HttpGet("getsku/{sku}")]
+        public async Task<List<object>> GetSku(string sku)
+        {
+            dynamic skuDetails = new object();
+            try
+            {
+                skuDetails = await _SkuRepo.GetSku(sku);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get sku with message" + ex.Message);
+
+            }
+
+            return skuDetails;
+        }
     }
 }

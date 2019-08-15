@@ -690,5 +690,34 @@ namespace badgerApi.Controllers
             return vendorExist;
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Getting vendor data by vendor name
+        URL:  api/vendor/GetVendor/vendor_name
+        Request GET
+        Input: string vendor
+        output: dynamic list of vendor data 
+        */
+        [HttpGet("getvendor/{vendor}")]
+        public async Task<List<object>> GetVendor(string vendor)
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetVendor(vendor);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
     }
 }

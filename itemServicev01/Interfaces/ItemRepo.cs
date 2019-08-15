@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using System.Dynamic;
 
 namespace itemService.Interfaces
 {
@@ -40,6 +41,7 @@ namespace itemService.Interfaces
         Task<List<Items>> CheckBarcodeExist(int barcode);
         Task<String> SetProductItemForPhotoshoot(int skuId, int status);
         Task<List<Items>> GetItemGroupByProductId(int PO_id);
+        Task<Object> GetBarcode(int barcode);
     }
     public class ItemRepo : ItemRepository
     {
@@ -914,7 +916,7 @@ namespace itemService.Interfaces
         Date: 7-20-19 
         Action: Check Barcode already Exist by barcode data from database
         Input: int barcode
-        output: list of barcode
+        output: dynamic list of barcode
         */
         public async Task<List<Items>> CheckBarcodeExist(int barcode)
         {
@@ -928,6 +930,27 @@ namespace itemService.Interfaces
 
                 return result.ToList();
             }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get barcode by barcode from database 
+        Input:  int barcode
+        output: dynamic list of barcode data
+        */
+        public async Task<Object> GetBarcode(int barcode)
+        {
+            dynamic barcodeDetails = new ExpandoObject();
+
+            string sQuery = "SELECT item_id as value,barcode as label,'barcode' as type FROM " + TableName + " WHERE barcode ="+barcode+";";
+
+            using (IDbConnection conn = Connection)
+            {
+                barcodeDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return barcodeDetails;
         }
 
     }

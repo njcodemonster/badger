@@ -1,4 +1,10 @@
-﻿/*
+﻿var vendorTable = $('#vendorListingArea').DataTable({
+    "aaSorting": [],
+    "lengthMenu": [50, 100, 200],
+    "pageLength": 50
+});
+
+/*
    Developer: Azeem Hassan
    Date: 7-12-19
    Action: Autocomplete search by vendor name like on greater than three character
@@ -649,7 +655,7 @@ $('#vendorListingArea').on('page.dt', function () {
 
     console.log('Showing page: ' + (info.page + 1) + ' of ' + info.pages);
 
-    if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
+    /*if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
         console.log("Load more...");
         $('.loading').removeClass("d-none");
         var start_total = info.recordsTotal; //table4.column(0).data().length;
@@ -675,5 +681,5 @@ $('#vendorListingArea').on('page.dt', function () {
                 $('.loading').addClass("d-none");
             }
         });
-    }
+    }*/
 });
