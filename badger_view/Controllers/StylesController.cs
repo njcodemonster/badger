@@ -179,7 +179,13 @@ namespace badger_view.Controllers
             if (product_id_current > 0)
                 {
                     product_id = product_id_current.ToString(); //update on selected product id
-                }
+
+                // add new product in product table
+                await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
+
+
+
+            }
             else{
                 try
                 {  // add new product in product table

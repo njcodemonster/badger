@@ -198,6 +198,23 @@ namespace badgerApi.Controllers
                 Product ProductToUpdate = JsonConvert.DeserializeObject<Product>(value);
                 ProductToUpdate.product_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+                if (ProductToUpdate.product_name != "")
+                {
+                    ValuesToUpdate.Add("product_name", ProductToUpdate.product_name.ToString());
+                }
+                if (ProductToUpdate.vendor_color_name != "")
+                {
+                    ValuesToUpdate.Add("vendor_color_name", ProductToUpdate.vendor_color_name.ToString());
+                }
+                if (ProductToUpdate.product_cost != 0)
+                {
+                    ValuesToUpdate.Add("product_cost", ProductToUpdate.product_cost.ToString());
+                }
+                if (ProductToUpdate.product_retail != 0)
+                {
+                    ValuesToUpdate.Add("product_retail", ProductToUpdate.product_retail.ToString());
+                }
+
                 if (ProductToUpdate.product_vendor_image != null)
                 {
                     ValuesToUpdate.Add("product_vendor_image", ProductToUpdate.product_vendor_image.ToString());
