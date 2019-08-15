@@ -690,5 +690,5 @@ namespace badgerApi.Controllers
             return vendorExist;
 
         }
-    }
+ }
 }

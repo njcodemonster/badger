@@ -316,12 +316,14 @@ $(document).on("keydown", ".item_barcode", function (e) {
 });
 
 $(document).on("change", ".item_barcode", function (e) {
+    debugger;
     var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
     var old_barcode = $(this).attr('data-barcode');
+    var size = $(this).parents("tr").attr('data-size');
     var barcode = $(this).val();
-
+    var barcodeRanges = JSON.parse( $("#allBarcodeRanges").val());
     $(this).removeClass('errorFeild');
     if (barcode.length < 8) {
         $(this).addClass('errorFeild');
@@ -332,7 +334,27 @@ $(document).on("change", ".item_barcode", function (e) {
         _self.removeClass('errorFeild');
         return false;
     }
+    //checking barcode range 
+    var hasMatch = false;
+    var index = -1;
+    for (var i = 0; i < barcodeRanges.length; i++) {
 
+        var single = barcodeRanges[i];
+
+        if (barcode >= single.barcode_from && barcode <= single.barcode_to ) {
+            hasMatch = true;
+            index = i;
+            break;
+        }
+    }
+    if (hasMatch) {
+        var currentBarcode = barcodeRanges[index];
+        if (currentBarcode.size.toLowerCase() != size.toLowerCase()) {
+            _self.addClass('errorFeild');
+            alertInnerBox('message-' + po_id, 'red', 'Item barcode exist in a size :  ' + currentBarcode.size);
+            return false;
+        }
+    }
     $.ajax({
         url: "/purchaseorders/checkbarcodeexist/" + barcode,
         dataType: 'json',

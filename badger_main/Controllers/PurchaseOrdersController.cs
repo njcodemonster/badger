@@ -24,6 +24,7 @@ namespace badgerApi.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
+        private readonly iBarcodeRangeRepo _BarcodeRangeRepo;
         ILoggerFactory _loggerFactory;
 
         private INotesAndDocHelper _NotesAndDoc;
@@ -61,7 +62,7 @@ namespace badgerApi.Controllers
             }
         }
 
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo,iBarcodeRangeRepo barcodeRangeRepo)
         {
             _eventRepo = eventRepo;
             _config = config;
@@ -69,6 +70,7 @@ namespace badgerApi.Controllers
             _loggerFactory = loggerFactory;
             _NotesAndDoc = NotesAndDoc;
             _ItemsHelper = ItemsHelper;
+            _BarcodeRangeRepo = barcodeRangeRepo;
         }
 
         /*
@@ -867,6 +869,33 @@ namespace badgerApi.Controllers
             return countData;
         }
 
+        /*
+        Developer: Rizwan Ali
+        Date: 9-8-19 
+        Action: Get barcode ranges all that are in the system  "api/purchaseorders/getBarcodeRange"
+        URL: api/purchaseorders/listpageview/10/boolean
+        Request: Get
+        Input: none
+        output: list of barcode ranges all that are in the system
+        */
+        [HttpGet("getBarcodeRange/")]
+        public async Task<object> GetBarcodeRange()
+        {
+            dynamic poPageList = new object();
+            try
+            {
+                poPageList = await _BarcodeRangeRepo.GetBarcodeRangeList();
+              
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
 
+            }
+
+            return poPageList;
+
+        }
     }
 }
