@@ -58,6 +58,10 @@ namespace badger_view.Controllers
                 {
                     multipleObject.barcodeList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/purchaseorders/getbarcode/" + search);
                 }
+                else
+                {
+                    multipleObject.barcodeList = xobject;
+                }
             }
             else
             {

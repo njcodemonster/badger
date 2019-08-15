@@ -13,13 +13,20 @@ $(document).ready(function () {
             // { "orderable": true, "targets": [1, 2, 3] }
         ]
     });
+    general_search();
+});
+
+$(document).on('click', "#general_search_btn", function () {
+    $("#general_search").autocomplete("search", $("#general_search").val()); 
+});
 
 
+/************** General  Search **********/
+function general_search() {
     // General Search
     var general_search = $('#general_search');
     general_search.autocomplete({
         source: function (request, response) {
-
             var jsonData = {};
             jsonData["search"] = request.term;
             console.log(jsonData);
@@ -36,32 +43,32 @@ $(document).ready(function () {
                 }).always(function (data) {
                     console.log(data);
 
-                        /********** Barcode **********************/
-                        if (data.barcodeList.length > 0) {
-                            newData = data.barcodeList;
-                        }
+                    /********** Barcode **********************/
+                    if (data.barcodeList.length > 0) {
+                        newData = data.barcodeList;
+                    }
 
-                        /********** SKU **********************/
-                        if (data.skuList.length > 0) {
-                            newData = data.skuList;
-                        }
+                    /********** SKU **********************/
+                    if (data.skuList.length > 0) {
+                        newData = data.skuList;
+                    }
 
-                        /********** Vendor **********************/
-                        if (data.vendorList.length > 0 && data.productList.length == 0) {
-                            newData = data.vendorList;
-                        }
+                    /********** Vendor **********************/
+                    if (data.vendorList.length > 0 && data.productList.length == 0) {
+                        newData = data.vendorList;
+                    }
 
-                        /********** Product **********************/
-                        if (data.productList.length > 0 && data.vendorList.length == 0) {
-                            newData = data.productList;
-                        }
+                    /********** Product **********************/
+                    if (data.productList.length > 0 && data.vendorList.length == 0) {
+                        newData = data.productList;
+                    }
 
-                        /********** Vendor & Product **********************/
-                        if (data.productList.length > 0 && data.vendorList.length > 0) {
-                            newData = data.vendorList.concat(data.productList);
-                        }
+                    /********** Vendor & Product **********************/
+                    if (data.productList.length > 0 && data.vendorList.length > 0) {
+                        newData = data.vendorList.concat(data.productList);
+                    }
 
-                        response(newData);
+                    response(newData);
                 });
             }
         },
@@ -73,54 +80,71 @@ $(document).ready(function () {
         focus: function (event, ui) {
             general_search.val(ui.item.label);
             return false;
-        }
+        },
+        /*open: function () {
+            $("ul.ui-menu").width($(this).innerWidth());
+        }*/
     });
 
     general_search.data("ui-autocomplete")._renderItem = function (ul, item) {
 
-        var $li = $('<li>'),
-            $img = $('<img style="width:35px;height:35px;padding-right:4px;">');
+        ul.addClass('search_result_list'); //Ul custom class here
+        //ul = this.menu.element;
+        //ul.outerWidth(this.element.outerWidth());
+
+        var li = $('<li>');
+        var img = $('<img style="width:50px;padding-right:4px;">');
+        var div = $('<div class="s_img">');
 
         if (item.type == 'vendor') {
-            $img.attr({
+            img.attr({
                 src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
                 alt: item.label
             });
         } else {
-            $img.attr({
-                src: 'uploads/' + item.image,
-                alt: item.label
-            });
+            if (item.image != null && item.image.indexOf("http") != -1) {
+                img.attr({
+                    src: item.image,
+                    alt: item.label
+                });
+            } else {
+                img.attr({
+                    src: 'uploads/' + item.image,
+                    alt: item.label
+                });
+            }
         }
-       
 
-        $li.attr('data-value', item.label);
+        li.attr('data-value', item.label);
 
         if (item.type == 'barcode') {
-            $li.append('<a href="#barcode">');
+            li.append('<a href="#barcode">');
         }
 
         if (item.type == 'sku') {
-            $li.append('<a href="#sku">');
+            li.append('<a href="#sku">');
         }
 
         if (item.type == 'vendor') {
-            $li.append('<a href="#vendor">');
+            li.append('<a href="#vendor">');
         }
 
         if (item.type == 'product') {
-            $li.append('<a href="#product">');
+            li.append('<a href="#product">');
         }
 
         if (item.image != null) {
-            $li.find('a').append($img).append(item.label);
+            div.append(img)
+            li.find('a').addClass("li_search").append(div).append(item.label);
         } else {
-            $li.find('a').append(item.label);
-        }
-        return $li.appendTo(ul);
+            li.find('a').append(item.label);
+        } 
+        
+
+        return li.appendTo(ul);
     };
 
-});
+}
 
 // Accordian PO Mgmt
 
