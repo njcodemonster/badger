@@ -226,6 +226,8 @@ namespace badger_view.Controllers
 
             dynamic getDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/getdiscount/" + id.ToString());
 
+            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + id.ToString() + "/" + "0");
+
             purchaseOrdersData.purchase_order = purchaseOrder;
             purchaseOrdersData.vendor = vendorData;
             purchaseOrdersData.notes = purchaseOrderNote;
@@ -233,7 +235,7 @@ namespace badger_view.Controllers
             purchaseOrdersData.tracking = purchaseOrderTracking;
             purchaseOrdersData.ledger = getLedger;
             purchaseOrdersData.discount = getDiscount;
-
+            purchaseOrdersData.Items = LineItemsDetails;
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
@@ -741,7 +743,8 @@ namespace badger_view.Controllers
             int purchase_order_id = PageModal.POList[0].po_id;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
-
+            List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
+            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges); 
             return View("PurchaseOrdersCheckIn", PageModal);
         }
 

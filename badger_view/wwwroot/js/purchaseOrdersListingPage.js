@@ -25,6 +25,60 @@
                     contentType: 'application/json',
                     processData: false,
                 }).always(function (data) {
+debugger;
+                    console.log(data);
+                    if (data.length > 0) {
+                        response(data);
+                        $('#poVendor').removeClass("errorFeild");
+                        $('.errorMsg').remove();
+                    } else {
+                        $('#poVendor').removeClass("errorFeild");
+                        $('.errorMsg').remove();
+                        $('#poVendor').addClass('errorFeild');
+                        $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                    }
+                   
+                });
+            } 
+            if (request.term.length == 0){
+                $('#poVendor').val(""); // display the selected text
+                $('#poVendor').attr("data-val", "");
+            }
+        },
+        select: function (event, ui) {
+            // Set selection
+            $('#poVendor').val(ui.item.label); // display the selected text
+            $('#poVendor').attr("data-val", ui.item.value);
+            // $('#selectuser_id').val(ui.item.value); // save selected id to input
+            return false;
+        },
+        focus: function (event, ui) {
+            event.preventDefault();
+            $("#poVendor").val(ui.item.label);
+        }
+    });
+
+
+//Auto Fill For product select 
+
+ // Single Select
+    $("#productSelect").autocomplete({
+        source: function (request, response) {
+            var jsonData = {};
+            jsonData["columnname"] = 'vendor_name';
+            jsonData["search"] = request.term;
+            console.log(jsonData);
+
+            if (request.term.length > 3) {
+                $.ajax({
+                    url: "/vendor/autosuggest/",
+                    dataType: 'json',
+                    type: 'post',
+                    data: JSON.stringify(jsonData),
+                    contentType: 'application/json',
+                    processData: false,
+                }).always(function (data) {
+debugger;
                     console.log(data);
                     if (data.length > 0) {
                         response(data);
@@ -943,6 +997,7 @@ Input: int id
 output: dynamic object of purchase order data
 */
 function purchaseOrderData(data) {
+    
     var data = data;
        var podata = data['purchase_order'];
         if (podata.length > 0) {
@@ -970,6 +1025,22 @@ function purchaseOrderData(data) {
             $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
             $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
+            debugger;
+            var it = data.Items.LineItemDetails;
+            if (it.length > 0) {
+                jQuery.each(it, function (i, dataNew) {
+                    if (dataNew.Quantity >0) {
+                        $("#itemsTable").append("<tr>");
+                        //$("#itemsTable").append("<td width = '60' > <img src=" + dataNew.product_vendor_image + " width='50' /></td>");
+                        $("#itemsTable").append("<td width='60'><img src='/images/dress-clipart.jpg' width='50' /></td>");
+                        $("#itemsTable").append("<td class='h6'>" + dataNew.product_name + " (DP007) in " + dataNew.vendor_color_name + " - " + dataNew.sku + "</td>");
+                        $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='EditItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber=" + data["purchase_order"][0].vendor_po_number + " data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
+                        $("#itemsTable").append("<td><a href='/Product/EditAttributes/" + dataNew.product_id +"'"+ " class='h6 text-primary'>Edit Attributes</a></td>");
+                        $("#itemsTable").append("<td><a href='#' class='h6 text-danger'>Remove</a></td>");
+                        $("#itemsTable").append("</tr>");
+                    }
+                });
+            }
             $("#newPurchaseOrderForm #po_status").val(podata.po_status);
         }
         window.notes = "";
@@ -1090,9 +1161,9 @@ function getSinglePurchaseOrder(id) {
 
             $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
             $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
+            $('#EditItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
 
             purchaseOrderData(data);
-
             $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
             if (data.purchase_order[0].po_status == 5) {
