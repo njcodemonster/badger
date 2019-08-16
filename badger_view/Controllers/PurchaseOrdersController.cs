@@ -126,7 +126,7 @@ namespace badger_view.Controllers
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
-            PurchaseOrdersPageModal.GetVendorsTypes = getVendorTypes;
+            PurchaseOrdersPageModal.VendorType = getVendorTypes;
 
             return View("Index", PurchaseOrdersPageModal);
         }
