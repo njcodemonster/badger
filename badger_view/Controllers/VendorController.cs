@@ -430,6 +430,8 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
+            vendorProductsandSku.vendor = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/" + id.ToString());
+            vendorProductsandSku.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }
 

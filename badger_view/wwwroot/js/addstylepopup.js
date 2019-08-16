@@ -7,6 +7,7 @@ Input: styles data
 Output: string of style
 */
 $(document).on('click', ".AddNewStyleButton", function () {
+    debugger;
     var action = $(this).attr('data-action');
      
     var newVendorForm = $("#newAddStyleForm input");
@@ -249,8 +250,11 @@ $(document).on('click', "#AddItemButton", function () {
         processData: true,
 
     }).always(function (data) {
-       // var sku_family = data.vendorSkufamily;
+        // var sku_family = data.vendorSkufamily;
+        data_vendor = data.vendor;
+        sku_sizes = data.Sizes;
         data = data.vendorProducts;
+
         $('#modaladdstylec #ExistingProductSelect option').remove();
         $('#modaladdstylec #ExistingProductSelect').append("<option id='-1' value=''>Choose...</option>");
         var last_sku_family = "";
@@ -260,20 +264,47 @@ $(document).on('click', "#AddItemButton", function () {
         $(".vendorSkuBox_disabled").remove();
         $(".vendorSkuBox").remove();
 
+        if (data.length) {
+            for (i = 0; i < data.length; i++) {
 
-        for (i = 0; i < data.length; i++) {
+                $('#modaladdstylec #ExistingProductSelect').append("<option data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+                last_sku_family = data[i].sku_family;
+            }
+            var vendorCode = last_sku_family.substring(0, 2);
+            var sku_number = parseInt(last_sku_family.substr(2)) + 1;
+            var new_sku = vendorCode + sku_number;
 
-            $('#modaladdstylec #ExistingProductSelect').append("<option data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID +"' data-name='"+ data[i].product_name +"' >" + data[i].product_name + "</option>");
-            last_sku_family = data[i].sku_family;
+        } else {
+            var vendorCode = data_vendor[0].vendor_code;
+            var sku_number = 100;
+            var new_sku = vendorCode + sku_number;
         }
-        var vendorCode = last_sku_family.substring(0, 2);
-        var sku_number = parseInt(last_sku_family.substr(2)) + 1;
-        var new_sku = vendorCode + sku_number;
         var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
 
-        var sku_sizes = ["","XS", "S", "M", "L"];
-        for (x = 1; x < 5; x++) {
-            $(wrapper).append('<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSize" id="styleSize" placeholder="Size" value = "' + sku_sizes[x] + '" /></div> <div class="form-group col-md-3"><input type="text" maxlength="7" style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "' + new_sku + '-' + x +'" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+
+        //var sku_sizes = ["","XS", "S", "M", "L"];
+
+        for (x = 1; x <= sku_sizes.length; x++) {
+            var dropdown = '<div class="form-group col-md-3" ><select name="styleSize"  id="styleSize" >';
+            var selected = "";
+            var y = 1;
+            
+            $.each(sku_sizes, function () {
+                if (x == y++) { selected = " selected "; }
+                dropdown += " <option value='" + this.attribute_id + "'  " + selected + ">" + this.attribute_display_name + "</option>";
+                selected = "";
+               // dropdown += " <option value='1' >as</option>";
+            });
+            dropdown += "</select></div>";
+
+            var str1 = '<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div>';
+            var str2 = ' <div class= "form-group col-md-3" > <input type="text" maxlength="7" style="text-transform: uppercase; " class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value="' + new_sku + '-' + x +'" /></div > <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div >';
+            var res = str1.concat(dropdown, str2);
+
+            $(wrapper).append(res);
+           // $(wrapper).append('<div class="pb - 2  vendorSkuBox form - row"> <div class="form - group col - md - 3"><input type="text" class="form - control d - inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> < div class= "form - group col - md - 3" > <input type="text" class="form - control d - inline  required" name="styleSize" id="styleSize" placeholder="Size" value="' + sku_sizes[x] + '" /></div < div class= "form - group col - md - 3" > <input type="text" maxlength="7" style="text - transform: uppercase; " class="form - control d - inline  required" name="styleSku" id="styleSku" placeholder="SKU" value="' + new_sku + ' - ' + x +'" /></div > <div class="form - group col - md - 3"><input type="text" class="form - control d - inline  required" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div > '); // add input boxes.");
+             // $(wrapper).append('<div class="pb - 2  vendorSkuBox form - row"> <div class="form - group col - md - 3"><input type="text" class="form - control d - inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> < div class= "form - group col - md - 3" > '+dropdown+'</div> <div class= "form - group col - md - 3" > <input type="text" maxlength="7" style="text - transform: uppercase; " class="form - control d - inline  required" name="styleSku" id="styleSku" placeholder="SKU" value="' + new_sku + ' - ' + x +'" /></div > <div class="form - group col - md - 3"><input type="text" class="form - control d - inline  required" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div > '); // add input boxes.");
+
 
         }
        
