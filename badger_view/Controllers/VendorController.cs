@@ -149,7 +149,7 @@ namespace badger_view.Controllers
                     if (formFile.Length > 0)
                     {
 
-                        //awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                        awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
                         int ref_id = Int32.Parse(vendorLogo.Vendor_id);
                         JObject vendorDocuments = new JObject();
                         vendorDocuments.Add("vendor_id", ref_id);
