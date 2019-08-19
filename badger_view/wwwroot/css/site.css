@@ -504,3 +504,31 @@ label.error {
 #AddModelBtnDiv {
     text-align:right;
 }
+
+.po_tble_list input[type=text] {
+    width:100px;
+}
+
+.search_result_list{
+    width:350px !important;
+    font-size:14px !important;
+}
+.search_result_list .li_search {
+    clear: both;
+    padding: 5px 0px;
+    height: 80px;
+    display: table;
+    width: 100%;
+}
+
+.search_result_list .s_img {
+    max-height: 80px;
+    display: table-cell;
+    width: 60px;
+}
+
+.search_result_list li {
+    border-bottom: 1px solid #eee;
+    padding: 3px .2em 3px .2em;
+}
+    

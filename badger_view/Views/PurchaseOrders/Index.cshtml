@@ -98,11 +98,11 @@
                     <td>
                         @if (@purchaseOrders.po_status == 5)
                         {
-                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checked-in</button>
+                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checkin</button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-success btn-sm">Checked-in</button>
+                            <button type="button" class="btn btn-success btn-sm">Checked-In</button>
                         }
 
                     </td>
@@ -258,164 +258,7 @@
     </div>
 
     <!-- Modal Vendor -->
-    <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <form id="newVendorForm" data-currentid="" enctype="multipart/form-data">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Vendor Name</label>
-                                    <input type="text" class="form-control required" id="vendorName">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Corporation Name</label>
-                                    <input type="text" class="form-control required" id="vendorCorpName">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Exact Statement Name</label>
-                                    <input type="text" class="form-control required" id="vendorStatmentName">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Vendor Code</label>
-                                    <input type="text" class="form-control autocomplete required" id="vendorCode">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Our Customer #</label>
-                                    <input type="text" class="form-control required" id="vendorourCustomerNumber">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Street Address</label>
-                                    <input type="text" class="form-control required" id="vendorStreetAdress">
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group col-md-3">
-                                    <label>Zip Code</label>
-                                    <input type="text" maxlength="5" data-type="number" class="form-control required" id="vendorZip">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label>State</label>
-                                    <input type="text" class="form-control required" id="vendorState">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label>Unit Number</label>
-                                    <input type="text" class="form-control required" id="vendorUnitNumber">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label>City</label>
-                                    <input type="text" class="form-control required" id="vendorCity">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Vendor Notes</label>
-                                    <textarea class="form-control" id="vendorNotes"></textarea>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Upload Logo</label>
-                                    <input type="file" class="form-control" id="vendorDocument" multiple>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Vendor Description</label>
-                                    <textarea class="form-control" id="vendorDec"></textarea>
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label>Vendor Types</label>
-                                    <select id="vendortype" class="form-control d-inline-block required" style="width: 90%">
-                                        <option value="">choose ...</option>
-                                        @foreach (VendorType vendorType in Model.GetVendorsTypes)
-                                        {
-                                            <option value="@vendorType.vendor_type_id">@vendorType.vendor_type_description</option>
-                                        }
-
-                                    </select><br>
-                                </div>
-
-                            </div>
-                            <div class="venderRepo">
-                                <div class="venderRepoBox highlighted">
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <label>Rep First Name</label>
-                                            <input type="text" class="form-control required" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" checked name="vendorRepIsPrimary" /> <small>Primary</small>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label>Rep Full Name</label>
-                                            <span class="firstRep">
-                                                <input type="text" class="form-control required" id="vendorFullRepName" style="width:90%">
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <label>Phone Number 1</label>
-                                            <div class="row">
-                                                <div class="col-md-3 p-0">
-                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone form-control d-inline w-75 required" id="vendorRepPhone11"> <span class="d-inline">)</span>
-                                                </div>
-                                                <div class="col-md-3 p-0">
-                                                    <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone12">
-                                                </div>
-
-                                                <div class="col-md-5">
-                                                    <input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone13">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label>Email</label>
-                                            <input type="email" class="form-control email required" style="width:90%" id="vendorRepEmail">
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <label>Phone Number 2</label>
-                                            <div class="row">
-                                                <div class="col-md-3 p-0">
-                                                    <span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="form-control d-inline w-75 phone required" id="vendorRepPhone14"> <span class="d-inline">)</span>
-                                                </div>
-                                                <div class="col-md-3 p-0">
-                                                    <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone15">
-                                                </div>
-
-                                                <div class="col-md-5">
-                                                    <input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone16">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#" id="AddMoreReps" class="" style="text-decoration:underline">+ add rep</a>
-
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="vendorAlertMsg"></div>
-                    <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
     <!-- Modal Add Invoice -->
     <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

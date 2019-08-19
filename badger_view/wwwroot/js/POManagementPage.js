@@ -80,6 +80,7 @@ Input: int item document id
 Output: get item document data
 */
 $(document).on("click", "#AddDocument", function () {
+    $(".poDocAlertMsg").text("");
     $('#document_form')[0].reset();
     var id = $(this).attr("data-itemid");
     var productid = $(this).attr("data-productid");
@@ -97,7 +98,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a onclick='return false' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -118,6 +119,12 @@ Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
     var po_id = $('#document_form').attr("data-productid");
+    $(".poDocAlertMsg").text("");
+    if ($('#poUploadImages').val() == "") {
+        $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
+        return false;
+    }
+
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
@@ -143,9 +150,16 @@ $(document).on("click", "#document_submit", function () {
                 console.log("Exception Error");
                 alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
             } else {
-                alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
-                console.log(data.responseText);
-                $("#modaladddocument").modal("hide");
+                if (data.responseText.indexOf('File Already') > -1) {
+                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                    $('.message-' + po_id).empty().html("");
+                } else {
+                    alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
+                    console.log(data.responseText);
+                    $("#modaladddocument").modal("hide");
+                }
+
+               
             }
         });
     }
@@ -316,12 +330,14 @@ $(document).on("keydown", ".item_barcode", function (e) {
 });
 
 $(document).on("change", ".item_barcode", function (e) {
+    debugger;
     var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
     var item_id = $(this).attr('data-itemid');
     var old_barcode = $(this).attr('data-barcode');
+    var size = $(this).parents("tr").attr('data-size');
     var barcode = $(this).val();
-
+    var barcodeRanges = JSON.parse( $("#allBarcodeRanges").val());
     $(this).removeClass('errorFeild');
     if (barcode.length < 8) {
         $(this).addClass('errorFeild');
@@ -331,6 +347,27 @@ $(document).on("change", ".item_barcode", function (e) {
     if (old_barcode == barcode) {
         _self.removeClass('errorFeild');
         return false;
+    }
+    //checking barcode range 
+    var hasMatch = false;
+    var index = -1;
+    for (var i = 0; i < barcodeRanges.length; i++) {
+
+        var single = barcodeRanges[i];
+
+        if (barcode >= single.barcode_from && barcode <= single.barcode_to ) {
+            hasMatch = true;
+            index = i;
+            break;
+        }
+    }
+    if (hasMatch) {
+        var currentBarcode = barcodeRanges[index];
+        if (currentBarcode.size.toLowerCase() != size.toLowerCase()) {
+            _self.addClass('errorFeild');
+            alertInnerBox('message-' + po_id, 'red', 'Item barcode exist in a size :  ' + currentBarcode.size);
+            return false;
+        }
     }
     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
     $.ajax({
@@ -938,7 +975,10 @@ Date: 7-19-19
 Action: Delete Document or Image on click 
 output: Boolean
 */
-$(document).on('click', ".podeleteImage", function () {
+$(document).on('click', ".podeleteImage", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');
@@ -979,18 +1019,25 @@ $(document).on('change', '.checkrastatus', function (e) {
     }
 });
 
+
+/*
+Developer: Sajid Khan
+Date: 08-07-19
+Action: When checked checkbox than checked status dropdown status changed
+Output: Alert notification success of failed etc
+*/
 $(document).on('change', '.checkitemstatus', function (e) {
     var checkdata = $(this).attr("data-status");
     if ($(this).is(':checked')) {
         $(".checkitemstatus").each(function () {
             if ($(this).attr("data-status") == checkdata) {
-                $(this).attr("checked", true);
+                $(this).prop('checked',true);
             }
         })
     } else {
         $(".checkitemstatus").each(function () {
             if ($(this).attr("data-status") == checkdata) {
-                $(this).attr("checked", false);
+                $(this).prop('checked',false);
             }
         })
     }

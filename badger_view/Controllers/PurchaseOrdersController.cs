@@ -70,7 +70,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/30/true");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
 
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
@@ -126,7 +126,7 @@ namespace badger_view.Controllers
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
             PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
-            PurchaseOrdersPageModal.GetVendorsTypes = getVendorTypes;
+            PurchaseOrdersPageModal.VendorType = getVendorTypes;
 
             return View("Index", PurchaseOrdersPageModal);
         }
@@ -226,6 +226,8 @@ namespace badger_view.Controllers
 
             dynamic getDiscount = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordersdiscounts/getdiscount/" + id.ToString());
 
+            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + id.ToString() + "/" + "0");
+
             purchaseOrdersData.purchase_order = purchaseOrder;
             purchaseOrdersData.vendor = vendorData;
             purchaseOrdersData.notes = purchaseOrderNote;
@@ -233,7 +235,7 @@ namespace badger_view.Controllers
             purchaseOrdersData.tracking = purchaseOrderTracking;
             purchaseOrdersData.ledger = getLedger;
             purchaseOrdersData.discount = getDiscount;
-
+            purchaseOrdersData.Items = LineItemsDetails;
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
@@ -364,7 +366,7 @@ namespace badger_view.Controllers
 
                                 JObject purchaseOrderDocuments = new JObject();
                                 purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
-                                purchaseOrderDocuments.Add("url", Fill_path);
+                                purchaseOrderDocuments.Add("url", formFile.FileName);
                                 purchaseOrderDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
@@ -741,7 +743,8 @@ namespace badger_view.Controllers
             int purchase_order_id = PageModal.POList[0].po_id;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
-
+            List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
+            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges); 
             return View("PurchaseOrdersCheckIn", PageModal);
         }
 
@@ -1040,7 +1043,7 @@ namespace badger_view.Controllers
 
                                 JObject itemDocuments = new JObject();
                                 itemDocuments.Add("ref_id", purchaseorderfile.po_id);
-                                itemDocuments.Add("url", Fill_path);
+                                itemDocuments.Add("url", formFile.FileName);
                                 itemDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocuments.ToString(Formatting.None), "/purchaseordermanagement/documentcreate");
 
@@ -1288,9 +1291,9 @@ namespace badger_view.Controllers
 
             if (fileName != null || fileName != string.Empty)
             {
-                if ((System.IO.File.Exists(fileName)))
+                if ((System.IO.File.Exists(UploadPath+fileName)))
                 {
-                    System.IO.File.Delete(fileName);
+                    System.IO.File.Delete(UploadPath+fileName);
                 }
 
             }

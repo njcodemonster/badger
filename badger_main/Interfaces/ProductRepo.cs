@@ -11,6 +11,13 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Dapper.Contrib.Extensions;
+using badgerApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using CommonHelper;
 namespace badgerApi.Interfaces
 {
     public interface IProductRepository
@@ -38,6 +45,8 @@ namespace badgerApi.Interfaces
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
         Task<string> AddEditProductPageDetails(string product_id, string product_detail_type, string value);
+        Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
+        Task<Object> GetProduct(string product_name);
     }
     public class ProductRepo : IProductRepository
     {
@@ -460,12 +469,12 @@ namespace badgerApi.Interfaces
 
         }
         /*
-       Developer: Azeem hassan
-       Date: 7-28-19 
-       Action: insert data to db
-       Input: image data
-       output: insertion id
-       */
+        Developer: Azeem hassan
+        Date: 7-28-19 
+        Action: insert product image data to db
+        Input: image data
+        output: insertion id
+        */
         public async Task<string> CreateProductImages(Productimages NewProductImages)
         {
             using (IDbConnection conn = Connection)
@@ -476,19 +485,64 @@ namespace badgerApi.Interfaces
         }
 
         /*
-        Developer: Mohi
-        Date: 8-16-19 
-        Action: check product details if itis already added then it update and otherwise insert it
-        Input: product id, product detail
-        output: string 
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get product data by product name to db
+        Input: image data
+        output: insertion id
         */
+        public async Task<Object> GetProduct(string product_name)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id as value, product_name as label, product_vendor_image as image,'product' as type FROM " + TableName + " WHERE product_name LIKE '%" + product_name + "%';";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: update product image as primary in database
+        Input: int product_image_id, int is_primary
+        output: boolean
+        */
+        public async Task<bool> UpadateImagePrimary(int product_image_id, int is_primary)
+        {
+            Boolean res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String updateQuery = "update product_images set isprimary = "+ is_primary + " where product_image_id = "+ product_image_id;
+                    var updateResult = await conn.QueryAsync<object>(updateQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        /*
+       Developer: Mohi
+       Date: 8-16-19 
+       Action: check product details if itis already added then it update and otherwise insert it
+       Input: product id, product detail
+       output: string 
+       */
 
         public async Task<string> AddEditProductPageDetails(string product_id, string product_detail_type, string value)
         {
             dynamic productDetails = new ExpandoObject();
             string sQuery = "";
             string toReturn = "success";
-            sQuery = "SELECT * FROM product_page_details where product_id = "+ product_id+ " And product_detail_type =  " + product_detail_type;
+            sQuery = "SELECT * FROM product_page_details where product_id = " + product_id + " And product_detail_type =  " + product_detail_type;
 
             using (IDbConnection conn = Connection)
             {
@@ -496,15 +550,16 @@ namespace badgerApi.Interfaces
                 int checkData = productPageDetail.Count();
                 if (checkData > 0)
                 {
-                    String InsertQuery = "update product_page_details set `product_detail_value` = \""+value+ "\", `updated_by` = 1, updated_at = 0.00  where `product_id` = "+ product_id +" and `product_detail_type`  = " + product_detail_type;
+                    String InsertQuery = "update product_page_details set `product_detail_value` = \"" + value + "\", `updated_by` = 1, updated_at = 0.00  where `product_id` = " + product_id + " and `product_detail_type`  = " + product_detail_type;
                     await conn.QueryAsync<object>(InsertQuery);
                 }
-                else {
+                else
+                {
                     String InsertQuery = "insert into product_page_details (`product_id`, `product_detail_type`, `product_detail_value`, `created_by`) " +
                         "values (" + product_id + "," + product_detail_type + ", \"" + value + "\", 1 )";
-                   var result = await conn.QueryAsync<object>(InsertQuery);
+                    var result = await conn.QueryAsync<object>(InsertQuery);
                 }
-                
+
             }
             return toReturn;
         }

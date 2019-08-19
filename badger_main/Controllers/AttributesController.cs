@@ -79,6 +79,34 @@ namespace badgerApi.Controllers
         }
 
         /*
+        Developer:ubaid
+        Date:5-8-19
+        Action:Get attributes data by attributes type id
+        Request:GET
+        URL: api/attributes/list/type/id
+        Input: int id
+        output: list of attributes data
+       */
+        [HttpGet("list/type/{id}")]
+        public async Task<List<Attributes>> GetAsyncType(int id)
+        {
+            List<Attributes> ToReturn = new List<Attributes>();
+            try
+            {
+                ToReturn = await _AttributesRepo.GetByTypeId(id);
+                
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ToReturn;
+        }
+
+        /*
           Developer: ubaid
           Date:5-7-19
           Action:get HTML Form (New Styles attributes Data) from VIEW and pass the data to API Attributes Repo 

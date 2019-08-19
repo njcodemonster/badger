@@ -63,7 +63,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
            
-            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/0/30");
+            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/0/0");
 
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count; 
@@ -148,27 +148,13 @@ namespace badger_view.Controllers
                 {
                     if (formFile.Length > 0)
                     {
-                        string Fill_path = formFile.FileName;
-                        Fill_path = UploadPath + Fill_path;
-                        if (System.IO.File.Exists(Fill_path))
-                        {
-                            messageAlreadyDocuments += "File Already Exists: " + Fill_path + " \r\n";
-                        }
-                        else
-                        {
-                            using (var stream = new FileStream(Fill_path, FileMode.Create))
-                            {
-                                messageDocuments += Fill_path + " \r\n";
 
-                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
-                                await formFile.CopyToAsync(stream);
-                                int ref_id = Int32.Parse(vendorLogo.Vendor_id);
-                                JObject vendorDocuments = new JObject();
-                                vendorDocuments.Add("vendor_id", ref_id);
-                                vendorDocuments.Add("logo", formFile.FileName);
-                                await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/"+ vendorLogo.Vendor_id);
-                            }
-                        }
+                        awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+                        int ref_id = Int32.Parse(vendorLogo.Vendor_id);
+                        JObject vendorDocuments = new JObject();
+                        vendorDocuments.Add("vendor_id", ref_id);
+                        vendorDocuments.Add("logo", formFile.FileName);
+                        await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendorLogo.Vendor_id);
                     }
                 }
 
@@ -201,7 +187,7 @@ namespace badger_view.Controllers
                 JObject vendorDocuments = new JObject();
                 vendorDocuments.Add("vendor_id", ref_id);
                 vendorDocuments.Add("logo", "");
-                System.IO.File.Delete(fileName);
+                System.IO.File.Delete(UploadPath+fileName);
                 await _BadgerApiHelper.GenericPutAsyncString<String>(vendorDocuments.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id);
                 return "file deleted successfully";
             }
@@ -430,6 +416,8 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
+            vendorProductsandSku.vendor = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/" + id.ToString());
+            vendorProductsandSku.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }
 

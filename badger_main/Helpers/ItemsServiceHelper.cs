@@ -46,6 +46,7 @@ namespace badgerApi.Helper
         Task<Boolean> CheckBarcodeExist(int barcode);
         Task<List<Items>> GetItemsGroupByProductId(int PO_id);
         Task<string> ItemSpecificUpdateById(int id, string json);
+        Task<object> GetBarcode(int barcode);
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
@@ -269,6 +270,24 @@ namespace badgerApi.Helper
             var data = await response.Content.ReadAsStringAsync();
 
             return data.ToString();
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-7-19 
+        Action: Get Product Items by small sku
+        URL: 
+        Request: Get
+        Input:  string product_id
+        output: dynamic object of items product data of small sku
+        */
+        public async Task<object> GetBarcode(int barcode)
+        {
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/getbarcode/"+barcode, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
         }
     }
 }

@@ -1,4 +1,10 @@
-﻿/*
+﻿var vendorTable = $('#vendorListingArea').DataTable({
+    "aaSorting": [],
+    "lengthMenu": [50, 100, 200],
+    "pageLength": 50
+});
+
+/*
    Developer: Azeem Hassan
    Date: 7-12-19
    Action: Autocomplete search by vendor name like on greater than three character
@@ -226,7 +232,7 @@ $(document).on('click', "#EditVendor", function () {
         if (documents != '' && documents != null) {
             //for (var i = 0; i < documents.length; i++) {
             url = "https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/"+documents;
-                var html = '<a href="'+url+'" target="_blank" class="documentsLink" data-val="'+documents+'" href="">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
+                var html = '<a href="'+url+'" target="_blank" class="documentsLink" data-val="'+documents+'">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
             //}
             $('#vendorDocument').parent('div').append(html)
         }
@@ -332,6 +338,9 @@ $(document).on('click', "#EditVendorButton", function () {
                         contentType: false,
                     }).always(function (data) {
                         console.log(data);
+                        if (data.responseText.indexOf('File Already') > -1) {
+                            alertBox('vendorAlertMsg', 'red', 'logo already exist');
+                        }
                     });
                 }
                     $('#newVendorModal').modal('hide'); 
@@ -580,7 +589,9 @@ $(document).on('change', "#vendortype", function () {
    Request: POST
    output: massage
 */
-$(document).on('click', ".deleteImage", function () {
+$(document).on('click', ".deleteImage", function (event) {
+    event.stopPropagation();
+    event.preventDefault();
     var jsonData = {};
     var _this = $(this);
     jsonData["vendorDocuments"] = $(this).parents('.documentsLink').attr('data-val');
@@ -644,7 +655,7 @@ $('#vendorListingArea').on('page.dt', function () {
 
     console.log('Showing page: ' + (info.page + 1) + ' of ' + info.pages);
 
-    if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
+    /*if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
         console.log("Load more...");
         $('.loading').removeClass("d-none");
         var start_total = info.recordsTotal; //table4.column(0).data().length;
@@ -670,5 +681,5 @@ $('#vendorListingArea').on('page.dt', function () {
                 $('.loading').addClass("d-none");
             }
         });
-    }
+    }*/
 });
