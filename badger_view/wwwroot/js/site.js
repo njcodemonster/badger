@@ -88,7 +88,7 @@ function general_search() {
     });
 
     general_search.data("ui-autocomplete")._renderItem = function (ul, item) {
-
+        console.log(item);
         ul.addClass('search_result_list'); //Ul custom class here
         //ul = this.menu.element;
         //ul.outerWidth(this.element.outerWidth());

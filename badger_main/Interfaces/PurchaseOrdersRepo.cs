@@ -353,7 +353,7 @@ namespace badgerApi.Interfaces
         {
             dynamic poDetails = new ExpandoObject();
 
-            string sQuery = "SELECT po_id AS value, vendor_po_number AS label, vendor_invoice_number AS label, vendor_order_number AS label, 'purchase_orders' AS type FROM purchase_orders WHERE(po_status != 2 AND po_status != 4) AND(vendor_po_number LIKE '" + search + "%' OR vendor_invoice_number LIKE '" + search + "%' OR vendor_order_number LIKE '" + search+"%')";
+            string sQuery = "SELECT po_id AS value, vendor_po_number AS label, 'purchase_orders' AS type FROM purchase_orders WHERE(po_status != 2 AND po_status != 4) AND(vendor_po_number LIKE '" + search + "%' OR vendor_invoice_number LIKE '" + search + "%' OR vendor_order_number LIKE '" + search+"%')";
 
             using (IDbConnection conn = Connection)
             {
