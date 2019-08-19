@@ -204,8 +204,8 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
     if (productImage != null) {
 
         //$(".style_doc_section").append("<img src='/images/dress-clipart.jpg' width='50' />");
-        $(".style_doc_section").append("<div><img src='" + productImage+"' width='50' /> <a onclick='return false' class='documentsLink' data-proid=" + SelectedProductID + " data-val=" + productImage + ">" + productImage + " <span class='podeleteImage'>×</span></a> </div> <br>");
-
+        $(".style_doc_section").append("<img src='" + productImage+"' width='50' />  <br>");
+        //$(".style_doc_section").append("<a onclick='return false' class='documentsLink' data-proid=" + SelectedProductID + " data-val=" + productImage + ">" + productImage + " <span class='podeleteImage'>×</span></a>");
 
         $(".style_doc_section").removeClass('d-none');
 
