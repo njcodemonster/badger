@@ -26,6 +26,7 @@ function general_search() {
     // General Search
     var general_search = $('#general_search');
     general_search.autocomplete({
+        delay: 0,
         source: function (request, response) {
             var jsonData = {};
             jsonData["search"] = request.term;
@@ -42,31 +43,31 @@ function general_search() {
                     processData: false,
                 }).always(function (data) {
                     console.log(data);
-
                     /********** Barcode **********************/
                     if (data.barcodeList.length > 0) {
-                        newData = data.barcodeList;
+                        newData = newData.concat(data.barcodeList);
                     }
 
                     /********** SKU **********************/
                     if (data.skuList.length > 0) {
-                        newData = data.skuList;
+                        newData = newData.concat(data.skuList);
                     }
 
                     /********** Vendor **********************/
-                    if (data.vendorList.length > 0 && data.productList.length == 0) {
-                        newData = data.vendorList;
+                    if (data.vendorList.length > 0 ) {
+                        newData = newData.concat(data.vendorList);
                     }
 
                     /********** Product **********************/
-                    if (data.productList.length > 0 && data.vendorList.length == 0) {
-                        newData = data.productList;
+                    if (data.productList.length > 0 ) {
+                        newData = newData.concat(data.productList);
                     }
 
-                    /********** Vendor & Product **********************/
-                    if (data.productList.length > 0 && data.vendorList.length > 0) {
-                        newData = data.vendorList.concat(data.productList);
+                    /********** PO **********************/
+                    if (data.purchaseOrdersList.length > 0) {
+                        newData = newData.concat(data.purchaseOrdersList);
                     }
+                    console.log(newData);
 
                     response(newData);
                 });
@@ -97,22 +98,29 @@ function general_search() {
         var div = $('<div class="s_img">');
 
         if (item.type == 'vendor') {
-            img.attr({
-                src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
-                alt: item.label
-            });
-        } else {
-            if (item.image != null && item.image.indexOf("http") != -1) {
+            if (item.image != undefined && item.image != null ) {
                 img.attr({
-                    src: item.image,
-                    alt: item.label
-                });
-            } else {
-                img.attr({
-                    src: 'uploads/' + item.image,
+                    src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
                     alt: item.label
                 });
             }
+            
+        } else {
+
+            if (item.image != undefined) {
+                if (item.image != null && item.image.indexOf("http") != -1) {
+                    img.attr({
+                        src: item.image,
+                        alt: item.label
+                    });
+                } else {
+                    img.attr({
+                        src: 'uploads/' + item.image,
+                        alt: item.label
+                    });
+                }
+            }
+            
         }
 
         li.attr('data-value', item.label);
@@ -133,7 +141,7 @@ function general_search() {
             li.append('<a href="#product">');
         }
 
-        if (item.image != null) {
+        if (item.image != null && item.image != undefined) {
             div.append(img)
             li.find('a').addClass("li_search").append(div).append(item.label);
         } else {

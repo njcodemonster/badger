@@ -43,12 +43,11 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             dynamic multipleObject = new ExpandoObject();
-            dynamic xobject = new object();
+            string[] xobject = new string[] { };
             string search = json.Value<string>("search");
             int searchLength = search.Length;
 
             Boolean checkPattern = false;
-            int[] values = null;
 
             /*********   Barcode  *********************/
             if (searchLength == 8)
@@ -91,12 +90,14 @@ namespace badger_view.Controllers
             if (checkPattern)
             {
                 multipleObject.vendorList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendor/"+search);
-                multipleObject.productList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getproduct/"+search);                
+                multipleObject.productList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getproduct/"+search);
+                multipleObject.purchaseOrdersList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/purchaseorders/getpolist/" + search);
             }
             else
             {
                 multipleObject.vendorList = xobject;
                 multipleObject.productList = xobject;
+                multipleObject.purchaseOrdersList = xobject;
             }
 
             return JsonConvert.SerializeObject(multipleObject);
