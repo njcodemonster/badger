@@ -265,6 +265,7 @@ __pycache__/
 # custom git ignore file here
 
 # app settings file in git ignore
+*.pubxml
 /*.json
 *.json
 !spec/*.json
