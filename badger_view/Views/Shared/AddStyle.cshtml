@@ -48,15 +48,15 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>Type</label>
-                                <select id="StyleType" class="form-control required">
+                                <select id="StyleType" class="form-control required" disabled>
                                     <option selected value="">Choose...</option>
-                                    <option value="1">Colothing</option>
+                                    <option value="1">Clothing</option>
                                     <option value="2">Accessories</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Subtype</label>
-                                <select id="StyleSubType" class="form-control">
+                                <select id="StyleSubType" class="form-control" disabled>
                                     <option selected>Choose...</option>
                                     <option>...</option>
                                 </select>
@@ -76,9 +76,14 @@
                             </div>
                         </div>
                         <div class="form-row">
+                            @*<div class="form-group col-md-8" >
+            <label>Vendor Notes</label>
+            <textarea class="form-control"></textarea>
+        </div>*@
                             <div class="form-group col-md-8">
-                                <label>Vendor Notes</label>
-                                <textarea class="form-control"></textarea>
+                                <label>Upload Files</label>
+                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
+                                <div class="style_doc_section d-none"></div>
                             </div>
                             <div class="form-group col-md-4 text-center">
                                 <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
@@ -87,10 +92,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-8">
-                                <label>Upload Files</label>
-                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
-                            </div>
+                         
                         </div>
                         <input id="po_id" name="po_id" type="hidden" class="form-control">
                         <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
