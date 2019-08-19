@@ -99,7 +99,6 @@ namespace badgerApi.Controllers
                 {
                     productDetailsPageData.Product_Notes = "";
                 }
-                productDetailsPageData.Product_Notes = "";
                 productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
