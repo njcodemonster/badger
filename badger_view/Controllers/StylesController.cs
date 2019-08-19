@@ -187,7 +187,7 @@ namespace badger_view.Controllers
                     product_id = product_id_current.ToString(); //update on selected product id
 
                 // add new product in product table
-                await _BadgerApiHelper.GenericPostAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
+                var a =await _BadgerApiHelper.GenericPutAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
 
 
 
@@ -298,7 +298,7 @@ namespace badger_view.Controllers
                         product_attribute_obj.Add("created_by", user_id);
                         //product_attribute_obj.Add("created_at", _common.GetTimeStemp()); need to create in DB
                         String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
-
+                        
                         //// size attribute ends here
                     }
 
