@@ -412,3 +412,8 @@
 2019-08-19T20:55:18.6657529+05:00 0HLP4NMAQDGEL:00000002 [INF] Executing ObjectResult, writing value of type '"System.String[]"'. (8a1b66c8)
 2019-08-19T20:55:18.6756652+05:00 0HLP4NMAQDGEL:00000002 [INF] Executed action "badgerApi.Controllers.ValuesController.Get (badgerApi)" in 29.1462ms (afa2e885)
 2019-08-19T20:55:18.6861108+05:00 0HLP4NMAQDGEL:00000002 [INF] Request finished in 54.6709ms 200 application/json; charset=utf-8 (791a596a)
+2019-08-19T21:22:18.6732957+05:00 0HLP4O5JRITM9:00000001 [INF] Request starting HTTP/1.1 DEBUG http://localhost:62169/  0 (ca22a1cb)
+2019-08-19T21:22:18.6732959+05:00 0HLP4O5JRITM8:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:44301/api/values   (ca22a1cb)
+2019-08-19T21:22:18.6732957+05:00 0HLP4O5JRITMA:00000001 [INF] Request starting HTTP/1.1 POST http://127.0.0.1:33969/iisintegration  0 (ca22a1cb)
+2019-08-19T21:22:18.7899898+05:00 0HLP4O5JRITM9:00000001 [INF] Request finished in 129.5473ms 200  (791a596a)
+2019-08-19T21:22:18.8039797+05:00 0HLP4O5JRITMA:00000001 [INF] Request finished in 129.5467ms 202  (791a596a)
