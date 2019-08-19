@@ -60,7 +60,8 @@ namespace badgerApi
             }
             else
             {
-                app.UseHsts();
+                app.UseDeveloperExceptionPage();
+                //app.UseHsts();
             }
 
             app.UseHttpsRedirection();
