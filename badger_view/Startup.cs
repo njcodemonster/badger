@@ -57,7 +57,7 @@ namespace badger_view
             {
                 app.UseDeveloperExceptionPage();
                 //app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
+               // app.UseHsts();
             }
            
             app.UseHttpsRedirection();
