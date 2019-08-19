@@ -104,8 +104,41 @@ $(document).on("change", ".tagsData", function () {
 $(document).on("click", "#mainSaveButton", function () {
     if (emptyFeildValidation('productDetailPage') == false) {
         return false;
-    }
+    } 
     datatosend = {};
+    datatosend["product_name"] = $("#product_name").val();
+    datatosend["size_fit"] = $("#Product_sizeandfit").val();
+    datatosend["product_cost"] = $("#product_cost").val();
+    datatosend["product_retail"] = $("#product_retail").val();
+    datatosend["product_discount"] = $("#product_discount").val();
+
+    datatosend["product_detail_1"] = $("#main_page_paragraph").val();
+    datatosend["product_detail_2"] = $("#main_page_bulit1").val();
+    datatosend["product_detail_3"] = $("#main_page_bulit2").val();
+    datatosend["product_detail_4"] = $("#main_page_bulit3").val();
+
+    datatosend["internalNotes"] = $("#internalNotes").val();
+    datatosend["oldInternalNotes"] =  $('#internalNotes').attr('data-realvalue'); 
+
+    var productID = $('#product_name').attr('data-id'); 
+
+    $.ajax({
+
+        url: '/product/UpdateAttributes/' + productID,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(datatosend),
+        processData: false,
+
+    }).always(function (data) {
+            console.log(data);
+            console.log(datatosend);
+    });
+
+    
+
+    return false;
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
     datatosend["color_added"] = color_added;
@@ -116,17 +149,7 @@ $(document).on("click", "#mainSaveButton", function () {
     $("select.form-control.dirty").each(function (item) {
         datatosend[$(this).attr("id")] = $(this).val();
     });
-    $.ajax({
-
-        url: '/product/UpdateAttributes',
-        dataType: 'json',
-        type: 'post',
-        contentType: 'application/json',
-        data: JSON.stringify(datatosend),
-        processData: false,
-
-    }).always(function (data) { });
-    console.log(datatosend);
+    
 });
 $(document).on("click", ".addMorePoints", function () {
     $(this).removeClass('fa-plus addMorePoints').addClass('fa-minus removeMorePoints');

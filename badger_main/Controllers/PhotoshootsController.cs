@@ -31,25 +31,25 @@ namespace badgerApi.Controllers
         string table_name = "product_events";
         string user_event_table_name = "user_events";
 
-        string event_create_photoshoot = "Photoshoot created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot
+        string event_create_photoshoot = "Photoshoot created by user = %%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_created_id = 16;
 
-        string event_add_product_photoshoot = "Photoshoot product added by user =%%userid%% with product id = %%pid%%"; ///event_add_product_photoshoot
+        string event_add_product_photoshoot = "Photoshoot product added by user = %%userid%% with product id = %%pid%%"; ///event_add_product_photoshoot
         int event_add_product_photoshoot_id = 34;
 
-        string event_photoshoot_started = "Photoshoot started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
+        string event_photoshoot_started = "Photoshoot started by user = %%userid%% with product id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_started_id = 17;
 
-        string event_photoshoot_not_started = "Photoshoot not started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
+        string event_photoshoot_not_started = "Photoshoot not started by user = %%userid%% with product id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_not_started_id = 18;
 
-        string event_photoshoot_sent_to_editor = "Photoshoot sent to editor by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
+        string event_photoshoot_sent_to_editor = "Photoshoot sent to editor by user = %%userid%% with product id = %%pid%%"; ///event_create_photoshoot
         int event_photoshoot_sent_to_editor_id = 19;
 
-        string event_photoshoot_note_create = "Photoshoot note created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
+        string event_photoshoot_note_create = "Photoshoot note created by user = %%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
         int event_photoshoot_note_create_id = 32;
 
-        string event_photoshoot_summmary_update = "Photoshoot summary update by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
+        string event_photoshoot_summmary_update = "Photoshoot summary update by user = %%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
         int event_photoshoot_summmary_update_id = 33;
 
         string user_event_create_photoshoot = "Photoshoot created with photoshoot id = %%pid%%";

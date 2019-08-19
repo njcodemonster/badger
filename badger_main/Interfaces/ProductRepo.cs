@@ -1,16 +1,16 @@
 ﻿
+using badgerApi.Models;
+using CommonHelper;
+using Dapper;
+using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
-using Dapper.Contrib.Extensions;
-using badgerApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
-using CommonHelper;
 namespace badgerApi.Interfaces
 {
     public interface IProductRepository
@@ -33,9 +33,11 @@ namespace badgerApi.Interfaces
         Task<IEnumerable<ProductDetails>> GetProductDetails(string id);
         Task<IEnumerable<AllColors>> GetAllProductColors();
         Task<IEnumerable<AllTags>> GetAllProductTags();
+        Task<IEnumerable<PhotoshootModels>> GetPhotoshootModels();
         Task<Int32> GetProductShootStatus(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
+        Task<string> AddEditProductPageDetails(string product_id, string product_detail_type, string value);
     }
     public class ProductRepo : IProductRepository
     {
@@ -146,6 +148,25 @@ namespace badgerApi.Interfaces
         {
             QueryHelper qHellper = new QueryHelper();
             string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
+            }
+
+        }
+
+        /*
+        Developer: Mohi
+        Date: 9-7-19 
+        Action: Update data with specific fields by id 
+        Input: Dictionary<String , String> ValuePairs, String where condition, tablename
+        output: Boolean
+        */
+        public async Task UpdateSpecificData(Dictionary<String, String> ValuePairs, String where, String table_name)
+        {
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, table_name, where);
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.QueryAsync(UpdateQuery);
@@ -292,8 +313,12 @@ namespace badgerApi.Interfaces
             Int32 shootstatus = 0;
             using (IDbConnection conn = Connection)
             {
-                shootstatus =  conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= '" + id + "'").Result.First();
-
+                try{ 
+                    shootstatus = conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= " + id).Result.First();
+                }
+                catch (Exception ex) {
+                    return shootstatus;
+                }
             }
             return shootstatus;
 
@@ -336,6 +361,25 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
+
+        /*
+        Developer: Mohi
+        Date: 8-8-19 
+        Action: Get all Photoshoot models from database
+        Input: 
+        output: list of photoshoot models
+        */
+        public async Task<IEnumerable<PhotoshootModels>> GetPhotoshootModels()
+        {
+            IEnumerable<PhotoshootModels> productPhotoshootModels;
+            using (IDbConnection conn = Connection)
+            {
+                productPhotoshootModels = await conn.QueryAsync<PhotoshootModels>("select * from photoshoot_models where active_status = 1 ");
+
+            }
+            return productPhotoshootModels;
+        }
+
         /*Developer: ubaid
         Date:5-7-19
         Action:get AttributeValues Model from controller and insert the AttributeValues
@@ -429,6 +473,40 @@ namespace badgerApi.Interfaces
                 long result = conn.Insert<Productimages>(NewProductImages);
                 return result.ToString();
             }
+        }
+
+        /*
+        Developer: Mohi
+        Date: 8-16-19 
+        Action: check product details if itis already added then it update and otherwise insert it
+        Input: product id, product detail
+        output: string 
+        */
+
+        public async Task<string> AddEditProductPageDetails(string product_id, string product_detail_type, string value)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "";
+            string toReturn = "success";
+            sQuery = "SELECT * FROM product_page_details where product_id = "+ product_id+ " And product_detail_type =  " + product_detail_type;
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> productPageDetail = await conn.QueryAsync<object>(sQuery);
+                int checkData = productPageDetail.Count();
+                if (checkData > 0)
+                {
+                    String InsertQuery = "update product_page_details set `product_detail_value` = \""+value+ "\", `updated_by` = 1, updated_at = 0.00  where `product_id` = "+ product_id +" and `product_detail_type`  = " + product_detail_type;
+                    await conn.QueryAsync<object>(InsertQuery);
+                }
+                else {
+                    String InsertQuery = "insert into product_page_details (`product_id`, `product_detail_type`, `product_detail_value`, `created_by`) " +
+                        "values (" + product_id + "," + product_detail_type + ", \"" + value + "\", 1 )";
+                   var result = await conn.QueryAsync<object>(InsertQuery);
+                }
+                
+            }
+            return toReturn;
         }
 
     }

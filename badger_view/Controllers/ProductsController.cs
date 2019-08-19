@@ -78,11 +78,43 @@ namespace badger_view.Controllers
         }
 
         [Authorize]
-        [HttpPost("product/UpdateAttributes")]
-        public async Task<IActionResult> UpdateAttributes([FromBody]   JObject json)
+        [HttpPost("product/UpdateAttributes/{productId}")]
+        public async Task<string> UpdateAttributes([FromBody]   JObject json, int productId)
         {
-            ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
-            return View("EditAttributes", productDetailsPageData);
+            SetBadgerHelper();
+            string user_id = await _LoginHelper.GetLoginUserId();
+
+            JObject product = new JObject();
+            product.Add("size_and_fit_id", json.Value<string>("size_fit"));
+            product.Add("product_retail", json.Value<string>("product_retail"));
+            product.Add("product_name", json.Value<string>("product_name"));
+            product.Add("product_cost", json.Value<string>("product_cost"));
+            product.Add("product_discount", json.Value<string>("product_discount"));
+            product.Add("product_detail_1", json.Value<string>("product_detail_1"));
+            product.Add("product_detail_2", json.Value<string>("product_detail_2"));
+            product.Add("product_detail_3", json.Value<string>("product_detail_3"));
+            product.Add("product_detail_4", json.Value<string>("product_detail_4"));
+            product.Add("updated_by", user_id);
+            product.Add("updated_at", _common.GetTimeStemp());
+            
+            string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(product.ToString(Formatting.None), "/Product/UpdateAttributes/" + productId.ToString());
+ 
+            if (json.Value<string>("oldInternalNotes") == json.Value<string>("internalNotes"))
+            {
+            }
+            else
+            {
+                JObject productNote = new JObject();
+                productNote.Add("ref_id", productId);
+                productNote.Add("note", json.Value<string>("internalNotes"));
+                productNote.Add("created_by", Int32.Parse(user_id));
+
+                await _BadgerApiHelper.GenericPostAsyncString<String>(productNote.ToString(Formatting.None), "/product/notecreate");
+            }
+          
+
+
+            return "success";
         }
         /*
            Developer: Azeem Hassan
@@ -144,5 +176,8 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
+
+       
+
     }
 }

@@ -71,5 +71,6 @@ namespace badger_view.Models
         public IEnumerable<Productpairwith> productpairwiths { get; set; }
         public IEnumerable<Productcolorwith> productcolorwiths { get; set; }
         public IEnumerable<ProductProperties> productProperties { get; set; }
+        public IEnumerable<PhotoshootModels> shootModels { get; set; }
     }
 }
