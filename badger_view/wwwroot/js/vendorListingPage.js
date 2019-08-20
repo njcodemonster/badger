@@ -45,6 +45,25 @@
         }
     });
 
+     /*
+       Developer: Azeem Hassan
+       Date: 7-6-19 
+       Action: this function is getting single single vendor data
+       URL:
+       Input: vendor id
+       output: single vendor data
+   */
+     if (window.location.href.indexOf('Vendor/single') > -1) {
+         var id = window.location.href.split('single/')[1];
+
+         if (id != undefined && id != "") {
+             getSetVendorData(id);
+             $('.singleVendorEditArea').removeClass('d-none');
+         } else {
+             window.location = location.protocol + "//" + location.host;
+         }
+
+     }
 
 })
 
@@ -191,9 +210,14 @@ $(document).on('click', "#EditVendor", function () {
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
     var id = $(this).data("id");
+    getSetVendorData(id)
+});
+
+function getSetVendorData(id) {
+    $('.loading').removeClass("d-none");
     $.ajax({
 
-        url: '/vendor/details/'+id,
+        url: '/vendor/details/' + id,
         dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
@@ -207,10 +231,10 @@ $(document).on('click', "#EditVendor", function () {
         var reps = vendorData.Reps;
         var notes = vendorNoteAndDoc.note;
         var documents = vendor.logo
-        $("#newVendorForm").data("currentID",vendor.vendor_id);
-        $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name+")");
-        if(notes.length > 0)
-        $('#vendorNotes').val(notes[notes.length-1].note).attr('data-value',notes[notes.length-1].note);
+        $("#newVendorForm").data("currentID", vendor.vendor_id);
+        $("#vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name + ")");
+        if (notes.length > 0)
+            $('#vendorNotes').val(notes[notes.length - 1].note).attr('data-value', notes[notes.length - 1].note);
         $('#vendorName').val(vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);
         $('#vendorStatmentName').val(vendor.statement_name);
@@ -226,13 +250,13 @@ $(document).on('click', "#EditVendor", function () {
             $('#vendorCity').val(add1.vendor_city);
             $('#vendorZip').val(add1.vendor_zip);
             $('#vendorState').val(add1.vendor_state);
-            $('#newVendorForm').attr('data-address-id',add1.vendor_address_id);
+            $('#newVendorForm').attr('data-address-id', add1.vendor_address_id);
         }
         $('.documentsLink').remove();
         if (documents != '' && documents != null) {
             //for (var i = 0; i < documents.length; i++) {
-            url = "https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/"+documents;
-                var html = '<a href="'+url+'" target="_blank" class="documentsLink" data-val="'+documents+'">'+documents+'<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
+            url = "https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/" + documents;
+            var html = '<a href="' + url + '" target="_blank" class="documentsLink" data-val="' + documents + '">' + documents + '<span class="deleteImage" style="color:red;margin-left:10px">&times;</span></a>';
             //}
             $('#vendorDocument').parent('div').append(html)
         }
@@ -240,12 +264,10 @@ $(document).on('click', "#EditVendor", function () {
             $('.venderRepoBox').remove();
             repsHtml(reps);
         }
-        
-        
+        $('.loading').addClass("d-none");
+
     });
-
-});
-
+}
 /*
     Developer: Azeem Hassan
     Date: 7-3-19 
@@ -371,7 +393,8 @@ $(document).on('click', "#AddNewVendorButton", function () {
        Date: 7-3-19 
        action: adding more repo button
 */
-$(document).on('click', "#AddMoreReps", function () {
+$(document).on('click', "#AddMoreReps", function (event) {
+    event.preventDefault();
                     var html  = '<div class="venderRepoBox"><span id="removeCurrentRep" class="repoCloseBtn" >&times;</span>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
