@@ -1,9 +1,4 @@
 ﻿
-@section Scripts {
-    <script src="~/js/common.js" asp-append-version="true"></script>
-    <script src="~/js/POManagementPage.js" asp-append-version="true"></script>
-}
-
 <div class="modal fade" id="modaladdstylec" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -77,9 +72,9 @@
                         </div>
                         <div class="form-row">
                             @*<div class="form-group col-md-8" >
-            <label>Vendor Notes</label>
-            <textarea class="form-control"></textarea>
-        </div>*@
+                                    <label>Vendor Notes</label>
+                                    <textarea class="form-control"></textarea>
+                                </div>*@
                             <div class="form-group col-md-8">
                                 <label>Upload Files</label>
                                 <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
@@ -92,7 +87,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                         
+
                         </div>
                         <input id="po_id" name="po_id" type="hidden" class="form-control">
                         <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
@@ -101,7 +96,7 @@
             </div>
             <div class="modal-footer">
                 <div class="poAlertMsg"></div>
-                <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                <button type="button" id="DeletefromPOButton12" class="btn btn-warning DeletefromPOButton12" data-action="refreshValue" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>

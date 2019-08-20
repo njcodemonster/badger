@@ -1,4 +1,25 @@
 ﻿/*
+Developer: Rizvan Ali
+Date: 7-5-19
+Action: Delete Product from PO 
+URL: /styles/delete
+Input: styles data
+Output: string of style
+*/
+$(document).on('click', ".DeletefromPOButton12", function () {
+    debugger;
+    var jsonData = {};
+    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
+    selectedProject = $('#ExistingProductSelect option:selected');
+    if (selectedProject.data("product_id") > 0) {
+        jsonData["product_id"] = selectedProject.data("product_id");
+    }
+
+
+    jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+});
+
+/*
 Developer: Sajid Khan
 Date: 7-5-19
 Action: Add new style
@@ -7,7 +28,6 @@ Input: styles data
 Output: string of style
 */
 $(document).on('click', ".AddNewStyleButton", function () {
-    debugger;
     var action = $(this).attr('data-action');
      
     var newVendorForm = $("#newAddStyleForm input");
