@@ -242,6 +242,7 @@ Output: string of vendor products
 */
 $(document).on('click', "#AddItemButton", function () {
     var CurrentPOID = $(this).data("poid");
+    $("#checkin_form").attr("data-poid", CurrentPOID);
     $('.errorMsg').remove();
     $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
     var CurrentVendorId = $(this).data("vendorid");

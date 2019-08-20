@@ -10,6 +10,7 @@
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
+    <script src="~/js/checkin.js" asp-append-version="true"></script>
 }
 <div class="loading d-none"></div>
 <div class="row">
@@ -161,53 +162,7 @@
 @section page_popup_area{
 
     <!-- Modal Check-in -->
-    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkinModalLongTitle"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <form id="checkin_form" data-poid="">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Tracking #</label>
-                                    <input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%">
-                                    <a href="#" class="h4 add_checkin_tracking">+</a>
-
-                                    <div id="wrapper_checkin_tracking"></div>
-
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Upload Images</label>
-                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
-
-                                    <div class="po_doc_section d-none"></div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Shipping &amp; Handling</label>
-                                    <input type="text" class="form-control required" id="poShipping">
-                                </div>
-                            </div>
-
-                            <div class="wrapper_product"></div>
-
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer" style="margin: 0 auto;">
-                    <button type="button" class="btn btn-success submit-check-in">Check-in</button>
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @{ Html.RenderPartial("~/Views/Shared/model_checkin.cshtml"); }
 
 
     <!-- Modal Add Style Item Clothing -->
@@ -504,11 +459,11 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Link to existing product</label>
-                                   @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
+                                    @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
                                     <select id="ExistingProductSelect" class="form-control">
-            <option selected data-name="" value="">Choose...</option>
-            <option>...</option>
-        </select>
+                                        <option selected data-name="" value="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -578,7 +533,7 @@
                                     <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
                                     <div class="style_doc_section d-none"></div>
                                 </div>
-                              
+
                             </div>
                             <input id="po_id" name="po_id" type="hidden" class="form-control">
                             <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
@@ -587,7 +542,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="poAlertMsg"></div>
-                   @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
+                    @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
