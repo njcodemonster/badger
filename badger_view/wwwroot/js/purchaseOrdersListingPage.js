@@ -1024,7 +1024,7 @@ function purchaseOrderData(data) {
             $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
             $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
-            debugger;
+            
             var it = data.Items.LineItemDetails;
             if (it.length > 0) {
                 jQuery.each(it, function (i, dataNew) {

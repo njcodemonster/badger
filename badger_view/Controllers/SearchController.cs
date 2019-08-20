@@ -86,7 +86,7 @@ namespace badger_view.Controllers
             }
 
             /********* Vendor & Product *********************/
-            checkPattern = Regex.IsMatch(search, "^[a-zA-Z_ ]+$");
+            checkPattern = Regex.IsMatch(search, "^[a-zA-Z0-9_ ]+$");
             if (checkPattern)
             {
                 multipleObject.vendorList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendor/"+search);

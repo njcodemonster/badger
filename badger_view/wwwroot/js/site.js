@@ -67,14 +67,12 @@ function general_search() {
                     if (data.purchaseOrdersList.length > 0) {
                         newData = newData.concat(data.purchaseOrdersList);
                     }
-                    console.log(newData);
 
                     response(newData);
                 });
             }
         },
         select: function (event, ui) {
-            console.log(ui.item);
             general_search.val(ui.item.label);
             return false;
         },
@@ -82,13 +80,12 @@ function general_search() {
             general_search.val(ui.item.label);
             return false;
         },
-        /*open: function () {
+       /* open: function () {
             $("ul.ui-menu").width($(this).innerWidth());
         }*/
     });
 
     general_search.data("ui-autocomplete")._renderItem = function (ul, item) {
-        console.log(item);
         ul.addClass('search_result_list'); //Ul custom class here
         //ul = this.menu.element;
         //ul.outerWidth(this.element.outerWidth());
@@ -134,15 +131,15 @@ function general_search() {
         }
 
         if (item.type == 'vendor') {
-            li.append('<a href="#vendor">');
+            li.append('<a href="'+window.location.origin+'/Vendor/Single/'+item.value+'">');
         }
 
         if (item.type == 'product') {
-            li.append('<a href="#product">');
+            li.append('<a href="'+window.location.origin+'/Product/EditAttributes/'+item.value+'">');
         }
 
         if (item.type == 'purchase_orders') {
-            li.append('<a href="#purchase_orders">');
+            li.append('<a href="'+window.location.origin+'/PurchaseOrders/Single/'+item.value+'">');
         }
 
         if (item.image != null && item.image != undefined) {
