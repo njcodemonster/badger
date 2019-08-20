@@ -141,6 +141,10 @@ function general_search() {
             li.append('<a href="#product">');
         }
 
+        if (item.type == 'purchase_orders') {
+            li.append('<a href="#purchase_orders">');
+        }
+
         if (item.image != null && item.image != undefined) {
             div.append(img)
             li.find('a').addClass("li_search").append(div).append(item.label);
