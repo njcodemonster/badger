@@ -58,7 +58,7 @@
 
          if (id != undefined && id != "") {
              getSetVendorData(id);
-             $('.singleVendorEditArea').removeClass('d-none');
+             $('.singleVendorEditArea,.vendorPageTitle').removeClass('d-none');
          } else {
              window.location = location.protocol + "//" + location.host;
          }
@@ -150,7 +150,7 @@ $(document).on('click', "#NewVendorButton", function () {
                 console.log(data);
             });
             $('#vendorListingArea').DataTable().row.add([
-                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 2, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 0, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
             ]).draw();
             var table = $('#vendorListingArea').DataTable();
             table.page('last').draw('page');
@@ -663,7 +663,8 @@ $(document).on('blur', "#vendorCode", function (event) {
         console.log(data);
         if (data.length > 0) {
             _this.addClass('errorFeild');
-            _this.parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this code is already exist</span>');
+            _this.parents('.form-group').find('.errorMsg').remove()
+            _this.parents('.form-group').html('<span class="errorMsg" style="color:red;font-size: 11px;">this code is already exist</span>');
         } else {
             $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
         }
