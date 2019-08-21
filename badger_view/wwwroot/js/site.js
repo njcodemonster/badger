@@ -32,7 +32,7 @@ function general_search() {
             jsonData["search"] = request.term;
             console.log(jsonData);
             var newData = [];
-
+            $('.search_result_list').hide();
             if (request.term.length > 3) {
                 $.ajax({
                     url: "/search/autosuggest/",
@@ -68,6 +68,11 @@ function general_search() {
                         newData = newData.concat(data.purchaseOrdersList);
                     }
 
+                    /********** Style Number **********************/
+                    if(data.styleNumberList.length > 0){
+                        newData = newData.concat(data.styleNumberList);
+                    }
+
                     response(newData);
                 });
             }
@@ -77,7 +82,7 @@ function general_search() {
             return false;
         },
         focus: function (event, ui) {
-            general_search.val(ui.item.label);
+            //general_search.val(ui.item.label);
             return false;
         },
        /* open: function () {
@@ -92,7 +97,8 @@ function general_search() {
 
         var li = $('<li>');
         var img = $('<img style="width:50px;padding-right:4px;">');
-        var div = $('<div class="s_img">');
+        var image_div = $('<div class="s_img">');
+        var title_div = $('<div class="s_title">');
 
         if (item.type == 'vendor') {
             if (item.image != undefined && item.image != null ) {
@@ -134,7 +140,7 @@ function general_search() {
             li.append('<a href="'+window.location.origin+'/Vendor/Single/'+item.value+'">');
         }
 
-        if (item.type == 'product') {
+        if (item.type == 'product' || item.type == 'stylenumber' ) {
             li.append('<a href="'+window.location.origin+'/Product/EditAttributes/'+item.value+'">');
         }
 
@@ -143,8 +149,9 @@ function general_search() {
         }
 
         if (item.image != null && item.image != undefined) {
-            div.append(img)
-            li.find('a').addClass("li_search").append(div).append(item.label);
+            image_div.append(img);
+            title_div.append(item.label);
+            li.find('a').addClass("li_search").append(image_div).append(title_div);
         } else {
             li.find('a').append(item.label);
         } 

@@ -70,10 +70,11 @@ namespace badger_view.Controllers
             /*********   SKU  *********************/
             if (searchLength >= 5 && searchLength <= 8)
             {
-                checkPattern = Regex.IsMatch(search, "(^([a-zA-Z]{2}[0-9]{3})|([A-Z]{2}[0-9]{3}-[0-9]{1}))+$");
+                checkPattern = Regex.IsMatch(search, "(^([a-zA-Z]{2}[0-9]{3})|([a-zA-Z]{2}[0-9]{3}-)||([A-Za-z]{2}[0-9]{3}-[0-9]{1}))+$");
                 if (checkPattern == true)
                 {
                     multipleObject.skuList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/sku/getsku/"+search);
+                    
                 }
                 else
                 {
@@ -83,6 +84,17 @@ namespace badger_view.Controllers
             else
             {
                 multipleObject.skuList = xobject;
+                
+            }
+
+            /********* Style Number *********************/
+            if (searchLength > 3 && searchLength <= 8)
+            {
+                multipleObject.styleNumberList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getstylenumber/" + search);    
+            }
+            else
+            {
+                multipleObject.styleNumberList = xobject;
             }
 
             /********* Vendor & Product *********************/
