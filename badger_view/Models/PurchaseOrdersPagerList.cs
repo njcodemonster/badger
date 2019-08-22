@@ -20,6 +20,8 @@ namespace badger_view.Models
         public double delivery_window_end { get; set; }
         public int po_status { get; set; }
         public int ra_flag { get; set; }
+        public int has_note { get; set; }
+        public int has_doc { get; set; }
         public double updated_at { get; set; }
         public string custom_delivery_window_start_end { get; set; }
         public string custom_order_date { get; set; }
