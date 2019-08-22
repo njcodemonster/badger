@@ -160,7 +160,7 @@ namespace badgerApi.Interfaces
 
         }
 
-
+       
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
@@ -174,8 +174,42 @@ namespace badgerApi.Interfaces
             //List<Product> toReturn = new List<Product>();
             using(IDbConnection conn = Connection)
             {
-                toReturn = await conn.QueryAsync<Product>("Select * from product where vendor_id=" + Vendor_id);
+
+
+                string querytoRun = "SELECT product.product_id " +
+                    ",product.product_type_id        " +
+                    ",product.vendor_id              " +
+                    ",product.product_availability   " +
+                    ",product.published_at           " +
+                    ",product.product_vendor_image   " +
+                    ",product.product_name           " +
+                    ",product.product_url_handle     " +
+                    ",product.product_description    " +
+                    ",product.vendor_color_name      " +
+                    ",product.sku_family             " +
+                    ",product.size_and_fit_id        " +
+                    ",product.wash_type_id           " +
+                    ",product.product_discount       " +
+                    ",product.product_cost           " +
+                    ",product.product_retail         " +
+                    ",product.published_status       " +
+                    ",product.is_on_site_status      " +
+                    ",product.created_by             " +
+                    ",product.updated_by             " +
+                    ",product.updated_at             " +
+                    ",product.created_at             " +
+                    ",vendor_products.vendor_color_code" +
+                    ",vendor_products.vendor_product_code " +
+                    " from product,vendor_products" +
+                    " where product.vendor_id = vendor_products.vendor_id " +
+                    " and product.product_id = vendor_products.product_id" +
+                    " and product.vendor_id=" + Vendor_id;
+
+
+                toReturn = await conn.QueryAsync<Product>(querytoRun);
             }
+
+           
             return toReturn.ToList();
         }
 
