@@ -278,7 +278,9 @@ namespace badger_view.Controllers
                     vendorNotes.Add("note", vendor_notes);
                     vendorNotes.Add("created_by", Int32.Parse(loginUserId));
                     String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
-
+                    JObject purchaseOrderStatusNote = new JObject();
+                    purchaseOrderStatusNote.Add("has_note", 1);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + newVendorID);
                 }
             }
             return newVendorID;
@@ -364,6 +366,9 @@ namespace badger_view.Controllers
                     vendorNotes.Add("note", vendor_notes);
                     vendorNotes.Add("created_by", Int32.Parse(loginUserId));
                     String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+                    JObject purchaseOrderStatusNote = new JObject();
+                    purchaseOrderStatusNote.Add("has_note", 1);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
 
                 }
 
@@ -412,8 +417,11 @@ namespace badger_view.Controllers
                 vendorNotes.Add("ref_id", id);
                 vendorNotes.Add("note", vendor_notes);
                 vendorNotes.Add("created_by", Int32.Parse(loginUserId));
-                 newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
-           
+                newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+                JObject purchaseOrderStatusNote = new JObject();
+                purchaseOrderStatusNote.Add("has_note", 1);
+                await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
+
             }
             return newNoteID;
         }
