@@ -531,4 +531,11 @@ label.error {
     border-bottom: 1px solid #eee;
     padding: 3px .2em 3px .2em;
 }
-    
+.redDOtElement{
+    position: absolute;
+    background: red;
+    right: 0;
+    z-index: 9;
+    border: 5px solid red;
+    border-radius: 50%;
+}

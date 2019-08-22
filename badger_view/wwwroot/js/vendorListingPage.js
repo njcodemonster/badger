@@ -177,7 +177,7 @@ $(document).on('keydown', "#newVendorForm input", function (e) {
     if ($(this).attr('data-type') == 'number') {
         return isNumber(e)
     } else {
-        if ($(this).attr('type') != 'email') {
+        if ($(this).attr('type') != 'email' && $(this).attr('data-type') != "vendorname") {
             return blockspecialcharacter(e);
         }
     }
@@ -577,7 +577,7 @@ $(document).on('click', "#VendorNoteButton", function () {
     output: vendor id
 */
 $(document).on('click', "#addVendorNote", function () {
-    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
+    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val()) {
         var id = $('#modaladdnote').attr('data-id');
         var jsonData = {};
         jsonData["vendor_notes"] = $('#vendorNote').val();
