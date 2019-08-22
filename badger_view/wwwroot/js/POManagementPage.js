@@ -274,8 +274,8 @@ $(document).on("change", ".sku_weight", function () {
     }
     console.log(sku_id + " -- " + sku_weight);
     var product_id = $(this).attr('data-productid');
-    confirmationBox(product_id,"SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
-        console.log(result)       
+    confirmationBox(product_id, "SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
+        console.log(result)
         if (result == "yes") {
             $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             var jsonData = {};
@@ -309,12 +309,12 @@ $(document).on("change", ".sku_weight", function () {
             $(".sku_weight").each(function () {
                 if ($(this).attr('id') == sku_id) {
                     $(this).val(old_sku_weight);
-                    $(this).attr('data-weight',old_sku_weight);
+                    $(this).attr('data-weight', old_sku_weight);
                 }
             });
 
         }
-    })
+    });
     
 });
 

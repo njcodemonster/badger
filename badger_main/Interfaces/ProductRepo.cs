@@ -42,6 +42,7 @@ namespace badgerApi.Interfaces
         Task<string> CreateProductImages(Productimages NewProductImages);
         Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
         Task<Object> GetProduct(string product_name);
+        Task<bool> DeleteProduct(string product_id);
     }
     public class ProductRepo : IProductRepository
     {
@@ -481,7 +482,41 @@ namespace badgerApi.Interfaces
             }
             return res;
         }
-
+        /*
+        Developer: Rizwan Ali
+        Date: 08-09-19 
+        Action: delete product's al traces in database
+        Input: int product_id
+        output: boolean
+      */
+        public async Task<bool> DeleteProduct(string product_id)
+        {
+            bool res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DeleteQuery = "delete FROM purchase_order_line_items WHERE product_id= " + product_id;
+                    var updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = false;
+            }
+            return res;
+        }
     }
 }
 

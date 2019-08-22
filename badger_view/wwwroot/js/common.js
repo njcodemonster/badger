@@ -7,12 +7,16 @@
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
-       return false;
+    if (evt.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+    if (charCode > 31 && charCode != 37 && charCode != 39 && charCode != 46 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
+        return false;
     }
     return blockspecialcharacter(evt)
     return true;
 }
+
 
 /*
   Developed By: Azeem Hassan

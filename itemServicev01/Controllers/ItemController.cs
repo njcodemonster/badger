@@ -868,5 +868,34 @@ namespace itemService.Controllers
 
             return barcodeDetails;
         }
+
+        /*
+     Developer: Rizwan ali
+     Date: 08-09-19 
+     Action: delete item by product
+     URL: api/item/deleteItemByProduct/?
+     Request: Get
+     Input: string product id
+     output: bool status
+     */
+        [HttpDelete("deleteItemByProduct/{id}")]
+        public async Task<bool> DeleteItemByProduct(string id)
+        {
+            bool status = false;
+            try
+            {
+                status = await _ItemRepository.DeleteItemByProduct(id);
+
+            }
+            catch (Exception ex)
+            {
+                status = false;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get barcode with message" + ex.Message);
+
+            }
+
+            return status;
+        }
     }
 }

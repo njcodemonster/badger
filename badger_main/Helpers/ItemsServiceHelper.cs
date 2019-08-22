@@ -47,6 +47,8 @@ namespace badgerApi.Helper
         Task<List<Items>> GetItemsGroupByProductId(int PO_id);
         Task<string> ItemSpecificUpdateById(int id, string json);
         Task<object> GetBarcode(int barcode);
+
+        Task<bool> DeleteItemByProduct(string product_id);
     }
         public class ItemsServiceHelper:IItemServiceHelper
     {
@@ -288,6 +290,26 @@ namespace badgerApi.Helper
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
+        }
+
+        /*
+        Developer: Rizwan Ali
+        Date: 7-7-19 
+        Action: Delete item by product id
+        URL: 
+        Request: Get
+        Input:  string product_id
+        output: dynamic object of items product data of small sku
+        */
+        public async Task<bool> DeleteItemByProduct(string id)
+        {
+            var client = new HttpClient();
+            var response = await client.DeleteAsync(ItemApiUrl + "/item/deleteItemByProduct/" + id.ToString());
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return Convert.ToBoolean(data);
         }
     }
 }

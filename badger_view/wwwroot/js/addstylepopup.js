@@ -6,17 +6,45 @@ URL: /styles/delete
 Input: styles data
 Output: string of style
 */
-$(document).on('click', ".DeletefromPOButton12", function () {
+$(document).on('click', ".DeletefromPOButton", function () {
     debugger;
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
     if (selectedProject.data("product_id") > 0) {
+
         jsonData["product_id"] = selectedProject.data("product_id");
+        jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+        $.ajax({
+
+            url: location.origin + '/styles/deleteFromPO/' + selectedProject.data("product_id"),
+            dataType: 'json',
+            type: 'get',
+            //contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+
+        }).always(function (data) {
+            console.log(data);
+            if (data == true) {
+                $('#modaladdstylec').modal('hide');
+                alertBox('poAlertMsg', 'green', 'Product deleted successfully');
+            }
+            else {
+                //failed message
+            }
+        });
+    }
+    else {
+        //error for selecting a product first to delete 
+        alertBox('poAlertMsg', 'red', 'Please select a product');
     }
 
 
-    jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+    
+
+   
+
 });
 
 /*
