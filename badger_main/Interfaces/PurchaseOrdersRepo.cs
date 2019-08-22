@@ -234,23 +234,23 @@ namespace badgerApi.Interfaces
                 IEnumerable<PurchaseOrderLineItems> result = new List<PurchaseOrderLineItems>();
 
 
-                string querytoRun =" Select purchase_order_line_items.line_item_id           " +
-                                    ",purchase_order_line_items.po_id                       " +
-                                    ",purchase_order_line_items.vendor_id                   " +
-                                    ",purchase_order_line_items.sku                         " +
-                                    ",purchase_order_line_items.product_id                  " +
-                                    ",purchase_order_line_items.line_item_cost              " +
-                                    ",purchase_order_line_items.line_item_retail            " +
-                                    ",purchase_order_line_items.line_item_type              " +
-                                    ",purchase_order_line_items.line_item_ordered_quantity  " +
-                                    ",purchase_order_line_items.line_item_accepted_quantity " +
-                                    ",purchase_order_line_items.line_item_rejected_quantity " +
-                                    ",purchase_order_line_items.created_by                  " +
-                                    ",purchase_order_line_items.updated_by                  " +
-                                    ",purchase_order_line_items.created_at                  " +
-                                    ",purchase_order_line_items.updated_at                  " +
-                                    ",attribute_values.value as vendor_size                 " +
-                                    " from purchase_order_line_items, attribute_values where attribute_values.product_id=purchase_order_line_items.product_id and purchase_order_line_items.product_id=" + product_id + " and purchase_order_line_items.po_id=" + PO_id + " ;";
+                string querytoRun = " Select pol.line_item_id           " +
+                                    ",pol.po_id                       " +
+                                    ",pol.vendor_id                   " +
+                                    ",pol.sku                         " +
+                                    ",pol.product_id                  " +
+                                    ",pol.line_item_cost              " +
+                                    ",pol.line_item_retail            " +
+                                    ",pol.line_item_type              " +
+                                    ",pol.line_item_ordered_quantity  " +
+                                    ",pol.line_item_accepted_quantity " +
+                                    ",pol.line_item_rejected_quantity " +
+                                    ",pol.created_by                  " +
+                                    ",pol.updated_by                  " +
+                                    ",pol.created_at                  " +
+                                    ",pol.updated_at                  " +
+                                    ",av.value as vendor_size                 " +
+                                    " from purchase_order_line_items pol , product_attributes pa ,attribute_values av where pol.sku=pa.sku  and av.attribute_id=pa.attribute_id and av.product_id=pa.product_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " ;";
 
                 result = await conn.QueryAsync<PurchaseOrderLineItems>(querytoRun);
                 return result.ToList();

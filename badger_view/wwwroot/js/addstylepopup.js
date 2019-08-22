@@ -8,6 +8,7 @@ Output: string of style
 */
 
 var new_sku = "";
+var SelectedProductID;
 $(document).on('click', ".AddNewStyleButton", function () {
 
 
@@ -442,8 +443,11 @@ $(document).on('focusout', '#product_title', function (event) {
 
         if (isTitleDuplicate(styleName))
         {
-            $(this).addClass('errorFeild');
+            $('#product_title').addClass('errorFeild');
             alertBox('poAlertMsg', 'red', 'This style name already exists.');
+        } else {
+
+            $('#product_title').removeClass('errorFeild');
         }
        
 
@@ -474,8 +478,6 @@ $(document).on('focusout', '#po_input_fields_wrap .vendorSkuBox #styleVendorSize
             $(this).parent().parent().find('#styleSku').val(newSkuToAssign);
         }
 
-
-
     }
 
 });
@@ -495,7 +497,7 @@ function isSkuDuplicate(newSKU) {
 
 function isTitleDuplicate(newTitle) {
 
-    if (SelectedProductID) {
+    if (SelectedProductID != null) {
         return false;
     }
 
