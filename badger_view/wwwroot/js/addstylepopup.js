@@ -87,8 +87,8 @@ $(document).on('click', ".AddNewStyleButton", function () {
             }
             alertBox('poAlertMsg', 'green', 'New style inserted successfully');
             if (action == 'refreshValue') {
-
-                $('#AddItemButton').trigger("click");
+                var selectedPurchaseOrderID =$('#newAddStyleForm #po_id').val();
+                $('button[data-poid="' + selectedPurchaseOrderID+'"]').trigger("click");
                 $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
 
             } else {
@@ -240,16 +240,19 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
         $(".vendorSkuBox").remove();
         $(".vendorSkuBox_disabled").remove();
         $(".vendorSkuArea").show();
-        var options = '';
-        if (window.sku_sizes) {
-            for (i = 0; i < sku_sizes.length; i++) {
-                var selected = "";
-                if (i == 0)
-                    selected = "selected";
-                options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
+
+        for (var x = 0; x < data.length; x++) {
+
+            var options = '';
+            if (window.sku_sizes) {
+                for (var i = 0; i < sku_sizes.length; i++) {
+                    var selected = "";
+                    if (sku_sizes[i].attribute_id == data[x].attribute_id)
+                        selected = "selected";
+                    options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
+                }
             }
-        }
-        for (x = 0; x < data.length; x++) {
+
             $(wrapper).append('<div class="pb-2 vendorSkuBox_disabled form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline " name="cqty[' + x + ']" placeholder="Qty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
 
         }
@@ -270,7 +273,11 @@ $(document).on('click', "#AddItemButton", function () {
     $('.errorMsg').remove();
     $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
     var CurrentVendorId = $(this).data("vendorid");
+
     $('.poNumber').text($(this).data("ponumber"))
+    
+  
+
     $('#modaladdstylec input').val("");
     $('#modaladdstylec #StyleSubType option').each(function () {
         if (this.innerText != "Choose..." && this.innerText != "...") {
@@ -322,6 +329,10 @@ $(document).on('click', "#AddItemButton", function () {
             var sku_number = 100;
             new_sku = vendorCode + sku_number;
         }
+
+        
+        $('.poSkuFamily').text(new_sku);
+        $('.poVendor').text(data_vendor[0].vendor_code)
         //var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
 
 
@@ -366,16 +377,20 @@ function AppendSkuTextBoxes(Qtyboxes, styletype) {
         btnHtml = '<button type="button" class="btn btn-primary form-control " name="btstyleVendorSize" id="btstyleVendorSize" > Add Size </button>';
     }
     if ($('.vendorSkuArea #styleVendorSize').length == 0) {
-        var options = '';
-        if (window.sku_sizes) {
-            for (i = 0; i < sku_sizes.length; i++) {
-                var selected = "";
-                if (i == 0)
-                    selected = "selected";
-                options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
-            }
-        }
+
+
         for (x = 1; x < Qtyboxes; x++) {
+
+            var options = '';
+            if (window.sku_sizes) {
+               for (i = 0; i < sku_sizes.length; i++) {
+                    var selected = "";
+                    if (i == x - 1)
+                        selected = "selected";
+                    options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
+                }
+            }
+
             $("#po_input_fields_wrap").append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"> ' + btnHtml + ' <input type="text" class="form-control required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><select class="form-control d-inline  required" name="styleSize" id="styleSize">' + options + '</select></div> <div class="form-group col-md-3"><input type="text" maxlength="7" style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
 
         }
@@ -412,7 +427,7 @@ $(document).on('change', "#StyleType", function (event) {
     } else if (selectedStyleType == '1') {
 
         $('.vendorSkuArea').show();
-        AppendSkuTextBoxes(5, selectedStyleType)
+        AppendSkuTextBoxes(window.sku_sizes.length + 1, selectedStyleType)
 
         $('.add_field_button').show();
 
@@ -432,7 +447,7 @@ $(document).on('focusout', '#product_title', function (event) {
         return false;
     }
     var isProductDDLoaded = $('#ExistingProductSelect option').filter(function () {
-        return $(this).val() != "";
+        return $(this).text() != "";
     }).length;
 
     if (isProductDDLoaded == 1) {
@@ -441,15 +456,14 @@ $(document).on('focusout', '#product_title', function (event) {
 
     $("#ExistingProductSelect").promise().done(function () {
 
-        if (isTitleDuplicate(styleName))
-        {
+        if (isTitleDuplicate(styleName)) {
             $('#product_title').addClass('errorFeild');
             alertBox('poAlertMsg', 'red', 'This style name already exists.');
         } else {
 
             $('#product_title').removeClass('errorFeild');
         }
-       
+
 
 
     });
@@ -506,7 +520,7 @@ function isTitleDuplicate(newTitle) {
     }).length;
 
     if (_isDuplicateCheckTitle) {
-       
+
         return true;
     } else {
         return false

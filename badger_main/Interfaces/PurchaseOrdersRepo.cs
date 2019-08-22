@@ -250,7 +250,9 @@ namespace badgerApi.Interfaces
                                     ",pol.created_at                  " +
                                     ",pol.updated_at                  " +
                                     ",av.value as vendor_size                 " +
-                                    " from purchase_order_line_items pol , product_attributes pa ,attribute_values av where pol.sku=pa.sku  and av.attribute_id=pa.attribute_id and av.product_id=pa.product_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " ;";
+                                    ",av.attribute_id" +
+                                    " from purchase_order_line_items pol , product_attributes pa ,attribute_values av " +
+                                    " where pol.sku=pa.sku  and av.attribute_id=pa.attribute_id and av.product_id=pa.product_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " ;";
 
                 result = await conn.QueryAsync<PurchaseOrderLineItems>(querytoRun);
                 return result.ToList();

@@ -8,7 +8,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O (<span class="poNumber"></span>)</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O (<span class="poNumber"></span>)  Vendor Code (<span class="poVendor"></span>) SKU Family (<span class="poSkuFamily"></span>) </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -86,9 +86,13 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-8">
+                            @*<div class="form-group col-md-8" style="visibility:hidden;">
                                 <label>Vendor Notes</label>
                                 <textarea class="form-control"></textarea>
+                            </div>*@
+                            <div class="form-group col-md-8">
+                                <label>Upload Files</label>
+                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
                             </div>
                             <div class="form-group col-md-4 text-center">
                                 <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
@@ -97,10 +101,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-8">
-                                <label>Upload Files</label>
-                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
-                            </div>
+                           
                         </div>
                         <input id="po_id" name="po_id" type="hidden" class="form-control">
                         <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
