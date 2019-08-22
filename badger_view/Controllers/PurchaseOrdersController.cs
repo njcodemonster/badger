@@ -91,7 +91,7 @@ namespace badger_view.Controllers
 
                 bool CheckDaysRange = false;
 
-                if (DateToCheck >= poList.delivery_window_start && DateToCheck <= poList.delivery_window_end)
+                if (DateToCheck <= poList.delivery_window_end)
                 {
                     CheckDaysRange = true;
                 }
@@ -1322,7 +1322,7 @@ namespace badger_view.Controllers
         public async Task<string> DocumentsDelete(int id, [FromBody] JObject json)
         {
             SetBadgerHelper();
-
+            string res = "0";
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
             JObject purchaseOrderDocumentDelete = new JObject();
@@ -1340,7 +1340,20 @@ namespace badger_view.Controllers
                 }
 
             }
-            return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
+            res = await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
+
+            if (res != "0")
+            {
+                dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + json.Value<string>("po_id") + "/0");
+                if(purchaseOrderDocs.Count == 0)
+                {
+                    JObject purchaseOrderStatusDoc = new JObject();
+                    purchaseOrderStatusDoc.Add("has_doc", 2);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusDoc.ToString(Formatting.None), "/purchaseorders/updatespecific/" + json.Value<string>("po_id"));
+                }
+            }
+
+            return res;
         }
 
         /*

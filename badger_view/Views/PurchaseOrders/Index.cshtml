@@ -109,10 +109,14 @@
                         <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>
+                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote">@if (purchaseOrders.has_note == 1)
+                        {<div class="redDotNote redDOtElement"></div>}else{ <div class="redDotNote"></div> }<i class="fa fa-edit h3"></i></a>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>
+                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument">
+                            @if (purchaseOrders.has_doc == 1)
+                        {<div class="redDotDoc redDOtElement"></div>}else{ <div class="redDotDoc"></div> }<i class="fa fa-upload h3"></i>
+                                            </a>
                     </td>
                     <td>
                         <a href="javascript:void(0)">Claim</a>
