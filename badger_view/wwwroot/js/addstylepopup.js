@@ -437,39 +437,39 @@ $(document).on('change', "#StyleType", function (event) {
     }
 });
 
-$(document).on('focusout', '#product_title', function (event) {
+//$(document).on('focusout', '#product_title', function (event) {
 
-    var styleName = $(this).val();
-
-
-    if (styleName == "") {
-
-        return false;
-    }
-    var isProductDDLoaded = $('#ExistingProductSelect option').filter(function () {
-        return $(this).text() != "";
-    }).length;
-
-    if (isProductDDLoaded == 1) {
-        $('#ExistingProductSelect').trigger("change");
-    }
-
-    $("#ExistingProductSelect").promise().done(function () {
-
-        if (isTitleDuplicate(styleName)) {
-            $('#product_title').addClass('errorFeild');
-            alertBox('poAlertMsg', 'red', 'This style name already exists.');
-        } else {
-
-            $('#product_title').removeClass('errorFeild');
-        }
+//    var styleName = $(this).val();
 
 
+//    if (styleName == "") {
 
-    });
+//        return false;
+//    }
+//    var isProductDDLoaded = $('#ExistingProductSelect option').filter(function () {
+//        return $(this).text() != "";
+//    }).length;
+
+//    if (isProductDDLoaded == 1) {
+//        $('#ExistingProductSelect').trigger("change");
+//    }
+
+//    $("#ExistingProductSelect").promise().done(function () {
+
+//        if (isTitleDuplicate(styleName)) {
+//            $('#product_title').addClass('errorFeild');
+//            alertBox('poAlertMsg', 'red', 'This style name already exists.');
+//        } else {
+
+//            $('#product_title').removeClass('errorFeild');
+//        }
 
 
-})
+
+//    });
+
+
+//})
 
 
 $(document).on('focusout', '#po_input_fields_wrap .vendorSkuBox #styleVendorSize', function (event) {

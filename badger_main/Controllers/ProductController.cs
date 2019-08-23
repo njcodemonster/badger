@@ -126,7 +126,6 @@ namespace badgerApi.Controllers
         }
 
 
-
         /*
         Developer: ubaid
         Date:5-7-19
@@ -276,8 +275,6 @@ namespace badgerApi.Controllers
 
             return UpdateResult;
         }
-
-
 
         /*
         Developer: ubaid
