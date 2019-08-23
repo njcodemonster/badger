@@ -442,7 +442,6 @@ namespace badgerApi.Interfaces
             }
             return await GetClaim(poId);
         }
-        }
 
         /*
         Developer: Sajid Khan
