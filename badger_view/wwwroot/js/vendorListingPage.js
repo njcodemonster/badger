@@ -113,6 +113,7 @@ $(document).on('click', "#NewVendorButton", function () {
         jsonData["vendor_reps"].push(vendor_rep);
     })
     console.log(jsonData);
+    var vendor_name = $('#vendorName').val();
     $.ajax({
         
         url: '/vendor/newvendor',
@@ -126,11 +127,11 @@ $(document).on('click', "#NewVendorButton", function () {
         console.log(data);
         if (data != "0") {
             var id = data;
-
-            $('#newPurchaseOrderForm #poVendor').append($("<option></option>").attr("value", data).text($('#newVendorForm #vendorName').val()));
+            $('#newPurchaseOrderForm #poVendor').attr("data-val", data).val(vendor_name);
+            /*$('#newPurchaseOrderForm #poVendor').append($("<option></option>").attr("value", data).text($('#newVendorForm #vendorName').val()));
             window.vendor_options = '';
             window.vendor_options = $("#newPurchaseOrderForm #poVendor > option").clone();
-            $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);
+            $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);*/
 
             console.log("New Vender Added");
             var formData = new FormData();
@@ -177,7 +178,7 @@ $(document).on('keydown', "#newVendorForm input", function (e) {
     if ($(this).attr('data-type') == 'number') {
         return isNumber(e)
     } else {
-        if ($(this).attr('type') != 'email') {
+        if ($(this).attr('type') != 'email' && $(this).attr('data-type') != "vendorname") {
             return blockspecialcharacter(e);
         }
     }
@@ -577,7 +578,7 @@ $(document).on('click', "#VendorNoteButton", function () {
     output: vendor id
 */
 $(document).on('click', "#addVendorNote", function () {
-    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
+    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val()) {
         var id = $('#modaladdnote').attr('data-id');
         var jsonData = {};
         jsonData["vendor_notes"] = $('#vendorNote').val();

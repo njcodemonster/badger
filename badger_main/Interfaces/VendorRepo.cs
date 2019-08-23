@@ -213,11 +213,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if(limit > 0)
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + start + "," + limit + ";";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + start + "," + limit + ";";
             }
             else
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc;";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc;";
             }
 
             using (IDbConnection conn = Connection)
@@ -368,7 +368,7 @@ namespace badgerApi.Interfaces
         public async Task<Object> GetStyleNumber(string stylenumber)
         {
             dynamic vendorDetails = new ExpandoObject();
-            string sQuery = "SELECT product_id as value, vendor_product_code as label,'stylenumber' as type FROM vendor_products WHERE vendor_product_code LIKE '%" + stylenumber + "%';";
+            string sQuery = "SELECT vendor_products.product_id as value, vendor_products.vendor_product_code as label,product.product_vendor_image AS image,'stylenumber' as type FROM vendor_products, product WHERE vendor_products.product_id = product.product_id AND vendor_products.vendor_product_code LIKE '%" + stylenumber + "%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);

@@ -91,7 +91,7 @@ namespace badger_view.Controllers
 
                 bool CheckDaysRange = false;
 
-                if (DateToCheck >= poList.delivery_window_start && DateToCheck <= poList.delivery_window_end)
+                if (DateToCheck <= poList.delivery_window_end)
                 {
                     CheckDaysRange = true;
                 }
@@ -116,7 +116,9 @@ namespace badger_view.Controllers
                     updated_at = poList.updated_at,
                     custom_order_date = NewDateFormat,
                     num_of_days = NumDays,
-                    check_days_range = CheckDaysRange
+                    check_days_range = CheckDaysRange,
+                    has_note = poList.has_note,
+                    has_doc = poList.has_doc,
                 });
 
                 NewDateFormat = "";
@@ -300,6 +302,7 @@ namespace badger_view.Controllers
             purchaseOrder.Add("delivery_window_end", _common.DateConvertToTimeStamp(endDate));
             purchaseOrder.Add("po_status", 5);
             purchaseOrder.Add("deleted", 0);
+            purchaseOrder.Add("has_note", 2);
             purchaseOrder.Add("created_by", Int32.Parse(loginUserId));
             purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
             purchaseOrder.Add("created_at", _common.GetTimeStemp());
@@ -316,6 +319,10 @@ namespace badger_view.Controllers
                     purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+
+                    JObject purchaseOrderStatusNote = new JObject();
+                    purchaseOrderStatusNote.Add("has_note", 1);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + newPurchaseOrderID);
                 }
             }
 
@@ -370,6 +377,9 @@ namespace badger_view.Controllers
                                 purchaseOrderDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
+                                JObject purchaseOrderStatusDoc = new JObject();
+                                purchaseOrderStatusDoc.Add("has_doc", 1);
+                                await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusDoc.ToString(Formatting.None), "/purchaseorders/updatespecific/" + purchaseorderfile.po_id);
 
                             }
                         }
@@ -446,6 +456,24 @@ namespace badger_view.Controllers
 
                         await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
                     }
+
+                    JObject purchaseOrderStatusNote = new JObject();
+                    purchaseOrderStatusNote.Add("has_note", 1);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
+
+                }
+                else
+                {
+                    JObject purchaseOrderNote = new JObject();
+                    purchaseOrderNote.Add("ref_id", id);
+                    purchaseOrderNote.Add("note", json.Value<string>("note"));
+                    purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
+
+                    await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+
+                    JObject purchaseOrderStatusNote = new JObject();
+                    purchaseOrderStatusNote.Add("has_note", 2);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
                 }
 
                 if (json.Value<string>("old_note") == "0" && json.Value<string>("note") != null)
@@ -456,6 +484,10 @@ namespace badger_view.Controllers
                     purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+
+                    JObject purchaseOrderStatusNote = new JObject();
+                    purchaseOrderStatusNote.Add("has_note", 1);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
                 }
 
                 JObject allData = JObject.Parse(json.ToString());
@@ -790,14 +822,25 @@ namespace badger_view.Controllers
 
             String newPurchaseLedgerID = "0";
 
+            JObject purchaseOrderNote = new JObject();
+            purchaseOrderNote.Add("ref_id", json.Value<string>("po_id"));
+            purchaseOrderNote.Add("note", json.Value<string>("po_notes"));
+            purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
+
+            newPurchaseLedgerID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
+
             if (json.Value<string>("po_notes") != "")
             {
-                JObject purchaseOrderNote = new JObject();
-                purchaseOrderNote.Add("ref_id", json.Value<string>("po_id"));
-                purchaseOrderNote.Add("note", json.Value<string>("po_notes"));
-                purchaseOrderNote.Add("created_by", Int32.Parse(loginUserId));
+                JObject purchaseOrderStatusNote = new JObject();
+                purchaseOrderStatusNote.Add("has_note", 1);
+                await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + json.Value<string>("po_id"));
+            }
+            else
+            {
+                JObject purchaseOrderStatusNote = new JObject();
+                purchaseOrderStatusNote.Add("has_note", 2);
+                await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + json.Value<string>("po_id"));
 
-                newPurchaseLedgerID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
             }
 
             return newPurchaseLedgerID;
@@ -1279,7 +1322,7 @@ namespace badger_view.Controllers
         public async Task<string> DocumentsDelete(int id, [FromBody] JObject json)
         {
             SetBadgerHelper();
-
+            string res = "0";
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
             JObject purchaseOrderDocumentDelete = new JObject();
@@ -1297,7 +1340,20 @@ namespace badger_view.Controllers
                 }
 
             }
-            return await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
+            res = await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrderDocumentDelete.ToString(Formatting.None), "/purchaseorders/documentdelete/" + id.ToString());
+
+            if (res != "0")
+            {
+                dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + json.Value<string>("po_id") + "/0");
+                if(purchaseOrderDocs.Count == 0)
+                {
+                    JObject purchaseOrderStatusDoc = new JObject();
+                    purchaseOrderStatusDoc.Add("has_doc", 2);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusDoc.ToString(Formatting.None), "/purchaseorders/updatespecific/" + json.Value<string>("po_id"));
+                }
+            }
+
+            return res;
         }
 
         /*

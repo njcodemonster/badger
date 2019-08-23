@@ -25,6 +25,8 @@ namespace badgerApi.Models
         public decimal? po_discount_id { get; set; }
         public int? deleted { get; set; }
         public int ra_flag { get; set; }
+        public int has_note { get; set; }
+        public int has_doc { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double order_date { get; set; }

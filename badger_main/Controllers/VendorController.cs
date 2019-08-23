@@ -594,7 +594,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("logo", VendorToUpdate.logo);
                 }
-
+                if (VendorToUpdate.has_note != 0)
+                {
+                    ValuesToUpdate.Add("has_note", VendorToUpdate.has_note.ToString());
+                }
 
                 await _VendorRepo.UpdateSpecific(ValuesToUpdate, "vendor_id="+id);
             }
