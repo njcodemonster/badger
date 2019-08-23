@@ -5,8 +5,6 @@
 @model dynamic
 
 @section Scripts {
-    <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
-    <script src="~/js/jquery-ui.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
 }
@@ -66,35 +64,55 @@
 @section page_popup_area{
 
     <!-- Modal Vendor -->
-    @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
-
-        <!-- Modal Add Note -->
-        <div class="modal fade" id="modaladdnote" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="noteModalLongTitle">Notes Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container">
-                            <form id="note_form" data-noteid="">
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label>Note</label>
-                                        <textarea type="text" class="form-control" id="vendorNote" name="vendorNote"></textarea>
-                                    </div>
+ 
+<div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
+            </div>
+            <div class="modal-footer">
+                <div class="vendorAlertMsg"></div>
+                <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+    <!-- Modal Add Note -->
+    <div class="modal fade" id="modaladdnote" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLongTitle">Notes Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="note_form" data-noteid="">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Note</label>
+                                    <textarea type="text" class="form-control" id="vendorNote" name="vendorNote"></textarea>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="addVendorNote" style="margin: 0 auto;">Submit</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="addVendorNote" style="margin: 0 auto;">Submit</button>
                 </div>
             </div>
         </div>
+    </div>
 
-    }
+}
