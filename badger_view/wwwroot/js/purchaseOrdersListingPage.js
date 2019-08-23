@@ -16,7 +16,7 @@
             jsonData["search"] = request.term;
             console.log(jsonData);
 
-            if (request.term.length > 3) {
+            if (request.term.length > 2) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
                     dataType: 'json',
