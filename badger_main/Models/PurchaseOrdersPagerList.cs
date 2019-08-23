@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace badger_view.Models
+namespace badgerApi.Models
 {
     public class PurchaseOrdersInfo
     {
@@ -25,7 +25,7 @@ namespace badger_view.Models
         public string custom_order_date { get; set; }
         public string num_of_days { get; set; }
         public bool check_days_range { get; set; }
-        public ClaimModel Claim { get; set; }
+        public PoClaim Claim { get; set; }
 
     }
 

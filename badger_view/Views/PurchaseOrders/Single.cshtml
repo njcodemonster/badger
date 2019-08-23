@@ -15,16 +15,17 @@
 <div class="row">
     <div class="col-md-3 col-sm-10  col-xs-10">
         <h4 class="text-dark">Purchase Order #: <a href="#" class="orderNumber"></a></h4>
+        <input type="hidden" id="poId" />
     </div>
     <div class="col-md-2 col-sm-2 col-xs-2">
         <button type="button" id="AddItemButton" class="btn btn-light btn-sm">Add an item</button>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12" style="white-space: nowrap">
-        <span class="text-center d-inline-block">
-            <b>Inspect</b><br /><a href="#">Claim</a>
+        <span class="text-center d-inline-block" id="inspect-claim">
+            
         </span>
-        <span class="text-center d-inline-block pl-4">
-            <b>Go Live</b><br /><a href="#">Claim</a>
+        <span class="text-center d-inline-block pl-4" id="publish-claim">
+            
         </span>
         <span class="d-inline-block pl-4 align-top pt-2">
             <!-- b>6 total styles, 5 have photos</b -->
@@ -504,11 +505,11 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Link to existing product</label>
-                                   @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
+                                    @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
                                     <select id="ExistingProductSelect" class="form-control">
-            <option selected data-name="" value="">Choose...</option>
-            <option>...</option>
-        </select>
+                                        <option selected data-name="" value="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -578,7 +579,7 @@
                                     <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
                                     <div class="style_doc_section d-none"></div>
                                 </div>
-                              
+
                             </div>
                             <input id="po_id" name="po_id" type="hidden" class="form-control">
                             <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
@@ -587,7 +588,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="poAlertMsg"></div>
-                   @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
+                    @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
@@ -595,3 +596,6 @@
     </div>
 
 }
+
+    <script src="~/lib/signalr/signalr.js" asp-append-version="true"></script>
+    <script src="~/js/POClaim.js" asp-append-version="true"></script>

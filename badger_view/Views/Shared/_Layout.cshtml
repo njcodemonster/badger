@@ -117,6 +117,10 @@
     <script src="~/js/moment.min.js" asp-append-version="true"></script>
     <script src="~/js/jquery-ui.js"></script>
     @RenderSection("Scripts", required: false)
+    <script>
+        @using CommonHelper;
+        var claimerType = @(Html.EnumToString<ClaimerType>());
+    </script>
 
 
 </body>

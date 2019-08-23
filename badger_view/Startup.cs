@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using badger_view.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using badger_view.Hubs;
 
 namespace badger_view
 {
@@ -44,6 +45,7 @@ namespace badger_view
             }); 
             services.AddHttpContextAccessor();
             services.AddTransient<ILoginHelper, LoginHelper>();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,7 +74,10 @@ namespace badger_view
                     template: "{controller=Home}/{action=Index}/{id?}");
 
             });
-
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/claimHub");
+            });
         }
     }
 }

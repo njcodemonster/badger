@@ -15,6 +15,7 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Collections;
 using System.Dynamic;
+using CommonHelper;
 
 namespace badgerApi.Controllers
 {
@@ -867,7 +868,6 @@ namespace badgerApi.Controllers
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
-
             }
             return countData;
         }
@@ -930,6 +930,49 @@ namespace badgerApi.Controllers
 
             return poPageList;
 
+        }
+
+        [HttpPost("claim")]
+        public async Task<IActionResult> Claim([FromBody] PoClaim claim)
+        {
+            PoClaim response;
+            if (claim.claim_type == ClaimerType.InspectClaimer)
+                response = await _PurchaseOrdersRepo.ClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
+            else
+                response = await _PurchaseOrdersRepo.ClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
+            return Ok(response);
+        }
+
+        [HttpPost("removeclaim")]
+        public async Task<IActionResult> RemoveClaim([FromBody] PoClaim claim)
+        {
+            try
+            {
+                PoClaim response;
+                if (claim.claim_type == ClaimerType.InspectClaimer)
+                    response = await _PurchaseOrdersRepo.RemoveClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
+                else
+                    response = await _PurchaseOrdersRepo.RemoveClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpGet("loadclaim/{poId:int}")]
+        public async Task<IActionResult> LoadClaim(int poId)
+        {
+            try
+            {
+                var response = await _PurchaseOrdersRepo.GetClaim(poId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
     }
     

@@ -88,7 +88,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/"+start+"/"+limit);
+            VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/" + start + "/" + limit);
 
             dynamic VendorPageModal = new ExpandoObject();
             VendorPageModal.VendorCount = vendorPagerList.Count;

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace badger_view.Controllers
 {
@@ -1577,5 +1578,68 @@ namespace badger_view.Controllers
             return newPurchaseOrderID;
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Claim([FromBody] ClaimModel claim)
+        {
+            try
+            {
+                SetBadgerHelper();
+                var userId = await _LoginHelper.GetLoginUserId();
+                BindClaimerType(claim, userId);
+                var response = await _BadgerApiHelper.GenericPostAsync(claim, "/PurchaseOrders/Claim/");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
+        }
+
+        private static void BindClaimerType(ClaimModel claim, string userId)
+        {
+            if (claim.claim_type == ClaimerType.InspectClaimer)
+                claim.inspect_claimer = Convert.ToInt32(userId);
+            else
+                claim.publish_claimer = Convert.ToInt32(userId);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RemoveClaim([FromBody] ClaimModel claim)
+        {
+            try
+            {
+                SetBadgerHelper();
+                var userId = await _LoginHelper.GetLoginUserId();
+                BindClaimerType(claim, userId);
+                var response = await _BadgerApiHelper.GenericPostAsync(claim, "/PurchaseOrders/removeclaim/");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/loadclaim/{poId:int}")]
+        public async Task<IActionResult> LoadClaim(int poId)
+        {
+            try
+            {
+                SetBadgerHelper();
+                var userId = await _LoginHelper.GetLoginUserId();
+                var response = await _BadgerApiHelper.GenericGetsAsync("/PurchaseOrders/loadclaim/" + poId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+        }
     }
 }
