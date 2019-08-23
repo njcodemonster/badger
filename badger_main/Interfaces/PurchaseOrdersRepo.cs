@@ -30,6 +30,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetSkuByProduct(string product_id);
         Task<Object> GetNameAndSizeByProductAndSku(string product_id, string sku);
         Task<object> SearchByPOAndInvoice(string search);
+        Task<Object> GetPOList(string search);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -358,6 +359,27 @@ namespace badgerApi.Interfaces
             }
             return poPageList;
 
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get seach po by numbers from database 
+        Input: string search
+        output: dynamic list of po data
+        */
+        public async Task<Object> GetPOList(string search)
+        {
+            dynamic poDetails = new ExpandoObject();
+
+            string sQuery = "SELECT po_id AS value, vendor_po_number AS label, 'purchase_orders' AS type FROM purchase_orders WHERE(po_status != 2 AND po_status != 4) AND(vendor_po_number LIKE '" + search + "%' OR vendor_invoice_number LIKE '" + search + "%' OR vendor_order_number LIKE '" + search+"%')";
+
+            using (IDbConnection conn = Connection)
+            {
+                poDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return poDetails;
         }
 
 

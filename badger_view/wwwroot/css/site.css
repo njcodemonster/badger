@@ -509,14 +509,17 @@ label.error {
     width:100px;
 }
 
-.search_result_list{
-    width:350px !important;
-    font-size:14px !important;
+.search_result_list {
+    width: 350px !important;
+    font-size: 14px !important;
+    overflow-y: scroll;
+    max-height: 300px;
+    position: fixed;
 }
 .search_result_list .li_search {
     clear: both;
     padding: 5px 0px;
-    height: 80px;
+    height: 70px;
     display: table;
     width: 100%;
 }
@@ -525,74 +528,77 @@ label.error {
     max-height: 80px;
     display: table-cell;
     width: 60px;
+    float:left;
+}
+
+.search_result_list .s_title {
+    white-space: pre-wrap;
+    width: 235px;
+    float:left;
 }
 
 .search_result_list li {
     border-bottom: 1px solid #eee;
     padding: 3px .2em 3px .2em;
 }
-    /* Multi Select CSS Start*/
 
-.multi-select-container {
-    display: inline-block;
-    position: relative;
-}
 
-.multi-select-menu {
-    position: absolute;
-    left: 0;
-    top: 0.8em;
-    float: left;
-    min-width: 100%;
-    background: #fff;
-    margin: 1em 0;
-    padding: 0.4em 0;
-    border: 1px solid #aaa;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    display: none;
-}
-
-    .multi-select-menu input {
-        margin-right: 0.3em;
-        vertical-align: 0.1em;
-    }
-
-.multi-select-button {
-    display: inline-block;
-    font-size: 0.875em;
-    padding: 0.2em 0.6em;
-    max-width: 50em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: -0.5em;
-    background-color: #fff;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    cursor: default;
-    width:200px;
-
-}
-
-    .multi-select-button:after {
-        content: "";
-        display: inline-block;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 0.4em 0.4em 0 0.4em;
-        border-color: #999 transparent transparent transparent;
-        margin-left: 0.4em;
-        vertical-align: 0.1em;
-    }
-
-.multi-select-container--open .multi-select-menu {
+.ui-menu.search_result_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: block;
+    outline: 0;
+    min-width: 180px;
+    white-space: nowrap;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1)
 }
 
-.multi-select-container--open .multi-select-button:after {
-    border-width: 0 0.4em 0.4em 0.4em;
-    border-color: transparent transparent #999 transparent;
+
+.ui-menu.search_result_list .ui-menu-item {
+    position: relative;
+    margin: 0;
+    cursor: pointer;
+    padding: 3px .2em 3px .2em;
+    min-height: 0;
+    outline: 0;
+    list-style-image:none;
 }
-    /* Multi Select CSS End*/
+
+.ui-menu.search_result_list .ui-menu-item > a {
+    display: block;
+    color: #333
+}
+
+.ui-menu.search_result_list .ui-menu-item > i {
+    margin-right: 7px
+}
+
+.ui-menu.search_result_list .ui-menu-item > .ui-menu-icon {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    right: 15px
+}
+
+.ui-menu.search_result_list .ui-menu-item > .ui-menu-icon:after {
+    content: '\e9c7';
+    font-family: icomoon;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    opacity: .8;
+    filter: alpha(opacity=80)
+}
+
+.ui-menu.search_result_list .ui-state-active, .ui-menu.search_result_list .ui-state-focus {
+    color: #333;
+    background-color: #f5f5f5
+}
+
