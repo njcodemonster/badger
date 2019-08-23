@@ -37,6 +37,7 @@ namespace badgerApi.Interfaces
         Task<PoClaim> ClaimPublish(int poId, int userId);
         Task<PoClaim> GetClaimPublish(int poId);
         Task<PoClaim> GetClaim(int poId);
+        Task<Object> GetPOList(string search);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -440,6 +441,28 @@ namespace badgerApi.Interfaces
                 poClaim.publish_claimer_name = await GetUsernameByClaim(poId, ClaimerType.PublishClaimer);
             }
             return await GetClaim(poId);
+        }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get seach po by numbers from database 
+        Input: string search
+        output: dynamic list of po data
+        */
+        public async Task<Object> GetPOList(string search)
+        {
+            dynamic poDetails = new ExpandoObject();
+
+            string sQuery = "SELECT po_id AS value, vendor_po_number AS label, 'purchase_orders' AS type FROM purchase_orders WHERE(po_status != 2 AND po_status != 4) AND(vendor_po_number LIKE '" + search + "%' OR vendor_invoice_number LIKE '" + search + "%' OR vendor_order_number LIKE '" + search+"%')";
+
+            using (IDbConnection conn = Connection)
+            {
+                poDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return poDetails;
         }
 
         public async Task<PoClaim> RemoveClaimInspect(int poId, int userId)

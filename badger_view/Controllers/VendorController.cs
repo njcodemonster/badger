@@ -72,7 +72,23 @@ namespace badger_view.Controllers
        
             return View("Index",VendorPageModal);
         }
-
+        /*
+         Developer: Azeem Hassan
+         Date:  
+         Action:
+         URL: 
+         Input: Null
+         output: dynamic ExpandoObject of VendorPageModal
+     */
+        [Authorize]
+        public async Task<IActionResult> single()
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            SetBadgerHelper();
+            List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
+            vendorDetails.VendorType = getVendorTypes;
+            return View("AddVendor", vendorDetails);
+        }
         /*
         Developer: Sajid Khan
         Date: 7-5-19 

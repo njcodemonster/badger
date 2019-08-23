@@ -901,6 +901,34 @@ namespace badgerApi.Controllers
             return barcodeDetails;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get PO data by search "api/purchaseorders/getpolist/sk100-1"
+        URL: api/purchaseorders/getpolist/search
+        Request: Get
+        Input: string search
+        output: dynamic list of po
+        */
+        [HttpGet("getpolist/{search}")]
+        public async Task<Object> GetPOList(string search)
+        {
+            dynamic poList = new object();
+            try
+            {
+                poList = await _PurchaseOrdersRepo.GetPOList(search);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get sku with message" + ex.Message);
+
+            }
+
+            return poList;
+        }
+
 
 
         /*
