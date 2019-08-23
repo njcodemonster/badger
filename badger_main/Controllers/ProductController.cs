@@ -23,12 +23,14 @@ namespace badgerApi.Controllers
         private IItemServiceHelper _ItemsHelper;
         ILoggerFactory _loggerFactory;
         INotesAndDocHelper _notesAndDocHelper;
-        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper , IItemServiceHelper ItemsHelper)
+        public IProductCategoriesRepository _ProductCategoriesRepository;
+        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper , IItemServiceHelper ItemsHelper,IProductCategoriesRepository ProductCategoriesRepository)
         {
             _ItemsHelper = ItemsHelper;
             _ProductRepo = ProductRepo;
             _loggerFactory = loggerFactory;
             _notesAndDocHelper = notesAndDocHelper;
+            _ProductCategoriesRepository = ProductCategoriesRepository;
         }
 
         // GET: api/Product
@@ -459,6 +461,38 @@ namespace badgerApi.Controllers
             }
             return updateResult;
         }
+
+        /*
+        Developer: Hamza Haq
+        Date:23-8-19
+        Action: 
+        URL: /product/createProductCategory
+        Input: FromBody string value
+        output: boolean
+        */
+        // POST: api/product/CreateProductCategory   
+        //[HttpPost("createProductCategory")]
+        //public async Task<Boolean> CreateProductCategory(int id, [FromBody]   string value)
+        //{
+        //    Boolean updateResult = false;
+        //    try
+        //    {
+        //        List<int> productCategories = JsonConvert.DeserializeObject<List<int>>(value);
+        //        for (int i = 0; i < productCategories.Count; i++)
+        //        {
+        //            ProductCategories ProductCategorytoAdd = new ProductCategories();
+        //            ProductCategorytoAdd
+        //          var updateResult = await _ProductRepo.UpadateImagePrimary(product_img_id, is_primary);
+        //        }
+                
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var logger = _loggerFactory.CreateLogger("internal_error_log");
+        //        logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+        //    }
+        //    return updateResult;
+        //}
 
         /*
         Developer: Sajid Khan

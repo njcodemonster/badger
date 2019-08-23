@@ -56,6 +56,7 @@ namespace badgerApi.Interfaces
                 return result.ToString();
             }
         }
+
         /*
           Developer: Hamza Haq
           Date: 8-23-19 
