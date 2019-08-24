@@ -34,7 +34,12 @@ namespace badger_view
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(9);
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
                 options.LoginPath = "/auth/Dologin";
@@ -45,7 +50,7 @@ namespace badger_view
             }); 
             services.AddHttpContextAccessor();
             services.AddTransient<ILoginHelper, LoginHelper>();
-            services.AddSignalR();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,12 +66,22 @@ namespace badger_view
                 //app.UseExceptionHandler("/Home/Error");
                 //app.UseHsts();
             }
-           
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ClaimtHub>("/claimHub");
+            });
+            //.UseWebSockets(new WebSocketOptions()
+            //{
+            //    KeepAliveInterval = TimeSpan.FromSeconds(5),
+            //    AllowedOrigins = { Configuration.GetSection("Services:Badger").Value },
+            //});
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
             app.UseAuthentication();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -74,10 +89,7 @@ namespace badger_view
                     template: "{controller=Home}/{action=Index}/{id?}");
 
             });
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<ChatHub>("/claimHub");
-            });
+
         }
     }
 }

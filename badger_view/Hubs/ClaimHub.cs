@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace badger_view.Hubs
 {
-    public class ChatHub : Hub
+    public class ClaimtHub : Hub
     {
         public async Task SendClaim(object claim)
         {

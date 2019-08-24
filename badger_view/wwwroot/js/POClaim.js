@@ -1,6 +1,9 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/claimHub").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/claimHub", {
+    //skipNegotiation: true,
+    transport: signalR.HttpTransportType.WebSockets
+}).build();
 
 //Disable send button until connection is established
 ToggleClaim(true);
@@ -13,17 +16,33 @@ connection.on("PushClaim", function (claim) {
     }
 });
 
-connection.start().then(function () {
-   // document.getElementById("btnClaim").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
+StartConnection();
+RestartConnection();
+function StartConnection() {
+    connection.start().then(function () {
+        ToggleClaim(false);
+        // document.getElementById("btnClaim").disabled = false;
+    }).catch(function (err) {
+        return console.error(err.toString());
+        RestartConnection();
+    });
+}
+
+function RestartConnection() {
+    connection.onclose(function () {
+        console.log("restarting connection....");
+        ToggleClaim(true);
+        setTimeout(function () {
+            StartConnection();
+        }, 5000); // Restart connection after 5 seconds.
+    });
+}
 
 function BindInspectClaimHtml(claim) {
     var title = "<b>Inspect</b><br />";
-    var claimButton = title + '<button type="button" class="btn btn-link btn-sm" id="claim-inspect-btn" onclick="Claim(undefined,' + claimerType.InspectClaimer + ')">Claim</button>';
+    var claimButton = title + '<button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(undefined,' + claimerType.InspectClaimer + ')">Claim</button>';
     if (claim.inspect_claimer > 0) {
-        claimButton = title + '<button type="button" class="btn btn-danger btn-sm" onclick="RemoveClaim(undefined,' + claimerType.InspectClaimer + ')" id="remove-claim-inspect-btn">' +
+        claimButton = title + '<button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(undefined,' + claimerType.InspectClaimer + ')" id="remove-claim-inspect-btn">' +
             ' <span style = "padding:inherit">' + claim.inspect_claimer_name + '</span>' +
             ' <span class="fa fa-times"></span></button >';
         $("#inspect-claim").remove("#claim-inspect-btn");
@@ -134,8 +153,18 @@ function LoadClaim() {
 }
 
 function ToggleClaim(disabled) {
-    document.getElementsByClassName("claim").disabled = disabled;
-    document.getElementsByClassName("remove-claim").disabled = disabled;
+    if (disabled) {
+        $(".claim").prop("disabled", disabled);
+        $(".claim").addClass("disabled");
+        $(".remove-claim").prop("disabled", disabled);
+        $(".remove-claim").addClass("disabled");
+    }
+    else {
+        $(".claim").prop("disabled", disabled);
+        $(".claim").removeClass("disabled");
+        $(".remove-claim").prop("disabled", disabled);
+        $(".remove-claim").removeClass("disabled");
+    }
 }
 
 function PushNotifyClaim(claim) {

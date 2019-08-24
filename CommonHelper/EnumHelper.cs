@@ -16,6 +16,18 @@ namespace CommonHelper
         PublishClaimer = 2
     }
 
+    public enum EventType
+    {
+        note_type = 4,
+        event_type_po_id = 2,
+        event_type_po_note_create_id=6,
+        event_type_po_document_create_id = 7,
+        event_type_po_update_id = 8,
+        event_type_po_specific_update_id = 9,
+        event_type_po_delete_id = 24,
+        event_type_po_delete_document_id = 31
+    }
+
     public static class HtmlEnumExtensions
     {
         public static HtmlString EnumToString<T>(this IHtmlHelper helper)
