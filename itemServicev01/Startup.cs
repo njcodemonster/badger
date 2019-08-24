@@ -39,7 +39,7 @@ namespace itemService
         {
             loggerFactory.AddFile("Logs/BadgerServiceFunctional-{Date}.txt");
             if (env.IsDevelopment())
-            { 
+            {
                 app.UseDeveloperExceptionPage();
             }
             else

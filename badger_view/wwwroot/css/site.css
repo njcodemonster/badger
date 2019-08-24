@@ -509,14 +509,17 @@ label.error {
     width:100px;
 }
 
-.search_result_list{
-    width:350px !important;
-    font-size:14px !important;
+.search_result_list {
+    width: 350px !important;
+    font-size: 14px !important;
+    overflow-y: scroll;
+    max-height: 300px;
+    position: fixed;
 }
 .search_result_list .li_search {
     clear: both;
     padding: 5px 0px;
-    height: 80px;
+    height: 70px;
     display: table;
     width: 100%;
 }
@@ -525,10 +528,77 @@ label.error {
     max-height: 80px;
     display: table-cell;
     width: 60px;
+    float:left;
+}
+
+.search_result_list .s_title {
+    white-space: pre-wrap;
+    width: 235px;
+    float:left;
 }
 
 .search_result_list li {
     border-bottom: 1px solid #eee;
     padding: 3px .2em 3px .2em;
 }
-    
+
+
+.ui-menu.search_result_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+    outline: 0;
+    min-width: 180px;
+    white-space: nowrap;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1)
+}
+
+
+.ui-menu.search_result_list .ui-menu-item {
+    position: relative;
+    margin: 0;
+    cursor: pointer;
+    padding: 3px .2em 3px .2em;
+    min-height: 0;
+    outline: 0;
+    list-style-image:none;
+}
+
+.ui-menu.search_result_list .ui-menu-item > a {
+    display: block;
+    color: #333
+}
+
+.ui-menu.search_result_list .ui-menu-item > i {
+    margin-right: 7px
+}
+
+.ui-menu.search_result_list .ui-menu-item > .ui-menu-icon {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    right: 15px
+}
+
+.ui-menu.search_result_list .ui-menu-item > .ui-menu-icon:after {
+    content: '\e9c7';
+    font-family: icomoon;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    opacity: .8;
+    filter: alpha(opacity=80)
+}
+
+.ui-menu.search_result_list .ui-state-active, .ui-menu.search_result_list .ui-state-focus {
+    color: #333;
+    background-color: #f5f5f5
+}
+
