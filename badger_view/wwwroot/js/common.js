@@ -9,7 +9,9 @@ function isNumber(evt) {
     var charCode = (evt.which) ? evt.which : evt.keyCode;
 
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
-    if (evt.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+    var ctrlDown = evt.ctrlKey || evt.metaKey // Mac support
+
+    if (ctrlDown && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
         return true;
     }
     if (charCode > 31 && charCode != 37 && charCode != 39 && charCode != 46 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
@@ -77,8 +79,10 @@ function onlyNumbersWithDot(e) {
         charCode = e.which || e.keyCode;
     }
 
+    var ctrlDown = e.ctrlKey || e.metaKey // Mac support
+
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
-    if (e.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+    if (ctrlDown && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
         return true;
     }
 
@@ -89,8 +93,9 @@ function onlyNumbersWithDot(e) {
     if (charCode == 110)
         return true
     if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16) 
-       return false;
-    
+        return false;
+
+    return blockspecialcharacter(e);
     return true;
 }
 
@@ -103,7 +108,9 @@ function allLetterAllow(event) {
     var inputValue = event.which;
 
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
-    if (event.ctrlKey == true && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88)) {
+    var ctrlDown = event.ctrlKey || event.metaKey // Mac support
+
+    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88)) {
         return true;
     }
 

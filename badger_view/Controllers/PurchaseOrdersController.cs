@@ -72,6 +72,15 @@ namespace badger_view.Controllers
 
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
 
+            String poIdsList = "";
+
+            foreach (PurchaseOrdersInfo items in purchaseOrdersPagerList.purchaseOrdersInfo)
+            {
+                poIdsList += items.po_id+ ","; 
+            }
+
+            dynamic ProductIdsList = await _BadgerApiHelper.GenericGetAsync<object>("/product/getproductidsbypurchaseorder/"+poIdsList.TrimEnd(','));
+
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
             string DeliveryStartEnd = "";
@@ -83,8 +92,29 @@ namespace badger_view.Controllers
 
             List<PurchaseOrdersInfo> newPurchaseOrderInfoList = new List<PurchaseOrdersInfo>();
 
+            int PhotosCount = 0;
+            int TotalPublishedProducts = 0;
             foreach (PurchaseOrdersInfo poList in TotalList)
             {
+                poIdsList = "";
+                PhotosCount = 0;
+                TotalPublishedProducts = 0;
+
+                foreach (dynamic ids in ProductIdsList)
+                {
+                    if (ids.po_id == poList.po_id)
+                    {
+                        PhotosCount++;
+                        poIdsList += ids.product_id + ",";
+                    }
+                }
+
+                if (PhotosCount != 0)
+                {
+                    dynamic TotalData = await _BadgerApiHelper.GenericGetAsync<object>("/product/getpublishedproductCount/" + poIdsList.TrimEnd(','));
+                    TotalPublishedProducts = TotalData.Count;
+                }
+                
                 DeliveryStartEnd = _common.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
 
                 double DateToCheck = _common.GetTimeStemp();
@@ -119,6 +149,8 @@ namespace badger_view.Controllers
                     check_days_range = CheckDaysRange,
                     has_note = poList.has_note,
                     has_doc = poList.has_doc,
+                    photos = TotalPublishedProducts,
+                    remaining = (PhotosCount-TotalPublishedProducts)
                 });
 
                 NewDateFormat = "";

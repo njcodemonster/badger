@@ -62,8 +62,8 @@
                     </td>
                     <td>@purchaseOrders.vendor</td>
                     <td>@purchaseOrders.total_styles</td>
-                    <td>5</td>
-                    <td>3</td>
+                    <td>@purchaseOrders.photos</td>
+                    <td>@purchaseOrders.remaining</td>
                     @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
                     {
                         <td class="text-danger font-weight-bold">@purchaseOrders.custom_delivery_window_start_end</td>
