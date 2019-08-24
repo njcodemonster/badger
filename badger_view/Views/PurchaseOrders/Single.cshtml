@@ -47,7 +47,7 @@
                 <div class="form-group col-md-6">
                     <label>Vendor Name</label>
                     <input type="text" class="form-control required d-inline-block autocomplete" id="poVendor" style="width: 90%">
-                    <a href="#" class="h4" data-toggle="modal" data-target="#modalvendor">+</a>
+                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
                 </div>
                 <div class="form-group col-md-6">
                     <label>Order Delivery Range</label>
@@ -504,11 +504,11 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Link to existing product</label>
-                                   @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
+                                    @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
                                     <select id="ExistingProductSelect" class="form-control">
-            <option selected data-name="" value="">Choose...</option>
-            <option>...</option>
-        </select>
+                                        <option selected data-name="" value="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -578,7 +578,7 @@
                                     <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
                                     <div class="style_doc_section d-none"></div>
                                 </div>
-                              
+
                             </div>
                             <input id="po_id" name="po_id" type="hidden" class="form-control">
                             <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
@@ -587,11 +587,31 @@
                 </div>
                 <div class="modal-footer">
                     <div class="poAlertMsg"></div>
-                   @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
+                    @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- Modal Vendor -->
+    <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
+                </div>
+                <div class="modal-footer">
+                    <div class="vendorAlertMsg"></div>
+                    <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
