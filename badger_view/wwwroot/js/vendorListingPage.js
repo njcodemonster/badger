@@ -109,7 +109,7 @@ $(document).on('click', "#NewVendorButton", function () {
             vendor_rep["main"] = 0;
         }
         vendor_rep["Rep_email"] = $(this).find('#vendorRepEmail').val();
-        vendor_rep["Rep_phone1"] = $('#vendorRepPhone11').val() + $('#vendorRepPhone12').val() + $('#vendorRepPhone12').val();
+        vendor_rep["Rep_phone1"] = $('#vendorRepPhone11').val() + $('#vendorRepPhone12').val() + $('#vendorRepPhone13').val();
         vendor_rep["Rep_phone2"] = $('#vendorRepPhone14').val() + $('#vendorRepPhone15').val() + $('#vendorRepPhone16').val();
         jsonData["vendor_reps"].push(vendor_rep);
     })
@@ -338,7 +338,7 @@ $(document).on('click', "#EditVendorButton", function () {
             vendor_rep["main"] = 0;
         }
         vendor_rep["Rep_email"] = $(this).find('#vendorRepEmail').val();
-        vendor_rep["Rep_phone1"] =$(this).find('#vendorRepPhone11').val() + $(this).find('#vendorRepPhone12').val() + $(this).find('#vendorRepPhone12').val();
+        vendor_rep["Rep_phone1"] =$(this).find('#vendorRepPhone11').val() + $(this).find('#vendorRepPhone12').val() + $(this).find('#vendorRepPhone13').val();
         vendor_rep["Rep_phone2"] = $(this).find('#vendorRepPhone14').val() + $(this).find('#vendorRepPhone15').val() + $(this).find('#vendorRepPhone16').val();
         jsonData["vendor_reps"].push(vendor_rep);
     })
