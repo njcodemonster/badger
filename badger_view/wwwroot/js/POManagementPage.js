@@ -676,7 +676,7 @@ $('.POListCheckIn .card-header .card-box').click(function () {
     var POid = thisPO.attr("data-POId");
 
     console.log($("#collapse_" + POid));
-    console.log($("#collapse_" + POid).is(":visible"))
+    console.log($("#collapse_" + POid).is(":visible")) 
     console.log($("#collapse_" + POid).is(":hidden"))
 
     if ($("#collapse_" + POid).is(":hidden")) {
