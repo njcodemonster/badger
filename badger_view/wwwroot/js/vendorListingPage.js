@@ -98,6 +98,7 @@ $(document).on('click', "#NewVendorButton", function () {
     jsonData["vendor_notes"] = $('#vendorNotes').val();
     jsonData["vendor_reps"] = [];
     jsonData["vendor_type"] = $('#vendortype').val();
+    var valid = true;
     $('.venderRepoBox').each(function (){
         var vendor_rep = {};
         vendor_rep["Rep_first_name"] = $(this).find('#vendorRepName').val();
@@ -108,11 +109,18 @@ $(document).on('click', "#NewVendorButton", function () {
             vendor_rep["main"] = 0;
         }
         vendor_rep["Rep_email"] = $(this).find('#vendorRepEmail').val();
-        vendor_rep["Rep_phone1"] = $('#vendorRepPhone11').val() + $('#vendorRepPhone12').val() + $('#vendorRepPhone12').val();
+        vendor_rep["Rep_phone1"] = $('#vendorRepPhone11').val() + $('#vendorRepPhone12').val() + $('#vendorRepPhone13').val();
         vendor_rep["Rep_phone2"] = $('#vendorRepPhone14').val() + $('#vendorRepPhone15').val() + $('#vendorRepPhone16').val();
         jsonData["vendor_reps"].push(vendor_rep);
     })
+    valid = phoneNumberValidate('.phone');
+    if (valid == false) {
+        $('.vendorAlertMsg').html('');
+        $(this).attr('disabled', false);
+        return false
+    }
     console.log(jsonData);
+    var vendor_name = $('#vendorName').val();
     $.ajax({
         
         url: '/vendor/newvendor',
@@ -126,11 +134,11 @@ $(document).on('click', "#NewVendorButton", function () {
         console.log(data);
         if (data != "0") {
             var id = data;
-
-            $('#newPurchaseOrderForm #poVendor').append($("<option></option>").attr("value", data).text($('#newVendorForm #vendorName').val()));
+            $('#newPurchaseOrderForm #poVendor').attr("data-val", data).val(vendor_name);
+            /*$('#newPurchaseOrderForm #poVendor').append($("<option></option>").attr("value", data).text($('#newVendorForm #vendorName').val()));
             window.vendor_options = '';
             window.vendor_options = $("#newPurchaseOrderForm #poVendor > option").clone();
-            $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);
+            $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);*/
 
             console.log("New Vender Added");
             var formData = new FormData();
@@ -149,8 +157,12 @@ $(document).on('click', "#NewVendorButton", function () {
             }).always(function (data) {
                 console.log(data);
             });
+            var isDot = "";
+            if ($('#vendorNotes').val() != '') {
+                isDot = "redDOtElement"
+            }
             $('#vendorListingArea').DataTable().row.add([
-                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 0, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 0, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><div class="redDotArea ' +isDot+'"></div><i class="fa fa-edit h3"></i></a>'
             ]).draw();
             var table = $('#vendorListingArea').DataTable();
             table.page('last').draw('page');
@@ -176,8 +188,10 @@ $(document).on('keydown', "#newVendorForm input", function (e) {
    $(this).parents('.form-group').find('.errorMsg').remove();
     if ($(this).attr('data-type') == 'number') {
         return isNumber(e)
+    } else if ($(this).attr('data-type') == 'city') {
+        return allLetterAllow(e);
     } else {
-        if ($(this).attr('type') != 'email') {
+        if ($(this).hasClass('blockSpecialChar')) {
             return blockspecialcharacter(e);
         }
     }
@@ -312,6 +326,7 @@ $(document).on('click', "#EditVendorButton", function () {
        }
 
     jsonData["vendor_reps"] = [];
+    var valid = true;
     $('.venderRepoBox').each(function (){
         var vendor_rep = {};
         vendor_rep["Rep_first_name"] = $(this).find('#vendorRepName').val();
@@ -328,10 +343,16 @@ $(document).on('click', "#EditVendorButton", function () {
             vendor_rep["main"] = 0;
         }
         vendor_rep["Rep_email"] = $(this).find('#vendorRepEmail').val();
-        vendor_rep["Rep_phone1"] =$(this).find('#vendorRepPhone11').val() + $(this).find('#vendorRepPhone12').val() + $(this).find('#vendorRepPhone12').val();
+        vendor_rep["Rep_phone1"] =$(this).find('#vendorRepPhone11').val() + $(this).find('#vendorRepPhone12').val() + $(this).find('#vendorRepPhone13').val();
         vendor_rep["Rep_phone2"] = $(this).find('#vendorRepPhone14').val() + $(this).find('#vendorRepPhone15').val() + $(this).find('#vendorRepPhone16').val();
         jsonData["vendor_reps"].push(vendor_rep);
     })
+    valid = phoneNumberValidate('.phone');
+    if (valid == false) {
+        $('.vendorAlertMsg').html('');
+        $(this).attr('disabled', false);
+        return false
+    }
     $.ajax({
 
         url: '/vendor/updatevendor/'+id,
@@ -346,6 +367,11 @@ $(document).on('click', "#EditVendorButton", function () {
             if (data != "0") {
                 alertBox('vendorAlertMsg', 'green', 'Vendor updated successfully');
                 console.log("vendor created . uploading files");
+                if ($('#vendorNotes').val() != '') {
+                    $('#VendorNoteButton[data-id="' + id + '"]').find('.redDotArea').addClass('redDOtElement');
+                } else {
+                    $('#VendorNoteButton[data-id="' + id + '"]').find('.redDotArea').removeClass('redDOtElement');
+                }
                 var formData = new FormData();
                 formData.append('Vendor_id', id);
                 var files = $("#newVendorForm #vendorDocument")[0].files;
@@ -373,13 +399,29 @@ $(document).on('click', "#EditVendorButton", function () {
             $('#EditVendorButton').attr('disabled', false);
         });
 });
-
+function phoneNumberValidate(fieldName) {
+    var valid = true
+    $(fieldName).each(function () {
+        if ($(this).attr('maxlength') != $(this).val().length) {
+            $(this).addClass('errorFeild')
+            if (valid == true)
+                valid = false;
+            if (valid == false) {
+                if ($(this).parents('.form-group').find('.errorMsg').length == 0)
+                    $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter 11 digit phone number</span>')
+            }
+            
+        }
+        
+    })
+    return valid;
+}
 /*
        Developed By: Azeem Hassan
        Date: 7-3-19 
        action: open modal add new vendor
 */
-$(document).on('click', "#AddNewVendorButton", function () {
+$(document).on('click', "#AddNewVendorButton,#addVendorFromPO", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
@@ -399,12 +441,12 @@ $(document).on('click', "#AddMoreReps", function (event) {
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
                                             '<label>Rep First Name</label>'+
-                                            '<input type="text" class="form-control required" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" name="vendorRepIsPrimary" /> <small>Primary</small>'+
+                                            '<input type="text" class="form-control required blockSpecialChar" id="vendorRepName" style="width:90%"><input type="radio" id="vendorRepIsPrimary" name="vendorRepIsPrimary" /> <small>Primary</small>'+
                                         '</div>'+
                                        '<div class="form-group col-md-6">'+
                                             '<label>Rep Full Name</label>'+
                                             '<span class="firstRep">'+
-                                                '<input type="text" class="form-control required" id="vendorFullRepName" style="width:90%">'+
+                                                '<input type="text" class="form-control required blockSpecialChar" id="vendorFullRepName" style="width:90%">'+
                                             '</span>'+
                                         '</div>'+
                                     '</div>'+
@@ -413,14 +455,14 @@ $(document).on('click', "#AddMoreReps", function (event) {
                                             '<label>Phone Number 1</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="phone required form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input maxlength="3" data-type="number" type="tel" class="blockSpecialChar phone required form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-3 p-0">'+
-                                                   ' <input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone12">'+
+                                                   ' <input type="tel" class="form-control phone required blockSpecialChar" maxlength="3" data-type="number" id="vendorRepPhone12">'+
                                                 '</div>'+
 
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone required" maxlength="4" data-type="number"  id="vendorRepPhone13">'+
+                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="4" data-type="number"  id="vendorRepPhone13">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -434,13 +476,13 @@ $(document).on('click', "#AddMoreReps", function (event) {
                                            '<label>Phone Number 2</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" data-type="number" maxlength="3" class="required phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input type="tel" data-type="number" maxlength="3" class="blockSpecialChar required phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<input type="tel" class="form-control phone required" maxlength="3" data-type="number" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="3" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone required" maxlength="4" data-type="number" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="4" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -456,6 +498,9 @@ $(document).on('click', "#AddMoreReps", function (event) {
 */
 $(document).on('click', "#removeCurrentRep", function () {
     $(this).parent().remove();
+    if ($(this).parents('.venderRepoBox').find('#vendorRepIsPrimary').is(':checked')) {
+        $('.venderRepoBox:last').find('#vendorRepIsPrimary').prop('checked', true);
+    }
 });
 
 $(document).on('change', "#vendorRepIsPrimary", function () {
@@ -502,14 +547,14 @@ function repsHtml(data) {
                                             '<label>Phone Number 1</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input maxlength="3" value="' + phone1.substring(0, 3) +'" data-type="number" type="tel" class="phone required form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
+            '<span class="d-inline">(</span> <input maxlength="3" value="' + phone1.substring(0, 3) +'" data-type="number" type="tel" class="blockSpecialChar phone required form-control d-inline w-75" id="vendorRepPhone11"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                   ' <input type="tel" class="form-control phone required" maxlength="3" value="'+phone1.substring(3, 6)+'" data-type="number" id="vendorRepPhone12">'+
+                                                   ' <input type="tel" class="form-control phone required blockSpecialChar" maxlength="3" value="'+phone1.substring(3, 6)+'" data-type="number" id="vendorRepPhone12">'+
                                                 '</div>'+
 
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone required" maxlength="4" value="'+phone1.substring(6, 10)+'" data-type="number" id="vendorRepPhone13">'+
+                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="4" value="'+phone1.substring(6, 10)+'" data-type="number" id="vendorRepPhone13">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -523,13 +568,13 @@ function repsHtml(data) {
                                            '<label>Phone Number 2</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" value="' + phone2.substring(0, 3) +'" data-type="number" maxlength="3" class="phone form-control d-inline w-75 required" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+            '<span class="d-inline">(</span> <input type="tel" value="' + phone2.substring(0, 3) +'" data-type="number" maxlength="3" class="blockSpecialChar phone form-control d-inline w-75 required" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control phone required" maxlength="3" value="'+phone2.substring(3,6)+'" data-type="number" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="3" value="'+phone2.substring(3,6)+'" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone required" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -577,7 +622,7 @@ $(document).on('click', "#VendorNoteButton", function () {
     output: vendor id
 */
 $(document).on('click', "#addVendorNote", function () {
-    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val() && $('#vendorNote').val() != '') {
+    if ($('#vendorNote').attr('data-value') != $('#vendorNote').val()) {
         var id = $('#modaladdnote').attr('data-id');
         var jsonData = {};
         jsonData["vendor_notes"] = $('#vendorNote').val();
@@ -590,7 +635,12 @@ $(document).on('click', "#addVendorNote", function () {
             processData: false,
         }).always(function (data) {
             console.log(data);
-           $('#modaladdnote').modal('hide');
+            $('#modaladdnote').modal('hide');
+            if ($('#vendorNote').val() != '')
+                $('#VendorNoteButton[data-id="' + id + '"]').find('.redDotArea').addClass('redDOtElement');
+            else
+                $('#VendorNoteButton[data-id="' + id + '"]').find('.redDotArea').removeClass('redDOtElement');
+
         })
     }
 });
@@ -663,8 +713,8 @@ $(document).on('blur', "#vendorCode", function (event) {
         console.log(data);
         if (data.length > 0) {
             _this.addClass('errorFeild');
-            _this.parents('.form-group').find('.errorMsg').remove()
-            _this.parents('.form-group').html('<span class="errorMsg" style="color:red;font-size: 11px;">this code is already exist</span>');
+            _this.parents('.form-group').find('.errorMsg').remove();
+            _this.parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this code is already exist</span>');
         } else {
             $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
         }

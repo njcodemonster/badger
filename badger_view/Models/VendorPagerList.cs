@@ -16,6 +16,7 @@ namespace badger_view.Models
         public string last_order { get; set; }
         public int order_count { get; set; }
         public string Count { get; set; }
+        public int has_note { get; set; }
 
     }
 

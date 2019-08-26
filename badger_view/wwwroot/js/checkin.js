@@ -134,6 +134,11 @@ $(document).on('click', ".submit-check-in", function () {
 
         if (data.responseText == "Success") {
 
+            $('.postatus-' + po_id).text('Recieved');
+            $('.checked-' + po_id).removeClass('btn-warning').addClass('btn-success').removeAttr('id').text('Checked-In');
+            $('.removeRed-' + po_id).removeClass('text-danger font-weight-bold ');
+            $('.days-' + po_id).text('0 Day');
+
             var fileLength = $("#checkin_form #poUploadImage")[0].files.length;
             if (fileLength != 0) {
                 var files = $("#checkin_form #poUploadImage")[0].files;

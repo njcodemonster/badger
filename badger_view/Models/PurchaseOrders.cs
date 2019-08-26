@@ -19,9 +19,11 @@ namespace badgerApi.Models
         public double? delivery_window_start { get; set; }
         public double? delivery_window_end { get; set; }
         public int po_status { get; set; }
-        public decimal? po_discount_id { get; set; }
+        public int po_discount_id { get; set; }
         public int? deleted { get; set; }
         public int ra_flag { get; set; }
+        public int has_note { get; set; }
+        public int has_doc { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double order_date { get; set; }

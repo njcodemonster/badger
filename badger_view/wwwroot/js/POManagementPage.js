@@ -330,9 +330,17 @@ $(document).on("keydown", ".item_barcode", function (e) {
 });
 
 $(document).on("change", ".item_barcode", function (e) {
-    debugger;
     var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
+
+    var item_status = $(this).parents("tr").find(".item_status").val();
+
+    if (item_status == 1) {
+        $(this).val("");
+        alertInnerBox('message-' + po_id, 'red', 'Change item status:');
+        return false;
+    }
+
     var item_id = $(this).attr('data-itemid');
     var old_barcode = $(this).attr('data-barcode');
     var size = $(this).parents("tr").attr('data-size');
@@ -676,11 +684,14 @@ $('.POListCheckIn .card-header .card-box').click(function () {
     var POid = thisPO.attr("data-POId");
 
     console.log($("#collapse_" + POid));
-    console.log($("#collapse_" + POid).is(":visible"))
+    console.log($("#collapse_" + POid).is(":visible")) 
     console.log($("#collapse_" + POid).is(":hidden"))
 
     if ($("#collapse_" + POid).is(":hidden")) {
-        getPurchaseOrdersItemdetails(POid);
+        if ($("#collapse_" + POid).find('.card-body').length == 0) {
+             getPurchaseOrdersItemdetails(POid);
+        }
+        $("#collapse_" + POid).show();
         $("#collapse_" + POid).attr('data-colapse', true);
     } else if ($("#collapse_" + POid).attr('data-colapse')) {
         $("#collapse_" + POid).hide();
