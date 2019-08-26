@@ -316,14 +316,15 @@ namespace badger_view.Controllers
         output: dynamic object of purchase orders
         */
         [Authorize]
-        public async Task<IActionResult> Single()
+        public async Task<IActionResult> Single() 
         {
             SetBadgerHelper();
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
+            List < VendorType > getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
             dynamic vendor = new ExpandoObject();
             vendor.GetVendorsNameAndId = getVendorsNameAndId;
-
+            vendor.VendorType = getVendorTypes;
             return View("Single", vendor);
         }
 
