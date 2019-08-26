@@ -103,12 +103,12 @@ function allLetterAllow(event) {
     var inputValue = event.which;
 
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
-    if (event.ctrlKey == true && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88)) {
+    if (event.ctrlKey == true && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88 || inputValue == 9 )) {
         return true;
     }
 
         // allow letters and whitespaces only.
-    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39) { 
+    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39 && inputValue != 9) { 
           return false
         }
 }

@@ -420,7 +420,7 @@ function phoneNumberValidate(fieldName) {
        Date: 7-3-19 
        action: open modal add new vendor
 */
-$(document).on('click', "#AddNewVendorButton", function () {
+$(document).on('click', "#AddNewVendorButton,#addVendorFromPO", function () {
     $("#NewVendorButton,#EditVendorButton").attr("id", "NewVendorButton").text('Add');
     $("#newVendorModal #vendorModalLongTitle").text("Add a New Vendor Profile");
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
@@ -497,8 +497,8 @@ $(document).on('click', "#AddMoreReps", function (event) {
 */
 $(document).on('click', "#removeCurrentRep", function () {
     $(this).parent().remove();
-    if ($('.venderRepoBox').length == 1) {
-        $('#vendorRepIsPrimary').prop('checked', true);
+    if ($(this).parents('.venderRepoBox').find('#vendorRepIsPrimary').is(':checked')) {
+        $('.venderRepoBox:last').find('#vendorRepIsPrimary').prop('checked', true);
     }
 });
 
