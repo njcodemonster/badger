@@ -32,6 +32,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorsByColumnName(string columnName, string search);
         Task<Object> CheckVendorCodeExist(string vendorcode);
         Task<Object> GetVendor(string vendor);
+        Task<Object> GetStyleNumber(string stylenumber);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -349,6 +350,25 @@ namespace badgerApi.Interfaces
         {
             dynamic vendorDetails = new ExpandoObject();
             string sQuery = "SELECT vendor_id as value, vendor_name as label, logo as image,'vendor' as type FROM " + TableName + " WHERE vendor_name LIKE '%" + vendor + "%';";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
+        }
+        
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get all vendor data by vendor name
+        Input: string vendor
+        output: dynamic list of vendor data
+        */
+        public async Task<Object> GetStyleNumber(string stylenumber)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id as value, vendor_product_code as label,'stylenumber' as type FROM vendor_products WHERE vendor_product_code LIKE '%" + stylenumber + "%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);

@@ -722,5 +722,35 @@ namespace badgerApi.Controllers
             return vendorDetails;
 
         }
+
+        /*
+       Developer: Sajid Khan
+       Date: 08-09-19 
+       Action: Getting product data by stylenumber
+       URL:  api/vendor/getstylenumber/stylenumber
+       Request GET
+       Input: string vendor
+       output: dynamic list of product data 
+       */
+        [HttpGet("getstylenumber/{stylenumber}")]
+        public async Task<List<object>> GetStyleNumber(string stylenumber)
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetStyleNumber(stylenumber);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+        
     }
 }

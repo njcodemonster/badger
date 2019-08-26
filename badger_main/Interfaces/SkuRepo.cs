@@ -173,7 +173,7 @@ namespace badgerApi.Interfaces
         {
             dynamic skuDetails = new ExpandoObject();
 
-            string sQuery = "SELECT sku_id as value,sku as label,'sku' as type FROM " + TableName + " WHERE LOWER(sku) LIKE '"+sku.ToLower()+"%';";
+            string sQuery = "SELECT sku.sku_id AS value,sku.sku AS label, product_images.product_image_url AS image,'sku' AS type FROM sku, product_images WHERE sku.product_id = product_images.product_id AND product_images.isprimary = 1 AND LOWER(sku.sku) LIKE '" + sku.ToLower()+"%';";
 
             using (IDbConnection conn = Connection)
             {

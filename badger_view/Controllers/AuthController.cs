@@ -54,7 +54,7 @@ namespace badger_view.Controllers
         {
             if (await _LoginHelper.DoLogin(logiDetails))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "PurchaseOrders");
             }
             else
             {
@@ -74,7 +74,7 @@ namespace badger_view.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "PurchaseOrders");
             }
         }
 
