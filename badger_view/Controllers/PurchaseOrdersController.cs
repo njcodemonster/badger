@@ -310,7 +310,7 @@ namespace badger_view.Controllers
         Developer: Sajid Khan
         Date: 7-5-19 
         Action: Get Purchase Orders data by id 
-        URL: /purchaseorders/single/649
+        URL: /purchaseorders/single/649z
         Request: Get
         Input: int id
         output: dynamic object of purchase orders
@@ -320,10 +320,11 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
+            List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
             dynamic vendor = new ExpandoObject();
             vendor.GetVendorsNameAndId = getVendorsNameAndId;
-
+            vendor.VendorType = getVendorTypes;
             return View("Single", vendor);
         }
 

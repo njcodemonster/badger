@@ -216,6 +216,7 @@ function emptyFeildValidation(id){
         if($(this).val() == ''){
             notvalid = false;
             $(this).addClass('errorFeild');
+            if ($(this).parents('.form-group').find('.errorMsg').length == 0)
             $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         }
         if (notvalid && $(this).attr('type') == 'email' && isEmail($(this).val()) == false) {
