@@ -27,6 +27,7 @@ namespace badgerApi.Models
         public string vendor_size { get; set; }
         [Write(false)]
         public int attribute_id { get; set; }
-        
+       
+
     }
 }

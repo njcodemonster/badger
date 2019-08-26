@@ -10,6 +10,7 @@ Output: string of style
 var new_sku = "";
 var SelectedProductID;
 var data_Categories;
+var productSubCategoriesAction = [];
 $(document).on('click', ".AddNewStyleButton", function () {
 
 
@@ -36,7 +37,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     jsonData["product_name_no"] = $('#newAddStyleForm #product_title_no').val();
     jsonData["product_color_code"] = $('#newAddStyleForm #product_color_code').val();
     jsonData["product_type_id"] = $('#StyleType option:selected').val();
-    jsonData["product_subtype_ids"] = $('#StyleSubType').val();
+    jsonData["product_subtype_ids"] = productSubCategoriesAction;
 
     jsonData["vendor_style_sku"] = [];
     $('#po_input_fields_wrap .vendorSkuBox').each(function () {
@@ -45,7 +46,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
         style_sku["style_size"] = $(this).find('#styleSize').val();
         style_sku["style_sku"] = $(this).find('#styleSku').val();
         style_sku["style_qty"] = $(this).find('#styleSkuQty').val();
-        jsonData["vendor_style_sku"].push(style_sku);
+        if ($(this).find('#styleVendorSize').val() != null && $(this).find('#styleSize').val() != null && $(this).find('#styleSkuQty').val() != null) {
+            jsonData["vendor_style_sku"].push(style_sku);
+        }
     });
 
 
@@ -137,6 +140,7 @@ URL:
 Input: 
 Output: input fields show dynamic 
 */
+var dropdownlist;
 $(document).ready(function () {
     var max_fields = 10; //maximum input boxes allowed
     var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
@@ -147,20 +151,7 @@ $(document).ready(function () {
         e.preventDefault();
         if (x < max_fields) { //max input box allowed
             x++; //text box increment
-            if ($('.vendorSkuBox:visible').length > 0) {
-                var lastsku = $('.vendorSkuBox:last').find('#styleSku').val()
-                if (lastsku.indexOf('-') > -1) {
-                    lastsku = lastsku.split('-')
-                    var lastskuNum = parseInt(lastsku[1])
-                    lastskuNum = lastskuNum + 1
-                    lastsku = lastsku[0] + '-' + lastskuNum
-                } else {
-                    lastsku = '';
-                }
-
-            } else {
-                lastsku = '';
-            }
+            var lastsku = ""
             var options = '';
             if (window.sku_sizes.length) {
                 for (i = 0; i < sku_sizes.length; i++) {
@@ -178,7 +169,37 @@ $(document).ready(function () {
         e.preventDefault(); $(this).parent('div').remove(); x--;
     })
 
+
+    $('#StyleSubType').multiselect({
+        nonSelectedText: 'Select sub type',
+        enableFiltering: true,
+        templates: {
+            li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>',
+            filter: '<li class="multiselect-item filter"><div class="input-group m-0 mb-1"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<div class="input-group-append"><button class="btn btn btn-primary multiselect-clear-filter" type="button"><i class="fa fa-times"></i></button></div>'
+        },
+        selectedClass: 'bg-light',
+        onInitialized: function (select, container) {
+            // hide checkboxes
+            container.find('input[type=checkbox]').addClass('d-none');
+        },
+        onChange: function (option, checked) {
+            var actionType = checked ? "insert" : "delete";
+            productSubCategoriesAction = productSubCategoriesAction.filter(function (category) {
+                return category.product_category_id != $(option).val();
+            });
+
+
+            var categoryAction = { category_id: $(option).val(), action: actionType };
+            productSubCategoriesAction.push(categoryAction)
+
+        }
+    });
+
+
 });
+
+
 
 $(document).on('blur', "#styleSku", function (event) {
     var patt = new RegExp('^([A-Z]{2})([0-9]{3})([-]{1})([0-9]{1})$');
@@ -223,6 +244,20 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
         $('#modaladdstylec #StyleType').val($('#modaladdstylec #StyleType option[value=2]').val()).change()
     }
 
+    selectProductCategories = SelectedProduct.data('product_categories')
+    if (selectProductCategories != null) {
+        var categoryIds = [];
+        for (var i = 0; i < selectProductCategories.length; i++) {
+            var Category = selectProductCategories[i];
+            categoryIds.push(Category.category_id);
+        }
+
+        $('#StyleSubType').multiselect('select', categoryIds);
+
+
+
+    }
+
 
     $.ajax({
         url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
@@ -253,9 +288,12 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
                 }
             }
 
-            $(wrapper).append('<div class="pb-2 vendorSkuBox_disabled form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline " name="cqty[' + x + ']" placeholder="Qty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
+            $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline " name="cqty[' + x + ']" placeholder="Qty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
 
+            new_sku = data[x].sku.split('-')[0];
         }
+
+
         $('.poAlertMsg').html('')
 
     });
@@ -270,6 +308,11 @@ Input: int purchase order id, int vendor id
 Output: string of vendor products
 */
 $(document).on('click', "#AddItemButton", function () {
+
+    $('#StyleSubType option').remove();
+    $('#StyleSubType').multiselect('rebuild');
+
+
     var CurrentPOID = $(this).data("poid");
     $('.errorMsg').remove();
     $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
@@ -332,9 +375,10 @@ $(document).on('click', "#AddItemButton", function () {
         if (data.length) {
             for (i = 0; i < data.length; i++) {
 
-                $('#modaladdstylec #ExistingProductSelect').append("<option data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+                $('#modaladdstylec #ExistingProductSelect').append("<option  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
                 last_sku_family = data[i].sku_family;
             }
+
 
             var vendorCode = last_sku_family.substring(0, 2);
             var sku_number = parseInt(last_sku_family.substr(2)) + 1;
@@ -424,9 +468,8 @@ $(document).on('change', "#StyleType", function (event) {
         $('.vendorSkuArea').hide();
     }
 
-
-    $('#modaladdstylec #StyleSubType option').remove();
-   
+    $('#StyleSubType option').remove();
+    $('#StyleSubType').multiselect('rebuild');
 
     var subCategories = data_Categories.filter(function (category) {
         return category.category_parent_id == selectedStyleType;
@@ -437,10 +480,10 @@ $(document).on('change', "#StyleType", function (event) {
             $('#StyleSubType').append("<option value='" + subCategories[i].category_id + "'>" + subCategories[i].category_name + "</option >")
         }
 
-        $('#StyleSubType').attr("multiple", '')
-        $('#StyleSubType').multiSelect();
+        $('#StyleSubType').multiselect('rebuild');
 
     }
+
 
 
 });
@@ -591,7 +634,9 @@ $(document).on('change', '#modaleditstylec #ExistingProductSelect', function () 
 
             $(wrapper).append('<div class="pb-2 vendorSkuBox_disabled form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" placeholder="Vendor Size"   disabled /></div><div class="form-group col-md-3"><input type="text" class="form-control d-inline" name="csku[' + x + ']" placeholder="SKU" value = "' + sku_sizes[x] + '"  disabled /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline " name="cqty[' + x + ']" placeholder="Qty" value="' + data[x].line_item_ordered_quantity + '"  disabled />  '); // add input boxes.
 
+
         }
+
         $('.poAlertMsg').html('')
 
     });
