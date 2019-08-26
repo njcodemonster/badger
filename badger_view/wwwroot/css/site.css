@@ -534,7 +534,6 @@ label.error {
 .redDOtElement{
     position: absolute;
     background: red;
-    right: 0;
     z-index: 9;
     border: 5px solid red;
     border-radius: 50%;

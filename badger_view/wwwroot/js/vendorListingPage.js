@@ -156,8 +156,12 @@ $(document).on('click', "#NewVendorButton", function () {
             }).always(function (data) {
                 console.log(data);
             });
+            var isDot = "";
+            if ($('#vendorNotes').val() != '') {
+                isDot = "redDOtElement"
+            }
             $('#vendorListingArea').DataTable().row.add([
-                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 0, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><i class="fa fa-edit h3"></i></a>'
+                $("#newVendorForm #vendorName").val(), $("#newVendorForm #vendorCode").val(), 0, 0, '<button type="button" id="EditVendor" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-toggle="modal" data-id="' + id + '" id="VendorNoteButton" data-target="#modaladdnote"><div class="redDotArea ' +isDot+'"></div><i class="fa fa-edit h3"></i></a>'
             ]).draw();
             var table = $('#vendorListingArea').DataTable();
             table.page('last').draw('page');
@@ -362,6 +366,11 @@ $(document).on('click', "#EditVendorButton", function () {
             if (data != "0") {
                 alertBox('vendorAlertMsg', 'green', 'Vendor updated successfully');
                 console.log("vendor created . uploading files");
+                if ($('#vendorNotes').val() != '') {
+                    $('#VendorNoteButton[data-id="' + id + '"]').find('.redDotArea').addClass('redDOtElement');
+                } else {
+                    $('#VendorNoteButton[data-id="' + id + '"]').find('.redDotArea').removeClass('redDOtElement');
+                }
                 var formData = new FormData();
                 formData.append('Vendor_id', id);
                 var files = $("#newVendorForm #vendorDocument")[0].files;
