@@ -278,9 +278,9 @@ namespace badger_view.Controllers
                     vendorNotes.Add("note", vendor_notes);
                     vendorNotes.Add("created_by", Int32.Parse(loginUserId));
                     String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
-                    JObject purchaseOrderStatusNote = new JObject();
-                    purchaseOrderStatusNote.Add("has_note", 1);
-                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + newVendorID);
+                    JObject vendorOrderStatusNote = new JObject();
+                    vendorOrderStatusNote.Add("has_note", 1);
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(vendorOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + newVendorID);
                 }
             }
             return newVendorID;
@@ -359,18 +359,25 @@ namespace badger_view.Controllers
                     }
                 }
                 string vendor_notes = json.Value<string>("vendor_notes");
-                if (vendor_notes != "")
-                {
+                
                     JObject vendorNotes = new JObject();
                     vendorNotes.Add("ref_id", id);
                     vendorNotes.Add("note", vendor_notes);
                     vendorNotes.Add("created_by", Int32.Parse(loginUserId));
                     String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
-                    JObject purchaseOrderStatusNote = new JObject();
-                    purchaseOrderStatusNote.Add("has_note", 1);
-                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
+                    JObject vendorOrderStatusNote = new JObject();
+                    
+                    if (vendor_notes == "")
+                    {
+                        vendorOrderStatusNote.Add("has_note", 0);
+                    }else
+                    {
+                        vendorOrderStatusNote.Add("has_note", 1);
 
-                }
+                    }
+                    await _BadgerApiHelper.GenericPutAsyncString<String>(vendorOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
+
+                
 
             }
 
@@ -411,18 +418,25 @@ namespace badger_view.Controllers
             string loginUserId = await _LoginHelper.GetLoginUserId();
             string vendor_notes = json.Value<string>("vendor_notes");
             String newNoteID = "0";
-            if (vendor_notes != "")
-            {
+       
                 JObject vendorNotes = new JObject();
                 vendorNotes.Add("ref_id", id);
                 vendorNotes.Add("note", vendor_notes);
                 vendorNotes.Add("created_by", Int32.Parse(loginUserId));
                 newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
+            if (vendor_notes != "")
+            {
                 JObject purchaseOrderStatusNote = new JObject();
                 purchaseOrderStatusNote.Add("has_note", 1);
                 await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
-
             }
+            else
+            {
+                JObject purchaseOrderStatusNote = new JObject();
+                purchaseOrderStatusNote.Add("has_note", 2);
+                await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
+            }
+            
             return newNoteID;
         }
         /*

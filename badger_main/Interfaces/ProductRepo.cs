@@ -42,6 +42,8 @@ namespace badgerApi.Interfaces
         Task<string> CreateProductImages(Productimages NewProductImages);
         Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
         Task<Object> GetProduct(string product_name);
+        Task<Object> GetProductIdsByPurchaseOrder(string poids);
+        Task<Object> GetPublishedProductIds(string poids);
     }
     public class ProductRepo : IProductRepository
     {
@@ -516,6 +518,43 @@ namespace badgerApi.Interfaces
             return res;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 24-08-19 
+        Action: get product ids by poid from db
+        Input: string poids
+        output: dynamic list of object product
+        */
+        public async Task<Object> GetProductIdsByPurchaseOrder(string poids)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product_used_in.po_id, product_used_in.product_id FROM product_used_in WHERE product_used_in.po_id IN ("+poids+")";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 24-08-19 
+        Action: get published product ids by product ids from db
+        Input: string poids
+        output: dynamic list of object published product ids
+        */
+        public async Task<Object> GetPublishedProductIds(string poids)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id FROM product WHERE published_status= 1 AND product_id IN (" + poids + ")";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
+        }
     }
 }
 

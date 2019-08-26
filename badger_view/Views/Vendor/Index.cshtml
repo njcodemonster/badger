@@ -43,7 +43,7 @@
                         <button type="button" id="EditVendor" data-ID="@vendor.vendor_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="#" data-toggle="modal" data-ID="@vendor.vendor_id" style="position:relative" id="VendorNoteButton" data-target="#modaladdnote">@if(vendor.has_note == 1){<div class="redDOtElement"></div>}<i class="fa fa-edit h3"></i></a>
+                        <a href="#" data-toggle="modal" data-ID="@vendor.vendor_id" style="position:relative" id="VendorNoteButton" data-target="#modaladdnote">@if(vendor.has_note == 1){<div class="redDotArea redDOtElement"></div>}else{<div class="redDotArea"></div>}<i class="fa fa-edit h3"></i></a>
                     </td>
                 </tr>
             }

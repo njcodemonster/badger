@@ -850,7 +850,7 @@ namespace badgerApi.Controllers
                     {
                         CountRaStatusZero++;
                     }
-                    if (rastatus == 1)
+                    if (rastatus > 0)
                     {
                         CountRaStatusOne++;
                     }
