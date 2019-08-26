@@ -986,7 +986,7 @@ $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
 
-    confirmationAlertBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
+    confirmationAlertInnerBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
 
         if (result == "yes") {
             $.ajax({
