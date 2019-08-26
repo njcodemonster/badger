@@ -680,7 +680,10 @@ $('.POListCheckIn .card-header .card-box').click(function () {
     console.log($("#collapse_" + POid).is(":hidden"))
 
     if ($("#collapse_" + POid).is(":hidden")) {
-        getPurchaseOrdersItemdetails(POid);
+        if ($("#collapse_" + POid).find('.card-body').length == 0) {
+             getPurchaseOrdersItemdetails(POid);
+        }
+        $("#collapse_" + POid).show();
         $("#collapse_" + POid).attr('data-colapse', true);
     } else if ($("#collapse_" + POid).attr('data-colapse')) {
         $("#collapse_" + POid).hide();
