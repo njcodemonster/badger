@@ -118,8 +118,8 @@
     <script src="~/js/jquery-ui.js"></script>
     @RenderSection("Scripts", required: false)
     <script>
-        @using CommonHelper;
-        var claimerType = @(Html.EnumToString<ClaimerType>());
+        @using CommonHelper.HTMLHelpers;
+        var claimerType = @(Html.EnumToString<CommonHelper.ClaimerType>());
     </script>
 
 

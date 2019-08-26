@@ -29,7 +29,6 @@ namespace badgerApi
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<INotesAndDocHelper,NotesAndDocHelper>();
             services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
-            services.AddTransient<IEventRepo, EventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
             services.AddTransient<IProductRepository, ProductRepo>();
             services.AddTransient<IPurchaseOrderStatusRepository, PurchaseOrderStatusRepo>();
@@ -49,6 +48,8 @@ namespace badgerApi
             services.AddTransient<IPurchaseOrdersLineItemsRepo, PurchaseOrdersLineItemsRepo>();
             services.AddTransient<IVendorProductRepository, VendorProductRepo>();
             services.AddTransient<iBarcodeRangeRepo, BarcodeRangeRepo>();
+
+            services.AddSingleton<IEventRepo, EventsRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

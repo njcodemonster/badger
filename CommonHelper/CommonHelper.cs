@@ -22,6 +22,11 @@ namespace CommonHelper
             return (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
 
+        public static Double GetTimeStamp()
+        {
+            return (Double)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        }
+
         /*
         Developer: Sajid Khan
         Date: 7-7-19 
