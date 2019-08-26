@@ -462,6 +462,14 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
                 }
+                if (PurchaseOrdersToUpdate.has_note != 0)
+                {
+                    ValuesToUpdate.Add("has_note", PurchaseOrdersToUpdate.has_note.ToString());
+                }
+                if (PurchaseOrdersToUpdate.has_doc != 0)
+                {
+                    ValuesToUpdate.Add("has_doc", PurchaseOrdersToUpdate.has_doc.ToString());
+                }
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -842,7 +850,7 @@ namespace badgerApi.Controllers
                     {
                         CountRaStatusZero++;
                     }
-                    if (rastatus == 1)
+                    if (rastatus > 0)
                     {
                         CountRaStatusOne++;
                     }

@@ -368,7 +368,7 @@ namespace badgerApi.Interfaces
         public async Task<Object> GetStyleNumber(string stylenumber)
         {
             dynamic vendorDetails = new ExpandoObject();
-            string sQuery = "SELECT product_id as value, vendor_product_code as label,'stylenumber' as type FROM vendor_products WHERE vendor_product_code LIKE '%" + stylenumber + "%';";
+            string sQuery = "SELECT vendor_products.product_id as value, vendor_products.vendor_product_code as label,product.product_vendor_image AS image,'stylenumber' as type FROM vendor_products, product WHERE vendor_products.product_id = product.product_id AND vendor_products.vendor_product_code LIKE '%" + stylenumber + "%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);

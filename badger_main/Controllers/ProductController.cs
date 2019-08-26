@@ -491,5 +491,64 @@ namespace badgerApi.Controllers
             return productDetails;
 
         }
+
+        /*
+        Developer: Sajid Khan
+        Date: 24-8-19 
+        Action: Get mutiple product ids with comma seperate  "api/purchaseorders/getproductidsbypurchaseorder/1,2,3"
+        URL: api/purchaseorders/getproductidsbypurchaseorder/1,2,3
+        Request: Get
+        Input: string poids
+        output: list of mutiple product ids
+        */
+        [HttpGet("getproductidsbypurchaseorder/{poids}")]
+        public async Task<object> GetProductIdsByPurchaseOrder(string poids)
+        {
+            dynamic poPageList = new object();
+            try
+            {
+                poPageList = await _ProductRepo.GetProductIdsByPurchaseOrder(poids);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders GetProductIdsByPurchaseOrder with message" + ex.Message);
+
+            }
+
+            return poPageList;
+
+        }
+
+        /*
+        Developer: Rizwan Ali
+        Date: 24-8-19 
+        Action: Get published product ids  "api/purchaseorders/getpublishedproductCount/1,2,3"
+        URL: api/purchaseorders/getpublishedproductCount/1,2,3
+        Request: Get
+        Input: string productids
+        output: list of published product ids
+        */
+        [HttpGet("getpublishedproductCount/{productids}")]
+        public async Task<object> GetPublishedProductCount(string productids)
+        {
+            dynamic poPageList = new object();
+            try
+            {
+                poPageList = await _ProductRepo.GetPublishedProductIds(productids);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders GetPublishedProductCount with message" + ex.Message);
+
+            }
+
+            return poPageList;
+
+        }
+
+        
     }
 }

@@ -330,9 +330,17 @@ $(document).on("keydown", ".item_barcode", function (e) {
 });
 
 $(document).on("change", ".item_barcode", function (e) {
-    debugger;
     var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
+
+    var item_status = $(this).parents("tr").find(".item_status").val();
+
+    if (item_status == 1) {
+        $(this).val("");
+        alertInnerBox('message-' + po_id, 'red', 'Change item status:');
+        return false;
+    }
+
     var item_id = $(this).attr('data-itemid');
     var old_barcode = $(this).attr('data-barcode');
     var size = $(this).parents("tr").attr('data-size');

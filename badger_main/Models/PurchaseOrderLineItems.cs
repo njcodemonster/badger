@@ -23,5 +23,10 @@ namespace badgerApi.Models
         public int updated_by { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
+        [Write(false)]
+        public string vendor_size { get; set; }
+        [Write(false)]
+        public int attribute_id { get; set; }
+        
     }
 }
