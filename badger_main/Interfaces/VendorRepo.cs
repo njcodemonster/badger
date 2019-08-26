@@ -212,11 +212,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if(limit > 0)
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + start + "," + limit + ";";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by b.order_count DESC limit " + start + "," + limit + ";";
             }
             else
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc;";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by b.order_count DESC;";
             }
 
             using (IDbConnection conn = Connection)
