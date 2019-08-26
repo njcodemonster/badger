@@ -91,6 +91,7 @@ namespace badger_view.Controllers
             var TotalList = purchaseOrdersPagerList.purchaseOrdersInfo;
 
             List<PurchaseOrdersInfo> newPurchaseOrderInfoList = new List<PurchaseOrdersInfo>();
+            List<PurchaseOrdersInfo> newPurchaseOrderInfoList2 = new List<PurchaseOrdersInfo>();
 
             int PhotosCount = 0;
             int TotalPublishedProducts = 0;
@@ -129,37 +130,69 @@ namespace badger_view.Controllers
                 NewDateFormat = _common.ConvertToDate(poList.order_date);
                 NumDays = _common.NumberOfDays(poList.updated_at);
 
-                newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo
-                {
-                    po_id = poList.po_id,
-                    vendor_po_number = poList.vendor_po_number,
-                    vendor_invoice_number = poList.vendor_invoice_number,
-                    vendor_order_number = poList.vendor_order_number,
-                    vendor_id = poList.vendor_id,
-                    total_styles = poList.total_styles,
-                    shipping = poList.shipping,
-                    order_date = poList.order_date,
-                    vendor = poList.vendor,
-                    custom_delivery_window_start_end = DeliveryStartEnd,
-                    po_status = poList.po_status,
-                    ra_flag = poList.ra_flag,
-                    updated_at = poList.updated_at,
-                    custom_order_date = NewDateFormat,
-                    num_of_days = NumDays,
-                    check_days_range = CheckDaysRange,
-                    has_note = poList.has_note,
-                    has_doc = poList.has_doc,
-                    photos = TotalPublishedProducts,
-                    remaining = (PhotosCount-TotalPublishedProducts)
-                });
 
+                if (CheckDaysRange ==  true && poList.po_status == 5)
+                {
+                    newPurchaseOrderInfoList2.Add(new PurchaseOrdersInfo
+                    {
+                        po_id = poList.po_id,
+                        vendor_po_number = poList.vendor_po_number,
+                        vendor_invoice_number = poList.vendor_invoice_number,
+                        vendor_order_number = poList.vendor_order_number,
+                        vendor_id = poList.vendor_id,
+                        total_styles = poList.total_styles,
+                        shipping = poList.shipping,
+                        order_date = poList.order_date,
+                        vendor = poList.vendor,
+                        custom_delivery_window_start_end = DeliveryStartEnd,
+                        po_status = poList.po_status,
+                        ra_flag = poList.ra_flag,
+                        updated_at = poList.updated_at,
+                        custom_order_date = NewDateFormat,
+                        num_of_days = NumDays,
+                        check_days_range = CheckDaysRange,
+                        has_note = poList.has_note,
+                        has_doc = poList.has_doc,
+                        photos = TotalPublishedProducts,
+                        remaining = (PhotosCount - TotalPublishedProducts)
+                    });
+                }
+                else
+                {
+                    newPurchaseOrderInfoList.Add(new PurchaseOrdersInfo
+                    {
+                        po_id = poList.po_id,
+                        vendor_po_number = poList.vendor_po_number,
+                        vendor_invoice_number = poList.vendor_invoice_number,
+                        vendor_order_number = poList.vendor_order_number,
+                        vendor_id = poList.vendor_id,
+                        total_styles = poList.total_styles,
+                        shipping = poList.shipping,
+                        order_date = poList.order_date,
+                        vendor = poList.vendor,
+                        custom_delivery_window_start_end = DeliveryStartEnd,
+                        po_status = poList.po_status,
+                        ra_flag = poList.ra_flag,
+                        updated_at = poList.updated_at,
+                        custom_order_date = NewDateFormat,
+                        num_of_days = NumDays,
+                        check_days_range = CheckDaysRange,
+                        has_note = poList.has_note,
+                        has_doc = poList.has_doc,
+                        photos = TotalPublishedProducts,
+                        remaining = (PhotosCount - TotalPublishedProducts)
+                    });
+                }
                 NewDateFormat = "";
                 NumDays = "";
             }
 
             dynamic PurchaseOrdersPageModal = new ExpandoObject();
+
+            var list = newPurchaseOrderInfoList.Concat(newPurchaseOrderInfoList2).ToList();
+
             PurchaseOrdersPageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
-            PurchaseOrdersPageModal.PurchaseOrdersLists = newPurchaseOrderInfoList;
+            PurchaseOrdersPageModal.PurchaseOrdersLists = list;
             PurchaseOrdersPageModal.VendorType = getVendorTypes;
 
             return View("Index", PurchaseOrdersPageModal);

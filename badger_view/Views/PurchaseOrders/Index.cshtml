@@ -66,38 +66,37 @@
                     <td>@purchaseOrders.remaining</td>
                     @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
                     {
-                        <td class="text-danger font-weight-bold">@purchaseOrders.custom_delivery_window_start_end</td>
-                        <td class="text-danger font-weight-bold">@purchaseOrders.num_of_days</td>
-                        <td class="text-danger font-weight-bold"> <span>Not Recieved</span> </td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id">@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"> <span class="postatus-@purchaseOrders.po_id">Not Recieved</span> </td>
                     }
                     else
                     {
                         <td>@purchaseOrders.custom_delivery_window_start_end</td>
-                        <td>@purchaseOrders.num_of_days</td>
+                        <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
                         <td>
                             @if (@purchaseOrders.po_status == 1)
                             {
-                                <span>Open</span>
+                                <span class="postatus-@purchaseOrders.po_id">Open</span>
                             }
-
                             @if (@purchaseOrders.po_status == 3)
                             {
-                                <span>In Progress</span>
+                                <span class="postatus-@purchaseOrders.po_id">In Progress</span>
                             }
                             @if (@purchaseOrders.po_status == 5)
                             {
-                                <span>Not Recieved</span>
+                                <span class="postatus-@purchaseOrders.po_id">Not Recieved</span>
                             }
                             @if (@purchaseOrders.po_status == 6)
                             {
-                                <span>Recieved</span>
+                                <span class="postatus-@purchaseOrders.po_id">Recieved</span>
                             }
                         </td>
                     }
                     <td>
                         @if (@purchaseOrders.po_status == 5)
                         {
-                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checkin</button>
+                            <button type="button" class="btn btn-warning btn-sm checked-@purchaseOrders.po_id" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checkin</button>
                         }
                         else
                         {
@@ -181,6 +180,8 @@
                                 <div class="form-group col-md-6">
                                     <label>P.O. Number</label>
                                     <input type="hidden" id="po_status" style="display:none;">
+                                    <input type="hidden" id="photos" style="display:none;">
+                                    <input type="hidden" id="remaining" style="display:none;">
                                     <input type="text" class="form-control required" id="poNumber">
                                 </div>
                                 <div class="form-group col-md-6">
