@@ -143,7 +143,7 @@ namespace badger_view.Controllers
             string product_retail = json.Value<string>("product_retail");
             string product_url_handle = product_name.Replace(' ', '-').ToLower();
             string product_type_id = json.Value<string>("product_type_id");
-
+            var product_subtype_ids= json.Value<List<int>>("product_subtype_ids");
 
 
             //default values FIXED hardcoded
@@ -227,6 +227,12 @@ namespace badger_view.Controllers
                         vendorProduct.Add("product_id", Convert.ToInt64(product_id));
                         // add new vendor product in vendor product table
                         var temp_product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorProduct.ToString(Formatting.None), "/vendor/createvendorproduct");
+                        for (int i = 0; i < product_subtype_ids.Count; i++)
+                        {
+
+                        }
+                        //product_subtype_ids 
+
                     }
 
                 }
