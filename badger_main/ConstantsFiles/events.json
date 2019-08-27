@@ -1,0 +1,7 @@
+ [
+    {
+      "EventId": 2,
+      "EventName": "po_created",
+      "EventDescription": "Purchase order created by user =%%userId%% with purchase order id= %%entityId%%"
+    }
+  ]
