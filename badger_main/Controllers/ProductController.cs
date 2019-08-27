@@ -495,19 +495,19 @@ namespace badgerApi.Controllers
         /*
         Developer: Sajid Khan
         Date: 24-8-19 
-        Action: Get mutiple product ids with comma seperate  "api/purchaseorders/getproductidsbypurchaseorder/1,2,3"
-        URL: api/purchaseorders/getproductidsbypurchaseorder/1,2,3
+        Action: Get mutiple product ids with comma seperate  "api/purchaseorders/getproductidsbypurchaseorder"
+        URL: api/purchaseorders/getproductidsbypurchaseorder
         Request: Get
         Input: string poids
         output: list of mutiple product ids
         */
-        [HttpGet("getproductidsbypurchaseorder/{poids}")]
-        public async Task<object> GetProductIdsByPurchaseOrder(string poids)
+        [HttpGet("getproductidsbypurchaseorder")]
+        public async Task<object> GetProductIdsByPurchaseOrder()
         {
             dynamic poPageList = new object();
             try
             {
-                poPageList = await _ProductRepo.GetProductIdsByPurchaseOrder(poids);
+                poPageList = await _ProductRepo.GetProductIdsByPurchaseOrder();
 
             }
             catch (Exception ex)

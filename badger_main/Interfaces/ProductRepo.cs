@@ -42,7 +42,7 @@ namespace badgerApi.Interfaces
         Task<string> CreateProductImages(Productimages NewProductImages);
         Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
         Task<Object> GetProduct(string product_name);
-        Task<Object> GetProductIdsByPurchaseOrder(string poids);
+        Task<Object> GetProductIdsByPurchaseOrder();
         Task<Object> GetPublishedProductIds(string poids);
     }
     public class ProductRepo : IProductRepository
@@ -525,10 +525,10 @@ namespace badgerApi.Interfaces
         Input: string poids
         output: dynamic list of object product
         */
-        public async Task<Object> GetProductIdsByPurchaseOrder(string poids)
+        public async Task<Object> GetProductIdsByPurchaseOrder()
         {
             dynamic productDetails = new ExpandoObject();
-            string sQuery = "SELECT product_used_in.po_id, product_used_in.product_id FROM product_used_in WHERE product_used_in.po_id IN ("+poids+")";
+            string sQuery = "SELECT purchase_orders.po_id, product_used_in.product_id  FROM purchase_orders, product_used_in WHERE purchase_orders.po_status != 2 AND purchase_orders.po_status != 4 AND purchase_orders.po_id = product_used_in.po_id order by ra_flag DESC, FIELD(a.po_status, 3, 6, 5) asc";
             using (IDbConnection conn = Connection)
             {
                 productDetails = await conn.QueryAsync<object>(sQuery);
