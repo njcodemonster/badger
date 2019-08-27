@@ -434,6 +434,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     $("#newPurchaseOrderForm input,textarea").val("").removeClass('errorFeild');
     $('.errorMsg').remove();
     $(".error").remove();
+    $('.msg').html("");
     $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
     $('.poTracking, #poNotes').val("");
 
