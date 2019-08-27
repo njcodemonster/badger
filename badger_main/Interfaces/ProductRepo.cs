@@ -37,6 +37,13 @@ namespace badgerApi.Interfaces
         Task<IEnumerable<ProductDetails>> GetProductDetails(string id);
         Task<IEnumerable<AllColors>> GetAllProductColors();
         Task<IEnumerable<AllTags>> GetAllProductTags();
+        //Task<IEnumerable<Categories>> GetSubCategoryAll();
+
+        //Task<object> GetParentCategory();
+        //Task<IEnumerable<Colors>> GetAllColors();
+        //Task<IEnumerable<Tags>> GetAllTags();
+
+        //Task<IEnumerable<Tags>> GetAllTagsTypeWise(string id);
         Task<Int32> GetProductShootStatus(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
@@ -517,6 +524,7 @@ namespace badgerApi.Interfaces
             }
             return res;
         }
+       
     }
 }
 

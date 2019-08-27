@@ -31,7 +31,7 @@ $(document).on('click', ".DeletefromPOButton", function () {
                 alertBox('poAlertMsg', 'green', 'Product deleted successfully');
             }
             else {
-                //failed message
+                alertBox('poAlertMsg', 'red', 'Product delete failed');
             }
         });
     }

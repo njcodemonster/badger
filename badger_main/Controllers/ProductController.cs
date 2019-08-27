@@ -23,7 +23,7 @@ namespace badgerApi.Controllers
         private IItemServiceHelper _ItemsHelper;
         ILoggerFactory _loggerFactory;
         INotesAndDocHelper _notesAndDocHelper;
-        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper , IItemServiceHelper ItemsHelper)
+        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory, INotesAndDocHelper notesAndDocHelper, IItemServiceHelper ItemsHelper)
         {
             _ItemsHelper = ItemsHelper;
             _ProductRepo = ProductRepo;
@@ -72,25 +72,27 @@ namespace badgerApi.Controllers
             ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
             try
             {
-                productDetailsPageData.Product = await _ProductRepo.GetByIdAsync(Convert.ToInt32( id));
+                productDetailsPageData.Product = await _ProductRepo.GetByIdAsync(Convert.ToInt32(id));
                 productDetailsPageData.productProperties = await _ProductRepo.GetProductProperties(id);
                 productDetailsPageData.productcolorwiths = await _ProductRepo.GetProductcolorwiths(id);
                 productDetailsPageData.productpairwiths = await _ProductRepo.GetProductpairwiths(id);
                 productDetailsPageData.product_Images = await _ProductRepo.GetProductImages(id);
                 productDetailsPageData.ProductDetails = await _ProductRepo.GetProductDetails(id);
                 List<Notes> note = await _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1);
-                if (note.Count > 0) {
+                if (note.Count > 0)
+                {
                     productDetailsPageData.Product_Notes = note[0].note;
                 }
                 else
                 {
                     productDetailsPageData.Product_Notes = "";
                 }
-                
+
                 productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -162,13 +164,13 @@ namespace badgerApi.Controllers
         output: New item id
         */
         [HttpPost("createitems/{qty}")]
-        public async Task<string> PostItemsAsync([FromBody]   string value,int qty)
+        public async Task<string> PostItemsAsync([FromBody]   string value, int qty)
         {
             string NewInsertionID = "0";
             try
             {
-                
-                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create/"+ qty.ToString());
+
+                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create/" + qty.ToString());
             }
             catch (Exception ex)
             {
@@ -259,7 +261,7 @@ namespace badgerApi.Controllers
                 ProductAttributes ProductAttributeToUpdate = JsonConvert.DeserializeObject<ProductAttributes>(value);
                 ProductAttributeToUpdate.product_attribute_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                
+
                 if (ProductAttributeToUpdate.sku != null)
                 {
                     ValuesToUpdate.Add("sku", ProductAttributeToUpdate.sku.ToString());
@@ -373,7 +375,7 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
-                NewInsertionID = await _ProductRepo.CreatePOLineitems (newPOlineitems);
+                NewInsertionID = await _ProductRepo.CreatePOLineitems(newPOlineitems);
             }
             catch (Exception ex)
             {
@@ -510,7 +512,7 @@ namespace badgerApi.Controllers
                 bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString());
                 isDeleted = await _ProductRepo.DeleteProduct(product_id);
                 isDeleted = isItemDeleted && isDeleted;
-               
+
             }
             catch (Exception ex)
             {
@@ -520,5 +522,7 @@ namespace badgerApi.Controllers
             }
             return isDeleted;
         }
+
+
     }
 }

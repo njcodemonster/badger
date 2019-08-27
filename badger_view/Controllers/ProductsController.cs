@@ -67,14 +67,14 @@ namespace badger_view.Controllers
 
             SetBadgerHelper();
 
-            productDetailsPageData = await _BadgerApiHelper.GenericGetAsync<ProductDetailsPageData>("/Product/detailpage/"+id);
+            productDetailsPageData = await _BadgerApiHelper.GenericGetAsync<ProductDetailsPageData>("/Product/detailpage/" + id);
             //  dynamic AttributeListDetails = new ExpandoObject();
             //  VendorPageModal.VendorCount = vendorPagerList.Count;
             //  VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
             // VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/Vendor/detailsaddressandrep/103");
 
             //VendorPageModal.Reps = venderAdressandRep.Reps;
-            return View("EditAttributes",productDetailsPageData );
+            return View("EditAttributes", productDetailsPageData);
         }
 
         [Authorize]
@@ -106,28 +106,28 @@ namespace badger_view.Controllers
             {
                 foreach (var formFile in files)
                 {
-                   
+
                     if (formFile.Length > 0)
                     {
-                       
-                              
-                                JObject productImageDetails = new JObject();
-                                awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
-                               
-                                int product_id = Int32.Parse(productFiles.product_id);
-                                JObject productDocuments = new JObject();
-                                string product_title = System.IO.Path.GetFileNameWithoutExtension(formFile.FileName);
-                                productDocuments.Add("product_id", product_id);
-                                productDocuments.Add("product_image_title", product_title);
-                                productDocuments.Add("product_image_url", formFile.FileName);                                
-                                productDocuments.Add("isprimary", Int32.Parse(productFiles.product_primary));
-                                productDocuments.Add("created_at", 0);
-                                productDocuments.Add("updated_at", 0);
-                                productDocuments.Add("created_by", Int32.Parse(loginUserId));
-                                string img_id = await _BadgerApiHelper.GenericPostAsyncString<String>(productDocuments.ToString(Formatting.None), "/product/createProductImage");
-                                productImageDetails.Add("image_id", img_id);
-                                productImageDetails.Add("product_name", formFile.FileName);
-                                productDetailArray.Add(productImageDetails);
+
+
+                        JObject productImageDetails = new JObject();
+                        awsS3Helper.UploadToS3(formFile.FileName, formFile.OpenReadStream(), S3bucket, S3folder);
+
+                        int product_id = Int32.Parse(productFiles.product_id);
+                        JObject productDocuments = new JObject();
+                        string product_title = System.IO.Path.GetFileNameWithoutExtension(formFile.FileName);
+                        productDocuments.Add("product_id", product_id);
+                        productDocuments.Add("product_image_title", product_title);
+                        productDocuments.Add("product_image_url", formFile.FileName);
+                        productDocuments.Add("isprimary", Int32.Parse(productFiles.product_primary));
+                        productDocuments.Add("created_at", 0);
+                        productDocuments.Add("updated_at", 0);
+                        productDocuments.Add("created_by", Int32.Parse(loginUserId));
+                        string img_id = await _BadgerApiHelper.GenericPostAsyncString<String>(productDocuments.ToString(Formatting.None), "/product/createProductImage");
+                        productImageDetails.Add("image_id", img_id);
+                        productImageDetails.Add("product_name", formFile.FileName);
+                        productDetailArray.Add(productImageDetails);
                     }
                 }
                 string data = JsonConvert.SerializeObject(productDetailArray);
@@ -154,7 +154,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             string result = "0";
-            try {
+            try
+            {
                 JObject imageData = JObject.Parse(json.ToString());
                 JArray imageDataArray = (JArray)imageData["dataImage"];
 
