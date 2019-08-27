@@ -16,6 +16,7 @@ using System.IO;
 
 namespace badger_view.Controllers
 {
+
     public class StyleFileData
     {
         public IFormFile StyleImage { get; set; }
@@ -66,9 +67,9 @@ namespace badger_view.Controllers
                 string product_id = StyleFileData.product_id;
                 SetBadgerHelper();
 
-                if (StyleFileData !=null&& StyleFileData.StyleImage !=null)
+                if (StyleFileData != null && StyleFileData.StyleImage != null)
                 {
-                    Fill_path=StyleFileData.StyleImage.FileName;
+                    Fill_path = StyleFileData.StyleImage.FileName;
                     Fill_path = UploadPath + Fill_path;
                     using (var stream = new FileStream(Fill_path, FileMode.Create))
                     {
@@ -114,7 +115,19 @@ namespace badger_view.Controllers
 
             JObject allData = JObject.Parse(json.ToString());
 
-            JArray vendor_style_sku_data = (JArray)allData["vendor_style_sku"];
+            JArray vendor_style_sku_data = new JArray();
+            JArray product_subtype_ids = new JArray();
+            if (allData["vendor_style_sku"] != null)
+            {
+                vendor_style_sku_data = (JArray)allData["vendor_style_sku"];
+            }
+
+            if (allData["product_subtype_ids"] != null)
+            {
+                product_subtype_ids = (JArray)allData["product_subtype_ids"];
+            }
+
+
 
             Int32 product_id_current = json.Value<Int32>("product_id");
             Int32 po_id = json.Value<Int32>("po_id");
@@ -129,7 +142,7 @@ namespace badger_view.Controllers
                 string first_style_qty = vendor_style_sku_data[0].Value<string>("style_qty");
                 first_sku = vendor_style_sku_data[0].Value<string>("style_sku");
 
-                if (first_sku.Count() > 0)
+                if (first_sku != null && first_sku.Count() > 0)
                 {
                     first_sku_family = first_sku.Split('-')[0];
                 }
@@ -143,7 +156,7 @@ namespace badger_view.Controllers
             string product_retail = json.Value<string>("product_retail");
             string product_url_handle = product_name.Replace(' ', '-').ToLower();
             string product_type_id = json.Value<string>("product_type_id");
-            var product_subtype_ids= json.Value<List<int>>("product_subtype_ids");
+
 
 
             //default values FIXED hardcoded
@@ -200,17 +213,20 @@ namespace badger_view.Controllers
 
 
 
+
+
+
+
             if (product_id_current > 0)
             {
                 product_id = product_id_current.ToString(); //update on selected product id
 
                 // add new product in product table
-                 var a =  await _BadgerApiHelper.GenericPutAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
+                var a = await _BadgerApiHelper.GenericPutAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
 
-                if (!string.IsNullOrEmpty(product_id));
+                if (!string.IsNullOrEmpty(product_id)) ;
                 {   //update vendor product
                     vendorProduct.Add("product_id", Convert.ToInt64(product_id));
-
                     var result = await _BadgerApiHelper.GenericPutAsyncString<String>(vendorProduct.ToString(Formatting.None), "/vendor/vendorproductUpdatespecific");
                 }
 
@@ -227,10 +243,8 @@ namespace badger_view.Controllers
                         vendorProduct.Add("product_id", Convert.ToInt64(product_id));
                         // add new vendor product in vendor product table
                         var temp_product_id = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorProduct.ToString(Formatting.None), "/vendor/createvendorproduct");
-                        for (int i = 0; i < product_subtype_ids.Count; i++)
-                        {
 
-                        }
+
                         //product_subtype_ids 
 
                     }
@@ -286,21 +300,43 @@ namespace badger_view.Controllers
             }
 
 
+            for (int i = 0; i < product_subtype_ids.Count(); i++)
+            {
+                string category_id = product_subtype_ids[i].Value<string>("category_id");
+                string action = product_subtype_ids[i].Value<string>("action");
+
+                JObject productCategories = new JObject();
+                productCategories.Add("product_id", product_id);
+                productCategories.Add("category_id", category_id);
+                productCategories.Add("action", action);
+                productCategories.Add("created_by", user_id);
+                productCategories.Add("created_at", _common.GetTimeStemp());
+
+                var temp_product_category_id = await _BadgerApiHelper.GenericPostAsyncString<String>(productCategories.ToString(Formatting.None), "/product/UpdateProductCategory");
+
+            }
+
+
+
             for (int i = 0; i < vendor_style_sku_data.Count; i++)
             {
-
 
                 string style_vendor_size = vendor_style_sku_data[i].Value<string>("style_vendor_size");
                 string style_size = vendor_style_sku_data[i].Value<string>("style_size");
                 string style_qty = vendor_style_sku_data[i].Value<string>("style_qty");
                 string sku = vendor_style_sku_data[i].Value<string>("style_sku");
                 string sku_family = "";
+                if (first_sku == null)
+                {
+                    break;
+                }
                 if (first_sku.Count() > 0)
                 {
                     sku_family = sku.Split('-')[0];
                 }
 
-                
+
+
                 /// sizes attribute add from here
                 JObject product_attr = new JObject();
                 Int16 attribute_id = Int16.Parse(style_size);
@@ -334,7 +370,7 @@ namespace badger_view.Controllers
                 String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
 
                 //// size attribute ends here
-                
+
 
 
                 JObject Sku_obj = new JObject();

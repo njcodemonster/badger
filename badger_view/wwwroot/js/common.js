@@ -102,6 +102,34 @@ function onlyNumbersWithDot(e) {
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
+  action: only number and dots allow 
+*/
+function onlyNumbers(e) {
+    var charCode;
+    if (e.keyCode > 0) {
+        charCode = e.which || e.keyCode;
+    }
+    else if (typeof (e.charCode) != "undefined") {
+        charCode = e.which || e.keyCode;
+    }
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    if (e.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+
+    if (charCode == 46)
+        return true
+    if (charCode == 190)
+        return true
+    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16)
+        return false;
+
+    return true;
+}
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
   action:  check email valid
 */
 function allLetterAllow(event) {

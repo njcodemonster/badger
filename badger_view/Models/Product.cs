@@ -28,4 +28,9 @@ namespace badger_view.Models
         public double updated_at { get; set; }
         public double created_at { get; set; }
     }
+    public class ProductCategory
+    {
+        public int product_category_id { get; set; }
+        public string action { get; set; }
+    }
 }

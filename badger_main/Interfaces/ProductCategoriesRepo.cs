@@ -21,6 +21,7 @@ namespace badgerApi.Interfaces
         Task<string> Create(ProductCategories ProductCategories);
         Task<Boolean> Update(ProductCategories VendorToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task<string> Delete(ProductCategories DeleteProductCategory);
     }
     public class ProductCategoriesRepo : IProductCategoriesRepository
     {
@@ -30,7 +31,7 @@ namespace badgerApi.Interfaces
         {
 
             _config = config;
-            
+
         }
 
         public IDbConnection Connection
@@ -53,6 +54,22 @@ namespace badgerApi.Interfaces
             {
                 var result = await conn.InsertAsync<ProductCategories>(NewProductCategories);
 
+                return result.ToString();
+            }
+        }
+        /*
+        Developer: Hamza Haq
+        Date: 8-26-19 
+        Action: Delete product category in database
+        Input: ProductCategories model
+        output: result
+     */
+        public async Task<string> Delete(ProductCategories deleteProductCategory)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                String DeleteQuery = "Delete From product_categories WHERE product_id=" + deleteProductCategory.product_id + " and  category_id =" + deleteProductCategory.category_id.ToString();
+                var result = await conn.QueryAsync(DeleteQuery);
                 return result.ToString();
             }
         }
@@ -92,6 +109,6 @@ namespace badgerApi.Interfaces
             }
 
         }
-       
+
     }
 }
