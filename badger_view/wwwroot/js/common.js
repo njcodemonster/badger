@@ -7,11 +7,15 @@
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (evt.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    var ctrlDown = evt.ctrlKey || evt.metaKey // Mac support
+
+    if (ctrlDown && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
         return true;
     }
     if (charCode > 31 && charCode != 37 && charCode != 39 && charCode != 46 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
-        return false;
+       return false;
     }
     return blockspecialcharacter(evt)
     return true;
@@ -75,6 +79,14 @@ function onlyNumbersWithDot(e) {
     else if (typeof (e.charCode) != "undefined") {
         charCode = e.which || e.keyCode;
     }
+
+    var ctrlDown = e.ctrlKey || e.metaKey // Mac support
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    if (ctrlDown && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+
     if (charCode == 46)
         return true
     if (charCode == 190)
@@ -82,8 +94,9 @@ function onlyNumbersWithDot(e) {
     if (charCode == 110)
         return true
     if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16) 
-       return false;
-    
+        return false;
+
+    return blockspecialcharacter(e);
     return true;
 }
 
@@ -93,9 +106,15 @@ function onlyNumbersWithDot(e) {
   action:  check email valid
 */
 function allLetterAllow(event) {
-    var inputValue = event.which; console.log(inputValue);
+    var inputValue = event.which;
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    if (event.ctrlKey == true && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88 || inputValue == 9 )) {
+        return true;
+    }
+
         // allow letters and whitespaces only.
-    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39) { 
+    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39 && inputValue != 9) { 
           return false
         }
 }
@@ -196,6 +215,7 @@ function emptyFeildValidation(id){
         if($(this).val() == ''){
             notvalid = false;
             $(this).addClass('errorFeild');
+            if ($(this).parents('.form-group').find('.errorMsg').length == 0)
             $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         }
         if (notvalid && $(this).attr('type') == 'email' && isEmail($(this).val()) == false) {

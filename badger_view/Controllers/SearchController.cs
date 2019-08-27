@@ -43,12 +43,11 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             dynamic multipleObject = new ExpandoObject();
-            dynamic xobject = new object();
+            string[] xobject = new string[] { };
             string search = json.Value<string>("search");
             int searchLength = search.Length;
 
             Boolean checkPattern = false;
-            int[] values = null;
 
             /*********   Barcode  *********************/
             if (searchLength == 8)
@@ -71,10 +70,11 @@ namespace badger_view.Controllers
             /*********   SKU  *********************/
             if (searchLength >= 5 && searchLength <= 8)
             {
-                checkPattern = Regex.IsMatch(search, "(^([a-zA-Z]{2}[0-9]{3})|([A-Z]{2}[0-9]{3}-[0-9]{1}))+$");
+                checkPattern = Regex.IsMatch(search, "(^([a-zA-Z]{2}[0-9]{3})|([a-zA-Z]{2}[0-9]{3}-)||([A-Za-z]{2}[0-9]{3}-[0-9]{1}))+$");
                 if (checkPattern == true)
                 {
                     multipleObject.skuList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/sku/getsku/"+search);
+                    
                 }
                 else
                 {
@@ -84,19 +84,32 @@ namespace badger_view.Controllers
             else
             {
                 multipleObject.skuList = xobject;
+                
+            }
+
+            /********* Style Number *********************/
+            if (searchLength > 3 && searchLength <= 8)
+            {
+                multipleObject.styleNumberList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getstylenumber/" + search);    
+            }
+            else
+            {
+                multipleObject.styleNumberList = xobject;
             }
 
             /********* Vendor & Product *********************/
-            checkPattern = Regex.IsMatch(search, "^[a-zA-Z_ ]+$");
+            checkPattern = Regex.IsMatch(search, "^[a-zA-Z0-9_ ]+$");
             if (checkPattern)
             {
                 multipleObject.vendorList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendor/"+search);
-                multipleObject.productList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getproduct/"+search);                
+                multipleObject.productList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getproduct/"+search);
+                multipleObject.purchaseOrdersList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/purchaseorders/getpolist/" + search);
             }
             else
             {
                 multipleObject.vendorList = xobject;
                 multipleObject.productList = xobject;
+                multipleObject.purchaseOrdersList = xobject;
             }
 
             return JsonConvert.SerializeObject(multipleObject);

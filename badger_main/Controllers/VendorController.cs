@@ -19,6 +19,7 @@ namespace badgerApi.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IVendorRepository _VendorRepo;
+        private readonly IVendorProductRepository _vendorproductRepository;
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 3;
@@ -33,10 +34,11 @@ namespace badgerApi.Controllers
         private string event_create_vendor= "Vendor created by user =%%userid%% with vendor id= %%vendorid%%";
         private string event_create_vendor_note = "Vendor note created by user =%%userid%% with note id= %%noteid%%";
         private string event_create_vendor_document = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
+        private string event_create_vendor_product = "Vendor product created by user =%%userid%% with product id= %%productid%%";
         private string event_update_vendor = "Vendor updated by user =%%userid%% with vendor id= %%vendorid%%";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository)
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository , IVendorProductRepository vendorproductRepository)
         {
             _productRepository = productRepository;
             _eventRepo = eventRepo;
@@ -44,7 +46,9 @@ namespace badgerApi.Controllers
             _VendorRepo = VendorRepo;
             _loggerFactory = loggerFactory;
             _NotesAndDoc = NotesAndDoc;
-           
+            _vendorproductRepository = vendorproductRepository;
+
+
         }
         /*
             Developer: Azeem Hassan
@@ -374,6 +378,42 @@ namespace badgerApi.Controllers
         }
 
         /*
+           Developer: Hamza Haq
+           Date: 8-20-19 
+           Action: create new vendor products with vendor and user event
+           URL:  api/vendor/createvendorproduct
+           Request POST
+           Input: VendorProducts form data
+           output: product_id
+       */
+        // POST: api/vendor/createendorproduct
+        [HttpPost("createvendorproduct")]
+        public async Task<string> PostAsyncVendorProduct([FromBody] string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                VendorProducts newVendor = JsonConvert.DeserializeObject<VendorProducts>(value);
+                int created_by = newVendor.created_by;
+                NewInsertionID = await _vendorproductRepository.Create(newVendor);
+
+                event_create_vendor_product = event_create_vendor_product.Replace("%%userid%%", created_by.ToString()).Replace("%%productid%%", NewInsertionID);
+
+                await _eventRepo.AddVendorEventAsync(Int32.Parse(NewInsertionID), event_vendor_id, 0, created_by, event_create_vendor_product, _common.GetTimeStemp(), vendorEventTableName);
+
+                await _eventRepo.AddEventAsync(event_vendor_id, created_by, Int32.Parse(NewInsertionID), event_create_vendor_product, _common.GetTimeStemp(), userEventTableName);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new vendor product with message" + ex.Message);
+            }
+            return NewInsertionID;
+
+         
+        }
+
+        /*
            Developer: Azeem Hassan
            Date: 7-5-19 
            Action: create vendor note with vendor and user event
@@ -489,6 +529,7 @@ namespace badgerApi.Controllers
             }
             return UpdateResult;
         }
+
         // PUT: api/vendor/specificUpdate/5
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
@@ -553,7 +594,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("logo", VendorToUpdate.logo);
                 }
-
+                if (VendorToUpdate.has_note != 0)
+                {
+                    ValuesToUpdate.Add("has_note", VendorToUpdate.has_note.ToString());
+                }
 
                 await _VendorRepo.UpdateSpecific(ValuesToUpdate, "vendor_id="+id);
             }
@@ -566,6 +610,59 @@ namespace badgerApi.Controllers
             
             return UpdateResult;
         }
+
+        /*
+           Developer: Hamza Haq
+           Date: 8-22-19 
+           Action: create new vendor products with vendor and user event
+           URL:  api/vendor/vendorproductUpdatespecific
+           Request PUT
+           Input: VendorProducts form data
+           output: product_id
+       */
+        // POST: api/vendor/vendorproductUpdatespecific
+        [HttpPut("vendorproductUpdatespecific")]
+        public async Task<string> vendorproductUpdatespecific([FromBody] string value)
+        {
+
+            string UpdateResult = "Success";
+
+            try
+            {
+                VendorProducts VendorToUpdate = JsonConvert.DeserializeObject<VendorProducts>(value);
+                VendorToUpdate.vendor_id = VendorToUpdate.vendor_id;
+                VendorToUpdate.product_id = VendorToUpdate.product_id;
+                Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+               
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_color_code))
+                {
+                    ValuesToUpdate.Add("vendor_color_code", VendorToUpdate.vendor_color_code);
+                }
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_color_name))
+                {
+                    ValuesToUpdate.Add("vendor_color_name", VendorToUpdate.vendor_product_code);
+                }
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_product_code))
+                {
+                    ValuesToUpdate.Add("vendor_product_code", VendorToUpdate.vendor_product_code);
+                }
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_product_name))
+                {
+                    ValuesToUpdate.Add("vendor_product_name", VendorToUpdate.vendor_product_name);
+                }
+                
+                await _vendorproductRepository.UpdateSpecific(ValuesToUpdate, "product_id ="+ VendorToUpdate.product_id + " and vendor_id=" + VendorToUpdate.vendor_id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new vendor with message" + ex.Message);
+                UpdateResult = "Failed";
+            }
+
+            return UpdateResult;
+        }
+
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
@@ -719,5 +816,35 @@ namespace badgerApi.Controllers
             return vendorDetails;
 
         }
+
+        /*
+       Developer: Sajid Khan
+       Date: 08-09-19 
+       Action: Getting product data by stylenumber
+       URL:  api/vendor/getstylenumber/stylenumber
+       Request GET
+       Input: string vendor
+       output: dynamic list of product data 
+       */
+        [HttpGet("getstylenumber/{stylenumber}")]
+        public async Task<List<object>> GetStyleNumber(string stylenumber)
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetStyleNumber(stylenumber);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+        
     }
 }

@@ -26,12 +26,13 @@ function general_search() {
     // General Search
     var general_search = $('#general_search');
     general_search.autocomplete({
+        delay: 0,
         source: function (request, response) {
             var jsonData = {};
             jsonData["search"] = request.term;
             console.log(jsonData);
             var newData = [];
-
+            $('.search_result_list').hide();
             if (request.term.length > 3) {
                 $.ajax({
                     url: "/search/autosuggest/",
@@ -42,30 +43,34 @@ function general_search() {
                     processData: false,
                 }).always(function (data) {
                     console.log(data);
-
                     /********** Barcode **********************/
                     if (data.barcodeList.length > 0) {
-                        newData = data.barcodeList;
+                        newData = newData.concat(data.barcodeList);
                     }
 
                     /********** SKU **********************/
                     if (data.skuList.length > 0) {
-                        newData = data.skuList;
+                        newData = newData.concat(data.skuList);
                     }
 
                     /********** Vendor **********************/
-                    if (data.vendorList.length > 0 && data.productList.length == 0) {
-                        newData = data.vendorList;
+                    if (data.vendorList.length > 0 ) {
+                        newData = newData.concat(data.vendorList);
                     }
 
                     /********** Product **********************/
-                    if (data.productList.length > 0 && data.vendorList.length == 0) {
-                        newData = data.productList;
+                    if (data.productList.length > 0 ) {
+                        newData = newData.concat(data.productList);
                     }
 
-                    /********** Vendor & Product **********************/
-                    if (data.productList.length > 0 && data.vendorList.length > 0) {
-                        newData = data.vendorList.concat(data.productList);
+                    /********** PO **********************/
+                    if (data.purchaseOrdersList.length > 0) {
+                        newData = newData.concat(data.purchaseOrdersList);
+                    }
+
+                    /********** Style Number **********************/
+                    if(data.styleNumberList.length > 0){
+                        newData = newData.concat(data.styleNumberList);
                     }
 
                     response(newData);
@@ -73,46 +78,49 @@ function general_search() {
             }
         },
         select: function (event, ui) {
-            console.log(ui.item);
-            general_search.val(ui.item.label);
+            //general_search.val(ui.item.label);
             return false;
         },
         focus: function (event, ui) {
-            general_search.val(ui.item.label);
+            //general_search.val(ui.item.label);
             return false;
         },
-        /*open: function () {
+       /* open: function () {
             $("ul.ui-menu").width($(this).innerWidth());
         }*/
     });
 
     general_search.data("ui-autocomplete")._renderItem = function (ul, item) {
-
         ul.addClass('search_result_list'); //Ul custom class here
         //ul = this.menu.element;
         //ul.outerWidth(this.element.outerWidth());
 
         var li = $('<li>');
         var img = $('<img style="width:50px;padding-right:4px;">');
-        var div = $('<div class="s_img">');
+        var image_div = $('<div class="s_img">');
+        var title_div = $('<div class="s_title">');
 
         if (item.type == 'vendor') {
-            img.attr({
-                src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
-                alt: item.label
-            });
+            if (item.image != undefined && item.image != null ) {
+                img.attr({
+                    src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
+                    //alt: item.label
+                });
+            }            
         } else {
-            if (item.image != null && item.image.indexOf("http") != -1) {
-                img.attr({
-                    src: item.image,
-                    alt: item.label
-                });
-            } else {
-                img.attr({
-                    src: 'uploads/' + item.image,
-                    alt: item.label
-                });
-            }
+            if (item.image != undefined || item.image != null) {
+                if (item.image.indexOf("http") != -1) {
+                    img.attr({
+                        src: item.image,
+                        //alt: item.label
+                    });
+                } else {
+                    img.attr({
+                        src: 'uploads/' + item.image,
+                        //alt: item.label
+                    });
+                }
+            }            
         }
 
         li.attr('data-value', item.label);
@@ -126,16 +134,21 @@ function general_search() {
         }
 
         if (item.type == 'vendor') {
-            li.append('<a href="#vendor">');
+            li.append('<a href="'+window.location.origin+'/Vendor/Single/'+item.value+'">');
         }
 
-        if (item.type == 'product') {
-            li.append('<a href="#product">');
+        if (item.type == 'product' || item.type == 'stylenumber' ) {
+            li.append('<a href="'+window.location.origin+'/Product/EditAttributes/'+item.value+'">');
         }
 
-        if (item.image != null) {
-            div.append(img)
-            li.find('a').addClass("li_search").append(div).append(item.label);
+        if (item.type == 'purchase_orders') {
+            li.append('<a href="'+window.location.origin+'/PurchaseOrders/Single/'+item.value+'">');
+        }
+
+        if (item.image != null && item.image != undefined) {
+            image_div.append(img);
+            title_div.append(item.label);
+            li.find('a').addClass("li_search").append(image_div).append(title_div);
         } else {
             li.find('a').append(item.label);
         } 

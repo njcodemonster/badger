@@ -462,6 +462,14 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
                 }
+                if (PurchaseOrdersToUpdate.has_note != 0)
+                {
+                    ValuesToUpdate.Add("has_note", PurchaseOrdersToUpdate.has_note.ToString());
+                }
+                if (PurchaseOrdersToUpdate.has_doc != 0)
+                {
+                    ValuesToUpdate.Add("has_doc", PurchaseOrdersToUpdate.has_doc.ToString());
+                }
                 if (PurchaseOrdersToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", PurchaseOrdersToUpdate.created_by.ToString());
@@ -842,7 +850,7 @@ namespace badgerApi.Controllers
                     {
                         CountRaStatusZero++;
                     }
-                    if (rastatus == 1)
+                    if (rastatus > 0)
                     {
                         CountRaStatusOne++;
                     }
@@ -899,6 +907,34 @@ namespace badgerApi.Controllers
             }
 
             return barcodeDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get PO data by search "api/purchaseorders/getpolist/sk100-1"
+        URL: api/purchaseorders/getpolist/search
+        Request: Get
+        Input: string search
+        output: dynamic list of po
+        */
+        [HttpGet("getpolist/{search}")]
+        public async Task<Object> GetPOList(string search)
+        {
+            dynamic poList = new object();
+            try
+            {
+                poList = await _PurchaseOrdersRepo.GetPOList(search);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get sku with message" + ex.Message);
+
+            }
+
+            return poList;
         }
 
 

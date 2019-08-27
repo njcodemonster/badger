@@ -32,6 +32,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetVendorsByColumnName(string columnName, string search);
         Task<Object> CheckVendorCodeExist(string vendorcode);
         Task<Object> GetVendor(string vendor);
+        Task<Object> GetStyleNumber(string stylenumber);
     }
     public class VendorRepo : IVendorRepository
     {
@@ -212,11 +213,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if(limit > 0)
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc limit " + start + "," + limit + ";";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by b.order_count DESC limit " + start + "," + limit + ";";
             }
             else
             {
-                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by a.vendor_id asc;";
+                sQuery = "SELECT a.vendor_id,a.vendor_type,a.vendor_name,a.vendor_code,a.has_note,b.order_count,b.last_order FROM vendor a left JOIN (SELECT count(purchase_orders.po_id) as order_count, MAX(purchase_orders.po_id) as last_order, purchase_orders.vendor_id FROM purchase_orders GROUP BY purchase_orders.vendor_id) b ON b.vendor_id = a.vendor_id order by b.order_count DESC;";
             }
 
             using (IDbConnection conn = Connection)
@@ -349,6 +350,25 @@ namespace badgerApi.Interfaces
         {
             dynamic vendorDetails = new ExpandoObject();
             string sQuery = "SELECT vendor_id as value, vendor_name as label, logo as image,'vendor' as type FROM " + TableName + " WHERE vendor_name LIKE '%" + vendor + "%';";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
+        }
+        
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: get all vendor data by vendor name
+        Input: string vendor
+        output: dynamic list of vendor data
+        */
+        public async Task<Object> GetStyleNumber(string stylenumber)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "SELECT vendor_products.product_id as value, vendor_products.vendor_product_code as label,product.product_vendor_image AS image,'stylenumber' as type FROM vendor_products, product WHERE vendor_products.product_id = product.product_id AND vendor_products.vendor_product_code LIKE '%" + stylenumber + "%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);

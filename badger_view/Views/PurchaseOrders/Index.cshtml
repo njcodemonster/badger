@@ -5,12 +5,11 @@
 @model dynamic
 @section Scripts {
     <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
-    <script src="~/js/jquery-ui.js"></script>
     <script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
+    <script src="~/js/checkin.js" asp-append-version="true"></script>
 }
 <div class="loading d-none"></div>
 <div class="row">
@@ -63,42 +62,41 @@
                     </td>
                     <td>@purchaseOrders.vendor</td>
                     <td>@purchaseOrders.total_styles</td>
-                    <td>5</td>
-                    <td>3</td>
+                    <td>@purchaseOrders.photos</td>
+                    <td>@purchaseOrders.remaining</td>
                     @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
                     {
-                        <td class="text-danger font-weight-bold">@purchaseOrders.custom_delivery_window_start_end</td>
-                        <td class="text-danger font-weight-bold">@purchaseOrders.num_of_days</td>
-                        <td class="text-danger font-weight-bold"> <span>Not Recieved</span> </td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id">@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"> <span class="postatus-@purchaseOrders.po_id">Not Recieved</span> </td>
                     }
                     else
                     {
                         <td>@purchaseOrders.custom_delivery_window_start_end</td>
-                        <td>@purchaseOrders.num_of_days</td>
+                        <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
                         <td>
                             @if (@purchaseOrders.po_status == 1)
                             {
-                                <span>Open</span>
+                                <span class="postatus-@purchaseOrders.po_id">Open</span>
                             }
-
                             @if (@purchaseOrders.po_status == 3)
                             {
-                                <span>In Progress</span>
+                                <span class="postatus-@purchaseOrders.po_id">In Progress</span>
                             }
                             @if (@purchaseOrders.po_status == 5)
                             {
-                                <span>Not Recieved</span>
+                                <span class="postatus-@purchaseOrders.po_id">Not Recieved</span>
                             }
                             @if (@purchaseOrders.po_status == 6)
                             {
-                                <span>Recieved</span>
+                                <span class="postatus-@purchaseOrders.po_id">Recieved</span>
                             }
                         </td>
                     }
                     <td>
                         @if (@purchaseOrders.po_status == 5)
                         {
-                            <button type="button" class="btn btn-warning btn-sm" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checkin</button>
+                            <button type="button" class="btn btn-warning btn-sm checked-@purchaseOrders.po_id" data-shipping="@purchaseOrders.shipping" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderCheckedIn">Checkin</button>
                         }
                         else
                         {
@@ -110,10 +108,14 @@
                         <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>
+                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote">@if (purchaseOrders.has_note == 1)
+                        {<div class="redDotNote redDOtElement"></div>}else{ <div class="redDotNote"></div> }<i class="fa fa-edit h3"></i></a>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>
+                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument">
+                            @if (purchaseOrders.has_doc == 1)
+                        {<div class="redDotDoc redDOtElement"></div>}else{ <div class="redDotDoc"></div> }<i class="fa fa-upload h3"></i>
+                                            </a>
                     </td>
                     <td>
                         <a href="javascript:void(0)">Claim</a>
@@ -167,7 +169,7 @@
                                 <div class="form-group col-md-6">
                                     <label>Vendor Name</label>
                                     <input type="text" class="form-control required d-inline-block autocomplete" id="poVendor" style="width: 90%">
-                                    <a href="#" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
+                                    <a href="#" id="addVendorFromPO" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Order Delivery Range</label>
@@ -178,6 +180,8 @@
                                 <div class="form-group col-md-6">
                                     <label>P.O. Number</label>
                                     <input type="hidden" id="po_status" style="display:none;">
+                                    <input type="hidden" id="photos" style="display:none;">
+                                    <input type="hidden" id="remaining" style="display:none;">
                                     <input type="text" class="form-control required" id="poNumber">
                                 </div>
                                 <div class="form-group col-md-6">
@@ -258,7 +262,26 @@
     </div>
 
     <!-- Modal Vendor -->
-    @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
+    <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
+                </div>
+                <div class="modal-footer">
+                    <div class="vendorAlertMsg"></div>
+                    <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Modal Add Invoice -->
     <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -337,53 +360,7 @@
     </div>
 
     <!-- Modal Check-in -->
-    <div class="modal fade" id="modalcheckin" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkinModalLongTitle"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <form id="checkin_form" data-poid="">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Tracking #</label>
-                                    <input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" style="width: 90%">
-                                    <a href="#" class="h4 add_checkin_tracking">+</a>
-
-                                    <div id="wrapper_checkin_tracking"></div>
-
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Upload Images</label>
-                                    <input type="file" class="form-control" id="poUploadImage" name="poUploadImage" multiple>
-
-                                    <div class="po_doc_section d-none"></div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Shipping &amp; Handling</label>
-                                    <input type="text" class="form-control required" id="poShipping">
-                                </div>
-                            </div>
-
-                            <div class="wrapper_product"></div>
-
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer" style="margin: 0 auto;">
-                    <button type="button" class="btn btn-success submit-check-in">Check-in</button>
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @{ Html.RenderPartial("~/Views/Shared/model_checkin.cshtml"); }
 
 
     <!-- Modal Add Note -->

@@ -100,3 +100,5 @@
 2019-08-27T16:00:24.3402433-07:00 0HLPB899G8486:00000002 [INF] Executing ObjectResult, writing value of type '"badgerApi.Models.CategoryOptionPage"'. (8a1b66c8)
 2019-08-27T16:00:24.3408267-07:00 0HLPB899G8486:00000002 [INF] Executed action "badgerApi.Controllers.CategoryOptionController.GetCategoryOption (badgerApi)" in 1762.4157ms (afa2e885)
 2019-08-27T16:00:24.3409296-07:00 0HLPB899G8486:00000002 [INF] Request finished in 1762.9548ms 200 application/json; charset=utf-8 (791a596a)
+2019-08-27T16:05:03.9456266-07:00 0HLPB899G8487:00000001 [INF] Request starting HTTP/1.1 POST http://127.0.0.1:4144/iisintegration  0 (ca22a1cb)
+2019-08-27T16:05:03.9475253-07:00 0HLPB899G8487:00000001 [INF] Request finished in 2.0221ms 202  (791a596a)
