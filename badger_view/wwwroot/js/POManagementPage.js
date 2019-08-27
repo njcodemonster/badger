@@ -274,8 +274,8 @@ $(document).on("change", ".sku_weight", function () {
     }
     console.log(sku_id + " -- " + sku_weight);
     var product_id = $(this).attr('data-productid');
-    confirmationBox(product_id,"SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
-        console.log(result)       
+    confirmationBox(product_id, "SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
+        console.log(result)
         if (result == "yes") {
             $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             var jsonData = {};
@@ -309,12 +309,12 @@ $(document).on("change", ".sku_weight", function () {
             $(".sku_weight").each(function () {
                 if ($(this).attr('id') == sku_id) {
                     $(this).val(old_sku_weight);
-                    $(this).attr('data-weight',old_sku_weight);
+                    $(this).attr('data-weight', old_sku_weight);
                 }
             });
 
         }
-    })
+    });
     
 });
 
@@ -372,51 +372,150 @@ $(document).on("change", ".item_barcode", function (e) {
     if (hasMatch) {
         var currentBarcode = barcodeRanges[index];
         if (currentBarcode.size.toLowerCase() != size.toLowerCase()) {
-            _self.addClass('errorFeild');
-            alertInnerBox('message-' + po_id, 'red', 'Item barcode exist in a size :  ' + currentBarcode.size);
-            return false;
-        }
-    }
-    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
-    $.ajax({
-        url: "/purchaseorders/checkbarcodeexist/" + barcode,
-        dataType: 'json',
-        type: 'Get',
-        contentType: 'application/json',
-    }).always(function (data) {
-        console.log(data);
-        if (data == true) {
-            _self.addClass('errorFeild');
-            alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
-            return false;
-        } else {
-            var jsondata = $("input#" + item_id).val();
-            var itemdata = JSON.parse(jsondata);
-            var id = itemdata.item_id
-            itemdata.barcode = barcode;
-            $("input#" + item_id).val(JSON.stringify(itemdata));
+            //_self.addClass('errorFeild');
+            //alertInnerBox('message-' + po_id, 'red', 'The barcode you entered matched a size "' + currentBarcode.size.toUpperCase() + '" but you are trying to use it for an "' + size.toUpperCase() + '". Are you sure you want to continue?  ');
+            debugger;
+            confirmationBox(po_id, "", "The barcode you entered matched a size " + currentBarcode.size.toUpperCase() + " but you are trying to use it for an " + size.toUpperCase() + ". Are you sure you want to continue? ", function (result) {
+                console.log(result)
+                if (result == "yes") {
+                    _self.removeClass('errorFeild');
+                    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+                    $.ajax({
+                        url: "/purchaseorders/checkbarcodeexist/" + barcode,
+                        dataType: 'json',
+                        type: 'Get',
+                        contentType: 'application/json',
+                    }).always(function (data) {
+                        console.log(data);
+                        if (data == true) {
+                            _self.addClass('errorFeild');
+                            alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+                            return false;
+                        } else {
+                            var jsondata = $("input#" + item_id).val();
+                            var itemdata = JSON.parse(jsondata);
+                            var id = itemdata.item_id
+                            itemdata.barcode = barcode;
+                            $("input#" + item_id).val(JSON.stringify(itemdata));
 
-            console.log($("input#" + item_id).val());
+                            console.log($("input#" + item_id).val());
 
-            $.ajax({
-                url: "/purchaseorders/itemupdate/" + id,
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(itemdata),
-                processData: false
-            }).always(function (data) {
-                console.log(data);
-                if (data.responseText == "Success") {
-                    _self.attr('data-barcode', barcode);
-                    alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
-                } else {
-                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                            $.ajax({
+                                url: "/purchaseorders/itemupdate/" + id,
+                                dataType: 'json',
+                                type: 'post',
+                                contentType: 'application/json',
+                                data: JSON.stringify(itemdata),
+                                processData: false
+                            }).always(function (data) {
+                                console.log(data);
+                                if (data.responseText == "Success") {
+                                    _self.attr('data-barcode', barcode);
+                                    alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                                } else {
+                                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                                }
+
+                            });
+                        }
+                    });
                 }
+                else {
+                    $(this).text = old_barcode;
+                    $(this).addClass('errorFeild');
+                    return false;
 
+                }
             });
         }
-    });
+        else {
+            _self.removeClass('errorFeild');
+            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+            $.ajax({
+                url: "/purchaseorders/checkbarcodeexist/" + barcode,
+                dataType: 'json',
+                type: 'Get',
+                contentType: 'application/json',
+            }).always(function (data) {
+                console.log(data);
+                if (data == true) {
+                    _self.addClass('errorFeild');
+                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+                    return false;
+                } else {
+                    var jsondata = $("input#" + item_id).val();
+                    var itemdata = JSON.parse(jsondata);
+                    var id = itemdata.item_id
+                    itemdata.barcode = barcode;
+                    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                    console.log($("input#" + item_id).val());
+
+                    $.ajax({
+                        url: "/purchaseorders/itemupdate/" + id,
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(itemdata),
+                        processData: false
+                    }).always(function (data) {
+                        console.log(data);
+                        if (data.responseText == "Success") {
+                            _self.attr('data-barcode', barcode);
+                            alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                        } else {
+                            alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                        }
+
+                    });
+                }
+            });
+        }
+    }
+    else {
+        _self.removeClass('errorFeild');
+        $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+        $.ajax({
+            url: "/purchaseorders/checkbarcodeexist/" + barcode,
+            dataType: 'json',
+            type: 'Get',
+            contentType: 'application/json',
+        }).always(function (data) {
+            console.log(data);
+            if (data == true) {
+                _self.addClass('errorFeild');
+                alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+                return false;
+            } else {
+                var jsondata = $("input#" + item_id).val();
+                var itemdata = JSON.parse(jsondata);
+                var id = itemdata.item_id
+                itemdata.barcode = barcode;
+                $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                console.log($("input#" + item_id).val());
+
+                $.ajax({
+                    url: "/purchaseorders/itemupdate/" + id,
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(itemdata),
+                    processData: false
+                }).always(function (data) {
+                    console.log(data);
+                    if (data.responseText == "Success") {
+                        _self.attr('data-barcode', barcode);
+                        alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                    } else {
+                        alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                    }
+
+                });
+            }
+        });
+    }
+
 
 
 

@@ -1,0 +1,157 @@
+﻿@{
+    ViewData["Title"] = "Category Option";
+}
+@model badgerApi.Models.CategoryOptionPage
+@section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/CategoryOptionPage.js" asp-append-version="true"></script>
+    @*<script src="~/js/productDetails.js" asp-append-version="true"></script>*@
+
+}
+<div class="loaderBox"><div class="spinner-border text-info"></div></div>
+<div class="text-right w-100">
+
+</div>
+<div id="productDetailPage">
+    <div class="row m-4">
+        <div class="col-md-12 table-responsive">
+            <input name="tagsinDB" id="tagsinDB" type="hidden" value="@ViewBag.tags">
+            <table class="table vborder">
+                <tr>
+                    <th>
+                        Category
+                    </th>
+                    @{ string currentHeading = ""; }
+                    @foreach (badgerApi.Models.Tags allTags in Model.AllTags)
+                    {
+                        if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
+                        {
+                            currentHeading = allTags.sub_heading;
+                            <th>
+                                @allTags.sub_heading
+                            </th>
+                        }
+                    }
+                    <th>
+                        Color
+                    </th>
+
+                </tr>
+                <tr>
+                    <td>
+
+
+                        <select id="StyleType" class="form-control required">
+                            <option selected value="0">Choose...</option>
+                            @for (int i = 0; i < ViewBag.SubCats.Count; i++)
+                            {
+                                if (ViewBag.SubCats[i].category_id == @ViewBag.selected)
+                                {
+                                    <option selected value=@ViewBag.SubCats[i].category_id>@ViewBag.SubCats[i].category_name</option>
+                                }
+                                else
+                                {
+                                    <option value=@ViewBag.SubCats[i].category_id>@ViewBag.SubCats[i].category_name</option>
+                                }
+                            }
+
+                        </select>
+                        <a href="#" id="AddSubCat" class="h4" data-toggle="modal" data-target="#modalAddSubCategory">+</a>
+                        @*<input type="checkbox" /> <label>Cloting</label>
+                    <br />
+                    <input type="checkbox" /> <label>Accessories</label>*@
+                    </td>
+                    @{ currentHeading = ""; }
+                    @foreach (badgerApi.Models.Tags allTags in Model.AllTags)
+                    {
+                        if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
+                        {
+                            if (currentHeading == "")
+                            {
+                                @:<td>
+                                }
+                                else
+                                {
+                                @:</td>
+                                @:<td>
+                                }
+                                currentHeading = allTags.sub_heading;
+                                @if (allTags.isChecked == "checked")
+                                {
+                                    @:<input type="checkbox" class="tagsData" checked="@allTags.isChecked" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                }
+                                else
+                                {
+                                    @:<input type="checkbox" class="tagsData" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                }
+                            }
+                            else
+                            {
+                                @:<br />
+                                @if (allTags.isChecked == "checked")
+                                {
+                                    @:<input type="checkbox" class="tagsData" checked="@allTags.isChecked" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                }
+                                else
+                                {
+                                    @:<input type="checkbox" class="tagsData" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                }
+                            }
+                        }
+                <td>
+                    @foreach (badgerApi.Models.Colors allColors in Model.AllColors)
+                    {
+                        @:<br />
+                        @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value" data-current="1" /> <label>@allColors.value</label>
+                    }
+                </td>
+            </tr>
+        </table>
+        <button type="button" class="btn btn-primary btn-sm float-right mt-3 " id="mainSaveButton">SAVE</button>
+        </div>
+</div>
+</div>
+
+@section page_popup_area{ 
+
+    <div class="modal fade" id="modalAddSubCategory" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Sub Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="AddCatForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Parent Category</label>
+                                    <select id="ParentCategorySelect" class="form-control">
+                                        <option selected data-name="" value="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Sub Category Title</label>
+                                    <input name="SubCat" id="SubCat" type="text" class="form-control required">
+                                </div>
+                            </div>
+                         
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="poAlertMsg"></div>
+                    <button type="button" id="SaveSubCategoryButton" class="btn btn-green SaveSubCategoryButton" data-action="refreshValue" >Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

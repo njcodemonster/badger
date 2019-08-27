@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using badger_view.Models;
+using GenericModals.Models;
 namespace badger_view.Models
 {
     public class VenderAdressandRep

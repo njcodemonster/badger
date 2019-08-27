@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
-using badgerApi.Models;
+using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
@@ -586,5 +586,36 @@ namespace badgerApi.Controllers
         }
 
         
+
+        /*
+       Developer: Rizvan Ali
+       Date:5-7-19
+       Action:get HTML Form (New Styles Data) from VIEW and pass the data to delete product
+       URL: /product/create
+       Input: Product ID
+       output: status
+       */
+        // POST: api/product/delete
+        [HttpGet("delete/{product_id}")]
+        public async Task<bool> DelAsync(string product_id)
+        {
+            bool isDeleted = false;
+            try
+            {
+                bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString());
+                isDeleted = await _ProductRepo.DeleteProduct(product_id);
+                isDeleted = isItemDeleted && isDeleted;
+
+            }
+            catch (Exception ex)
+            {
+                isDeleted = false;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in deleting product with message" + ex.Message);
+            }
+            return isDeleted;
+        }
+
+
     }
 }

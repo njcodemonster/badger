@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using badger_view.Helpers;
-using badger_view.Models;
+using GenericModals.Models;
 using System.Dynamic;
 using System.Web;
 using Microsoft.Extensions.Logging;
@@ -420,6 +420,22 @@ namespace badger_view.Controllers
 
             return product_id;
 
+        }
+
+        /*
+        Developer: Rizvan ali
+        Date:5-7-19
+        Action:get HTML Form (New Styles Data) from addstyle JS and delete the complete the data of given product if it is 
+        not in used in other PO if Exist then just delete from item 
+        Input: HTML form with the data of product
+        output: status of deletion
+        */
+        [HttpGet("/styles/deleteFromPO/{product_id}")]
+        public async Task<bool> DeleteStyle(int product_id)
+        {
+            SetBadgerHelper();
+            var response = await _BadgerApiHelper.GenericGetAsync<bool>("/product/delete/" + product_id.ToString());
+            return response;
         }
     }
 }

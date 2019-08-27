@@ -81,13 +81,14 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            @*<div class="form-group col-md-8" style="visibility:hidden;">
+                            @*<div class="form-group col-md-8" >
                                     <label>Vendor Notes</label>
                                     <textarea class="form-control"></textarea>
                                 </div>*@
                             <div class="form-group col-md-8">
                                 <label>Upload Files</label>
                                 <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
+                                <div class="style_doc_section d-none"></div>
                             </div>
                             <div class="form-group col-md-4 text-center">
                                 <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
@@ -105,7 +106,7 @@
             </div>
             <div class="modal-footer">
                 <div class="poAlertMsg"></div>
-                <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                <button type="button" id="DeletefromPOButton" class="btn btn-warning DeletefromPOButton" data-action="refreshValue" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>

@@ -55,6 +55,7 @@ namespace badgerApi
             //*              Singletons                                   *\\
             services.AddSingleton<ICategoriesRepository, CategoriesRepo>();
 
+            services.AddTransient<ICategoryRepository, CategoryRepo>();
         }
 
 

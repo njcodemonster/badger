@@ -1,4 +1,53 @@
 ﻿/*
+Developer: Rizvan Ali
+Date: 7-5-19
+Action: Delete Product from PO 
+URL: /styles/delete
+Input: styles data
+Output: string of style
+*/
+$(document).on('click', ".DeletefromPOButton", function () {
+    debugger;
+    var jsonData = {};
+    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
+    selectedProject = $('#ExistingProductSelect option:selected');
+    if (selectedProject.data("product_id") > 0) {
+
+        jsonData["product_id"] = selectedProject.data("product_id");
+        jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+        $.ajax({
+
+            url: location.origin + '/styles/deleteFromPO/' + selectedProject.data("product_id"),
+            dataType: 'json',
+            type: 'get',
+            //contentType: 'application/json',
+            data: JSON.stringify(jsonData),
+            processData: false,
+
+        }).always(function (data) {
+            console.log(data);
+            if (data == true) {
+                $('#modaladdstylec').modal('hide');
+                alertBox('poAlertMsg', 'green', 'Product deleted successfully');
+            }
+            else {
+                alertBox('poAlertMsg', 'red', 'Product delete failed');
+            }
+        });
+    }
+    else {
+        //error for selecting a product first to delete 
+        alertBox('poAlertMsg', 'red', 'Please select a product');
+    }
+
+
+    
+
+   
+
+});
+
+/*
 Developer: Sajid Khan
 Date: 7-5-19
 Action: Add new style
@@ -12,8 +61,6 @@ var SelectedProductID;
 var data_Categories;
 var productSubCategoriesAction = [];
 $(document).on('click', ".AddNewStyleButton", function () {
-
-
     var action = $(this).attr('data-action');
 
     var newVendorForm = $("#newAddStyleForm input");
@@ -260,6 +307,18 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
     $(".style_doc_section").empty();
     if (productImage != null) {
 
+        //$(".style_doc_section").append("<img src='/images/dress-clipart.jpg' width='50' />");
+        $(".style_doc_section").append("<img src='" + productImage+"' width='50' />  <br>");
+        //$(".style_doc_section").append("<a onclick='return false' class='documentsLink' data-proid=" + SelectedProductID + " data-val=" + productImage + ">" + productImage + " <span class='podeleteImage'>×</span></a>");
+   
+
+        $('#StyleSubType').multiselect('select', categoryIds);
+
+        $(".style_doc_section").removeClass('d-none');
+
+    } else {
+        $(".style_doc_section").addClass('d-none');
+    }
     selectProductCategories = SelectedProduct.data('product_categories')
     if (selectProductCategories != null) {
         var categoryIds = [];
@@ -267,12 +326,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
             var Category = selectProductCategories[i];
             categoryIds.push(Category.category_id);
         }
-
-        $('#StyleSubType').multiselect('select', categoryIds);
-
     }
-
-
     $.ajax({
         url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
         dataType: 'json',
@@ -329,11 +383,9 @@ $(document).on('click', "#AddItemButton", function () {
     $('.errorMsg').remove();
     $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
     var CurrentVendorId = $(this).data("vendorid");
-
-    $('.poNumber').text($(this).data("ponumber"))
-
-
-
+    var CurrentProductId = $(this).data("proid");
+    var productImage = $(this).data("product_vendor_image");
+    $('.poNumber').text( $(this).data("ponumber"))
     $('#modaladdstylec input').val("");
     $('#modaladdstylec #StyleSubType option').each(function () {
         if (this.innerText != "Choose..." && this.innerText != "...") {
@@ -362,8 +414,8 @@ $(document).on('click', "#AddItemButton", function () {
         data_Categories = data.categories;
         data = data.vendorProducts;
 
-
-
+        $('#modaladdstylec #ExistingProductSelect option').remove();
+        $('#modaladdstylec #ExistingProductSelect').append("<option id='-1' value=''>Choose...</option>");
         var last_sku_family = "";
 
         $('#po_id').val(CurrentPOID);
@@ -387,11 +439,23 @@ $(document).on('click', "#AddItemButton", function () {
         if (data.length) {
             for (i = 0; i < data.length; i++) {
 
-                $('#modaladdstylec #ExistingProductSelect').append("<option  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
-                last_sku_family = data[i].sku_family;
+                var selectedValue = "";
+                if (CurrentProductId != null) {
+                    selectedValue = "value = '" + data[i].product_id + "'";
+
+                   // $('#modaladdstylec #ExistingProductSelect').append("<option value='" + data[i].product_id + "' data-product_type='" + data[i].product_type_id + "' data-product_vendor_image='" + data[i].product_vendor_image + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+                }
+                else {
+                 }
+                $('#modaladdstylec #ExistingProductSelect').append("<option " + selectedValue +"  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+
+               last_sku_family = data[i].sku_family;
             }
-
-
+            if (CurrentProductId != null) {
+                $('#modaladdstylec #ExistingProductSelect').val(CurrentProductId).trigger('change');
+                $('#modaladdstylec #ExistingProductSelect').prop('disabled', true);
+                $('#modaladdstylec #StyleType').prop('disabled', true);
+            }
             var vendorCode = last_sku_family.substring(0, 2);
             var sku_number = parseInt(last_sku_family.substr(2)) + 1;
             new_sku = vendorCode + sku_number;
