@@ -78,7 +78,7 @@ function general_search() {
             }
         },
         select: function (event, ui) {
-            general_search.val(ui.item.label);
+            //general_search.val(ui.item.label);
             return false;
         },
         focus: function (event, ui) {
@@ -104,26 +104,23 @@ function general_search() {
             if (item.image != undefined && item.image != null ) {
                 img.attr({
                     src: 'https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/' + item.image,
-                    alt: item.label
+                    //alt: item.label
                 });
-            }
-            
+            }            
         } else {
-
-            if (item.image != undefined) {
-                if (item.image != null && item.image.indexOf("http") != -1) {
+            if (item.image != undefined || item.image != null) {
+                if (item.image.indexOf("http") != -1) {
                     img.attr({
                         src: item.image,
-                        alt: item.label
+                        //alt: item.label
                     });
                 } else {
                     img.attr({
                         src: 'uploads/' + item.image,
-                        alt: item.label
+                        //alt: item.label
                     });
                 }
-            }
-            
+            }            
         }
 
         li.attr('data-value', item.label);
