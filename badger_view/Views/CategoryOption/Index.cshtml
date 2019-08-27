@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Category Option";
 }
-@model badgerApi.Models.CategoryOptionPage
+@model GenericModals.Models.CategoryOptionPage
 @section Scripts {
     <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
@@ -23,7 +23,7 @@
                         Category
                     </th>
                     @{ string currentHeading = ""; }
-                    @foreach (badgerApi.Models.Tags allTags in Model.AllTags)
+                    @foreach (GenericModals.Models.Tags allTags in Model.AllTags)
                     {
                         if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
                         {
@@ -63,7 +63,7 @@
                     <input type="checkbox" /> <label>Accessories</label>*@
                     </td>
                     @{ currentHeading = ""; }
-                    @foreach (badgerApi.Models.Tags allTags in Model.AllTags)
+                    @foreach (GenericModals.Models.Tags allTags in Model.AllTags)
                     {
                         if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
                         {
@@ -100,7 +100,7 @@
                             }
                         }
                 <td>
-                    @foreach (badgerApi.Models.Colors allColors in Model.AllColors)
+                    @foreach (GenericModals.Models.Colors allColors in Model.AllColors)
                     {
                         @:<br />
                         @:<input type="checkbox" class="colorItem" data-colorvalue="@allColors.value" data-current="1" /> <label>@allColors.value</label>

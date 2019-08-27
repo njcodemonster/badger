@@ -12,6 +12,7 @@ using GenericModals.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using GenericModals;
 
 namespace badger_view.Models
 {
