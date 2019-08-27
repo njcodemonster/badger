@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
 using System.Dynamic;
+using GenericModals.PurchaseOrder;
 
 namespace badgerApi.Interfaces
 {

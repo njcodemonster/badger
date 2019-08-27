@@ -50,7 +50,7 @@ namespace badger_view.Controllers
         output: Redirect to page
         */
         [HttpPost("TryLogin")]
-        public async Task<IActionResult> TryLogin(badger_view.Models.LogiDetails logiDetails)
+        public async Task<IActionResult> TryLogin(badger_view.Models_Backup.LogiDetails logiDetails)
         {
             if (await _LoginHelper.DoLogin(logiDetails))
             {

@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using badger_view.Helpers;
 using GenericModals.Models;
 using System.Dynamic;
-using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommonHelper;
@@ -15,7 +14,8 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
+using GenericModals.Claim;
+using GenericModals.PurchaseOrder;
 
 namespace badger_view.Controllers
 {

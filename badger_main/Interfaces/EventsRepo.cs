@@ -1,8 +1,8 @@
-﻿using badgerApi.Models;
 using CommonHelper;
-using CommonHelper.Extensions;
+// using CommonHelper.Extensions;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using GenericModals.Event;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;

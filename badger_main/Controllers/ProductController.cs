@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
 using System.Dynamic;
 using itemService_entity.Models;
+using GenericModals.PurchaseOrder;
 
 namespace badgerApi.Controllers
 {
