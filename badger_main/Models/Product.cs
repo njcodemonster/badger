@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     [Table("product")]
     public partial class Product
@@ -34,6 +34,8 @@ namespace badgerApi.Models
         public string vendor_color_code { get; set; }
         [Write(false)]
         public string vendor_product_code { get; set; }
+        [Write(false)]
+        public string productCategories { get; set; }
     }
 
 

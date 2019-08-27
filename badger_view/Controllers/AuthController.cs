@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using badger_view.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using badger_view.Models;
+using GenericModals.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;

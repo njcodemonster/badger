@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GenericModals\GenericModals.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="appsettings.Stage2.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

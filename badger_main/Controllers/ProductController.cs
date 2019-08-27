@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
-using badgerApi.Models;
+using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
@@ -23,12 +23,14 @@ namespace badgerApi.Controllers
         private IItemServiceHelper _ItemsHelper;
         ILoggerFactory _loggerFactory;
         INotesAndDocHelper _notesAndDocHelper;
-        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory,INotesAndDocHelper notesAndDocHelper , IItemServiceHelper ItemsHelper)
+        public IProductCategoriesRepository _ProductCategoriesRepository;
+        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory, INotesAndDocHelper notesAndDocHelper, IItemServiceHelper ItemsHelper, IProductCategoriesRepository ProductCategoriesRepository)
         {
             _ItemsHelper = ItemsHelper;
             _ProductRepo = ProductRepo;
             _loggerFactory = loggerFactory;
             _notesAndDocHelper = notesAndDocHelper;
+            _ProductCategoriesRepository = ProductCategoriesRepository;
         }
 
         // GET: api/Product
@@ -72,25 +74,27 @@ namespace badgerApi.Controllers
             ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
             try
             {
-                productDetailsPageData.Product = await _ProductRepo.GetByIdAsync(Convert.ToInt32( id));
+                productDetailsPageData.Product = await _ProductRepo.GetByIdAsync(Convert.ToInt32(id));
                 productDetailsPageData.productProperties = await _ProductRepo.GetProductProperties(id);
                 productDetailsPageData.productcolorwiths = await _ProductRepo.GetProductcolorwiths(id);
                 productDetailsPageData.productpairwiths = await _ProductRepo.GetProductpairwiths(id);
                 productDetailsPageData.product_Images = await _ProductRepo.GetProductImages(id);
                 productDetailsPageData.ProductDetails = await _ProductRepo.GetProductDetails(id);
                 List<Notes> note = await _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1);
-                if (note.Count > 0) {
+                if (note.Count > 0)
+                {
                     productDetailsPageData.Product_Notes = note[0].note;
                 }
                 else
                 {
                     productDetailsPageData.Product_Notes = "";
                 }
-                
+
                 productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -124,7 +128,6 @@ namespace badgerApi.Controllers
             }
             return ToReturn;
         }
-
 
 
         /*
@@ -162,13 +165,13 @@ namespace badgerApi.Controllers
         output: New item id
         */
         [HttpPost("createitems/{qty}")]
-        public async Task<string> PostItemsAsync([FromBody]   string value,int qty)
+        public async Task<string> PostItemsAsync([FromBody]   string value, int qty)
         {
             string NewInsertionID = "0";
             try
             {
-                
-                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create/"+ qty.ToString());
+
+                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/create/" + qty.ToString());
             }
             catch (Exception ex)
             {
@@ -219,12 +222,13 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("product_vendor_image", ProductToUpdate.product_vendor_image.ToString());
                 }
-                if (ProductToUpdate.sku_family != null)
+                if (ProductToUpdate.sku_family != string.Empty)
                 {
                     ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
                 }
                 if (ProductToUpdate.wash_type_id != 0)
                 {
+
                     ValuesToUpdate.Add("wash_type_id", ProductToUpdate.wash_type_id.ToString());
                 }
                 await _ProductRepo.UpdateSpecific(ValuesToUpdate, "Product_id=" + id);
@@ -259,7 +263,7 @@ namespace badgerApi.Controllers
                 ProductAttributes ProductAttributeToUpdate = JsonConvert.DeserializeObject<ProductAttributes>(value);
                 ProductAttributeToUpdate.product_attribute_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                
+
                 if (ProductAttributeToUpdate.sku != null)
                 {
                     ValuesToUpdate.Add("sku", ProductAttributeToUpdate.sku.ToString());
@@ -276,8 +280,6 @@ namespace badgerApi.Controllers
 
             return UpdateResult;
         }
-
-
 
         /*
         Developer: ubaid
@@ -373,7 +375,7 @@ namespace badgerApi.Controllers
             try
             {
                 PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
-                NewInsertionID = await _ProductRepo.CreatePOLineitems (newPOlineitems);
+                NewInsertionID = await _ProductRepo.CreatePOLineitems(newPOlineitems);
             }
             catch (Exception ex)
             {
@@ -464,6 +466,40 @@ namespace badgerApi.Controllers
         }
 
         /*
+        Developer: Hamza Haq
+        Date:23-8-19
+        Action: 
+        URL: /product/createProductCategory
+        Input: FromBody string value
+        output: boolean
+        */
+        //POST: api/product/CreateProductCategory
+        [HttpPost("UpdateProductCategory")]
+        public async Task<string> UpdateProductCategory([FromBody]  string value)
+        {
+            string updateResult = "";
+            try
+            {
+                ProductCategories productCategories = JsonConvert.DeserializeObject<ProductCategories>(value);
+                if (productCategories.action.ToLower() == "insert")
+                {
+                    updateResult = await _ProductCategoriesRepository.Create(productCategories);
+                }
+                else
+                {
+                    updateResult = await _ProductCategoriesRepository.Delete(productCategories);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return updateResult;
+        }
+
+        /*
         Developer: Sajid Khan
         Date: 08-09-19 
         Action: Getting list of product by product_name string
@@ -495,19 +531,19 @@ namespace badgerApi.Controllers
         /*
         Developer: Sajid Khan
         Date: 24-8-19 
-        Action: Get mutiple product ids with comma seperate  "api/purchaseorders/getproductidsbypurchaseorder/1,2,3"
-        URL: api/purchaseorders/getproductidsbypurchaseorder/1,2,3
+        Action: Get mutiple product ids with comma seperate  "api/purchaseorders/getproductidsbypurchaseorder"
+        URL: api/purchaseorders/getproductidsbypurchaseorder
         Request: Get
         Input: string poids
         output: list of mutiple product ids
         */
-        [HttpGet("getproductidsbypurchaseorder/{poids}")]
-        public async Task<object> GetProductIdsByPurchaseOrder(string poids)
+        [HttpGet("getproductidsbypurchaseorder")]
+        public async Task<object> GetProductIdsByPurchaseOrder()
         {
             dynamic poPageList = new object();
             try
             {
-                poPageList = await _ProductRepo.GetProductIdsByPurchaseOrder(poids);
+                poPageList = await _ProductRepo.GetProductIdsByPurchaseOrder();
 
             }
             catch (Exception ex)
@@ -550,5 +586,36 @@ namespace badgerApi.Controllers
         }
 
         
+
+        /*
+       Developer: Rizvan Ali
+       Date:5-7-19
+       Action:get HTML Form (New Styles Data) from VIEW and pass the data to delete product
+       URL: /product/create
+       Input: Product ID
+       output: status
+       */
+        // POST: api/product/delete
+        [HttpGet("delete/{product_id}")]
+        public async Task<bool> DelAsync(string product_id)
+        {
+            bool isDeleted = false;
+            try
+            {
+                bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString());
+                isDeleted = await _ProductRepo.DeleteProduct(product_id);
+                isDeleted = isItemDeleted && isDeleted;
+
+            }
+            catch (Exception ex)
+            {
+                isDeleted = false;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in deleting product with message" + ex.Message);
+            }
+            return isDeleted;
+        }
+
+
     }
 }

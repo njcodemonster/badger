@@ -3,7 +3,7 @@ using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     [Table("po_claim")]
     public partial class PoClaim

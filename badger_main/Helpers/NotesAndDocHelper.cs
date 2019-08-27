@@ -7,37 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GenericModals.Models;
 
 namespace badgerApi.Helper
 {
-    [Table("notes")]
-    public partial class Notes
-    {
-        [Key]
-        public int note_id { get; set; }
-        public int ref_id { get; set; }
-        public int note_type_id { get; set; }
-        public string note { get; set; }
-        public int created_by { get; set; }
-        public int updated_by { get; set; }
-        public double created_at { get; set; }
-        public double updated_at { get; set; }
-    }
-
-    [Table("documents")]
-    public class Documents
-    {
-        [Key]
-        public int doc_id { get; set; }
-        public int ref_id { get; set; }
-        public int doc_type_id { get; set; }
-        public string url { get; set; }
-        public string notes { get; set; }
-        public int created_by { get; set; }
-        public int updated_by { get; set; }
-        public double created_at { get; set; }
-        public double updated_at { get; set; }
-    }
+    
     public interface INotesAndDocHelper
     {
         Task<List<Notes>> GenericNote<T>(int Reff ,int note_type, int Limit);

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using badger_view.Helpers;
-using badger_view.Models;
+using GenericModals.Models;
 using System.Dynamic;
 using System.Web;
 using Newtonsoft.Json;
@@ -456,6 +456,8 @@ namespace badger_view.Controllers
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
             vendorProductsandSku.vendor = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/" + id.ToString());
             vendorProductsandSku.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            vendorProductsandSku.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
+
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }
 

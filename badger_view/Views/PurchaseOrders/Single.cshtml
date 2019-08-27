@@ -10,6 +10,7 @@
 <script src="~/js/checkin.js" asp-append-version="true"></script>
 <script src="~/lib/signalr/signalr.js" asp-append-version="true"></script>
 <script src="~/js/POClaim.js" asp-append-version="true"></script>
+<script src="~/js/addstylepopup.js" asp-append-version="true"></script>
 }
 <div class="loading d-none"></div>
 <div class="row">
@@ -268,6 +269,8 @@
         </div>
     </div>
 </div>
+    <!-- Modal Add Style Item Clothing -->
+    @{ Html.RenderPartial("~/Views/Shared/AddStyle.cshtml"); }
 
 <!-- Modal Add Style Item Accessories -->
 <div class="modal fade" id="modaladdstylea" tabindex="-1" role="dialog" aria-hidden="true">

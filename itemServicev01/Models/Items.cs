@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace itemService.Models
+namespace GenericModals.Models
 {
     [Table("items")]
     public partial class Items

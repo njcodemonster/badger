@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using itemService.Models;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
@@ -42,6 +42,7 @@ namespace itemService.Interfaces
         Task<String> SetProductItemForPhotoshoot(int skuId, int status);
         Task<List<Items>> GetItemGroupByProductId(int PO_id);
         Task<Object> GetBarcode(int barcode);
+        Task<bool> DeleteItemByProduct(string id);
     }
     public class ItemRepo : ItemRepository
     {
@@ -951,6 +952,36 @@ namespace itemService.Interfaces
 
             }
             return barcodeDetails;
+        }
+
+
+        /*
+        Developer: Rizwan Ali
+        Date: 08-09-19 
+        Action: delete item from db by product 
+        Input:  int product id
+        output: bool status
+        */
+        public async Task<bool> DeleteItemByProduct(string id)
+        {
+            bool status = false;
+            int product_id = int.Parse(id);
+            string sQuery = "delete FROM items WHERE product_id="+ product_id;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    var a = await conn.QueryAsync<string>(sQuery);
+                    status = true;
+
+                }
+            }
+            catch (Exception)
+            {
+                status = false;
+            }
+           
+            return status;
         }
 
     }

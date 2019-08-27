@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using badgerApi.Models;
+using GenericModals.Models;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using Dapper;
 using Dapper.Contrib;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     public partial class LogiDetails
     {

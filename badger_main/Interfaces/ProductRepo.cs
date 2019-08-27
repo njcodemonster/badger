@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using badgerApi.Models;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
@@ -42,8 +42,9 @@ namespace badgerApi.Interfaces
         Task<string> CreateProductImages(Productimages NewProductImages);
         Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
         Task<Object> GetProduct(string product_name);
-        Task<Object> GetProductIdsByPurchaseOrder(string poids);
+        Task<Object> GetProductIdsByPurchaseOrder();
         Task<Object> GetPublishedProductIds(string poids);
+        Task<bool> DeleteProduct(string product_id);
     }
     public class ProductRepo : IProductRepository
     {
@@ -178,8 +179,7 @@ namespace badgerApi.Interfaces
             {
 
 
-                string querytoRun = "SELECT product.product_id " +
-                    ",product.product_type_id        " +
+                string querytoRun = "SELECT product.product_id ,product.product_type_id" +
                     ",product.vendor_id              " +
                     ",product.product_availability   " +
                     ",product.published_at           " +
@@ -202,10 +202,14 @@ namespace badgerApi.Interfaces
                     ",product.created_at             " +
                     ",vendor_products.vendor_color_code" +
                     ",vendor_products.vendor_product_code " +
-                    " from product,vendor_products" +
-                    " where product.vendor_id = vendor_products.vendor_id " +
+                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id,'category_id', pc.category_id)),']') AS JSON) AS productCategories " +
+                    " from product,vendor_products , product_categories pc" +
+                    " where pc.product_id=product.product_id and product.vendor_id = vendor_products.vendor_id " +
                     " and product.product_id = vendor_products.product_id" +
-                    " and product.vendor_id=" + Vendor_id;
+                    " and product.vendor_id=" + Vendor_id + " " +
+                    " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +
+                    ",product.product_discount  ,product.product_cost ,product.product_retail " +
+                    ",product.published_status  ,product.is_on_site_status ,product.created_by  ,product.updated_by ,product.updated_at  ,product.created_at ,vendor_products.vendor_color_code ,vendor_products.vendor_product_code ";
 
 
                 toReturn = await conn.QueryAsync<Product>(querytoRun);
@@ -525,10 +529,10 @@ namespace badgerApi.Interfaces
         Input: string poids
         output: dynamic list of object product
         */
-        public async Task<Object> GetProductIdsByPurchaseOrder(string poids)
+        public async Task<Object> GetProductIdsByPurchaseOrder()
         {
             dynamic productDetails = new ExpandoObject();
-            string sQuery = "SELECT product_used_in.po_id, product_used_in.product_id FROM product_used_in WHERE product_used_in.po_id IN ("+poids+")";
+            string sQuery = "SELECT purchase_orders.po_id, product_used_in.product_id  FROM purchase_orders, product_used_in WHERE purchase_orders.po_status != 2 AND purchase_orders.po_status != 4 AND purchase_orders.po_id = product_used_in.po_id order by ra_flag DESC, FIELD(a.po_status, 3, 6, 5) asc";
             using (IDbConnection conn = Connection)
             {
                 productDetails = await conn.QueryAsync<object>(sQuery);
@@ -555,6 +559,43 @@ namespace badgerApi.Interfaces
             }
             return productDetails;
         }
+    
+        /*
+        Developer: Rizwan Ali
+        Date: 08-09-19 
+        Action: delete product's al traces in database
+        Input: int product_id
+        output: boolean
+      */
+        public async Task<bool> DeleteProduct(string product_id)
+        {
+            bool res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DeleteQuery = "delete FROM purchase_order_line_items WHERE product_id= " + product_id;
+                    var updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = false;
+            }
+            return res;
+        }
+       
     }
 }
 

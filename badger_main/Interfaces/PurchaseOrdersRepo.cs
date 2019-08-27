@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using badgerApi.Models;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
@@ -269,7 +269,8 @@ namespace badgerApi.Interfaces
                                     ",av.value as vendor_size                 " +
                                     ",av.attribute_id" +
                                     " from purchase_order_line_items pol , product_attributes pa ,attribute_values av " +
-                                    " where pol.sku=pa.sku  and av.attribute_id=pa.attribute_id and av.product_id=pa.product_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " ;";
+                                    " where pol.sku=pa.sku  and av.attribute_id=pa.attribute_id and av.product_id=pa.product_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " order by pol.sku ;";
+                                    
 
                 result = await conn.QueryAsync<PurchaseOrderLineItems>(querytoRun);
                 return result.ToList();

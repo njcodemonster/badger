@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using badger_view.Models;
+using GenericModals.Models;
 using badgerApi.Models;
 
 namespace badger_view.Models

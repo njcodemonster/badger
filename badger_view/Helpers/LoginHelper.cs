@@ -8,10 +8,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using badger_view.Models;
+using GenericModals.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using GenericModals;
 
 namespace badger_view.Models
 {
