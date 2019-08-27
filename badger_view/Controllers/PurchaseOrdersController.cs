@@ -116,7 +116,7 @@ namespace badger_view.Controllers
 
                 bool CheckDaysRange = false;
 
-                if (DateToCheck <= poList.delivery_window_end)
+                if (DateToCheck <= poList.delivery_window_end || poList.delivery_window_end == 0)
                 {
                     CheckDaysRange = true;
                 }
@@ -368,7 +368,7 @@ namespace badger_view.Controllers
                 purchaseOrder.Add("vendor_order_number", 0);
             }
 
-            if (json.Value<int>("total_styles") > 0)
+            if (json.Value<string>("total_styles") != "")
             {
                 purchaseOrder.Add("total_styles", json.Value<string>("total_styles"));
             }
@@ -377,7 +377,7 @@ namespace badger_view.Controllers
                 purchaseOrder.Add("total_styles", 0);
             }
 
-            if (json.Value<int>("total_quantity") > 0)
+            if (json.Value<string>("total_quantity") != "")
             {
                 purchaseOrder.Add("total_quantity", json.Value<string>("total_quantity"));
             }
@@ -386,7 +386,7 @@ namespace badger_view.Controllers
                 purchaseOrder.Add("total_quantity", 0);
             }
 
-            if (json.Value<decimal>("subtotal") > 0)
+            if (json.Value<string>("subtotal") != "")
             {
                 purchaseOrder.Add("subtotal", json.Value<string>("subtotal"));
             }
@@ -397,7 +397,7 @@ namespace badger_view.Controllers
 
             purchaseOrder.Add("vendor_id", json.Value<string>("vendor_id"));
 
-            if (json.Value<decimal>("shipping") > 0)
+            if (json.Value<string>("shipping") != "")
             {
                 purchaseOrder.Add("shipping", json.Value<string>("shipping"));
             }
@@ -1282,6 +1282,7 @@ namespace badger_view.Controllers
                     }
 
                     purchaseOrdersData.Add("updated_by", Int32.Parse(loginUserId));
+                    purchaseOrdersData.Add("updated_at", _common.GetTimeStemp());
 
                     updateItemID = await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrdersData.ToString(Formatting.None), "/purchaseorders/updatespecific/" + po_id);
                 }
