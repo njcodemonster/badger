@@ -1040,17 +1040,19 @@ function purchaseOrderData(data) {
         if (podata.length > 0) {
             podata = data['purchase_order'][0];
 
-            var startDate = timeToDateConvert(podata.delivery_window_start);
-            var endDate = timeToDateConvert(podata.delivery_window_end);
-            $("#newPurchaseOrderForm #poDelieveryRange").daterangepicker({
-                startDate: startDate, // after open picker you'll see this dates as picked
-                endDate: endDate,
-                locale: {
-                    format: 'M/D/YYYY',
-                }
-            }, function (start, end, label) {
-                //what to do after change
-            }).val(startDate + " - " + endDate); 
+            if (podata.delivery_window_start > 0) {
+                var startDate = timeToDateConvert(podata.delivery_window_start);
+                var endDate = timeToDateConvert(podata.delivery_window_end);
+                $("#newPurchaseOrderForm #poDelieveryRange").daterangepicker({
+                    startDate: startDate, // after open picker you'll see this dates as picked
+                    endDate: endDate,
+                    locale: {
+                        format: 'M/D/YYYY',
+                    }
+                }, function (start, end, label) {
+                    //what to do after change
+                }).val(startDate + " - " + endDate); 
+            }
 
             $("#newPurchaseOrderForm #poVendor").val(data["vendor"][0].vendor_name);
             $("#newPurchaseOrderForm #poVendor").attr("data-val", data["vendor"][0].vendor_id);
@@ -1060,7 +1062,9 @@ function purchaseOrderData(data) {
             $("#newPurchaseOrderForm #poTotalQuantity").val(podata.total_quantity);
             $("#newPurchaseOrderForm #poOrderNumber").val(podata.vendor_order_number);
             $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
-            $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
+            if (podata.order_date > 0) {
+                $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
+            }            
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
             
             var it = data.Items.LineItemDetails;
