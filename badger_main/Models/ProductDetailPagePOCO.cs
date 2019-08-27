@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     public partial class Productpairwith
     {

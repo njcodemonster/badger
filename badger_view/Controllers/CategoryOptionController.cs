@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using badger_view.Helpers;
-using badger_view.Models;
+using GenericModals.Models;
 using System.Dynamic;
 using System.Web;
 using Newtonsoft.Json;
