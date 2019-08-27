@@ -41,5 +41,13 @@ namespace badgerApi.Controllers
         public void Delete(int id)
         {
         }
+
+        [HttpGet("Test")]
+        public int Test()
+        {
+            string a = "aa";
+            int.Parse(a);
+            return 0;
+        }
     }
 }

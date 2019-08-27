@@ -213,8 +213,8 @@
 
 <div class="">
 
-
-    @foreach (GenericModals.Models.PurchaseOrdersInfo purchaseOrder in Model.POList)
+    @using CommonHelper;
+    @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrder in Model.POList)
     {
         <div class="accordion" id="accordionpocheck-@purchaseOrder.po_id">
             <div class="card POListCheckIn">
