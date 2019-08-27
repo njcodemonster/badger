@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using badgerApi.Helper;
 using badgerApi.Interfaces;
-using badgerApi.Models;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
