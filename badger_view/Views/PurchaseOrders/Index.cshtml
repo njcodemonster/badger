@@ -86,24 +86,26 @@
                                 @purchaseOrders.custom_delivery_window_start_end
                             }
                         </td>
-                        <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
+                        <td><a href="@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></a></td>
                         <td>
-                            @if (@purchaseOrders.po_status == 1)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">Open</span>
-                            }
-                            @if (@purchaseOrders.po_status == 3)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">In Progress</span>
-                            }
-                            @if (@purchaseOrders.po_status == 5)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">Not Recieved</span>
-                            }
-                            @if (@purchaseOrders.po_status == 6)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">Recieved</span>
-                            }
+                            <a href="@purchaseOrders.po_id">
+                                @if (@purchaseOrders.po_status == 1)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">Open</span>
+                                }
+                                @if (@purchaseOrders.po_status == 3)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">In Progress</span>
+                                }
+                                @if (@purchaseOrders.po_status == 5)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">Not Recieved</span>
+                                }
+                                @if (@purchaseOrders.po_status == 6)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">Recieved</span>
+                                }
+                            </a>
                         </td>
                     }
                     <td>
