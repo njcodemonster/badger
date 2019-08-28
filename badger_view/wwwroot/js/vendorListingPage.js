@@ -94,10 +94,10 @@ $(document).on('click', "#NewVendorButton", function () {
     jsonData["vendor_description"] = $('#vendorDec').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
-    jsonData["vendor_state"] = $('#vendorState').val();
+    jsonData["vendor_state"] = $('#vendorState option:selected').val();
     jsonData["vendor_notes"] = $('#vendorNotes').val();
     jsonData["vendor_reps"] = [];
-    jsonData["vendor_type"] = $('#vendortype').val();
+    jsonData["vendor_type"] = $('#vendortype option:selected').val();
     var valid = true;
     $('.venderRepoBox').each(function (){
         var vendor_rep = {};
@@ -113,7 +113,7 @@ $(document).on('click', "#NewVendorButton", function () {
         vendor_rep["Rep_phone2"] = $('#vendorRepPhone14').val() + $('#vendorRepPhone15').val() + $('#vendorRepPhone16').val();
         jsonData["vendor_reps"].push(vendor_rep);
     })
-    valid = phoneNumberValidate('.phone.required');
+    valid = phoneNumberValidate('.phone');
     if (valid == false) {
         $('.vendorAlertMsg').html('');
         $(this).attr('disabled', false);
@@ -303,13 +303,13 @@ $(document).on('click', "#EditVendorButton", function () {
     jsonData["corp_name"] = $('#vendorCorpName').val();
     jsonData["statement_name"] = $('#vendorStatmentName').val();
     jsonData["vendor_code"] = $('#vendorCode').val();
-    jsonData["vendor_type"] = $('#vendortype').val();
+    jsonData["vendor_type"] = $('#vendortype option:selected').val();
     jsonData["vendor_street"] = $('#vendorStreetAdress').val();
     jsonData["vendor_suite_number"] = $('#vendorUnitNumber').val();
     jsonData["vendor_description"] = $('#vendorDec').val();
     jsonData["vendor_city"] = $('#vendorCity').val();
     jsonData["vendor_zip"] = $('#vendorZip').val();
-    jsonData["vendor_state"] = $('#vendorState').val();
+    jsonData["vendor_state"] = $('#vendorState option:selected').val();
     jsonData["our_customer_number"] = $('#vendorourCustomerNumber').val();
     jsonData["address_id"] = $('#newVendorForm').attr('data-address-id');
     if ($('.documentsLink').text() != '') {
@@ -402,7 +402,7 @@ $(document).on('click', "#EditVendorButton", function () {
 function phoneNumberValidate(fieldName) {
     var valid = true
     $(fieldName).each(function () {
-        if ($(this).attr('maxlength') != $(this).val().length) {
+        if ($(this).attr('maxlength') != $(this).val().length && $(this).val() != '') {
             $(this).addClass('errorFeild')
             if (valid == true)
                 valid = false;
