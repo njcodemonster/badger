@@ -55,8 +55,7 @@ namespace badger_view.Controllers
             CategoryOptionPage categoryOption = new CategoryOptionPage();
             SetBadgerHelper();
             ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<Categories>>("/CategoryOption/SubCategoryAll/");
-            string a=await _BadgerApiHelper.GenericGetAsync<string>("/CategoryOption/CategoryOptionPage/");
-            categoryOption =a;
+            categoryOption = await _BadgerApiHelper.GenericGetAsync<CategoryOptionPage>("/CategoryOption/CategoryOptionPage/");
             ViewBag.selected = 0;
             return View(categoryOption);
         }

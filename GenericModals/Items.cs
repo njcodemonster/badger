@@ -21,10 +21,14 @@ namespace GenericModals.Models
         public string sku_family { get; set; }
         public int? PO_id { get; set; }
         public int? published { get; set; }
+        public string small_sku { get; set; }
+        public string product_name { get; set; }
+        public string size { get; set; }
         public int? published_by { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
+
     }
 }
