@@ -145,7 +145,7 @@
                     <select id="vendortype" class="form-control d-inline-block required" style="width: 90%">
                         <option value="">choose ...</option>
 
-                        @foreach (VendorType vendorType in Model.VendorType)
+                        @foreach (GenericModals.Models.VendorType vendorType in Model.VendorType)
                         {
                             <option value="@vendorType.vendor_type_id">@vendorType.vendor_type_description</option>
                         }

@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using badgerApi.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace badger_view.Controllers
