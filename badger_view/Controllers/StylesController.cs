@@ -351,6 +351,10 @@ namespace badger_view.Controllers
                 String attr_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr.ToString(Formatting.None), "/attributevalues/create");
 
 
+                JObject product_attr_value = new JObject();
+                product_attr_value.Add("product_id", Int32.Parse(product_id));
+                product_attr_value.Add("attribute_id", attribute_id);
+                product_attr_value.Add("value_id", attr_value_id);
 
                 product_attr_value.Add("created_by", user_id);
                 // product_attr_value.Add("created_at", _common.GetTimeStemp()); need to create in DB
@@ -408,9 +412,9 @@ namespace badger_view.Controllers
 
                 String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/createitems/" + style_qty);
 
-
-
             }
+
+
 
 
 
