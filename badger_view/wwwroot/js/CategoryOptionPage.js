@@ -163,7 +163,9 @@ Output: get data in fields
 $(document).on('change', '#StyleType', function () {
     debugger;
     var SelectedStyleType = $(this.options[this.selectedIndex]).val();
+    $('#loading').show();
     GetTags(SelectedStyleType);
+    //$('.loading').addClass("d-none");
 });
 
 

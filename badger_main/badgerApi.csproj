@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Categories.cs" />
+    <Compile Remove="Models\CategoryOptionPage.cs" />
+    <Compile Remove="Models\CategoryOptions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Logs\BadgerAPIFunctional-20190718.txt" />
     <None Remove="Logs\BadgerAPIFunctional-20190719.txt" />
     <None Remove="Logs\BadgerAPIFunctional-20190731.txt" />
