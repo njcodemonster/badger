@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using notesService.Models;
+using GenericModals.Models;
 using notesService.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

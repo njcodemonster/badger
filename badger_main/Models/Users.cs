@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     [Table("users")]
     public partial class Users

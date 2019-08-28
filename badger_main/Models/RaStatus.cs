@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     [Table("ra_status")]
     public partial class RaStatus

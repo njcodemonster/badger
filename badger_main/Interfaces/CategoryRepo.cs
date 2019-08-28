@@ -1,4 +1,4 @@
-﻿using badgerApi.Models;
+﻿using GenericModals.Models;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;

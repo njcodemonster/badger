@@ -8,7 +8,7 @@ using badgerApi.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
-using badgerApi.Models;
+using GenericModals.Models;
 using Newtonsoft.Json;
 
 namespace badgerApi.Controllers

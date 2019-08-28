@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\badger_main\badgerApi.csproj" />
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
+    <ProjectReference Include="..\GenericModals\GenericModals.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,7 +7,7 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-using notesService.Models;
+using GenericModals.Models;
 
 namespace notesService.Interfaces
 {

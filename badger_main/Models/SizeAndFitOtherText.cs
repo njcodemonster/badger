@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     [Table("size_and_fit_other_text")]
     public partial class SizeAndFitOtherText
