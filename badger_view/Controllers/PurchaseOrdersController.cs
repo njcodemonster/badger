@@ -982,9 +982,10 @@ namespace badger_view.Controllers
             else
             {
                  purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/singlepageview/" + id);
-                if (purchaseOrdersPagerList.Count == null)
+                if (purchaseOrdersPagerList.purchaseOrdersInfo.Count() == 0)
                 {
-                    return Redirect("~/PurchaseOrders");
+                 
+                        return Redirect("~/PurchaseOrders");
                 }
             }
             
