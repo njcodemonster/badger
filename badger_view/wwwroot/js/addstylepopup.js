@@ -326,7 +326,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
             var Category = selectProductCategories[i];
             categoryIds.push(Category.category_id);
         }
-
+    }
     $.ajax({
         url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
         dataType: 'json',
