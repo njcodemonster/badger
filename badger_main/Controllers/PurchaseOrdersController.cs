@@ -174,6 +174,33 @@ namespace badgerApi.Controllers
             return poPageList;
 
         }
+        /*
+       Developer: Azeem
+       Date: 27-8-19 
+       Action: Get purchase order page data
+       URL: api/purchaseorders/singlepageview/10
+       Request: Get
+       Input: int id
+       output: list of dynamic Object of Purchase Orders
+       */
+        [HttpGet("singlepageview/{id}")]
+        public async Task<object> singlepageviewAsync(int id)
+        {
+            dynamic poPageData = new object();
+            try
+            {
+                poPageData = await _PurchaseOrdersRepo.GetPurchaseOrdersPageData(id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
+
+            }
+
+            return poPageData;
+
+        }
 
         /*
         Developer: Sajid Khan

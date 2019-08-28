@@ -1,4 +1,9 @@
-﻿/*
+﻿$(document).ready(function () {
+    if (window.location.href.indexOf('PurchaseOrdersCheckIn/') > -1) {
+        $('.collapsButton').click()
+    }
+});
+/*
 Developer: Sajid Khan
 Date: 7-5-19
 Action: it will show item note

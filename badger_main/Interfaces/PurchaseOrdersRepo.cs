@@ -23,6 +23,7 @@ namespace badgerApi.Interfaces
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int start, int limit);
+        Task<object> GetPurchaseOrdersPageData(int id);
         Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
         Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id);
         Task<List<RaStatus>> GetAllRaStatus();
@@ -220,6 +221,31 @@ namespace badgerApi.Interfaces
             return poPageList;
 
         }
+        /*
+     Developer: Azeem
+     Date: 7-5-19 
+     Action: Get purchase order page data from database
+     Input: int id
+     output: Dynamic object of purchase order
+     */
+        public async Task<object> GetPurchaseOrdersPageData(int id)
+        {
+
+            dynamic poPageList = new ExpandoObject();
+            string sQuery = "";
+           
+                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 AND a.po_status != 4 AND a.po_id = "+id+";";
+            
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> purchaseOrdersInfo = await conn.QueryAsync<object>(sQuery);
+                poPageList.purchaseOrdersInfo = purchaseOrdersInfo;
+            }
+            return poPageList;
+
+        }
+        
 
         /*
         Developer: Sajid Khan
