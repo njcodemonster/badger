@@ -270,7 +270,7 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
 });
 
 
-$(document).on('keyup blur', "#poNumber", function () {
+/*$(document).on('blur', "#poNumber", function () {
     $('.errorMsg').remove();
     console.log($(this).val());
     var ponumber = $(this).val();
@@ -281,15 +281,17 @@ $(document).on('keyup blur', "#poNumber", function () {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
+        $('#poNumber').removeClass("errorFeild");
+        $('.errorMsg').remove();
         if (data == true) {
-            $('#poNumber').removeClass("errorFeild");
-            $('.errorMsg').remove();
             $('#poNumber').addClass('errorFeild');
-            $('#poNumber').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+            $('#poNumber').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">PO # is already exists</span>')
             return false;
+        } else {
+
         }
     });
-});
+});*/
 
 
 
