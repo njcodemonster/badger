@@ -113,7 +113,7 @@ $(document).on('click', "#NewVendorButton", function () {
         vendor_rep["Rep_phone2"] = $('#vendorRepPhone14').val() + $('#vendorRepPhone15').val() + $('#vendorRepPhone16').val();
         jsonData["vendor_reps"].push(vendor_rep);
     })
-    valid = phoneNumberValidate('.phone');
+    valid = phoneNumberValidate('.phone.required');
     if (valid == false) {
         $('.vendorAlertMsg').html('');
         $(this).attr('disabled', false);
@@ -473,16 +473,16 @@ $(document).on('click', "#AddMoreReps", function (event) {
                                     '</div>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
-                                           '<label>Phone Number 2</label>'+
+                                           '<label>Phone Number 2 (Optional)</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<span class="d-inline">(</span> <input type="tel" data-type="number" maxlength="3" class="blockSpecialChar required phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+                                                    '<span class="d-inline">(</span> <input type="tel" data-type="number" maxlength="3" class="blockSpecialChar phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-3 p-0">'+
-                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="3" data-type="number" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone blockSpecialChar" maxlength="3" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="4" data-type="number" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone blockSpecialChar" maxlength="4" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -565,16 +565,16 @@ function repsHtml(data) {
                                     '</div>'+
                                     '<div class="form-row">'+
                                         '<div class="form-group col-md-6">'+
-                                           '<label>Phone Number 2</label>'+
+                                           '<label>Phone Number 2 (Optional)</label>'+
                                             '<div class="row">'+
                                                 '<div class="col-md-3 p-0">'+
-            '<span class="d-inline">(</span> <input type="tel" value="' + phone2.substring(0, 3) +'" data-type="number" maxlength="3" class="blockSpecialChar phone form-control d-inline w-75 required" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
+            '<span class="d-inline">(</span> <input type="tel" value="' + phone2.substring(0, 3) +'" data-type="number" maxlength="3" class="blockSpecialChar phone form-control d-inline w-75" id="vendorRepPhone14"> <span class="d-inline">)</span>'+
                                                 '</div>'+
                                                 '<div class="col-md-4 p-0">'+
-                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="3" value="'+phone2.substring(3,6)+'" data-type="number" id="vendorRepPhone15">'+
+                                                    '<input type="tel" class="form-control phone blockSpecialChar" maxlength="3" value="'+phone2.substring(3,6)+'" data-type="number" id="vendorRepPhone15">'+
                                                 '</div>'+
                                                 '<div class="col-md-5">'+
-                                                    '<input type="tel" class="form-control phone required blockSpecialChar" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
+                                                    '<input type="tel" class="form-control phone blockSpecialChar" maxlength="4" value="'+phone2.substring(6,10)+'" data-type="number" id="vendorRepPhone16">'+
                                                 '</div>'+
                                             '</div>'+
                                         '</div>'+
@@ -648,7 +648,7 @@ $(document).on('click', "#addVendorNote", function () {
 $(document).on('change', "#vendorDocument", function () {
     $('.documentsLink').remove()
 });
-$(document).on('change', "#vendortype", function () {
+$(document).on('change', "#vendortype,#vendorState", function () {
    $(this).removeClass('errorFeild');
    $(this).parents('.form-group').find('.errorMsg').remove();
 });
@@ -756,4 +756,10 @@ $('#vendorListingArea').on('page.dt', function () {
             }
         });
     }*/
+});
+$(document).on('keydown', '.required', function (e) {
+    console.log(this.value);
+    if (e.which === 32 && e.target.selectionStart === 0) {
+        return false;
+    }
 });
