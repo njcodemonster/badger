@@ -103,18 +103,48 @@ function onlyNumbersWithDot(e) {
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
+  action: only number and dots allow 
+*/
+function onlyNumbers(e) {
+    var charCode;
+    if (e.keyCode > 0) {
+        charCode = e.which || e.keyCode;
+    }
+    else if (typeof (e.charCode) != "undefined") {
+        charCode = e.which || e.keyCode;
+    }
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    if (e.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+
+    if (charCode == 46)
+        return true
+    if (charCode == 190)
+        return true
+    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16)
+        return false;
+
+    return true;
+}
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
   action:  check email valid
 */
 function allLetterAllow(event) {
     var inputValue = event.which;
 
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
-    if (event.ctrlKey == true && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88 || inputValue == 9 )) {
+    var ctrlDown = event.ctrlKey || event.metaKey // Mac support
+
+    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88)) {
         return true;
     }
 
         // allow letters and whitespaces only.
-    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39 && inputValue != 9) { 
+    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39) { 
           return false
         }
 }
@@ -128,7 +158,7 @@ function alertBox(area, action, massage) {
     var color = 'success'
     if (action == 'red')
         color = 'danger'
-    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" class="alert alert-' + color + ' alert-dismissible">' +
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: fixed;right: 0;margin: 0 auto;top: 10%;" class="alert alert-' + color + ' alert-dismissible">' +
         '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
         massage +
         '</div>';
@@ -177,6 +207,26 @@ function confirmationAlertBox(heading, description, callback) {
 
     })
 }
+
+function confirmationAlertInnerBox(heading, description, callback) {
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
+        '<h4 class="alert-heading">' + heading + '</h4>' +
+        '<p>' + description + '</p>' +
+        '<hr>' +
+        '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
+        '</div>';
+    $('.msg').prepend(html);
+    $('.confirmDialog').click(function () {
+        $('.confirmationBox').remove();
+        if ($(this).attr('data-val') == 'yes') {
+            return callback('yes');
+        } else {
+            return callback('no');
+        }
+
+    })
+}
+
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 

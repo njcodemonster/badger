@@ -27,7 +27,7 @@ namespace badgerApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddTransient<INotesAndDocHelper,NotesAndDocHelper>();
+            services.AddTransient<INotesAndDocHelper, NotesAndDocHelper>();
             services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
             services.AddTransient<IEventRepo, EventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
@@ -49,8 +49,15 @@ namespace badgerApi
             services.AddTransient<IPurchaseOrdersLineItemsRepo, PurchaseOrdersLineItemsRepo>();
             services.AddTransient<IVendorProductRepository, VendorProductRepo>();
             services.AddTransient<iBarcodeRangeRepo, BarcodeRangeRepo>();
+            services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
+
+
+            //*              Singletons                                   *\\
+            services.AddSingleton<ICategoriesRepository, CategoriesRepo>();
+
             services.AddTransient<ICategoryRepository, CategoryRepo>();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
