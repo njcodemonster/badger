@@ -13,7 +13,6 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
-using badgerApi.Models;
 
 namespace badger_view.Controllers
 {
@@ -56,7 +55,8 @@ namespace badger_view.Controllers
             CategoryOptionPage categoryOption = new CategoryOptionPage();
             SetBadgerHelper();
             ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<Categories>>("/CategoryOption/SubCategoryAll/");
-            categoryOption = await _BadgerApiHelper.GenericGetAsync<CategoryOptionPage>("/CategoryOption/CategoryOptionPage/");
+            string a=await _BadgerApiHelper.GenericGetAsync<string>("/CategoryOption/CategoryOptionPage/");
+            categoryOption =a;
             ViewBag.selected = 0;
             return View(categoryOption);
         }
@@ -74,8 +74,8 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             if (id == "0")
             {
-                ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<Categories>>("/CategoryOption/SubCategoryAll/");
-                categoryOption = await _BadgerApiHelper.GenericGetAsync<CategoryOptionPage>("/CategoryOption/CategoryOptionPage/");
+                ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<object>>("/CategoryOption/SubCategoryAll/");
+                categoryOption = await _BadgerApiHelper.GenericGetAsync<dynamic>("/CategoryOption/CategoryOptionPage/");
                 ViewBag.selected = 0;
             }
             else
