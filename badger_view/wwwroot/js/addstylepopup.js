@@ -439,12 +439,22 @@ $(document).on('click', "#AddItemButton", function () {
         if (data.length) {
             for (i = 0; i < data.length; i++) {
 
-                $('#modaladdstylec #ExistingProductSelect').append("<option  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
-                last_sku_family = data[i].sku_family;
+                var selectedValue = "";
+                if (CurrentProductId != null) {
+                    selectedValue = "value = '" + data[i].product_id + "'";
+
+                   // $('#modaladdstylec #ExistingProductSelect').append("<option value='" + data[i].product_id + "' data-product_type='" + data[i].product_type_id + "' data-product_vendor_image='" + data[i].product_vendor_image + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+                }
+                else {
+                 }
+                $('#modaladdstylec #ExistingProductSelect').append("<option " + selectedValue +"  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+
+               last_sku_family = data[i].sku_family;
             }
             if (CurrentProductId != null) {
                 $('#modaladdstylec #ExistingProductSelect').val(CurrentProductId).trigger('change');
                 $('#modaladdstylec #ExistingProductSelect').prop('disabled', true);
+                $('#modaladdstylec #StyleType').prop('disabled', true);
             }
             var vendorCode = last_sku_family.substring(0, 2);
             var sku_number = parseInt(last_sku_family.substr(2)) + 1;
