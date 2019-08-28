@@ -644,6 +644,38 @@ namespace badgerApi.Controllers
 
         /*
         Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check Barcode already Exist or not by barcode "api/purchaseorders/checkbarcodeexist/1"
+        URL: api/purchaseorders/checkbarcodeexist/1
+        Request: Get
+        Input: int barcode
+        output: boolean
+        */
+        [HttpGet("checkpoexist/{colname}/{colvalue}")]
+        public async Task<Boolean> CheckPOExist(string colname, string colvalue)
+        {
+            Boolean result = false;
+            List<PurchaseOrders> ToReturn = new List<PurchaseOrders>();
+            try
+            {
+                ToReturn = await _PurchaseOrdersRepo.CheckPOExist(colname, colvalue);
+
+                if (ToReturn.Count > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return result;
+        }
+
+        /*
+        Developer: Sajid Khan
         Date: 7-24-19 
         Action: Get smallest sku by product ids with comma separate "api/purchaseorders/smallestsku/1"
         URL: api/purchaseorders/smallestsku/ids

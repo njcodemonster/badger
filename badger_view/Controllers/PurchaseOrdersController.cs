@@ -546,27 +546,98 @@ namespace badger_view.Controllers
 
             JObject purchaseOrder = new JObject();
 
-            string daterange = json.Value<string>("vendor_po_delievery_range");
+            if (json.Value<string>("vendor_po_number") != "")
+            {
+                purchaseOrder.Add("vendor_po_number", json.Value<string>("vendor_po_number"));
+            }
+            else
+            {
+                purchaseOrder.Add("vendor_po_number", 0);
+            }
 
-            string[] dateRangeList = daterange.Split(" - ");
+            if (json.Value<string>("vendor_invoice_number") != "")
+            {
+                purchaseOrder.Add("vendor_invoice_number", json.Value<string>("vendor_invoice_number"));
+            }
+            else
+            {
+                purchaseOrder.Add("vendor_invoice_number", 0);
+            }
 
-            string startDate = dateRangeList[0].ToString();
-            string endDate = dateRangeList[1].ToString();
+            if (json.Value<string>("vendor_order_number") != "")
+            {
+                purchaseOrder.Add("vendor_order_number", json.Value<string>("vendor_order_number"));
+            }
+            else
+            {
+                purchaseOrder.Add("vendor_order_number", 0);
+            }
 
-            string orderDate = json.Value<string>("order_date");
+            if (json.Value<string>("total_styles") != "")
+            {
+                purchaseOrder.Add("total_styles", json.Value<string>("total_styles"));
+            }
+            else
+            {
+                purchaseOrder.Add("total_styles", 0);
+            }
 
-            purchaseOrder.Add("vendor_po_number", json.Value<string>("vendor_po_number"));
-            purchaseOrder.Add("vendor_invoice_number", json.Value<string>("vendor_invoice_number"));
-            purchaseOrder.Add("vendor_order_number", json.Value<string>("vendor_order_number"));
+            if (json.Value<string>("total_quantity") != "")
+            {
+                purchaseOrder.Add("total_quantity", json.Value<string>("total_quantity"));
+            }
+            else
+            {
+                purchaseOrder.Add("total_quantity", 0);
+            }
+
+            if (json.Value<string>("subtotal") != "")
+            {
+                purchaseOrder.Add("subtotal", json.Value<string>("subtotal"));
+            }
+            else
+            {
+                purchaseOrder.Add("subtotal", 0);
+            }
+
             purchaseOrder.Add("vendor_id", json.Value<string>("vendor_id"));
-            purchaseOrder.Add("total_styles", json.Value<string>("total_styles"));
-            purchaseOrder.Add("total_quantity", json.Value<string>("total_quantity"));
-            purchaseOrder.Add("subtotal", json.Value<string>("subtotal"));
-            purchaseOrder.Add("shipping", json.Value<string>("shipping"));
-            purchaseOrder.Add("delivery_window_start", _common.DateConvertToTimeStamp(startDate));
-            purchaseOrder.Add("delivery_window_end", _common.DateConvertToTimeStamp(endDate));
+
+            if (json.Value<string>("shipping") != "")
+            {
+                purchaseOrder.Add("shipping", json.Value<string>("shipping"));
+            }
+            else
+            {
+                purchaseOrder.Add("shipping", 0);
+            }
+
+            string daterange = json.Value<string>("vendor_po_delievery_range");
+            if (daterange != "")
+            {
+                string[] dateRangeList = daterange.Split(" - ");
+
+                string startDate = dateRangeList[0].ToString();
+                string endDate = dateRangeList[1].ToString();
+
+                purchaseOrder.Add("delivery_window_start", _common.DateConvertToTimeStamp(startDate));
+                purchaseOrder.Add("delivery_window_end", _common.DateConvertToTimeStamp(endDate));
+            }
+            else
+            {
+                purchaseOrder.Add("delivery_window_start", 0);
+                purchaseOrder.Add("delivery_window_end", 0);
+            }
+            string orderDate = json.Value<string>("order_date");
+            if (orderDate != "")
+            {
+                purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
+            }
+            else
+            {
+                purchaseOrder.Add("order_date", 0);
+            }
+
             purchaseOrder.Add("updated_by", Int32.Parse(loginUserId));
-            purchaseOrder.Add("order_date", _common.DateConvertToTimeStamp(orderDate));
             purchaseOrder.Add("updated_at", _common.GetTimeStemp());
 
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrder.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
@@ -1588,6 +1659,33 @@ namespace badger_view.Controllers
             try
             {
                 result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkbarcodeexist/" + barcode);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+            }
+            return result;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check Barcode Already exist or not by barcode by using badger api helper 
+        URL: /purchaseorders/checkbarcodeexist/12345678
+        Request: Get
+        Input: int barcode
+        output: string true/false
+        */
+        [HttpGet("purchaseorders/checkpoexist/{colname}/{colvalue}")]
+        public async Task<string> CheckPOExist(string colname, string colvalue)
+        {
+            SetBadgerHelper();
+
+            string result = "false";
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkpoexist/"+colname+"/"+colvalue);
             }
             catch (Exception ex)
             {
