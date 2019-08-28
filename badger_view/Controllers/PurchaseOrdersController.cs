@@ -968,12 +968,27 @@ namespace badger_view.Controllers
         Input: Null
         output: dynamic object of purchase orders management list
         */
-        public async Task<IActionResult> PurchaseOrdersCheckIn()
+        public async Task<IActionResult> PurchaseOrdersCheckIn(int id)
         {
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+            PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
+            if (id == 0)
+            {
+                 purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+
+            }
+            else
+            {
+                 purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/singlepageview/" + id);
+                if (purchaseOrdersPagerList.Count == null)
+                {
+                    return Redirect("~/PurchaseOrders");
+                }
+            }
+            
+
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
             int purchase_order_id = PageModal.POList[0].po_id;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);

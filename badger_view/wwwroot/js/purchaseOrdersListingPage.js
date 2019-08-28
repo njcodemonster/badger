@@ -683,12 +683,6 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
         console.log(data);
 
         if (data.responseText == "Success") {
-
-            if (note != "") {
-                $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").addClass("redDOtElement");
-            } else {
-                $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").removeClass("redDOtElement");
-            }
             //alertBox('poAlertMsg', 'green', 'Purchase order is updated');
             var fileLength = $("#poUploadImage")[0].files.length;
             if (fileLength != 0) {
@@ -746,6 +740,11 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     }
                 }
 
+                if (note != "") {
+                    $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").addClass("redDOtElement");
+                } else {
+                    $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").removeClass("redDOtElement");
+                }
                 window.purchaseorderrownumber = "";
             }
 
