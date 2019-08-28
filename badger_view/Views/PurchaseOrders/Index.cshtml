@@ -76,7 +76,7 @@
                             }
                         </td>
                         <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
-                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"> <span class="postatus-@purchaseOrders.po_id">Not Recieved</span> </td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><a class="text-danger font-weight-bold" target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id"><span class="postatus-@purchaseOrders.po_id">Not Recieved</span></a></td>
                     }
                     else
                     {
@@ -86,9 +86,9 @@
                                 @purchaseOrders.custom_delivery_window_start_end
                             }
                         </td>
-                        <td><a href="@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></a></td>
+                        <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
                         <td>
-                            <a href="@purchaseOrders.po_id">
+                            <a target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id">
                                 @if (@purchaseOrders.po_status == 1)
                                 {
                                     <span class="postatus-@purchaseOrders.po_id">Open</span>

@@ -31,6 +31,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetNameAndSizeByProductAndSku(string product_id, string sku);
         Task<object> SearchByPOAndInvoice(string search);
         Task<Object> GetPOList(string search);
+        Task<List<PurchaseOrders>> CheckPOExist(string colname, string colvalue);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -381,6 +382,27 @@ namespace badgerApi.Interfaces
 
             }
             return poDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-19-19 
+        Action: Check Sku already Exist data from database
+        Input: string sku
+        output: list of sku check
+        */
+        public async Task<List<PurchaseOrders>> CheckPOExist(string colname, string colvalue)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<PurchaseOrders> result = new List<PurchaseOrders>();
+
+                string squery = "Select * from " + TableName + " WHERE "+ colname + " = '" + colvalue + "';";
+
+                result = await conn.QueryAsync<PurchaseOrders>(squery);
+
+                return result.ToList();
+            }
         }
 
 

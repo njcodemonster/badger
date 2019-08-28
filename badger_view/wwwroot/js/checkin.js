@@ -137,6 +137,7 @@ $(document).on('click', ".submit-check-in", function () {
             $('.postatus-' + po_id).text('Recieved');
             $('.checked-' + po_id).removeClass('btn-warning').addClass('btn-success').removeAttr('id').text('Checked-In');
             $('.removeRed-' + po_id).removeClass('text-danger font-weight-bold ');
+            $('.removeRed-' + po_id + ' a').removeClass('text-danger font-weight-bold ');
             $('.days-' + po_id).text('0 Day');
 
             var fileLength = $("#checkin_form #poUploadImage")[0].files.length;

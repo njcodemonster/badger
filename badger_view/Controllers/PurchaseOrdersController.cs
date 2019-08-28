@@ -1655,6 +1655,33 @@ namespace badger_view.Controllers
 
         /*
         Developer: Sajid Khan
+        Date: 7-20-19 
+        Action: Check Barcode Already exist or not by barcode by using badger api helper 
+        URL: /purchaseorders/checkbarcodeexist/12345678
+        Request: Get
+        Input: int barcode
+        output: string true/false
+        */
+        [HttpGet("purchaseorders/checkpoexist/{colname}/{colvalue}")]
+        public async Task<string> CheckPOExist(string colname, string colvalue)
+        {
+            SetBadgerHelper();
+
+            string result = "false";
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkpoexist/"+colname+"/"+colvalue);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product wash type with message" + ex.Message);
+            }
+            return result;
+        }
+
+        /*
+        Developer: Sajid Khan
         Date: 7-24-19 
         Action: Get Purchase Order item data with tracking and document and smallest sku with product name  by using badger api helper
         URL: /purchaseorders/PurchaseOrderItemDetails/poid
