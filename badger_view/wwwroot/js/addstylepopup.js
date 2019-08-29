@@ -69,11 +69,6 @@ $(document).on('click', ".AddNewStyleButton", function () {
     }
 
  
-    if (productSubCategoriesAction.length == 0 && $('#StyleSubType').val() !=0 ) {
-
-        $('#StyleSubType').addClass('errorFeild');
-        $('#StyleSubType').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Please select atleast one.</span>')
-    } 
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
