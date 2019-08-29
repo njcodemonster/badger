@@ -644,6 +644,7 @@ namespace badger_view.Controllers
 
             if (newPurchaseOrderID == "Success")
             {
+                JObject purchaseOrderStatusNote = new JObject();
 
                 if (json.Value<string>("old_note") != "")
                 {
@@ -660,8 +661,14 @@ namespace badger_view.Controllers
                         await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
                     }
 
-                    JObject purchaseOrderStatusNote = new JObject();
-                    purchaseOrderStatusNote.Add("has_note", 1);
+                    if (json.Value<string>("note") != "")
+                    {
+                        purchaseOrderStatusNote.Add("has_note", 1);
+                    }
+                    else
+                    {
+                        purchaseOrderStatusNote.Add("has_note", 2);
+                    }
                     await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
 
                 }
@@ -674,8 +681,13 @@ namespace badger_view.Controllers
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
 
-                    JObject purchaseOrderStatusNote = new JObject();
-                    purchaseOrderStatusNote.Add("has_note", 2);
+                    if (json.Value<string>("note") != ""){
+                        purchaseOrderStatusNote.Add("has_note", 1);
+                    }
+                    else
+                    {
+                        purchaseOrderStatusNote.Add("has_note", 2);
+                    }                    
                     await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
                 }
 
@@ -688,7 +700,6 @@ namespace badger_view.Controllers
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
 
-                    JObject purchaseOrderStatusNote = new JObject();
                     purchaseOrderStatusNote.Add("has_note", 1);
                     await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
                 }

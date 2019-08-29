@@ -35,6 +35,7 @@
                         $('.errorMsg').remove();
                         $('#poVendor').addClass('errorFeild');
                         $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                        $('.ui-autocomplete').empty().css("border","0");    
                     }
                    
                 });
@@ -133,8 +134,12 @@ debugger;
         Input:any keypress
         output: true/false
     */
-    $("#poTotalStyles,#poOrderNumber").on("keydown", function (event) {
+    $("#poTotalStyles,#poOrderNumber,.poTracking").on("keydown", function (event) {
         return isNumber(event);
+    });
+
+    $(document).on('keydown', "#wrapper_tracking .poTracking, #wrapper_checkin_tracking .poTracking", function (e) {
+        return isNumber(e);
     });
       /*
         Developer: Azeem Hassan
