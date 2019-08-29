@@ -12,6 +12,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using badgerApi.Interfaces;
 using badgerApi.Helper;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using GenericModals;
+
 namespace badgerApi
 {
     public class Startup
@@ -63,16 +69,39 @@ namespace badgerApi
             loggerFactory.AddFile("Logs/BadgerAPIFunctional-{Date}.txt");
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
             }
             else
             {
-                app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
                 //app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void LogGloblaErrors(IApplicationBuilder app,ILoggerFactory loggerFactory)
+        {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var exceptionHandlerPathFeature =
+                        context.Features.Get<IExceptionHandlerPathFeature>();
+                    var logger = loggerFactory.CreateLogger("Api Logs");
+                    logger.LogInformation("Error: ", exceptionHandlerPathFeature.Error.ToString());
+
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    var responseObj = JsonConvert.SerializeObject(new ResponseModel
+                    {
+                        Status = HttpStatusCode.InternalServerError,
+                        Message = exceptionHandlerPathFeature.Error.ToString()
+                    });
+                    await context.Response.WriteAsync(responseObj);
+                });
+            });
         }
     }
 }

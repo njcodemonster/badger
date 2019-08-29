@@ -7,6 +7,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon.S3;
+using GenericModals;
+using Microsoft.AspNetCore.Http;
+
 namespace badger_view.Helpers
 {
     public class BadgerApiHelper
@@ -63,6 +66,43 @@ namespace badger_view.Helpers
             };
             return JsonConvert.DeserializeObject<T>(data,settings);
 
+        }
+
+        public async Task<T> GetAsync<T>(string uri)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.GetAsync(BadgerAPIURL + uri, HttpCompletionOption.ResponseHeadersRead);
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            
+            var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
+            if(responseData.Status != System.Net.HttpStatusCode.OK)
+            {
+                throw new Exception(responseData.Message);
+            }
+            return JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings);
+        }
+
+        public async Task<TReturn> PostAsync<TReturn>(object json, string uri)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json);
+
+            var data = await response.Content.ReadAsStringAsync();
+            
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
+            return JsonConvert.DeserializeObject<TReturn>(data, settings);
         }
 
         /*

@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using GenericModals.Claim;
 using GenericModals.PurchaseOrder;
+using GenericModals;
+using CommonHelper.Extensions;
 
 namespace badger_view.Controllers
 {
@@ -70,9 +72,12 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
-
+            
+            var exceptionTest = await _BadgerApiHelper.GetAsync<string>("/values/test");
+            
+            // PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
+            var purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
+            
             String poIdsList = "";
 
             dynamic ProductIdsList = await _BadgerApiHelper.GenericGetAsync<object>("/product/getproductidsbypurchaseorder/");
@@ -903,9 +908,10 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+            var purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            int purchase_order_id = PageModal.POList[0].po_id;
+            int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
@@ -1816,18 +1822,12 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/loadclaim/{poId:int}")]
         public async Task<IActionResult> LoadClaim(int poId)
         {
-            try
-            {
-                SetBadgerHelper();
-                var userId = await _LoginHelper.GetLoginUserId();
-                var response = await _BadgerApiHelper.GenericGetsAsync("/PurchaseOrders/loadclaim/" + poId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
+            SetBadgerHelper();
+            var userId = await _LoginHelper.GetLoginUserId();
+            string a = "aa";
+            int i = int.Parse(a);
+            var response = await _BadgerApiHelper.GetAsync<PoClaim>("/PurchaseOrders/loadclaim/" + poId);
+            return Ok(response);
         }
     }
 }

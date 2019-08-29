@@ -18,6 +18,8 @@ using System.Dynamic;
 using CommonHelper;
 using GenericModals.Event;
 using GenericModals.PurchaseOrder;
+using GenericModals;
+using GenericModals.Extentions;
 
 namespace badgerApi.Controllers
 {
@@ -155,26 +157,27 @@ namespace badgerApi.Controllers
         output: list of dynamic Object of Purchase Orders
         */
         [HttpGet("listpageview/{start}/{limit}/{countNeeded}")]
-        public async Task<object> ListPageViewAsync(int start, int limit, Boolean countNeeded)
+        public async Task<ResponseModel> ListPageViewAsync(int start, int limit, Boolean countNeeded)
         {
             dynamic poPageList = new object();
-            try
-            {
+            //try
+            //{
                 poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(start, limit);
                 if (countNeeded)
                 {
                     string poPageCount = await _PurchaseOrdersRepo.Count();
                     poPageList.Count = poPageCount;
                 }
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
+                return ResponseHelper.GetResponse(poPageList);
+            //}
+            //catch (Exception ex)
+            //{
+            //    var logger = _loggerFactory.CreateLogger("internal_error_log");
+            //    logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
 
-            }
+            //}
 
-            return poPageList;
+           // return poPageList;
 
         }
 
@@ -1013,17 +1016,10 @@ namespace badgerApi.Controllers
         }
 
         [HttpGet("loadclaim/{poId:int}")]
-        public async Task<IActionResult> LoadClaim(int poId)
+        public async Task<ResponseModel> LoadClaim(int poId)
         {
-            try
-            {
-                var response = await _PurchaseOrdersRepo.GetClaim(poId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            var response = await _PurchaseOrdersRepo.GetClaim(poId);
+            return ResponseHelper.GetResponse(response);
         }
     }
     

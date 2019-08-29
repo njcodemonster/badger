@@ -12,16 +12,25 @@ using Microsoft.Extensions.DependencyInjection;
 using badger_view.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using badger_view.Hubs;
+using Microsoft.AspNetCore.Diagnostics;
+using System.IO;
+using Microsoft.Extensions.Logging;
+using CommonHelper.Extensions;
+using System.Net;
+using Newtonsoft.Json;
+using GenericModals;
 
 namespace badger_view
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+
+        public Startup(ILoggerFactory logger, IConfiguration configuration)
         {
             Configuration = configuration;
+            _logger = logger;
         }
-
+        private readonly ILoggerFactory _logger;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -37,9 +46,10 @@ namespace badger_view
             services.AddSignalR(options =>
             {
                 options.EnableDetailedErrors = true;
-                options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);
-                options.KeepAliveInterval = TimeSpan.FromSeconds(9);
+               // options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);
+              //  options.KeepAliveInterval = TimeSpan.FromSeconds(9);
             });
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
                 options.LoginPath = "/auth/Dologin";
@@ -56,40 +66,68 @@ namespace badger_view
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app);
             }
             else
             {
-                app.UseDeveloperExceptionPage();
-                //app.UseExceptionHandler("/Home/Error");
-                //app.UseHsts();
+                LogGloblaErrors(app);
             }
+
+            //app.UseHsts();
 
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ClaimtHub>("/claimHub");
             });
-            //.UseWebSockets(new WebSocketOptions()
-            //{
-            //    KeepAliveInterval = TimeSpan.FromSeconds(5),
-            //    AllowedOrigins = { Configuration.GetSection("Services:Badger").Value },
-            //});
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
             app.UseAuthentication();
-            
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=PurchaseOrders}/{action=Index}/{id?}");
-
             });
+        }
 
+        private void LogGloblaErrors(IApplicationBuilder app)
+        {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var exceptionHandlerPathFeature =
+                        context.Features.Get<IExceptionHandlerPathFeature>();
+
+                        var log = _logger.CreateLogger("Badger View Log");
+                        log.LogInformation("Error: ", exceptionHandlerPathFeature.Error.ToString());
+                        await ProductionError(context);
+                });
+            });
+        }
+
+        private static async Task ProductionError(HttpContext context)
+        {
+            if (context.Request.IsAjaxRequest())
+            {
+                var responseObj = JsonConvert.SerializeObject(new ResponseModel
+                {
+                    Status = HttpStatusCode.InternalServerError,
+                    Message = "something went wrong plz contact customer support."
+                });
+                await context.Response.WriteAsync(responseObj);
+            }
+            else
+            {
+                context.Response.Redirect("/home/error");
+            }
         }
     }
 }

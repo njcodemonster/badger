@@ -15,6 +15,6 @@ namespace GenericModals.Claim
         public string po_claimcol { get; set; }
         public string inspect_claimer_name { get; set; }
         public string publish_claimer_name { get; set; }
-        // public ClaimerType claim_type { get; set; }
+        public ClaimerType claim_type { get; set; }
     }
 }
