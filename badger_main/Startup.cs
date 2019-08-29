@@ -17,6 +17,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using GenericModals;
+using badgerApi.Helpers;
 
 namespace badgerApi
 {
@@ -60,6 +61,11 @@ namespace badgerApi
             services.AddSingleton<ICategoriesRepository, CategoriesRepo>();
             services.AddTransient<ICategoryRepository, CategoryRepo>();
             services.AddSingleton<IEventRepo, EventsRepo>();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
+            });
         }
 
 

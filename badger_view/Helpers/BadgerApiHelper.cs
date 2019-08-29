@@ -79,13 +79,18 @@ namespace badger_view.Helpers
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
-            
+
             var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
-            if(responseData.Status != System.Net.HttpStatusCode.OK)
+            ThorwException(responseData);
+            return JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings);
+        }
+
+        private static void ThorwException(ResponseModel responseData)
+        {
+            if (responseData.Status != System.Net.HttpStatusCode.OK)
             {
                 throw new Exception(responseData.Message);
             }
-            return JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings);
         }
 
         public async Task<TReturn> PostAsync<TReturn>(object json, string uri)
@@ -102,7 +107,8 @@ namespace badger_view.Helpers
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
             var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
-            return JsonConvert.DeserializeObject<TReturn>(data, settings);
+            ThorwException(responseData);
+            return JsonConvert.DeserializeObject<TReturn>(responseData.Data.ToString(), settings);
         }
 
         /*

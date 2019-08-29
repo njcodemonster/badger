@@ -239,7 +239,7 @@ namespace badger_view.Controllers
             vendor.Add("created_by", Int32.Parse(loginUserId));
             vendor.Add("active_status", 1);
             vendor.Add("created_at", _common.GetTimeStemp());
-            String newVendorID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendor.ToString(Formatting.None), "/vendor/create");
+            String newVendorID = await _BadgerApiHelper.PostAsync<string>(vendor, "/vendor/create");
             if (newVendorID != "0")
             {
                 vendor_adress.Add("vendor_id", newVendorID);

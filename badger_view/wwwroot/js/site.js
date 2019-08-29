@@ -4,6 +4,19 @@
 // Write your JavaScript code.
 
 // Initiate data table
+
+$(document).ajaxStart(function () {
+    alert("request started");
+});
+
+$(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+    alertBox('vendorAlertMsg', 'red', jqxhr.responseJSON.Message);
+});
+
+//$(document).ajaxSuccess(function () {
+//    alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
+//})
+
 window.onerror = function (errMsg, url, line, column, error) {
     var string = errMsg.toLowerCase();
     var substring = "script error";
