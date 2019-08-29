@@ -218,7 +218,7 @@ $(document).on('click', "#AddSubCat", function () {
         debugger;
 
         $('#modalAddSubCategory #ParentCategorySelect option').remove();
-        $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value='-1'>Choose...</option>");
+        $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value=''>Choose...</option>");
 
         data = data.vendorProducts;
         if (data.length) {
