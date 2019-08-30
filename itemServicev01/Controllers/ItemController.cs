@@ -780,6 +780,10 @@ namespace itemService.Controllers
                 {
                     ValuesToUpdate.Add("published_by", ItemToUpdate.published_by.ToString());
                 }
+                if (ItemToUpdate.has_doc != 0)
+                {
+                    ValuesToUpdate.Add("has_doc", ItemToUpdate.has_doc.ToString());
+                }
                 if (ItemToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", ItemToUpdate.created_by.ToString());

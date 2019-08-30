@@ -315,7 +315,15 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
 $(document).on('click', "#NewPurchaseOrderButton", function () {
     _self = $(this);
     _self.attr('disabled', true);
+
     if (emptyFeildValidation('newPurchaseOrderForm') == false) {
+        _self.attr('disabled', false);
+        return false;
+    }
+
+    if ($("#newPurchaseOrderForm #poNumber").val().trim().length == 0) {
+        $("#newPurchaseOrderForm #poNumber").addClass('errorFeild');
+        $("#newPurchaseOrderForm #poNumber").parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         _self.attr('disabled', false);
         return false;
     }
@@ -340,20 +348,20 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
             var delivery_window = (delivery_window_start.getMonth() + 1) + "/" + delivery_window_start.getDate() + "-"+ (delivery_window_end.getMonth() + 1) + "/" + delivery_window_end.getDate() + "/" + delivery_window_end.getFullYear();
         }
-        
-    var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
-        if(order_date != ""){  
-            order_date_milliseconds = order_date.getTime();
-            order_date_seconds = order_date_milliseconds / 1000;
-            var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+
+        if ($("#newPurchaseOrderForm #poOrderDate").val() != "") {
+            var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
+                order_date_milliseconds = order_date.getTime();
+                order_date_seconds = order_date_milliseconds / 1000;
+                var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
         }
        
     var shipping = $("#newPurchaseOrderForm #poShipping").val();
 
     jsonData["vendor_po_delievery_range"] = $("#newPurchaseOrderForm #poDelieveryRange").val();
-    jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
-    jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val();
-    jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val();
+    jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val().trim();
+    jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val().trim();
+    jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val().trim();
     jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").attr("data-val");
     jsonData["total_styles"] = $("#newPurchaseOrderForm #poTotalStyles").val();
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
@@ -412,7 +420,10 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                 });
             }
             
-            if(delieveryRange != "" && order_date != ""){
+            if (delieveryRange != "") {
+                if (order_date == undefined) {
+                    order_date = "";
+                }
                 $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + data + "'><span class='postatus-" + data + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + data + '" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             }else{
                 $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), " ", vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + data + "'><span class='postatus-" + data + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + data + '" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();

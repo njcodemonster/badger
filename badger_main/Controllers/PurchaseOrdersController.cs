@@ -485,7 +485,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("deleted", PurchaseOrdersToUpdate.deleted.ToString());
                 }
-                if (PurchaseOrdersToUpdate.ra_flag == 0 || PurchaseOrdersToUpdate.ra_flag == 1)
+                if (PurchaseOrdersToUpdate.ra_flag != 0)
                 {
                     ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
                 }
