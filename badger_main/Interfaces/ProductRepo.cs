@@ -79,7 +79,7 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                long result =  conn.Insert<Product>(NewProduct);
+                long result = conn.Insert<Product>(NewProduct);
                 return result.ToString();
             }
         }
@@ -134,9 +134,9 @@ namespace badgerApi.Interfaces
         Input: Product data
         output: Boolean
         */
-        public async Task<bool>  UpdateAsync(Product ProductToUpdate)
+        public async Task<bool> UpdateAsync(Product ProductToUpdate)
         {
-           
+
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.UpdateAsync<Product>(ProductToUpdate);
@@ -163,7 +163,7 @@ namespace badgerApi.Interfaces
 
         }
 
-       
+
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
@@ -175,7 +175,7 @@ namespace badgerApi.Interfaces
         {
             IEnumerable<Product> toReturn;
             //List<Product> toReturn = new List<Product>();
-            using(IDbConnection conn = Connection)
+            using (IDbConnection conn = Connection)
             {
 
 
@@ -202,10 +202,11 @@ namespace badgerApi.Interfaces
                     ",product.created_at             " +
                     ",vendor_products.vendor_color_code" +
                     ",vendor_products.vendor_product_code " +
-                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id,'category_id', pc.category_id)),']') AS JSON) AS productCategories " +
-					" from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
-				    " LEFT JOIN product_categories pc ON pc.product_id=product.product_id " +
-                    " where product.product_id = vendor_products.product_id" +
+                    ",(SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories"+
+                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('attribute_id', pa.attribute_id ,'sku', pa.sku)),']') AS JSON) AS skulist " +
+                    " from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
+                    " INNER JOIN product_attributes pa ON product.product_id = pa.product_id" +
+                    " where product.product_id = vendor_products.product_id and ISNULL(pa.sku)=0 and pa.sku <> '' " +
                     " and product.vendor_id=" + Vendor_id + " " +
                     " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +
                     ",product.product_discount  ,product.product_cost ,product.product_retail " +
@@ -215,7 +216,7 @@ namespace badgerApi.Interfaces
                 toReturn = await conn.QueryAsync<Product>(querytoRun);
             }
 
-           
+
             return toReturn.ToList();
         }
 
@@ -228,10 +229,22 @@ namespace badgerApi.Interfaces
         */
         public async Task<string> CreateProductAttribute(ProductAttributes NewProductAttributes)
         {
+
+            string ProductAttributesExistsQuery = "SELECT * FROM product_attributes WHERE sku='"+ NewProductAttributes .sku+ "' and  attribute_id='" + NewProductAttributes.attribute_id + "' and product_id='" + NewProductAttributes.product_id + "';";
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<ProductAttributes>(NewProductAttributes);
-                return result.ToString();
+                var ProductAttributesExist = await conn.QueryAsync<ProductAttributes>(ProductAttributesExistsQuery);
+
+                if (ProductAttributesExist == null || ProductAttributesExist.Count() == 0)
+                {
+                    var result = await conn.InsertAsync<ProductAttributes>(NewProductAttributes);
+                    return result.ToString();
+                }
+                else
+                {
+                    return ProductAttributesExist.First().product_attribute_id.ToString();
+                }
+
             }
         }
 
@@ -293,14 +306,14 @@ namespace badgerApi.Interfaces
         Input: string id 
         output: list of Product properties
         */
-        public async Task<IEnumerable<ProductProperties>> GetProductProperties (string id)
+        public async Task<IEnumerable<ProductProperties>> GetProductProperties(string id)
         {
             IEnumerable<ProductProperties> productProperties;
             IEnumerable<ProductProperties> productProperties2;
             using (IDbConnection conn = Connection)
             {
-                 productProperties = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,C.attribute_type_id,C.attribute,C.attribute_display_name,D.value FROM product_attributes AS A  , attributes AS C ,attribute_values AS D,product_attribute_values AS E WHERE (A.product_id = "+id+" AND A.attribute_id= C.attribute_id AND E.attribute_id =  A.attribute_id AND D.value_id= E.value_id AND E.product_id="+id+")  ");
-                 productProperties2 = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,B.attribute_type_id,B.attribute,B.attribute_display_name,NULL AS 'value' FROM product_attributes AS A, attributes AS B WHERE A.product_id = "+id+" AND A.attribute_id = B.attribute_id AND B.attribute_type_id =4");
+                productProperties = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,C.attribute_type_id,C.attribute,C.attribute_display_name,D.value FROM product_attributes AS A  , attributes AS C ,attribute_values AS D,product_attribute_values AS E WHERE (A.product_id = " + id + " AND A.attribute_id= C.attribute_id AND E.attribute_id =  A.attribute_id AND D.value_id= E.value_id AND E.product_id=" + id + ")  ");
+                productProperties2 = await conn.QueryAsync<ProductProperties>("SELECT A.attribute_id,A.sku,A.product_id,B.attribute_type_id,B.attribute,B.attribute_display_name,NULL AS 'value' FROM product_attributes AS A, attributes AS B WHERE A.product_id = " + id + " AND A.attribute_id = B.attribute_id AND B.attribute_type_id =4");
 
             }
             return productProperties.Concat(productProperties2);
@@ -338,7 +351,7 @@ namespace badgerApi.Interfaces
             Int32 shootstatus = 0;
             using (IDbConnection conn = Connection)
             {
-                shootstatus =  conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= '" + id + "'").Result.First();
+                shootstatus = conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= '" + id + "'").Result.First();
 
             }
             return shootstatus;
@@ -376,7 +389,7 @@ namespace badgerApi.Interfaces
             IEnumerable<AllTags> productProperties;
             using (IDbConnection conn = Connection)
             {
-                productProperties = await conn.QueryAsync<AllTags>("select attribute_id,attribute,attribute_display_name,sub_heading from attributes where attribute_type_id=4 order by sub_heading" );
+                productProperties = await conn.QueryAsync<AllTags>("select attribute_id,attribute,attribute_display_name,sub_heading from attributes where attribute_type_id=4 order by sub_heading");
 
             }
             return productProperties;
@@ -390,10 +403,24 @@ namespace badgerApi.Interfaces
         */
         public async Task<string> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues)
         {
+            string productAttirubteExistsQuery = "SELECT * FROM product_attribute_values WHERE product_id='" + NewProductAttributeValues.product_id + "' and attribute_id='" + NewProductAttributeValues.attribute_id + "';";
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<ProductAttributeValues>(NewProductAttributeValues);
-                return result.ToString();
+
+
+                var productAttributeExists = await conn.QueryAsync<ProductAttributeValues>(productAttirubteExistsQuery);
+
+                if (productAttributeExists == null || productAttributeExists.Count() == 0)
+                {
+                    var result = await conn.InsertAsync<ProductAttributeValues>(NewProductAttributeValues);
+                    return result.ToString();
+                }
+                else
+                {
+                    return productAttributeExists.First().product_attribute_value_id.ToString();
+                }
+
+
             }
 
         }
@@ -406,10 +433,23 @@ namespace badgerApi.Interfaces
         */
         public async Task<string> CreateSku(Sku NewSku)
         {
+
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<Sku>(NewSku);
-                return result.ToString();
+                string skuExistsQuery = "SELECT * FROM sku WHERE sku='" + NewSku.sku + "' and product_id =" + NewSku.product_id + " and vendor_id=" + NewSku.vendor_id + ";";
+
+                var SkuexistsResult = await conn.QueryAsync<Sku>(skuExistsQuery);
+                if (SkuexistsResult == null || SkuexistsResult.Count() == 0)
+                {
+                    var result = await conn.InsertAsync<Sku>(NewSku);
+                    return result.ToString();
+                }
+                else
+                {
+                    return SkuexistsResult.First().sku_id.ToString();
+                }
+
+
             }
 
         }
@@ -453,12 +493,25 @@ namespace badgerApi.Interfaces
        */
         public async Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn)
         {
+
+
+            string ProductUsedInExistsQuery = "SELECT * FROM product_used_in WHERE po_id='" + NewUsedIn.po_id + "' and product_id='" + NewUsedIn.product_id + "';";
             using (IDbConnection conn = Connection)
             {
-                var result =  await conn.InsertAsync<ProductUsedIn>(NewUsedIn);
+                var ProductUsedInExists = await conn.QueryAsync<ProductUsedIn>(ProductUsedInExistsQuery);
 
-                return result.ToString();
+                if (ProductUsedInExists == null || ProductUsedInExists.Count() == 0)
+                {
+                    var result = await conn.InsertAsync<ProductUsedIn>(NewUsedIn);
+                    return result.ToString();
+                }
+                else
+                {
+                    return ProductUsedInExists.First().product_used_in_id.ToString();
+                }
+
             }
+
 
         }
         /*
@@ -510,7 +563,7 @@ namespace badgerApi.Interfaces
             {
                 using (IDbConnection conn = Connection)
                 {
-                    String updateQuery = "update product_images set isprimary = "+ is_primary + " where product_image_id = "+ product_image_id;
+                    String updateQuery = "update product_images set isprimary = " + is_primary + " where product_image_id = " + product_image_id;
                     var updateResult = await conn.QueryAsync<object>(updateQuery);
                     res = true;
                 }
@@ -559,7 +612,7 @@ namespace badgerApi.Interfaces
             }
             return productDetails;
         }
-    
+
         /*
         Developer: Rizwan Ali
         Date: 08-09-19 
@@ -595,7 +648,7 @@ namespace badgerApi.Interfaces
             }
             return res;
         }
-       
+
     }
 }
 

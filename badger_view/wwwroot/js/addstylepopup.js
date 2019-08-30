@@ -7,7 +7,7 @@ Input: styles data
 Output: string of style
 */
 $(document).on('click', ".DeletefromPOButton", function () {
-    
+
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
@@ -41,9 +41,9 @@ $(document).on('click', ".DeletefromPOButton", function () {
     }
 
 
-    
 
-   
+
+
 
 });
 
@@ -56,10 +56,12 @@ Input: styles data
 Output: string of style
 */
 
+var Original_sku = "";
 var new_sku = "";
 var SelectedProductID;
 var data_Categories;
 var productSubCategoriesAction = [];
+var IsLineItemExists = false;
 $(document).on('click', ".AddNewStyleButton", function () {
     var action = $(this).attr('data-action');
 
@@ -68,7 +70,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
         return false;
     }
 
- 
+
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
@@ -86,16 +88,31 @@ $(document).on('click', ".AddNewStyleButton", function () {
     jsonData["product_name_no"] = $('#newAddStyleForm #product_title_no').val();
     jsonData["product_color_code"] = $('#newAddStyleForm #product_color_code').val();
     jsonData["product_type_id"] = $('#StyleType option:selected').val();
+    jsonData["IsLineItemExists"] = IsLineItemExists;
     jsonData["product_subtype_ids"] = productSubCategoriesAction;
 
     jsonData["vendor_style_sku"] = [];
     $('#po_input_fields_wrap .vendorSkuBox').each(function () {
         var style_sku = {};
-        style_sku["style_vendor_size"] = $(this).find('#styleVendorSize').val();
-        style_sku["style_size"] = $(this).find('#styleSize').val();
-        style_sku["style_sku"] = $(this).find('#styleSku').val();
-        style_sku["style_qty"] = $(this).find('#styleSkuQty').val();
-        if ($(this).find('#styleVendorSize').val() != null && $(this).find('#styleSize').val() != null && $(this).find('#styleSkuQty').val() != null) {
+        var styleVendorSize = $(this).find('#styleVendorSize').val();
+        var styleSize = $(this).find('#styleSize').val();
+        var styleSku = $(this).find('#styleSku').val();
+        var styleSkuQty = $(this).find('#styleSkuQty').val();
+        var styleSkuAttr = $($(this).find('#styleSku')).attr('disabled');
+        var IsNewSku = false;
+
+        if (typeof styleSkuAttr !== typeof undefined && styleSkuAttr !== false) {
+            IsNewSku = false;
+        } else {
+            IsNewSku = true;
+        }
+
+        style_sku["style_vendor_size"] = styleVendorSize;
+        style_sku["style_size"] = styleSize;
+        style_sku["style_sku"] = styleSku;
+        style_sku["style_qty"] = styleSkuQty;
+        style_sku["IsNewSku"] = IsNewSku;
+        if (styleVendorSize != null && styleSize != null && styleSku != null && styleSkuQty != null) {
             jsonData["vendor_style_sku"].push(style_sku);
         }
     });
@@ -246,7 +263,7 @@ $(document).ready(function () {
 
                 $('#StyleSubType').removeClass('errorFeild');
                 $('#StyleSubType').parents('.form-group').find('span.errorMsg').remove()
-            } 
+            }
 
         }
     });
@@ -278,6 +295,13 @@ Output: get data in fields
 $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
 
 
+
+    if (this.selectedIndex == 0) {
+        new_sku = Original_sku;
+        $('.poSkuFamily').text(Original_sku);
+
+
+    }
     var SelectedProduct = $(this.options[this.selectedIndex]);
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     SelectedProductID = SelectedProduct.data("product_id");
@@ -293,73 +317,134 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
 
     var SeletedPOID = SelectedProduct.data("po_id");
     $('#modaladdstylec StyleType option').removeAttr('selected');
-    if (SelectedProduct.data('product_type') == 1) {
-        $('#modaladdstylec #StyleType').val($('#modaladdstylec #StyleType option[value=1]').val()).change()
+    if (SelectedProduct.data('product_type') != 0) {
+
+        $('#modaladdstylec #StyleType').val($('#modaladdstylec #StyleType option[value=' + SelectedProduct.data('product_type') + ']').val()).change();;
     }
-    else {
-        $('#modaladdstylec #StyleType').val($('#modaladdstylec #StyleType option[value=2]').val()).change()
-    }
+
+
+    $('#modaladdstylec #StyleType').attr('disabled', '');
     $(".style_doc_section").empty();
     if (productImage != null) {
 
-        //$(".style_doc_section").append("<img src='/images/dress-clipart.jpg' width='50' />");
-        $(".style_doc_section").append("<img src='" + productImage+"' width='50' />  <br>");
-        //$(".style_doc_section").append("<a onclick='return false' class='documentsLink' data-proid=" + SelectedProductID + " data-val=" + productImage + ">" + productImage + " <span class='podeleteImage'>×</span></a>");
-   
-
-        $('#StyleSubType').multiselect('select', categoryIds);
-
+        $(".style_doc_section").append("<img src='" + productImage + "' width='50' />  <br>");
         $(".style_doc_section").removeClass('d-none');
 
     } else {
         $(".style_doc_section").addClass('d-none');
-	}
-	
+    }
+
     selectProductCategories = SelectedProduct.data('product_categories')
     if (selectProductCategories != null) {
         var categoryIds = [];
         for (var i = 0; i < selectProductCategories.length; i++) {
             var Category = selectProductCategories[i];
             categoryIds.push(Category.category_id);
-		}
-		$('#StyleSubType').multiselect('select', categoryIds);
-    }
-    $.ajax({
-        url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
-        dataType: 'json',
-        type: 'GET',
-        contentType: 'application/json',
-        processData: true,
-
-    }).always(function (data) {
-        // var sku_family = data.vendorSkufamily;
-        //data = ;
-        //console.log(data);
-
-        var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
-        $(".vendorSkuBox").remove();
-        $(".vendorSkuBox_disabled").remove();
-        $(".vendorSkuArea").show();
-
-        for (var x = 0; x < data.length; x++) {
-
-            var options = '';
-            if (window.sku_sizes) {
-                for (var i = 0; i < sku_sizes.length; i++) {
-                    var selected = "";
-                    if (sku_sizes[i].attribute_id == data[x].attribute_id)
-                        selected = "selected";
-                    options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
-                }
-            }
-
-            $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline " name="cqty[' + x + ']" placeholder="Qty"  id="styleSkuQty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
-
-            new_sku = data[x].sku.split('-')[0];
         }
+        $('#StyleSubType').multiselect('select', categoryIds);
+    }
+
+    if (this.selectedIndex != 0) {
+
+
+        $.ajax({
+            url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
+            dataType: 'json',
+            type: 'GET',
+            contentType: 'application/json',
+            processData: true,
+
+        }).always(function (data) {
+            IsLineItemExists = false;
+            // var sku_family = data.vendorSkufamily;
+            //data = ;
+            //console.log(data);
+            var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
+            $(".vendorSkuBox").remove();
+            $(".vendorSkuBox_disabled").remove();
+            $(".vendorSkuArea").show();
+            var options = '';
+            var Temp_Sku = '';
+            var skulist = SelectedProduct.data('skulist');
+            if (data == null || data.length == 0) {
+
+
+
+                if (window.sku_sizes) {
+                    for (var y = 0; y < skulist.length; y++) {
+                        if (skulist[y].sku == null || skulist[y].sku == '') {
+                            continue;
+                        }
+                        options = '';
+                        for (var i = 0; i < sku_sizes.length; i++) {
+                            var selected = "";
+                            if (sku_sizes[i].attribute_id == skulist[y].attribute_id)
+                                selected = "selected";
+                            options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
+                        }
+                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']"  placeholder="Vendor Size" id="styleVendorSize"   /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" disabled >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"  name="styleSku" id="styleSku" disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
+
+                        Temp_Sku = skulist[y].sku.split('-')[0];
+                    }
+                }
+
+            } else {
+                IsLineItemExists = true;
+
+                var LineItemsskuList = [];
+                for (var x = 0; x < data.length; x++) {
+
+                    options = '';
+                    if (window.sku_sizes) {
+                        for (var i = 0; i < sku_sizes.length; i++) {
+                            var selected = "";
+                            if (sku_sizes[i].attribute_id == data[x].attribute_id)
+                                selected = "selected";
+                            options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
+                        }
+                    }
+                    LineItemsskuList.push({ sku: data[x].sku, attribute_id: data[x].attribute_id, });
+
+                    $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required " name="cqty[' + x + ']" placeholder="Qty"  id="styleSkuQty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
+
+                    Temp_Sku = data[x].sku.split('-')[0];
+                }
+
+                if (window.sku_sizes) {
+                    for (var y = 0; y < skulist.length; y++) {
+                        if ($("input[value='" + skulist[y].sku + "']").val() != null) {
+                            continue;
+                        }
+
+                        if (skulist[y].sku == null || skulist[y].sku == '') {
+                            continue;
+                        }
+                        options = '';
+                        for (var i = 0; i < sku_sizes.length; i++) {
+                            var selected = "";
+                            if (sku_sizes[i].attribute_id == skulist[y].attribute_id)
+                                selected = "selected";
+                            options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
+                        }
+
+                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']"  placeholder="Vendor Size" id="styleVendorSize"   /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"  name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
+
+                        Temp_Sku = skulist[y].sku.split('-')[0];
+                    }
+                }
+
+
+            }
+            Original_sku = new_sku;
+            new_sku = Temp_Sku;
+            $('.poSkuFamily').text(new_sku);
+            $('.poAlertMsg').html('')
+        });
+    } else {
         $('.poAlertMsg').html('')
 
-    });
+        $('#modaladdstylec #StyleType').removeAttr('disabled');
+    }
 });
 
 
@@ -372,6 +457,7 @@ Output: string of vendor products
 */
 $(document).on('click', "#AddItemButton", function () {
 
+    $('#modaladdstylec #StyleType').removeAttr('disabled');
     $('#StyleSubType option').remove();
     $('#StyleSubType').multiselect('rebuild');
 
@@ -382,7 +468,7 @@ $(document).on('click', "#AddItemButton", function () {
     var CurrentVendorId = $(this).data("vendorid");
     var CurrentProductId = $(this).data("proid");
     var productImage = $(this).data("product_vendor_image");
-    $('.poNumber').text( $(this).data("ponumber"))
+    $('.poNumber').text($(this).data("ponumber"))
     $('#modaladdstylec input').val("");
     $('#modaladdstylec #StyleSubType option').each(function () {
         if (this.innerText != "Choose..." && this.innerText != "...") {
@@ -440,13 +526,13 @@ $(document).on('click', "#AddItemButton", function () {
                 if (CurrentProductId != null) {
                     selectedValue = "value = '" + data[i].product_id + "'";
 
-                   // $('#modaladdstylec #ExistingProductSelect').append("<option value='" + data[i].product_id + "' data-product_type='" + data[i].product_type_id + "' data-product_vendor_image='" + data[i].product_vendor_image + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+                    // $('#modaladdstylec #ExistingProductSelect').append("<option value='" + data[i].product_id + "' data-product_type='" + data[i].product_type_id + "' data-product_vendor_image='" + data[i].product_vendor_image + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
                 }
                 else {
-                 }
-                $('#modaladdstylec #ExistingProductSelect').append("<option " + selectedValue +"  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
+                }
+                $('#modaladdstylec #ExistingProductSelect').append("<option data-skulist='" + data[i].skulist + "' " + selectedValue + "  data-product_categories='" + data[i].productCategories + "' data-vendor_product_code='" + data[i].vendor_product_code + "' data-vendor_color_code='" + data[i].vendor_color_code + "'   data-product_type='" + data[i].product_type_id + "' data-product_color='" + data[i].vendor_color_name + "' data-product_unit_cost='" + data[i].product_cost + "' data-product_retail='" + data[i].product_retail + "' data-Product_id='" + data[i].product_id + "'  data-skufamily='" + data[i].sku_family + "'  data-po_id='" + CurrentPOID + "' data-name='" + data[i].product_name + "' >" + data[i].product_name + "</option>");
 
-               last_sku_family = data[i].sku_family;
+                last_sku_family = data[i].sku_family;
             }
             if (CurrentProductId != null) {
                 $('#modaladdstylec #ExistingProductSelect').val(CurrentProductId).trigger('change');
@@ -518,8 +604,10 @@ $(document).on('change', "#StyleType", function (event) {
 
 
     var selectedStyleType = $(this).val()
+    var skutextboxesCount = 0;
     if (selectedStyleType == '2') {
-        AppendSkuTextBoxes(2, selectedStyleType)
+        skutextboxesCount = 2
+
         $('.vendorSkuArea').show();
         $('.add_field_button').hide();
 
@@ -532,8 +620,8 @@ $(document).on('change', "#StyleType", function (event) {
     } else if (selectedStyleType == '1') {
 
         $('.vendorSkuArea').show();
-        AppendSkuTextBoxes(window.sku_sizes.length + 1, selectedStyleType)
 
+        skutextboxesCount = window.sku_sizes.length + 1
         $('.add_field_button').show();
 
     } else {
@@ -541,27 +629,32 @@ $(document).on('change', "#StyleType", function (event) {
         $('.vendorSkuArea').hide();
     }
 
+    if (SelectedProductID == null) {
+        AppendSkuTextBoxes(skutextboxesCount, selectedStyleType)
+    }
+
+
     $('#StyleSubType option').remove();
     $('#StyleSubType').multiselect('rebuild');
 
-	
-	if (selectedStyleType !=0) {
 
-		var subCategories = data_Categories.filter(function (category) {
-			return category.category_parent_id == selectedStyleType;
-		});
+    if (selectedStyleType != 0) {
 
-		if (subCategories.length) {
-			for (var i = 0; i < subCategories.length; i++) {
-				$('#StyleSubType').append("<option value='" + subCategories[i].category_id + "'>" + subCategories[i].category_name + "</option >")
-			}
+        var subCategories = data_Categories.filter(function (category) {
+            return category.category_parent_id == selectedStyleType;
+        });
 
-			$('#StyleSubType').multiselect('rebuild');
+        if (subCategories.length) {
+            for (var i = 0; i < subCategories.length; i++) {
+                $('#StyleSubType').append("<option value='" + subCategories[i].category_id + "'>" + subCategories[i].category_name + "</option >")
+            }
 
-		}
-	}
+            $('#StyleSubType').multiselect('rebuild');
 
-    
+        }
+    }
+
+
 
 
 
