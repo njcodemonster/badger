@@ -121,6 +121,12 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
     datatosend["category_id"] = $('#StyleType option:selected').val();
+    debugger;
+    if (datatosend["category_id"] == "0") {
+
+        alertBox('poAlertMsg', 'red', 'Please Select category');
+        return false;
+    }
     //datatosend["color_added"] = color_added;
     //datatosend["color_removed"] = color_removed;
     //debugger;
