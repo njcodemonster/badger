@@ -121,21 +121,21 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
     datatosend["category_id"] = $('#StyleType option:selected').val();
-    debugger;
-    if (datatosend["category_id"] == "0") {
-
-        alertBox('poAlertMsg', 'red', 'Please Select category');
-        return false;
-    }
-    //datatosend["color_added"] = color_added;
-    //datatosend["color_removed"] = color_removed;
     //debugger;
-    //$("input.form-control.dirty").each(function (item) {
-    //    datatosend[$(this).attr("id")] = $(this).val();
-    //});
-    //$("select.form-control.dirty").each(function (item) {
-    //    datatosend[$(this).attr("id")] = $(this).val();
-    //});
+    //if (datatosend["category_id"] == "0") {
+
+    //    alertBox('poAlertMsg', 'red', 'Please Select category');
+    //    return false;
+    //}
+    ////datatosend["color_added"] = color_added;
+    ////datatosend["color_removed"] = color_removed;
+    ////debugger;
+    ////$("input.form-control.dirty").each(function (item) {
+    ////    datatosend[$(this).attr("id")] = $(this).val();
+    ////});
+    ////$("select.form-control.dirty").each(function (item) {
+    ////    datatosend[$(this).attr("id")] = $(this).val();
+    ////});
     $.ajax({
 
         url: '/categoryoption/updateattributes/',
