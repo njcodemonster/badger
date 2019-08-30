@@ -203,9 +203,10 @@ namespace badgerApi.Interfaces
                     ",vendor_products.vendor_color_code" +
                     ",vendor_products.vendor_product_code " +
                     ",(SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories"+
-                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('attribute_id', pa.attribute_id ,'sku', pa.sku)),']') AS JSON) AS skulist " +
+                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('attribute_id', pa.attribute_id ,'sku', pa.sku,'vendor_size',av.value)),']') AS JSON) AS skulist " +
                     " from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
                     " INNER JOIN product_attributes pa ON product.product_id = pa.product_id" +
+                    " INNER JOIN attribute_values av ON pa.value_id=av.value_id" +
                     " where product.product_id = vendor_products.product_id and ISNULL(pa.sku)=0 and pa.sku <> '' " +
                     " and product.vendor_id=" + Vendor_id + " " +
                     " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +

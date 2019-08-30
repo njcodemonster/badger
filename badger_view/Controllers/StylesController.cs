@@ -298,14 +298,6 @@ namespace badger_view.Controllers
                 String used_in_id = await _BadgerApiHelper.GenericPostAsyncString<String>(used_in_obj.ToString(Formatting.None), "/product/createUsedIn");
             }
 
-
-
-
-
-
-
-
-
             for (int i = 0; i < product_subtype_ids.Count(); i++)
             {
                 string category_id = product_subtype_ids[i].Value<string>("category_id");
@@ -321,8 +313,6 @@ namespace badger_view.Controllers
                 var temp_product_category_id = await _BadgerApiHelper.GenericPostAsyncString<String>(productCategories.ToString(Formatting.None), "/product/UpdateProductCategory");
 
             }
-
-
 
             for (int i = 0; i < vendor_style_sku_data.Count; i++)
             {

@@ -367,9 +367,6 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
             var Temp_Sku = '';
             var skulist = SelectedProduct.data('skulist');
             if (data == null || data.length == 0) {
-
-
-
                 if (window.sku_sizes) {
                     for (var y = 0; y < skulist.length; y++) {
                         if (skulist[y].sku == null || skulist[y].sku == '') {
@@ -382,7 +379,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
                                 selected = "selected";
                             options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
                         }
-                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']"  placeholder="Vendor Size" id="styleVendorSize"   /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" disabled >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"  name="styleSku" id="styleSku" disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
+                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" disabled >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " id="styleSku" name="styleSku"  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"   disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
 
                         Temp_Sku = skulist[y].sku.split('-')[0];
                     }
@@ -405,7 +402,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
                     }
                     LineItemsskuList.push({ sku: data[x].sku, attribute_id: data[x].attribute_id, });
 
-                    $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '" style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required " name="cqty[' + x + ']" placeholder="Qty"  id="styleSkuQty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
+                    $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" value="' + data[x].sku + '"  style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required " name="cqty[' + x + ']" placeholder="Qty"  id="styleSkuQty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
 
                     Temp_Sku = data[x].sku.split('-')[0];
                 }
@@ -427,7 +424,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
                             options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
                         }
 
-                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']"  placeholder="Vendor Size" id="styleVendorSize"   /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"  name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
+                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"    name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
 
                         Temp_Sku = skulist[y].sku.split('-')[0];
                     }
@@ -457,6 +454,8 @@ Output: string of vendor products
 */
 $(document).on('click', "#AddItemButton", function () {
 
+
+    $('#modaladdstylec #ExistingProductSelect').removeAttr('disabled');
     $('#modaladdstylec #StyleType').removeAttr('disabled');
     $('#StyleSubType option').remove();
     $('#StyleSubType').multiselect('rebuild');
@@ -538,6 +537,9 @@ $(document).on('click', "#AddItemButton", function () {
                 $('#modaladdstylec #ExistingProductSelect').val(CurrentProductId).trigger('change');
                 $('#modaladdstylec #ExistingProductSelect').prop('disabled', true);
                 $('#modaladdstylec #StyleType').prop('disabled', true);
+                $('#DeletefromPOButton').show();
+            } else {
+                $('#DeletefromPOButton').hide();
             }
             var vendorCode = last_sku_family.substring(0, 2);
             var sku_number = parseInt(last_sku_family.substr(2)) + 1;
@@ -548,7 +550,6 @@ $(document).on('click', "#AddItemButton", function () {
             var sku_number = 100;
             new_sku = vendorCode + sku_number;
         }
-
 
         $('.poSkuFamily').text(new_sku);
         $('.poVendor').text(data_vendor[0].vendor_code)
@@ -667,6 +668,12 @@ $(document).on('focusout', '#po_input_fields_wrap .vendorSkuBox #styleVendorSize
         return this.value != "";
     }).length;
 
+
+    var styleSkuAttr = $($(this).parent().parent().find('#styleSku')).attr('disabled');
+
+    if (typeof styleSkuAttr !== typeof undefined && styleSkuAttr !== false) {
+        return;
+    }
 
     if ($(this).val() == "") {
 
