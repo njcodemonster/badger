@@ -322,6 +322,8 @@ namespace badger_view.Controllers
                 string style_qty = vendor_style_sku_data[i].Value<string>("style_qty");
                 string sku = vendor_style_sku_data[i].Value<string>("style_sku");
                 bool IsNewSku = vendor_style_sku_data[i].Value<bool>("IsNewSku");
+                int original_qty = vendor_style_sku_data[i].Value<int>("original_qty");
+
                 string sku_family = "";
                 if (first_sku == null)
                 {
@@ -376,42 +378,46 @@ namespace badger_view.Controllers
                 Sku_obj.Add("product_id", Int32.Parse(product_id));
                 String sku_id = await _BadgerApiHelper.GenericPostAsyncString<String>(Sku_obj.ToString(Formatting.None), "/sku/create");
 
+                JObject lineitem_obj = new JObject();
+                lineitem_obj.Add("po_id", po_id);
+                lineitem_obj.Add("vendor_id", vendor_id);
+                lineitem_obj.Add("sku", sku);
+                lineitem_obj.Add("product_id", Int32.Parse(product_id));
+                lineitem_obj.Add("line_item_cost", product_cost);
+                lineitem_obj.Add("line_item_retail", product_retail);
+                lineitem_obj.Add("line_item_type_id", product_type_id);
+                lineitem_obj.Add("line_item_ordered_quantity", style_qty);
+
+                JObject items = new JObject();
+                items.Add("barcode", barcode); // 0
+                items.Add("slot_number", slot_number); // 0
+                items.Add("bag_code", bag_code); // 0
+                items.Add("item_status_id", item_status_id); // 1
+                items.Add("ra_status", ra_status); // 0
+                items.Add("sku", sku);
+                items.Add("sku_id", sku_id);
+                items.Add("sku_family", sku_family);
+                items.Add("product_id", product_id);
+                items.Add("vendor_id", vendor_id);
+                items.Add("PO_id", po_id);
+                items.Add("created_by", user_id);
+                items.Add("original_qty", original_qty);
+                items.Add("created_at", _common.GetTimeStemp());
+
+
                 if (!IsLineItemExists || IsNewSku)
                 {
-                    JObject lineitem_obj = new JObject();
-                    lineitem_obj.Add("po_id", po_id);
-                    lineitem_obj.Add("vendor_id", vendor_id);
-                    lineitem_obj.Add("sku", sku);
-                    lineitem_obj.Add("product_id", Int32.Parse(product_id));
-                    lineitem_obj.Add("line_item_cost", product_cost);
-                    lineitem_obj.Add("line_item_retail", product_retail);
-                    lineitem_obj.Add("line_item_type_id", product_type_id);
-                    lineitem_obj.Add("line_item_ordered_quantity", style_qty);
+
                     String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/createLineitems");
-
-
-
-
-                    JObject items = new JObject();
-                    items.Add("barcode", barcode); // 0
-                    items.Add("slot_number", slot_number); // 0
-                    items.Add("bag_code", bag_code); // 0
-                    items.Add("item_status_id", item_status_id); // 1
-                    items.Add("ra_status", ra_status); // 0
-                    items.Add("sku", sku);
-                    items.Add("sku_id", sku_id);
-                    items.Add("sku_family", sku_family);
-                    items.Add("product_id", product_id);
-                    items.Add("vendor_id", vendor_id);
-                    items.Add("PO_id", po_id);
-                    items.Add("created_by", user_id);
-                    items.Add("created_at", _common.GetTimeStemp());
                     String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/createitems/" + style_qty);
 
                 }
                 else
                 {
-                    //need to implement updating old line items by quantity.
+                    String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/updateitems/" + style_qty);
+                    String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/updateLineitems");
+
+
                 }
 
             }

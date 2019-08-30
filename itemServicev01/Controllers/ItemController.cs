@@ -542,6 +542,41 @@ namespace itemService.Controllers
             }
             return NewInsertionID;
         }
+        /*Developer: Hamza Haq
+        Date:30-8-19
+        Action:get HTML Form(uodate items Data) from badger api and pass the data to items Repo
+        URL: /item/update/{quantity}
+        Input: HTML form Body Json with the data of new item(s)
+        output: New item id
+        */
+        [HttpPost("update/{qty}")]
+        public async Task<string> updatePostAsync([FromBody]   string value, int qty = 0)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                Items newItems = JsonConvert.DeserializeObject<Items>(value);
+                if (qty > newItems.original_qty)
+                {
+                   qty -= newItems.original_qty;
+                }
+                else
+                {
+                    //Delete items logic
+                }
+
+                for (int loop = 0; loop < qty; loop++)
+                {
+                    NewInsertionID = await _ItemRepository.Create(newItems);
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Item with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
 
 
         /*

@@ -30,6 +30,7 @@ namespace badgerApi.Interfaces
         Task<List<Product>> GetProductsByVendorId(String Vendor_id);
         Task<IEnumerable<ProductProperties>> GetProductProperties(string id);
         Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem);
+        Task<string> UpdatePoLineItems(PurchaseOrderLineItems NewLineitem);
         Task<IEnumerable<Productpairwith>> GetProductpairwiths(string id);
         Task<IEnumerable<Productcolorwith>> GetProductcolorwiths(string id);
         Task<IEnumerable<ProductImages>> GetProductImages(string id);
@@ -201,7 +202,7 @@ namespace badgerApi.Interfaces
                     ",product.created_at             " +
                     ",vendor_products.vendor_color_code" +
                     ",vendor_products.vendor_product_code " +
-                    ",(SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories"+
+                    ",(SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories" +
                     ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('attribute_id', pa.attribute_id ,'sku', pa.sku,'vendor_size',av.value)),']') AS JSON) AS skulist " +
                     " from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
                     " INNER JOIN product_attributes pa ON product.product_id = pa.product_id" +
@@ -230,7 +231,7 @@ namespace badgerApi.Interfaces
         public async Task<string> CreateProductAttribute(ProductAttributes NewProductAttributes)
         {
 
-            string ProductAttributesExistsQuery = "SELECT * FROM product_attributes WHERE sku='"+ NewProductAttributes .sku+ "' and  attribute_id='" + NewProductAttributes.attribute_id + "' and product_id='" + NewProductAttributes.product_id + "';";
+            string ProductAttributesExistsQuery = "SELECT * FROM product_attributes WHERE sku='" + NewProductAttributes.sku + "' and  attribute_id='" + NewProductAttributes.attribute_id + "' and product_id='" + NewProductAttributes.product_id + "';";
             using (IDbConnection conn = Connection)
             {
                 var ProductAttributesExist = await conn.QueryAsync<ProductAttributes>(ProductAttributesExistsQuery);
@@ -425,7 +426,7 @@ namespace badgerApi.Interfaces
 
         }
 
-        
+
         /*Developer: ubaid
         Date:5-7-19
         Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
@@ -441,6 +442,22 @@ namespace badgerApi.Interfaces
             }
 
         }
+        /*Developer: ubaid
+        Date:5-7-19
+        Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
+        Input: PurchaseOrderLineItems Model 
+        output: New PO LineItem id
+        */
+        public async Task<string> UpdatePoLineItems(PurchaseOrderLineItems NewLineitem)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.InsertAsync<PurchaseOrderLineItems>(NewLineitem);
+                return result.ToString();
+            }
+
+        }
+
         /*Developer: ubaid
        Date:5-7-19
        Action:get ProductAttributes values from controller and update the spesific Row

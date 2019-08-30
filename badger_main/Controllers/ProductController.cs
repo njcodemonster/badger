@@ -182,6 +182,31 @@ namespace badgerApi.Controllers
         }
 
         /*
+        Developer: Hamza Haq
+        Date:30-8-19
+        Action:get HTML Form (Update Styles Data) from VIEW and pass the data to items API
+        URL: /product/updateitems/{quantity}
+        Input: HTML form Body Json with the data of new product
+        output: old item id
+       */
+        [HttpPost("updateitems/{qty}")]
+        public async Task<string> updateItemsAsync([FromBody]  string value, int qty)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+
+                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/update/" + qty.ToString());
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
+        /*
         Developer: Azeem Hassan
         Date:7-8-19
         Action: Update specific product by id
@@ -358,6 +383,33 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+        /*
+        Developer: Hamza Haq
+        Date:5-7-19
+        Action:get HTML Form (update Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
+        URL: /product/updateLineitems
+        Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
+        output:current LINE ITEM id
+        */
+        // POST: api/product/create   // purchase order line items
+        [HttpPost("updateLineitems")]
+        public async Task<string> UpdateLineitemsAsync([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
+                NewInsertionID = await _ProductRepo.UpdatePoLineItems(newPOlineitems);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
         /*
         Developer: ubaid
         Date:13-7-19
