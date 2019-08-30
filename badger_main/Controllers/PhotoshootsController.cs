@@ -12,6 +12,7 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using badgerApi.Helper;
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -320,7 +321,16 @@ namespace badgerApi.Controllers
                     var ids = productId.Split(",");
                     foreach (var product_id in ids)
                     {
-                        await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
+                        
+                        var eventModel = new EventModel(table_name)
+                        {
+                            EventName = "photoshoot_created",
+                            EntityId = Int32.Parse(product_id),
+                            RefrenceId = Int32.Parse(NewInsertionID),
+                            UserId = userId,
+                        };
+                        await _eventRepo.AddEventAsync(eventModel);
+                       // await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
                         await _eventRepo.AddEventAsync(event_photoshoot_created_id, userId, Int32.Parse(product_id), event_create_photoshoot, _common.GetTimeStemp(), user_event_table_name);
                     }
                 }

@@ -225,11 +225,11 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 newPOId = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
-                var poEvent = _eventRepo.GetEventTypeByName("po_created");
+                var po_created = "po_created";
                 var eventModel = new EventModel(poEventTableName)
                 {
+                    EventName = po_created,
                     EntityId = Int32.Parse(newPOId),
-                    EventType = poEvent,
                     RefrenceId = 0,
                     UserId = newPurchaseOrder.created_by,
                 };
@@ -237,8 +237,8 @@ namespace badgerApi.Controllers
 
                 var userEvent = new EventModel(userEventTableName)
                 {
+                    EventName = po_created,
                     EntityId = newPurchaseOrder.created_by,
-                    EventType = poEvent,
                     RefrenceId = Convert.ToInt32(newPOId),
                     UserId = newPurchaseOrder.created_by,
                 };

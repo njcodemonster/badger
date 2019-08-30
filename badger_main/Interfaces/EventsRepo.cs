@@ -108,11 +108,12 @@ namespace badgerApi.Interfaces
         {
             try
             {
-                var eventNote = eventModel.EventType.EventDescription
+                var eventTypeModel = GetEventTypeByName(eventModel.EventName);
+                var eventNote = eventTypeModel.EventDescription
                     .Replace("%%userId%%", eventModel.UserId.ToString())
                     .Replace("%%entityId%%", eventModel.EntityId.ToString());
                 eventModel.EventNotes = eventNote;
-                eventModel.EventId = eventModel.EventType.EventId;
+                eventModel.EventId = eventTypeModel.EventId;
                 using (IDbConnection conn = Connection)
                 {
                    // string query = "insert into @Table values (null,@EntityId,@EventId,@RefrenceId,@EventNotes,@UserId,@CreatedAt)";
