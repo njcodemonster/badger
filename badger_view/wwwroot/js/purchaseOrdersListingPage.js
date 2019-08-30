@@ -149,7 +149,14 @@
         output: true/false
     */
     $("#poNumber,#poInvoiceNumber").on("keydown", function (event) {
-       return blockspecialcharacter(event)
+        var ctrlDown = event.ctrlKey || event.metaKey // Mac support
+        var inputValue = event.which;
+        if (ctrlDown || inputValue == 189) {
+            return true;
+        } else {
+            return blockspecialcharacter(event)
+        }
+       
     });
 
     /*
