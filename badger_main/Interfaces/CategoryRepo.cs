@@ -79,7 +79,7 @@ namespace badgerApi.Interfaces
             IEnumerable<Tags> productProperties;
             using (IDbConnection conn = Connection)
             {
-                productProperties = await conn.QueryAsync<Tags>("select attribute_id,attribute,attribute_display_name,sub_heading from attributes where attribute_type_id=4 order by sub_heading");
+                productProperties = await conn.QueryAsync<Tags>("select attribute_id,attribute,attribute_display_name,sub_heading from attributes where attribute_type_id=4 order by sub_heading,attribute_display_name");
 
             }
             return productProperties;
@@ -120,7 +120,7 @@ namespace badgerApi.Interfaces
                 try
                 {
                     productProperties = await conn.QueryAsync<Tags>
-                 ("SELECT  * FROM(SELECT b.attribute_id, b.attribute, b.attribute_display_name, b.sub_heading, 'checked' AS isChecked FROM category_options a INNER JOIN attributes b ON a.attribute_id = b.attribute_id WHERE a.category_id = " + styleid + " UNION ALL SELECT b.attribute_id, b.attribute, b.attribute_display_name, b.sub_heading, '' AS isChecked FROM attributes b WHERE b.attribute_id NOT IN(SELECT b.attribute_id FROM category_options a INNER JOIN attributes b ON a.attribute_id = b.attribute_id WHERE a.category_id = " + styleid + ") AND attribute_type_id = 4) c ORDER BY c.sub_heading");
+                 ("SELECT  * FROM(SELECT b.attribute_id, b.attribute, b.attribute_display_name, b.sub_heading, 'checked' AS isChecked FROM category_options a INNER JOIN attributes b ON a.attribute_id = b.attribute_id WHERE a.category_id = " + styleid + " UNION ALL SELECT b.attribute_id, b.attribute, b.attribute_display_name, b.sub_heading, '' AS isChecked FROM attributes b WHERE b.attribute_id NOT IN(SELECT b.attribute_id FROM category_options a INNER JOIN attributes b ON a.attribute_id = b.attribute_id WHERE a.category_id = " + styleid + ") AND attribute_type_id = 4) c ORDER BY c.sub_heading, c.attribute_display_name");
 
                 }
                 catch (Exception ex)

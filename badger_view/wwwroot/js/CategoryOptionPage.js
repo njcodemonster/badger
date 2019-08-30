@@ -122,11 +122,15 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["tag_removed"] = tag_removed;
     datatosend["category_id"] = $('#StyleType option:selected').val();
     //debugger;
-    //if (datatosend["category_id"] == "0") {
+    if (datatosend["category_id"] == "0") {
 
-    //    alertBox('poAlertMsg', 'red', 'Please Select category');
-    //    return false;
-    //}
+        alertBox('poAlertMsg', 'red', 'Please Select category');
+        return false;
+    }
+    if (tag_added.length == 0 && tag_removed.length == 0) {
+        alertBox('poAlertMsg', 'red', 'No changes to save');
+        return false;
+    }
     ////datatosend["color_added"] = color_added;
     ////datatosend["color_removed"] = color_removed;
     ////debugger;
