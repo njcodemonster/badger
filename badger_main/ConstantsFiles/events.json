@@ -158,5 +158,35 @@
     "EventId": 28,
     "EventName": "update_vendor_repo",
     "EventDescription": "Vendor repo updated by user =%%userid%% with vendor id= %%entityId%%"
+  },
+  {
+    "EventId": 34,
+    "EventName": "product_photoshoot_created",
+    "EventDescription": "Photoshoot product created by user =%%userid%% with photoshoot id = %%entityId%%"
+  },
+  {
+    "EventId": 17,
+    "EventName": "photoshoot_started",
+    "EventDescription": "Photoshoot started by user =%%userid%% with product id = %%entityId%%"
+  },
+  {
+    "EventId": 18,
+    "EventName": "photoshoot_not_started",
+    "EventDescription": "Photoshoot not started by user =%%userid%% with product id = %%entityId%%"
+  },
+  {
+    "EventId": 19,
+    "EventName": "photoshoot_sent_to_editor",
+    "EventDescription": "Photoshoot sent to editor by user =%%userid%% with product id = %%entityId%%"
+  },
+  {
+    "EventId": 32,
+    "EventName": "photoshoot_note_created",
+    "EventDescription": "Photoshoot note created by user =%%userid%% with photoshoot id = %%entityId%%"
+  },
+  {
+    "EventId": 33,
+    "EventName": "photoshoot_summmary_updated",
+    "EventDescription": "Photoshoot summary update by user =%%userid%% with photoshoot id = %%entityId%%"
   }
 ]

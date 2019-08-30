@@ -24,7 +24,6 @@ namespace badgerApi.Interfaces
         Task<bool> AddVendorEventAsync(int vendor_id,int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
         Task<bool> AddItemEventAsync(int item_id, int barcode, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName);
         Task<int> AddEventAsync(EventModel eventModel);
-        EventTypeModel GetEventTypeByName(string name);
         
     }
     public class EventsRepo : IEventRepo
@@ -45,7 +44,7 @@ namespace badgerApi.Interfaces
             return eventTypeList;
         }
 
-        public EventTypeModel GetEventTypeByName(string name)
+        private EventTypeModel GetEventTypeByName(string name)
         {
             return EventTypes.Single(x => x.EventName == name?.ToLower());
         }
