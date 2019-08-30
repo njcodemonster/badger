@@ -121,6 +121,12 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
     datatosend["category_id"] = $('#StyleType option:selected').val();
+    debugger;
+    if (datatosend["category_id"] == "0") {
+
+        alertBox('poAlertMsg', 'red', 'Please Select category');
+        return false;
+    }
     //datatosend["color_added"] = color_added;
     //datatosend["color_removed"] = color_removed;
     //debugger;
@@ -163,7 +169,9 @@ Output: get data in fields
 $(document).on('change', '#StyleType', function () {
     debugger;
     var SelectedStyleType = $(this.options[this.selectedIndex]).val();
+    $('#loading').show();
     GetTags(SelectedStyleType);
+    //$('.loading').addClass("d-none");
 });
 
 
@@ -216,7 +224,7 @@ $(document).on('click', "#AddSubCat", function () {
         debugger;
 
         $('#modalAddSubCategory #ParentCategorySelect option').remove();
-        $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value='-1'>Choose...</option>");
+        $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value=''>Choose...</option>");
 
         data = data.vendorProducts;
         if (data.length) {
