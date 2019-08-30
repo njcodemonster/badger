@@ -45,7 +45,7 @@ namespace badgerApi.Controllers
             CategoryOptionPage categoryOption = new CategoryOptionPage();
             try
             {
-                categoryOption.AllColors = await _CategoryRepo.GetAllColors();
+                //categoryOption.AllColors = await _CategoryRepo.GetAllColors();
                 categoryOption.AllTags = await _CategoryRepo.GetAllTags();
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace badgerApi.Controllers
             CategoryOptionPage categoryOption = new CategoryOptionPage();
             try
             {
-                categoryOption.AllColors = await _CategoryRepo.GetAllColors();
+                //categoryOption.AllColors = await _CategoryRepo.GetAllColors();
                 categoryOption.AllTags = await _CategoryRepo.GetAllTagsTypeWise(id);
             }
             catch (Exception ex)
