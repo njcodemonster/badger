@@ -1,7 +1,53 @@
- [
-    {
-      "EventId": 2,
-      "EventName": "po_created",
-      "EventDescription": "Purchase order created by user =%%userId%% with purchase order id= %%entityId%%"
-    }
-  ]
+[
+  {
+    "EventId": 2,
+    "EventName": "po_created",
+    "EventDescription": "Purchase order created by user =%%userId%% with purchase order id= %%entityId%%"
+  },
+  {
+    "EventId": 6,
+    "EventName": "po_note_create",
+    "EventDescription": "Purchase order note created by user =%%userid%% with note id= %%entityId%%"
+  },
+  {
+    "EventId": 7,
+    "EventName": "po_document_create",
+    "EventDescription": "Purchase order document created by user =%%userid%% with document id= %%entityId%%"
+  },
+  {
+    "EventId": 8,
+    "EventName": "po_update",
+    "EventDescription": "Purchase order updated by user =%%userid%% with purchase order id= %%entityId%%"
+  },
+  {
+    "EventId": 9,
+    "EventName": "po_specific_update",
+    "EventDescription": "Purchase order specific updated by user =%%userid%% with purchase order id= %%entityId%%"
+  },
+  {
+    "EventId": 24,
+    "EventName": "po_delete",
+    "EventDescription": "Purchase order deleted by user =%%userid%% with purchase order id= %%entityId%%"
+  },
+  {
+    "EventId": 31,
+    "EventName": "po_delete_document",
+    "EventDescription": "Purchase order document deleted by user =%%userid%% with document id= %%entityId%%"
+  },
+  {
+    "EventId": 5,
+    "EventName": "discount",
+    "EventDescription": "Purchase order discount created by user =%%userid%% with purchase order discount id= %%entityId%%"
+  },
+  {
+    "EventId": 12,
+    "EventName": "discount_update",
+    "EventDescription": "Purchase order discount updated by user =%%userid%% with purchase order discount id= %%entityId%%"
+  },
+  {
+    "EventId": 13,
+    "EventName": "discount_specificupdate",
+    "EventDescription": "Purchase order discount specific updated by user =%%userid%% with purchase order discount id= %%entityId%%"
+  },
+  
+]
