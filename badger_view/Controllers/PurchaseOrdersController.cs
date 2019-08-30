@@ -1432,7 +1432,47 @@ namespace badger_view.Controllers
             }
             return updateSkuID;
         }
+        /*
+      Developer: Azeem hassan
+      Date: 7-5-19 
+      Action: update Purchase Order sku weight update by id by using badger api helper and login helper 
+      URL: /purchaseorders/MultipleskuWeightUpdate/id
+      Request: Get
+      Input: int id, FromBody json object
+      output: string of purchase orders sku
+      */
+        [Authorize]
+        [HttpPost("purchaseorders/MultipleskuWeightUpdate")]
+        public async Task<string> MultipleskuWeightUpdate([FromBody] JObject json)
+        {
+            SetBadgerHelper();
 
+            string loginUserId = await _LoginHelper.GetLoginUserId();
+
+            string updateSkuID = "0";
+            try
+            {
+                JObject Data = JObject.Parse(json.ToString());
+                JArray skuData = (JArray)Data["skuData"];
+                for (int i = 0; i < skuData.Count; i++)
+                {
+                    JObject skuUpdate = new JObject();
+                    skuUpdate.Add("sku_id", skuData[i].Value<string>("sku_id"));
+                    skuUpdate.Add("weight", skuData[i].Value<string>("weight"));
+                    skuUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                    skuUpdate.Add("updated_at", _common.GetTimeStemp());
+
+                    updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(skuUpdate.ToString(Formatting.None), "/sku/updatespecific/" + skuData[i].Value<string>("sku_id"));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
+                updateSkuID = "Failed";
+            }
+            return updateSkuID;
+        }
         /*
         Developer: Sajid Khan
         Date: 7-5-19 

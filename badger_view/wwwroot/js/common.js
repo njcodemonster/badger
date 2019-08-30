@@ -139,7 +139,7 @@ function allLetterAllow(event) {
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
     var ctrlDown = event.ctrlKey || event.metaKey // Mac support
 
-    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88)) {
+    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88) || charCode == 9) {
         return true;
     }
 
@@ -294,7 +294,12 @@ $(document).on('click', '.collapsButton', function (e) {
     });
  
 });
-
+$(document).on('keydown', '.required', function (e) {
+    console.log(this.value);
+    if (e.which === 32 && e.target.selectionStart === 0) {
+        return false;
+    }
+});
 
 /*$('.collapse').on('shown.bs.collapse', function () {
     $(this).find(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
