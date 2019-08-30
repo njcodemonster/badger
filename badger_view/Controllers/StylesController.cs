@@ -374,7 +374,7 @@ namespace badger_view.Controllers
                 Sku_obj.Add("sku", sku);
                 Sku_obj.Add("vendor_id", vendor_id);
                 Sku_obj.Add("product_id", Int32.Parse(product_id));
-                String sku_id = await _BadgerApiHelper.GenericPostAsyncString<String>(Sku_obj.ToString(Formatting.None), "/product/createSku");
+                String sku_id = await _BadgerApiHelper.GenericPostAsyncString<String>(Sku_obj.ToString(Formatting.None), "/sku/create");
 
                 if (!IsLineItemExists || IsNewSku)
                 {

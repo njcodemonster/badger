@@ -336,32 +336,6 @@ namespace badgerApi.Controllers
         /*
         Developer: ubaid
         Date:5-7-19
-        Action:get HTML Form (New Styles SKU Data) from VIEW and pass the data to API product Repo 
-        URL: /product/createSku
-        Input: HTML form Body Json with the data of new SKU values and product_id
-        output: New SKU id
-       */
-        // POST: api/product/create
-        [HttpPost("createSku")]
-        public async Task<string> PostAsyncSku([FromBody]   string value)
-        {
-            string NewInsertionID = "0";
-            try
-            {
-                Sku newSku = JsonConvert.DeserializeObject<Sku>(value);
-                NewInsertionID = await _ProductRepo.CreateSku(newSku);
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new Sku with message" + ex.Message);
-            }
-            return NewInsertionID;
-        }
-
-        /*
-        Developer: ubaid
-        Date:5-7-19
         Action:get HTML Form (New Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
         URL: /product/createLineitems
         Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
@@ -585,7 +559,7 @@ namespace badgerApi.Controllers
 
         }
 
-        
+
 
         /*
        Developer: Rizvan Ali

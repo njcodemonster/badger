@@ -29,7 +29,6 @@ namespace badgerApi.Interfaces
         Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
         Task<List<Product>> GetProductsByVendorId(String Vendor_id);
         Task<IEnumerable<ProductProperties>> GetProductProperties(string id);
-        Task<string> CreateSku(Sku NewSku);
         Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem);
         Task<IEnumerable<Productpairwith>> GetProductpairwiths(string id);
         Task<IEnumerable<Productcolorwith>> GetProductcolorwiths(string id);
@@ -426,34 +425,7 @@ namespace badgerApi.Interfaces
 
         }
 
-        /*Developer: ubaid
-        Date:5-7-19
-        Action:get SKU Model from controller and insert the SKU
-        Input: SKU Model 
-        output: New SKU id
-        */
-        public async Task<string> CreateSku(Sku NewSku)
-        {
-
-            using (IDbConnection conn = Connection)
-            {
-                string skuExistsQuery = "SELECT * FROM sku WHERE sku='" + NewSku.sku + "' and product_id =" + NewSku.product_id + " and vendor_id=" + NewSku.vendor_id + ";";
-
-                var SkuexistsResult = await conn.QueryAsync<Sku>(skuExistsQuery);
-                if (SkuexistsResult == null || SkuexistsResult.Count() == 0)
-                {
-                    var result = await conn.InsertAsync<Sku>(NewSku);
-                    return result.ToString();
-                }
-                else
-                {
-                    return SkuexistsResult.First().sku_id.ToString();
-                }
-
-
-            }
-
-        }
+        
         /*Developer: ubaid
         Date:5-7-19
         Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
