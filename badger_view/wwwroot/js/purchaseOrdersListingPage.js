@@ -669,7 +669,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     var photos = $('#photos').val();
     var remaining = $('#remaining').val();
 
-    $('.poTracking').each(function () {
+    $('.poTracking:visible').each(function () {
         var tracking_json = {};
 
         tracking_json['track'] = $(this).val();
