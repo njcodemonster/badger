@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
-namespace GenericModals.Models
+namespace GenericModals.PurchaseOrder
 {
+    [Table("purchase_orders")]
     public partial class PurchaseOrders
-    {     
+    {   
+        [Key]
         public int po_id { get; set; }
         public string vendor_po_number { get; set; }
         public string vendor_invoice_number { get; set; }

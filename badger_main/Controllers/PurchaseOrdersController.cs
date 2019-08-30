@@ -15,6 +15,11 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Collections;
 using System.Dynamic;
+using CommonHelper;
+using GenericModals.Event;
+using GenericModals.PurchaseOrder;
+using GenericModals;
+using GenericModals.Extentions;
 
 namespace badgerApi.Controllers
 {
@@ -42,7 +47,7 @@ namespace badgerApi.Controllers
         private int event_type_po_delete_document_id = 31;
 
         private string userEventTableName = "user_events";
-        private string tableName = "purchase_order_events";
+        private string poEventTableName = "purchase_order_events";
 
         private string event_create_purchase_orders = "Purchase order created by user =%%userid%% with purchase order id= %%poid%%";
         private string event_create_purchase_orders_notecreate = "Purchase order note created by user =%%userid%% with note id= %%noteid%%";
@@ -152,26 +157,27 @@ namespace badgerApi.Controllers
         output: list of dynamic Object of Purchase Orders
         */
         [HttpGet("listpageview/{start}/{limit}/{countNeeded}")]
-        public async Task<object> ListPageViewAsync(int start, int limit, Boolean countNeeded)
+        public async Task<ResponseModel> ListPageViewAsync(int start, int limit, Boolean countNeeded)
         {
             dynamic poPageList = new object();
-            try
-            {
+            //try
+            //{
                 poPageList = await _PurchaseOrdersRepo.GetPurchaseOrdersPageList(start, limit);
                 if (countNeeded)
                 {
                     string poPageCount = await _PurchaseOrdersRepo.Count();
                     poPageList.Count = poPageCount;
                 }
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
+                return ResponseHelper.GetResponse(poPageList);
+            //}
+            //catch (Exception ex)
+            //{
+            //    var logger = _loggerFactory.CreateLogger("internal_error_log");
+            //    logger.LogInformation("Problem happened in selecting the data for purchaseorders listpageview with message" + ex.Message);
 
-            }
+            //}
 
-            return poPageList;
+           // return poPageList;
 
         }
         /*
@@ -214,24 +220,37 @@ namespace badgerApi.Controllers
         [HttpPost("create")]
         public async Task<string> PostAsync([FromBody] string value)
         {
-            string NewInsertionID = "0";
+            string newPOId = "0";
             try
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
-                NewInsertionID = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
-
-                event_create_purchase_orders = event_create_purchase_orders.Replace("%%userid%%", newPurchaseOrder.created_by.ToString()).Replace("%%poid%%", NewInsertionID);
-
-                _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(NewInsertionID), event_type_po_id, 0, event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp(), tableName);
-
-                _eventRepo.AddEventAsync(event_type_po_id, newPurchaseOrder.created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                newPOId = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
+                var poEvent = _eventRepo.GetEventTypeByName("po_created");
+                var eventModel = new EventModel(poEventTableName)
+                {
+                    EntityId = Int32.Parse(newPOId),
+                    EventType = poEvent,
+                    RefrenceId = 0,
+                    UserId = newPurchaseOrder.created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
+               //   await _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(newPOId), event_type_po_id, 0, event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp(), poEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = newPurchaseOrder.created_by,
+                    EventType = poEvent,
+                    RefrenceId = Convert.ToInt32(newPOId),
+                    UserId = newPurchaseOrder.created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
+               // await _eventRepo.AddEventAsync(event_type_po_id, newPurchaseOrder.created_by, Int32.Parse(newPOId), event_create_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in making new purchaseorders create with message" + ex.Message);
             }
-            return NewInsertionID;
+            return newPOId;
         }
 
         /*
@@ -258,9 +277,9 @@ namespace badgerApi.Controllers
 
                 event_create_purchase_orders_notecreate = event_create_purchase_orders_notecreate.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp(), tableName);
+                await _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp(), poEventTableName);
 
-                _eventRepo.AddEventAsync(event_type_po_note_create_id, created_by, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, _common.GetTimeStemp(), userEventTableName);
+                await _eventRepo.AddEventAsync(event_type_po_note_create_id, created_by, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -296,7 +315,7 @@ namespace badgerApi.Controllers
 
                 event_create_purchase_orders_documentcreate = event_create_purchase_orders_documentcreate.Replace("%%userid%%", created_by.ToString()).Replace("%%documentid%%", NewInsertionID);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp(), tableName);
+                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp(), poEventTableName);
 
                 _eventRepo.AddEventAsync(event_type_po_document_create_id, created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, _common.GetTimeStemp(), userEventTableName);
             }
@@ -387,7 +406,7 @@ namespace badgerApi.Controllers
 
                 event_update_purchase_orders = event_update_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
 
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), poEventTableName);
 
                 _eventRepo.AddEventAsync(event_type_po_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
@@ -524,7 +543,7 @@ namespace badgerApi.Controllers
                 {
                     event_delete_purchase_orders = event_delete_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
 
-                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_delete_id, id, event_delete_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_delete_id, id, event_delete_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), poEventTableName);
 
                     _eventRepo.AddEventAsync(event_type_po_delete_id, PurchaseOrdersToUpdate.updated_by, id, event_delete_purchase_orders, _common.GetTimeStemp(), userEventTableName);
                 }
@@ -532,7 +551,7 @@ namespace badgerApi.Controllers
                 {
                     event_updatespecific_purchase_orders = event_updatespecific_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
 
-                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
+                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), poEventTableName);
 
                     _eventRepo.AddEventAsync(event_type_po_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders, _common.GetTimeStemp(), userEventTableName);
                 }
@@ -601,7 +620,7 @@ namespace badgerApi.Controllers
 
                     event_delete_document_purchase_orders = event_delete_document_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%documentid%%", id.ToString());
 
-                    _eventRepo.AddPurchaseOrdersEventAsync(po_id, event_type_po_delete_document_id, id, event_delete_document_purchase_orders, updated_by, _common.GetTimeStemp(), tableName);
+                    _eventRepo.AddPurchaseOrdersEventAsync(po_id, event_type_po_delete_document_id, id, event_delete_document_purchase_orders, updated_by, _common.GetTimeStemp(), poEventTableName);
 
                     _eventRepo.AddEventAsync(event_type_po_delete_document_id, updated_by, id, event_delete_document_purchase_orders, _common.GetTimeStemp(), userEventTableName);
 
@@ -934,7 +953,6 @@ namespace badgerApi.Controllers
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
-
             }
             return countData;
         }
@@ -1025,6 +1043,42 @@ namespace badgerApi.Controllers
 
             return poPageList;
 
+        }
+
+        [HttpPost("claim")]
+        public async Task<IActionResult> Claim([FromBody] PoClaim claim)
+        {
+            PoClaim response;
+            if (claim.claim_type == ClaimerType.InspectClaimer)
+                response = await _PurchaseOrdersRepo.ClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
+            else
+                response = await _PurchaseOrdersRepo.ClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
+            return Ok(response);
+        }
+
+        [HttpPost("removeclaim")]
+        public async Task<IActionResult> RemoveClaim([FromBody] PoClaim claim)
+        {
+            try
+            {
+                PoClaim response;
+                if (claim.claim_type == ClaimerType.InspectClaimer)
+                    response = await _PurchaseOrdersRepo.RemoveClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
+                else
+                    response = await _PurchaseOrdersRepo.RemoveClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpGet("loadclaim/{poId:int}")]
+        public async Task<ResponseModel> LoadClaim(int poId)
+        {
+            var response = await _PurchaseOrdersRepo.GetClaim(poId);
+            return ResponseHelper.GetResponse(response);
         }
     }
     

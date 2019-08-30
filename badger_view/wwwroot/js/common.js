@@ -153,7 +153,7 @@ function allLetterAllow(event) {
   Date: 7-3-19 
   action:  alert function for any event success or failed. give area action and massage to print
 */
-function alertBox(area, action, massage) {
+function alertBox(area, action, massage,timeout) {
     $('.alert').remove()
     var color = 'success'
     if (action == 'red')
@@ -166,7 +166,7 @@ function alertBox(area, action, massage) {
      $('body').append(html);
     setTimeout(function () {
         $('.alert').remove()
-    }, 3000)
+    }, timeout ? timeout : 3000)
 }
 
 /*

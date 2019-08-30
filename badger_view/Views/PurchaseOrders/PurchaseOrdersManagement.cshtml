@@ -279,7 +279,7 @@
     <div class="accordion" id="accordionpomgmt">
 
        
-            @foreach (GenericModals.Models.PurchaseOrdersInfo purchaseOrder in Model.POList)
+            @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrder in Model.POList)
             {
                 <div class="card POList">
                     <div class="card-header" id="heading_@purchaseOrder.po_id" data-POid="@purchaseOrder.po_id">
@@ -308,7 +308,7 @@
 
 @*
 @{ int First = 0; }
-@foreach (PurchaseOrdersInfo purchaseOrder in Model.POList)
+@foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrder in Model.POList)
 {
 
     <table class="table outerboddy @purchaseOrder.po_id">

@@ -78,7 +78,6 @@
                     contentType: 'application/json',
                     processData: false,
                 }).always(function (data) {
-debugger;
                     console.log(data);
                     if (data.length > 0) {
                         response(data);
@@ -1259,28 +1258,28 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
-
-        if (data.purchase_order[0].po_status == 4) {
+        var po = data.purchase_order[0];
+        if (po.po_status == 4) {
 
             alert("This P.O does not exist.");
             window.location = location.protocol + "//" + location.host;
             return false;
 
         } else {
-
-            $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
-            $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
-            $('#EditItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
+            $("#poId").val(po.po_id);
+            $('.orderNumber').text(po.vendor_po_number);
+            $('#AddItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id);
+            $('#EditItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id);
 
             purchaseOrderData(data);
             $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
-            if (data.purchase_order[0].po_status == 5) {
-                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm checked-'+id+'" data-shipping="' + data.purchase_order[0].shipping + '" data-ID="' + data.purchase_order[0].po_id + '" id = "EditPurhaseOrderCheckedIn">Checkin</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
+            if (po.po_status == 5) {
+                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm" data-shipping="' + po.shipping + '" data-ID="' + po.po_id + '" id = "EditPurhaseOrderCheckedIn">Checkin</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
             } else {
                 $('.checkin_btn').html('<button type="button" class="btn btn-success btn-sm">Checked-In</button>  <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
             }
-
+            LoadClaim();
             $('.loading').addClass("d-none");
         }
 

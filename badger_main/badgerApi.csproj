@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Categories.cs" />
+    <Compile Remove="Models\CategoryOptionPage.cs" />
+    <Compile Remove="Models\CategoryOptions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Logs\BadgerAPIFunctional-20190718.txt" />
     <None Remove="Logs\BadgerAPIFunctional-20190719.txt" />
     <None Remove="Logs\BadgerAPIFunctional-20190731.txt" />
@@ -21,6 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Dapper.Contrib" Version="1.60.1" />
+    <PackageReference Include="DapperExtensions" Version="1.6.3" />
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
