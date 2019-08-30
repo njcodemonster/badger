@@ -13,11 +13,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using badgerApi.Models;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using Newtonsoft.Json;
+
+using System.Dynamic;
+using GenericModals.PurchaseOrder;
+
 namespace badgerApi.Interfaces
 {
     public interface IProductRepository
@@ -53,6 +58,9 @@ namespace badgerApi.Interfaces
         Task<string> RemovePairWithProduct(string product_id, string pair_product_id);
         Task<string> AddOtherColorProducts(string product_id, string pair_product_id, string userid, string dateTime);
         Task<string> RemoveOtherColorProducts(string product_id, string same_color_product_id);
+        Task<Object> GetProductIdsByPurchaseOrder();
+        Task<Object> GetPublishedProductIds(string poids);
+        Task<bool> DeleteProduct(string product_id);
     }
     public class ProductRepo : IProductRepository
     {
@@ -204,8 +212,45 @@ namespace badgerApi.Interfaces
             //List<Product> toReturn = new List<Product>();
             using(IDbConnection conn = Connection)
             {
-                toReturn = await conn.QueryAsync<Product>("Select * from product where vendor_id=" + Vendor_id);
+
+
+                string querytoRun = "SELECT product.product_id ,product.product_type_id" +
+                    ",product.vendor_id              " +
+                    ",product.product_availability   " +
+                    ",product.published_at           " +
+                    ",product.product_vendor_image   " +
+                    ",product.product_name           " +
+                    ",product.product_url_handle     " +
+                    ",product.product_description    " +
+                    ",product.vendor_color_name      " +
+                    ",product.sku_family             " +
+                    ",product.size_and_fit_id        " +
+                    ",product.wash_type_id           " +
+                    ",product.product_discount       " +
+                    ",product.product_cost           " +
+                    ",product.product_retail         " +
+                    ",product.published_status       " +
+                    ",product.is_on_site_status      " +
+                    ",product.created_by             " +
+                    ",product.updated_by             " +
+                    ",product.updated_at             " +
+                    ",product.created_at             " +
+                    ",vendor_products.vendor_color_code" +
+                    ",vendor_products.vendor_product_code " +
+                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id,'category_id', pc.category_id)),']') AS JSON) AS productCategories " +
+					" from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
+				    " LEFT JOIN product_categories pc ON pc.product_id=product.product_id " +
+                    " where product.product_id = vendor_products.product_id" +
+                    " and product.vendor_id=" + Vendor_id + " " +
+                    " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +
+                    ",product.product_discount  ,product.product_cost ,product.product_retail " +
+                    ",product.published_status  ,product.is_on_site_status ,product.created_by  ,product.updated_by ,product.updated_at  ,product.created_at ,vendor_products.vendor_color_code ,vendor_products.vendor_product_code ";
+
+
+                toReturn = await conn.QueryAsync<Product>(querytoRun);
             }
+
+           
             return toReturn.ToList();
         }
 
@@ -576,6 +621,80 @@ namespace badgerApi.Interfaces
             catch (Exception ex)
             {
 
+            }
+            return res;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 24-08-19 
+        Action: get product ids by poid from db
+        Input: string poids
+        output: dynamic list of object product
+        */
+        public async Task<Object> GetProductIdsByPurchaseOrder()
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT purchase_orders.po_id, product_used_in.product_id  FROM purchase_orders, product_used_in WHERE purchase_orders.po_status != 2 AND purchase_orders.po_status != 4 AND purchase_orders.po_id = product_used_in.po_id order by ra_flag DESC, FIELD(a.po_status, 3, 6, 5) asc";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 24-08-19 
+        Action: get published product ids by product ids from db
+        Input: string poids
+        output: dynamic list of object published product ids
+        */
+        public async Task<Object> GetPublishedProductIds(string poids)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id FROM product WHERE published_status= 1 AND product_id IN (" + poids + ")";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return productDetails;
+        }
+    
+        /*
+        Developer: Rizwan Ali
+        Date: 08-09-19 
+        Action: delete product's al traces in database
+        Input: int product_id
+        output: boolean
+      */
+        public async Task<bool> DeleteProduct(string product_id)
+        {
+            bool res = false;
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    String DeleteQuery = "delete FROM purchase_order_line_items WHERE product_id= " + product_id;
+                    var updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
+                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = false;
             }
             return res;
         }

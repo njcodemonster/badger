@@ -12,6 +12,11 @@ using MySql.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using itemService.Interfaces;
+using Microsoft.AspNetCore.Diagnostics;
+using GenericModals;
+using Newtonsoft.Json;
+using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace itemService
 {
@@ -39,18 +44,41 @@ namespace itemService
         {
             loggerFactory.AddFile("Logs/BadgerServiceFunctional-{Date}.txt");
             if (env.IsDevelopment())
-            { 
-                app.UseDeveloperExceptionPage();
+            {
+                // app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
             }
             else
             {
-                app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 //app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void LogGloblaErrors(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var exceptionHandlerPathFeature =
+                        context.Features.Get<IExceptionHandlerPathFeature>();
+                    var logger = loggerFactory.CreateLogger("Item Service Api Logs");
+                    logger.LogInformation("Error: ", exceptionHandlerPathFeature.Error.ToString());
+
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    var responseObj = JsonConvert.SerializeObject(new ResponseModel
+                    {
+                        Status = HttpStatusCode.InternalServerError,
+                        Message = exceptionHandlerPathFeature.Error.ToString()
+                    });
+                    await context.Response.WriteAsync(responseObj);
+                });
+            });
         }
     }
 }

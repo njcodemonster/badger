@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using badger_view.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using badger_view.Models;
+using GenericModals.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
@@ -50,11 +50,11 @@ namespace badger_view.Controllers
         output: Redirect to page
         */
         [HttpPost("TryLogin")]
-        public async Task<IActionResult> TryLogin(badger_view.Models.LogiDetails logiDetails)
+        public async Task<IActionResult> TryLogin(badger_view.Models_Backup.LogiDetails logiDetails)
         {
             if (await _LoginHelper.DoLogin(logiDetails))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "PurchaseOrders");
             }
             else
             {
@@ -74,7 +74,7 @@ namespace badger_view.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "PurchaseOrders");
             }
         }
 

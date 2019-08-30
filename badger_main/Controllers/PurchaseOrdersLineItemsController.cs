@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
-using badgerApi.Models;
+using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using GenericModals.PurchaseOrder;
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -18,8 +20,17 @@ namespace badgerApi.Controllers
         private readonly IPurchaseOrdersLineItemsRepo _PurchaseOrdersLineItemsRepo;
         ILoggerFactory _loggerFactory;
 
-        public PurchaseOrdersLineItemsController(IPurchaseOrdersLineItemsRepo PurchaseOrdersLineItemsRepo, ILoggerFactory loggerFactory)
+        IEventRepo _eventRepo;
+
+        private string userEventTableName = "user_events";
+        private string tableName = "purchase_order_events";
+
+        string po_lineitem_created = "po_lineitem_created";
+        string po_lineitem_update = "po_lineitem_update";
+        string po_lineitem_specific_update = "po_lineitem_specific_update";
+        public PurchaseOrdersLineItemsController(IPurchaseOrdersLineItemsRepo PurchaseOrdersLineItemsRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
         {
+            _eventRepo = eventRepo;
             _PurchaseOrdersLineItemsRepo = PurchaseOrdersLineItemsRepo;
             _loggerFactory = loggerFactory;
         }
@@ -95,6 +106,24 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrderLineItems NewPoLineItem = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
                 NewInsertionID = await _PurchaseOrdersLineItemsRepo.Create(NewPoLineItem);
+
+                var eventModel = new EventModel(tableName)
+                {
+                    EntityId = Int32.Parse(NewInsertionID),
+                    EventName = po_lineitem_created,
+                    RefrenceId = NewPoLineItem.po_id,
+                    UserId = NewPoLineItem.created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
+
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = NewPoLineItem.created_by,
+                    EventName = po_lineitem_created,
+                    RefrenceId = Convert.ToInt32(NewInsertionID),
+                    UserId = NewPoLineItem.created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -124,6 +153,24 @@ namespace badgerApi.Controllers
                 PurchaseOrderLineItems PoLineItemToUpdate = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
                 PoLineItemToUpdate.line_item_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersLineItemsRepo.Update(PoLineItemToUpdate);
+
+                var eventModel = new EventModel(tableName)
+                {
+                    EntityId = id,
+                    EventName = po_lineitem_update,
+                    RefrenceId = PoLineItemToUpdate.po_id,
+                    UserId = PoLineItemToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
+
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = PoLineItemToUpdate.updated_by,
+                    EventName = po_lineitem_update,
+                    RefrenceId = id,
+                    UserId = PoLineItemToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -209,6 +256,24 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersLineItemsRepo.UpdateSpecific(ValuesToUpdate, "line_item_id=" + id);
+
+                var eventModel = new EventModel(tableName)
+                {
+                    EntityId = id,
+                    EventName = po_lineitem_specific_update,
+                    RefrenceId = PoLineItemToUpdate.po_id,
+                    UserId = PoLineItemToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
+
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = PoLineItemToUpdate.updated_by,
+                    EventName = po_lineitem_specific_update,
+                    RefrenceId = id,
+                    UserId = PoLineItemToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {

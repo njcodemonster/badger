@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using GenericModals.Models;
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -28,13 +30,7 @@ namespace badgerApi.Controllers
 
         private string userEventTableName = "user_events";
         private string tableName = "item_events";
-
-        private int event_item_note_id = 29;
-        private int event_item_document_id = 30;
-
-        private string event_create_item_notecreate = "Item note created by user =%%userid%% with note id= %%noteid%%";
-        private string event_create_item_documentcreate = "Item document created by user =%%userid%% with document id= %%noteid%%";
-
+        
         IEventRepo _eventRepo;
         public PurchaseOrderManagementController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
@@ -175,11 +171,24 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
 
-                event_create_item_notecreate = event_create_item_notecreate.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
+                var item_note_create = "item_note_create";
+                var eventModel = new EventModel(tableName)
+                {
+                    EntityId = Int32.Parse(newNoteID),
+                    EventName = item_note_create,
+                    RefrenceId = ref_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddItemEventAsync(ref_id,0, event_item_note_id, Int32.Parse(newNoteID), event_create_item_notecreate, created_by, _common.GetTimeStemp(), tableName);
-
-                _eventRepo.AddEventAsync(event_item_note_id, created_by, Int32.Parse(newNoteID), event_create_item_notecreate, _common.GetTimeStemp(), userEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = created_by,
+                    EventName = item_note_create,
+                    RefrenceId = Int32.Parse(newNoteID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -267,11 +276,24 @@ namespace badgerApi.Controllers
 
                 NewInsertionID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
 
-                event_create_item_documentcreate = event_create_item_documentcreate.Replace("%%userid%%", created_by.ToString()).Replace("%%documentid%%", NewInsertionID);
+                var item_document_create = "item_document_create";
+                var eventModel = new EventModel(tableName)
+                {
+                    EntityId = Int32.Parse(NewInsertionID),
+                    EventName = item_document_create,
+                    RefrenceId = ref_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddItemEventAsync(ref_id, 0, event_item_document_id, Int32.Parse(NewInsertionID), event_create_item_documentcreate, created_by, _common.GetTimeStemp(), tableName);
-
-                _eventRepo.AddEventAsync(event_item_document_id, created_by, Int32.Parse(NewInsertionID), event_create_item_documentcreate, _common.GetTimeStemp(), userEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = created_by,
+                    EventName = item_document_create,
+                    RefrenceId = Int32.Parse(NewInsertionID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);              
             }
             catch (Exception ex)
             {

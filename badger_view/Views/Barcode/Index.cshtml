@@ -1,0 +1,121 @@
+﻿
+@{
+    ViewData["Title"] = "Barcode Range";
+}
+
+@model dynamic
+
+<div class="loading d-none"></div>
+<div class="row">
+    <div class="col-md-2 col-sm-12">
+        <h4 class="text-info">Barcode Range</h4>
+    </div>
+    <div class="col-md-10">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="AddNewVarcodeButton" data-target="#newBarcodeModal">
+            Add New Barcode Range
+        </button>
+    </div>
+</div>
+<div class="table-responsive pt-5">
+    <table id="vendorListingArea" class="table table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Size</th>
+                <th>Barcode From:</th>
+                <th>Barcode To:</th>
+                <th>Last Updated</th>
+                <th>Edit Barcode Range</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        @*<tbody>
+            @foreach (GenericModals.Models.VendorInfo vendor in Model.VendorLists)
+            {
+                <tr>
+                    <td class="vendorName">@vendor.vendor_name</td>
+                    <td>@vendor.vendor_code</td>
+                    <td>@vendor.order_count</td>
+                    <td><a href="/PurchaseOrders/Single/@vendor.last_order" target="_blank">@vendor.last_order</a></td>
+                    <td>
+                        <button type="button" id="EditVendor" data-ID="@vendor.vendor_id" class="btn btn-light btn-sm">Edit</button>
+                    </td>
+                    <td>
+                        <a href="#" data-toggle="modal" data-ID="@vendor.vendor_id" style="position:relative" id="VendorNoteButton" data-target="#modaladdnote">
+                            @if (vendor.has_note == 1)
+                            {<div class="redDotArea redDOtElement"></div>}
+                            else
+                            {<div class="redDotArea"></div>}<i class="fa fa-edit h3"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>*@
+        <tfoot>
+            <tr>
+                <th>Size</th>
+                <th>Barcode From:</th>
+                <th>Barcode To:</th>
+                <th>Last Updated</th>
+                <th>Edit Barcode Range</th>
+                <th>Delete</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/CategoryOptionPage.js" asp-append-version="true"></script>
+}
+<div class="loaderBox"><div class="spinner-border text-info"></div></div>
+<div class="text-right w-100">
+
+</div>
+<div id="productDetailPage">
+    <br />
+
+</div>
+
+@section page_popup_area{
+
+    <div class="modal fade" id="modalAddSubCategory" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Sub Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="AddCatForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Parent Category</label>
+                                    <select id="ParentCategorySelect" class="form-control">
+                                        <option selected data-name="" value="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Sub Category Title</label>
+                                    <input name="SubCat" id="SubCat" type="text" class="form-control required">
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="poAlertMsg"></div>
+                    <button type="button" id="SaveSubCategoryButton" class="btn btn-green SaveSubCategoryButton" data-action="refreshValue">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

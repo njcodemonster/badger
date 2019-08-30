@@ -7,12 +7,20 @@
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    var ctrlDown = evt.ctrlKey || evt.metaKey // Mac support
+
+    if (ctrlDown && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+    if (charCode > 31 && charCode != 37 && charCode != 39 && charCode != 46 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)) {
        return false;
     }
     return blockspecialcharacter(evt)
     return true;
 }
+
 
 /*
   Developed By: Azeem Hassan
@@ -71,6 +79,14 @@ function onlyNumbersWithDot(e) {
     else if (typeof (e.charCode) != "undefined") {
         charCode = e.which || e.keyCode;
     }
+
+    var ctrlDown = e.ctrlKey || e.metaKey // Mac support
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    if (ctrlDown && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+
     if (charCode == 46)
         return true
     if (charCode == 190)
@@ -78,18 +94,55 @@ function onlyNumbersWithDot(e) {
     if (charCode == 110)
         return true
     if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16) 
-       return false;
-    
+        return false;
+
+    return blockspecialcharacter(e);
     return true;
 }
 
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
+  action: only number and dots allow 
+*/
+function onlyNumbers(e) {
+    var charCode;
+    if (e.keyCode > 0) {
+        charCode = e.which || e.keyCode;
+    }
+    else if (typeof (e.charCode) != "undefined") {
+        charCode = e.which || e.keyCode;
+    }
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    if (e.ctrlKey == true && (charCode == 65 || charCode == 17 || charCode == 86 || charCode == 67 || charCode == 88)) {
+        return true;
+    }
+
+    if (charCode == 46)
+        return true
+    if (charCode == 190)
+        return true
+    if (charCode > 31 && charCode != 37 && charCode != 39 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) || charCode == 16)
+        return false;
+
+    return true;
+}
+/*
+  Developed By: Azeem Hassan
+  Date: 7-3-19 
   action:  check email valid
 */
 function allLetterAllow(event) {
-    var inputValue = event.which; console.log(inputValue);
+    var inputValue = event.which;
+
+    /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
+    var ctrlDown = event.ctrlKey || event.metaKey // Mac support
+
+    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88) || charCode == 9) {
+        return true;
+    }
+
         // allow letters and whitespaces only.
     if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0) && inputValue != 8 && inputValue != 37 && inputValue != 39) { 
           return false
@@ -100,12 +153,12 @@ function allLetterAllow(event) {
   Date: 7-3-19 
   action:  alert function for any event success or failed. give area action and massage to print
 */
-function alertBox(area, action, massage) {
+function alertBox(area, action, massage,timeout) {
     $('.alert').remove()
     var color = 'success'
     if (action == 'red')
         color = 'danger'
-    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" class="alert alert-' + color + ' alert-dismissible">' +
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: fixed;right: 0;margin: 0 auto;top: 10%;" class="alert alert-' + color + ' alert-dismissible">' +
         '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
         massage +
         '</div>';
@@ -113,7 +166,7 @@ function alertBox(area, action, massage) {
      $('body').append(html);
     setTimeout(function () {
         $('.alert').remove()
-    }, 3000)
+    }, timeout ? timeout : 3000)
 }
 
 /*
@@ -154,6 +207,26 @@ function confirmationAlertBox(heading, description, callback) {
 
     })
 }
+
+function confirmationAlertInnerBox(heading, description, callback) {
+    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
+        '<h4 class="alert-heading">' + heading + '</h4>' +
+        '<p>' + description + '</p>' +
+        '<hr>' +
+        '<p style="text-align:right;" class="mb-0"><button type="button" style="margin-right: 10px;" data-val="yes" class="confirmDialog btn btn-success">Yes</button><button type="button" data-val="no" class="confirmDialog btn btn-success">No</button></p>' +
+        '</div>';
+    $('.msg').prepend(html);
+    $('.confirmDialog').click(function () {
+        $('.confirmationBox').remove();
+        if ($(this).attr('data-val') == 'yes') {
+            return callback('yes');
+        } else {
+            return callback('no');
+        }
+
+    })
+}
+
 /*
   Developed By: Azeem Hassan
   Date: 7-3-19 
@@ -192,6 +265,7 @@ function emptyFeildValidation(id){
         if($(this).val() == ''){
             notvalid = false;
             $(this).addClass('errorFeild');
+            if ($(this).parents('.form-group').find('.errorMsg').length == 0)
             $(this).parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         }
         if (notvalid && $(this).attr('type') == 'email' && isEmail($(this).val()) == false) {
@@ -220,7 +294,12 @@ $(document).on('click', '.collapsButton', function (e) {
     });
  
 });
-
+$(document).on('keydown', '.required', function (e) {
+    console.log(this.value);
+    if (e.which === 32 && e.target.selectionStart === 0) {
+        return false;
+    }
+});
 
 /*$('.collapse').on('shown.bs.collapse', function () {
     $(this).find(".fa-plus").removeClass("fa-plus").addClass("fa-minus");

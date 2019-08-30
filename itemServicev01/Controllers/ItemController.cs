@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using itemService.Interfaces;
-using itemService.Models;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -780,6 +780,10 @@ namespace itemService.Controllers
                 {
                     ValuesToUpdate.Add("published_by", ItemToUpdate.published_by.ToString());
                 }
+                if (ItemToUpdate.has_doc != 0)
+                {
+                    ValuesToUpdate.Add("has_doc", ItemToUpdate.has_doc.ToString());
+                }
                 if (ItemToUpdate.created_by != 0)
                 {
                     ValuesToUpdate.Add("created_by", ItemToUpdate.created_by.ToString());
@@ -867,6 +871,35 @@ namespace itemService.Controllers
             }
 
             return barcodeDetails;
+        }
+
+        /*
+     Developer: Rizwan ali
+     Date: 08-09-19 
+     Action: delete item by product
+     URL: api/item/deleteItemByProduct/?
+     Request: Get
+     Input: string product id
+     output: bool status
+     */
+        [HttpDelete("deleteItemByProduct/{id}")]
+        public async Task<bool> DeleteItemByProduct(string id)
+        {
+            bool status = false;
+            try
+            {
+                status = await _ItemRepository.DeleteItemByProduct(id);
+
+            }
+            catch (Exception ex)
+            {
+                status = false;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get barcode with message" + ex.Message);
+
+            }
+
+            return status;
         }
     }
 }

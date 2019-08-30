@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonHelper", "CommonHelpe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "notesService", "notesService\notesService.csproj", "{975EEE84-5AF5-45E9-A713-22C65156AA34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericModals", "GenericModals\GenericModals.csproj", "{75B1A13C-9647-4140-AD5F-8E00014F1A34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{975EEE84-5AF5-45E9-A713-22C65156AA34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75B1A13C-9647-4140-AD5F-8E00014F1A34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75B1A13C-9647-4140-AD5F-8E00014F1A34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75B1A13C-9647-4140-AD5F-8E00014F1A34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75B1A13C-9647-4140-AD5F-8E00014F1A34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

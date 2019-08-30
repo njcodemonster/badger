@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
-using badgerApi.Models;
+using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-
-
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -17,12 +16,10 @@ namespace badgerApi.Controllers
     {
         private readonly IVendorAddress _VendorAddressRepo ;
         private IEventRepo _eventRepo;
-        private int event_vendor_address_created_id = 25;
-        private int event_vendor_address_updated_id = 27;
-        private string event_create_vendor_address = "Vendor address created by user =%%userid%% with vendor id= %%vendorid%%";
-        private string event_update_vendor_address = "Vendor address updated by user =%%userid%% with vendor id= %%vendorid%%";
         private string userEventTableName = "user_events";
         private string vendorEventTableName = "vendor_events";
+        string vendor_address_updated = "vendor_address_updated";
+        string vendor_address_created = "vendor_address_created";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         ILoggerFactory _loggerFactory;
@@ -53,12 +50,24 @@ namespace badgerApi.Controllers
                 VendorAddress newVendorAddress = JsonConvert.DeserializeObject<VendorAddress>(value);
                 int created_by = newVendorAddress.created_by;
                 NewInsertionID = await _VendorAddressRepo.Create(newVendorAddress);
-                event_create_vendor_address = event_create_vendor_address.Replace("%%userid%%", created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
                 int vendor_id = newVendorAddress.vendor_id;
-                _eventRepo.AddVendorEventAsync(vendor_id, event_vendor_address_created_id, Int32.Parse(NewInsertionID), created_by, event_create_vendor_address, _common.GetTimeStemp(), vendorEventTableName);
+                var eventModel = new EventModel(vendorEventTableName)
+                {
+                    EventName = vendor_address_created,
+                    EntityId = Int32.Parse(NewInsertionID),
+                    RefrenceId = vendor_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddEventAsync(event_vendor_address_created_id, created_by, Int32.Parse(NewInsertionID), event_create_vendor_address, _common.GetTimeStemp(), userEventTableName);
-
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EventName = vendor_address_created,
+                    EntityId = created_by,
+                    RefrenceId = Convert.ToInt32(NewInsertionID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -90,12 +99,23 @@ namespace badgerApi.Controllers
                 VendorToUpdate.vendor_address_id = id;
                 int updated_by = VendorToUpdate.updated_by;
                 UpdateProcessOutput = await _VendorAddressRepo.Update(VendorToUpdate);
-                event_update_vendor_address = event_update_vendor_address.Replace("%%userid%%", updated_by.ToString()).Replace("%%vendorid%%", id.ToString());
+                var eventModel = new EventModel(vendorEventTableName)
+                {
+                    EventName = vendor_address_updated,
+                    EntityId = id,
+                    RefrenceId = id,
+                    UserId = updated_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddVendorEventAsync(id, event_vendor_address_updated_id, id, updated_by, event_update_vendor_address, _common.GetTimeStemp(), vendorEventTableName);
-
-                _eventRepo.AddEventAsync(event_vendor_address_updated_id, updated_by, id, event_update_vendor_address, _common.GetTimeStemp(), userEventTableName);
-
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EventName = vendor_address_updated,
+                    EntityId = updated_by,
+                    RefrenceId = id,
+                    UserId = updated_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {

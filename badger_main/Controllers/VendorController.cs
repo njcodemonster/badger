@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using badgerApi.Interfaces;
-using badgerApi.Models;
+using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using System.Dynamic;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
 using CommonHelper;
+using GenericModals;
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -19,24 +21,21 @@ namespace badgerApi.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IVendorRepository _VendorRepo;
+        private readonly IVendorProductRepository _vendorproductRepository;
         ILoggerFactory _loggerFactory;
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 3;
         private IEventRepo _eventRepo;
         private IProductRepository _productRepository;
-        private int event_vendor_id = 1;
-        private int event_vendor_note_create_id = 22;
-        private int event_type_vendor_document_create_id = 21;
-        private int event_type_vendor_update_id = 23;
         private string userEventTableName = "user_events";
         private string vendorEventTableName = "vendor_events";
-        private string event_create_vendor= "Vendor created by user =%%userid%% with vendor id= %%vendorid%%";
-        private string event_create_vendor_note = "Vendor note created by user =%%userid%% with note id= %%noteid%%";
-        private string event_create_vendor_document = "Vendor document created by user =%%userid%% with document id= %%documentid%%";
-        private string event_update_vendor = "Vendor updated by user =%%userid%% with vendor id= %%vendorid%%";
-
+        string create_vendor = "create_vendor";
+        string create_vendor_product = "create_vendor_product";
+        string create_vendor_note = "create_vendor_note";
+        string create_vendor_document = "create_vendor_document";
+        string update_vendor = "update_vendor";
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository)
+        public VendorController(IVendorRepository VendorRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IEventRepo eventRepo,IProductRepository productRepository , IVendorProductRepository vendorproductRepository)
         {
             _productRepository = productRepository;
             _eventRepo = eventRepo;
@@ -44,7 +43,9 @@ namespace badgerApi.Controllers
             _VendorRepo = VendorRepo;
             _loggerFactory = loggerFactory;
             _NotesAndDoc = NotesAndDoc;
-           
+            _vendorproductRepository = vendorproductRepository;
+
+
         }
         /*
             Developer: Azeem Hassan
@@ -350,27 +351,79 @@ namespace badgerApi.Controllers
         */
         // POST: api/vendor/create
         [HttpPost("create")]
-        public async Task<string> PostAsync([FromBody]   string value)
+        public async Task<ResponseModel> PostAsync([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            ResponseModel response;
+            Vendor newVendor = JsonConvert.DeserializeObject<Vendor>(value);
+            int created_by = newVendor.created_by;
+            NewInsertionID = await _VendorRepo.Create(newVendor);
+            response = new ResponseModel { Data = NewInsertionID, Status = System.Net.HttpStatusCode.OK, Message = "Success" };
+            var eventModel = new EventModel(vendorEventTableName)
+            {
+                EventName = create_vendor,
+                EntityId = Int32.Parse(NewInsertionID),
+                RefrenceId = 0,
+                UserId = created_by,
+            };
+            await _eventRepo.AddEventAsync(eventModel);
+
+            var userEvent = new EventModel(userEventTableName)
+            {
+                EventName = create_vendor,
+                EntityId = created_by,
+                RefrenceId = Convert.ToInt32(NewInsertionID),
+                UserId = created_by,
+            };
+            await _eventRepo.AddEventAsync(userEvent);
+            return response;
+        }
+
+        /*
+           Developer: Hamza Haq
+           Date: 8-20-19 
+           Action: create new vendor products with vendor and user event
+           URL:  api/vendor/createvendorproduct
+           Request POST
+           Input: VendorProducts form data
+           output: product_id
+       */
+        // POST: api/vendor/createendorproduct
+        [HttpPost("createvendorproduct")]
+        public async Task<string> PostAsyncVendorProduct([FromBody] string value)
         {
             string NewInsertionID = "0";
             try
             {
-                Vendor newVendor = JsonConvert.DeserializeObject<Vendor>(value);
+                VendorProducts newVendor = JsonConvert.DeserializeObject<VendorProducts>(value);
                 int created_by = newVendor.created_by;
-                NewInsertionID = await _VendorRepo.Create(newVendor);
+                NewInsertionID = await _vendorproductRepository.Create(newVendor);
+                var eventModel = new EventModel(vendorEventTableName)
+                {
+                    EventName = create_vendor_product,
+                    EntityId = Int32.Parse(NewInsertionID),
+                    RefrenceId = 0,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                event_create_vendor = event_create_vendor.Replace("%%userid%%", created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
-
-                _eventRepo.AddVendorEventAsync(Int32.Parse(NewInsertionID), event_vendor_id, 0, created_by, event_create_vendor, _common.GetTimeStemp(), vendorEventTableName);
-
-                _eventRepo.AddEventAsync(event_vendor_id, created_by, Int32.Parse(NewInsertionID), event_create_vendor, _common.GetTimeStemp(), userEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EventName = create_vendor_product,
+                    EntityId = created_by,
+                    RefrenceId = Convert.ToInt32(NewInsertionID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
+                logger.LogInformation("Problem happened in making new vendor product with message" + ex.Message);
             }
             return NewInsertionID;
+
+         
         }
 
         /*
@@ -395,12 +448,23 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 int created_by = newVendorNote.created_by;
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
-                event_create_vendor_note = event_create_vendor_note.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
+                var eventModel = new EventModel(vendorEventTableName)
+                {
+                    EventName = create_vendor_note,
+                    EntityId = Int32.Parse(newNoteID),
+                    RefrenceId = ref_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddVendorEventAsync(ref_id, event_vendor_note_create_id, Int32.Parse(newNoteID), created_by, event_create_vendor_note, _common.GetTimeStemp(), vendorEventTableName);
-
-                _eventRepo.AddEventAsync(event_vendor_note_create_id, created_by, Int32.Parse(newNoteID), event_create_vendor_note, _common.GetTimeStemp(), userEventTableName);
-
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EventName = create_vendor_note,
+                    EntityId = created_by,
+                    RefrenceId = Convert.ToInt32(newNoteID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -432,12 +496,23 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 int created_by = newVendorDoc.created_by;
                 newDocID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, url, "", created_by, created_at);
-                event_create_vendor_document = event_create_vendor_document.Replace("%%userid%%", newVendorDoc.created_by.ToString()).Replace("%%documentid%%", newDocID);
+                var eventModel = new EventModel(vendorEventTableName)
+                {
+                    EventName = create_vendor_document,
+                    EntityId = Int32.Parse(newDocID),
+                    RefrenceId = ref_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddVendorEventAsync(ref_id, event_type_vendor_document_create_id, Int32.Parse(newDocID), created_by, event_create_vendor_document, _common.GetTimeStemp(), vendorEventTableName);
-
-                _eventRepo.AddEventAsync(event_type_vendor_document_create_id, created_by, Int32.Parse(newDocID), event_create_vendor_document, _common.GetTimeStemp(), userEventTableName);
-
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EventName = create_vendor_document,
+                    EntityId = created_by,
+                    RefrenceId = Convert.ToInt32(newDocID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -469,12 +544,23 @@ namespace badgerApi.Controllers
                 VendorToUpdate.vendor_id = id;
                 int updated_by = VendorToUpdate.updated_by;
                 UpdateProcessOutput = await _VendorRepo.Update(VendorToUpdate);
-                event_update_vendor = event_update_vendor.Replace("%%userid%%", updated_by.ToString()).Replace("%%vendorid%%", id.ToString());
+                var eventModel = new EventModel(vendorEventTableName)
+                {
+                    EventName = update_vendor,
+                    EntityId = id,
+                    RefrenceId = id,
+                    UserId = updated_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddVendorEventAsync(id, event_type_vendor_update_id, id, updated_by, event_update_vendor, _common.GetTimeStemp(), vendorEventTableName);
-
-                _eventRepo.AddEventAsync(event_type_vendor_update_id, updated_by, id, event_update_vendor, _common.GetTimeStemp(), userEventTableName);
-
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EventName = update_vendor,
+                    EntityId = id,
+                    RefrenceId = Convert.ToInt32(id),
+                    UserId = updated_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
 
             }
             catch (Exception ex)
@@ -489,6 +575,7 @@ namespace badgerApi.Controllers
             }
             return UpdateResult;
         }
+
         // PUT: api/vendor/specificUpdate/5
         [HttpPut("updatespecific/{id}")]
         public async Task<string> UpdateSpecific(int id, [FromBody] string value)
@@ -553,7 +640,10 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("logo", VendorToUpdate.logo);
                 }
-
+                if (VendorToUpdate.has_note != 0)
+                {
+                    ValuesToUpdate.Add("has_note", VendorToUpdate.has_note.ToString());
+                }
 
                 await _VendorRepo.UpdateSpecific(ValuesToUpdate, "vendor_id="+id);
             }
@@ -566,6 +656,59 @@ namespace badgerApi.Controllers
             
             return UpdateResult;
         }
+
+        /*
+           Developer: Hamza Haq
+           Date: 8-22-19 
+           Action: create new vendor products with vendor and user event
+           URL:  api/vendor/vendorproductUpdatespecific
+           Request PUT
+           Input: VendorProducts form data
+           output: product_id
+       */
+        // POST: api/vendor/vendorproductUpdatespecific
+        [HttpPut("vendorproductUpdatespecific")]
+        public async Task<string> vendorproductUpdatespecific([FromBody] string value)
+        {
+
+            string UpdateResult = "Success";
+
+            try
+            {
+                VendorProducts VendorToUpdate = JsonConvert.DeserializeObject<VendorProducts>(value);
+                VendorToUpdate.vendor_id = VendorToUpdate.vendor_id;
+                VendorToUpdate.product_id = VendorToUpdate.product_id;
+                Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+               
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_color_code))
+                {
+                    ValuesToUpdate.Add("vendor_color_code", VendorToUpdate.vendor_color_code);
+                }
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_color_name))
+                {
+                    ValuesToUpdate.Add("vendor_color_name", VendorToUpdate.vendor_product_code);
+                }
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_product_code))
+                {
+                    ValuesToUpdate.Add("vendor_product_code", VendorToUpdate.vendor_product_code);
+                }
+                if (!string.IsNullOrEmpty(VendorToUpdate.vendor_product_name))
+                {
+                    ValuesToUpdate.Add("vendor_product_name", VendorToUpdate.vendor_product_name);
+                }
+                
+                await _vendorproductRepository.UpdateSpecific(ValuesToUpdate, "product_id ="+ VendorToUpdate.product_id + " and vendor_id=" + VendorToUpdate.vendor_id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating new vendor with message" + ex.Message);
+                UpdateResult = "Failed";
+            }
+
+            return UpdateResult;
+        }
+
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
@@ -719,5 +862,35 @@ namespace badgerApi.Controllers
             return vendorDetails;
 
         }
+
+        /*
+       Developer: Sajid Khan
+       Date: 08-09-19 
+       Action: Getting product data by stylenumber
+       URL:  api/vendor/getstylenumber/stylenumber
+       Request GET
+       Input: string vendor
+       output: dynamic list of product data 
+       */
+        [HttpGet("getstylenumber/{stylenumber}")]
+        public async Task<List<object>> GetStyleNumber(string stylenumber)
+        {
+            dynamic vendorDetails = new object();
+            try
+            {
+                vendorDetails = await _VendorRepo.GetStyleNumber(stylenumber);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorDetails;
+
+        }
+        
     }
 }

@@ -29,7 +29,7 @@
                 dynamic selectedPhotoshoot = Model.SelectedPhotoshoot;
                 }  <input type="hidden" id="selectedPhotoshootId" value="@selectedPhotoshoot" />
             </h1>
-        @foreach (ProductPhotoshootInProgressRep inProgress in Model.Lists)
+        @foreach (GenericModals.Models.ProductPhotoshootInProgressRep inProgress in Model.Lists)
         {
             <div class="card PhotoshootList" id="inprogressContainer_@inProgress.photoshoot_id">
                 <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id">

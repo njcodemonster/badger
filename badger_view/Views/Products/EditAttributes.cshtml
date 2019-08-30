@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Edit Attributes";
 }
-@model ProductDetailsPageData ;
+@model GenericModals.Models.ProductDetailsPageData ;
 @section Scripts {
     <!--<script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>-->
     <script src="~/js/common.js" asp-append-version="true"></script>
@@ -311,7 +311,7 @@
                                 <input type="text" class="" value="" id="writtentags" data-role="tagsinput">
 
                                 @{ string pairvalues = ""; Boolean first = true;}
-                                @foreach (Productpairwith productpairwith in Model.productpairwiths)
+                                @foreach (GenericModals.Models.Productpairwith productpairwith in Model.productpairwiths)
                                 {
                                     if (first)
                                     {
@@ -339,7 +339,7 @@
                                 <label>Other colors available</label>
                                 <input type="text" value="" id="writtentagscolor" data-role="tagsinput" class="form-control" />
                                 @{ string colorValues = ""; first = true;}
-                                @foreach (Productcolorwith productcolorwith in Model.productcolorwiths)
+                                @foreach (GenericModals.Models.Productcolorwith productcolorwith in Model.productcolorwiths)
                                 {
                                     if (first)
                                     {
@@ -379,7 +379,7 @@
             <table class="table vborder">
                 <tr>
                     @{ string currentHeading = ""; }
-                    @foreach (AllTags allTags in Model.AllTags)
+                    @foreach (GenericModals.Models.AllTags allTags in Model.AllTags)
                     {
                         if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
                         {
@@ -396,7 +396,7 @@
                 </tr>
                 <tr>
                     @{ currentHeading = ""; }
-                    @foreach (AllTags allTags in Model.AllTags)
+                    @foreach (GenericModals.Models.AllTags allTags in Model.AllTags)
                     {
                         if (allTags.sub_heading != null && currentHeading != allTags.sub_heading)
                         {
@@ -435,7 +435,7 @@
                 <td>
                     @{ first = true; var itemcolor = @Model.productProperties.Where(X => X.attribute_type_id == 2).Select(X => X.value).DefaultIfEmpty("None"); }
 
-                    @foreach (AllColors allColors in Model.AllColors)
+                    @foreach (GenericModals.Models.AllColors allColors in Model.AllColors)
                     {
                         if (first)
                         {

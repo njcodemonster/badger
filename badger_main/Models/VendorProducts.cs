@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace badgerApi.Models
+namespace GenericModals.Models
 {
     [Table("vendor_products")]
     public partial class VendorProducts
     {
-        [Key]
+  
         public int product_id { get; set; }
         public int vendor_id { get; set; }
         public string vendor_color_code { get; set; }

@@ -1,4 +1,9 @@
-﻿/*
+﻿$(document).ready(function () {
+    if (window.location.href.indexOf('PurchaseOrdersCheckIn/') > -1) {
+        $('.collapsButton').click()
+    }
+});
+/*
 Developer: Sajid Khan
 Date: 7-5-19
 Action: it will show item note
@@ -98,7 +103,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-itemid="+id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -119,6 +124,8 @@ Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
     var po_id = $('#document_form').attr("data-productid");
+    var itemid = $('#document_form').attr("data-documentid");
+    
     $(".poDocAlertMsg").text("");
     if ($('#poUploadImages').val() == "") {
         $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
@@ -156,10 +163,9 @@ $(document).on("click", "#document_submit", function () {
                 } else {
                     alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
                     console.log(data.responseText);
+                    $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
                 }
-
-               
             }
         });
     }
@@ -274,8 +280,8 @@ $(document).on("change", ".sku_weight", function () {
     }
     console.log(sku_id + " -- " + sku_weight);
     var product_id = $(this).attr('data-productid');
-    confirmationBox(product_id,"SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
-        console.log(result)       
+    confirmationBox(product_id, "SKU Weight Update", "This will all same SKU weight updates, Do you want to continue?", function (result) {
+        console.log(result)
         if (result == "yes") {
             $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             var jsonData = {};
@@ -309,12 +315,12 @@ $(document).on("change", ".sku_weight", function () {
             $(".sku_weight").each(function () {
                 if ($(this).attr('id') == sku_id) {
                     $(this).val(old_sku_weight);
-                    $(this).attr('data-weight',old_sku_weight);
+                    $(this).attr('data-weight', old_sku_weight);
                 }
             });
 
         }
-    })
+    });
     
 });
 
@@ -330,9 +336,17 @@ $(document).on("keydown", ".item_barcode", function (e) {
 });
 
 $(document).on("change", ".item_barcode", function (e) {
-    debugger;
     var _self = $(this);
     var po_id = $(this).parents("tr").attr("data-productid");
+
+    var item_status = $(this).parents("tr").find(".item_status").val();
+
+    if (item_status == 1) {
+        $(this).val("");
+        alertInnerBox('message-' + po_id, 'red', 'Change item status:');
+        return false;
+    }
+
     var item_id = $(this).attr('data-itemid');
     var old_barcode = $(this).attr('data-barcode');
     var size = $(this).parents("tr").attr('data-size');
@@ -364,51 +378,150 @@ $(document).on("change", ".item_barcode", function (e) {
     if (hasMatch) {
         var currentBarcode = barcodeRanges[index];
         if (currentBarcode.size.toLowerCase() != size.toLowerCase()) {
-            _self.addClass('errorFeild');
-            alertInnerBox('message-' + po_id, 'red', 'Item barcode exist in a size :  ' + currentBarcode.size);
-            return false;
-        }
-    }
-    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
-    $.ajax({
-        url: "/purchaseorders/checkbarcodeexist/" + barcode,
-        dataType: 'json',
-        type: 'Get',
-        contentType: 'application/json',
-    }).always(function (data) {
-        console.log(data);
-        if (data == true) {
-            _self.addClass('errorFeild');
-            alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
-            return false;
-        } else {
-            var jsondata = $("input#" + item_id).val();
-            var itemdata = JSON.parse(jsondata);
-            var id = itemdata.item_id
-            itemdata.barcode = barcode;
-            $("input#" + item_id).val(JSON.stringify(itemdata));
+            //_self.addClass('errorFeild');
+            //alertInnerBox('message-' + po_id, 'red', 'The barcode you entered matched a size "' + currentBarcode.size.toUpperCase() + '" but you are trying to use it for an "' + size.toUpperCase() + '". Are you sure you want to continue?  ');
+            debugger;
+            confirmationBox(po_id, "", "The barcode you entered matched a size " + currentBarcode.size.toUpperCase() + " but you are trying to use it for an " + size.toUpperCase() + ". Are you sure you want to continue? ", function (result) {
+                console.log(result)
+                if (result == "yes") {
+                    _self.removeClass('errorFeild');
+                    $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+                    $.ajax({
+                        url: "/purchaseorders/checkbarcodeexist/" + barcode,
+                        dataType: 'json',
+                        type: 'Get',
+                        contentType: 'application/json',
+                    }).always(function (data) {
+                        console.log(data);
+                        if (data == true) {
+                            _self.addClass('errorFeild');
+                            alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+                            return false;
+                        } else {
+                            var jsondata = $("input#" + item_id).val();
+                            var itemdata = JSON.parse(jsondata);
+                            var id = itemdata.item_id
+                            itemdata.barcode = barcode;
+                            $("input#" + item_id).val(JSON.stringify(itemdata));
 
-            console.log($("input#" + item_id).val());
+                            console.log($("input#" + item_id).val());
 
-            $.ajax({
-                url: "/purchaseorders/itemupdate/" + id,
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(itemdata),
-                processData: false
-            }).always(function (data) {
-                console.log(data);
-                if (data.responseText == "Success") {
-                    _self.attr('data-barcode', barcode);
-                    alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
-                } else {
-                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                            $.ajax({
+                                url: "/purchaseorders/itemupdate/" + id,
+                                dataType: 'json',
+                                type: 'post',
+                                contentType: 'application/json',
+                                data: JSON.stringify(itemdata),
+                                processData: false
+                            }).always(function (data) {
+                                console.log(data);
+                                if (data.responseText == "Success") {
+                                    _self.attr('data-barcode', barcode);
+                                    alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                                } else {
+                                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                                }
+
+                            });
+                        }
+                    });
                 }
+                else {
+                    $(this).text = old_barcode;
+                    $(this).addClass('errorFeild');
+                    return false;
 
+                }
             });
         }
-    });
+        else {
+            _self.removeClass('errorFeild');
+            $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+            $.ajax({
+                url: "/purchaseorders/checkbarcodeexist/" + barcode,
+                dataType: 'json',
+                type: 'Get',
+                contentType: 'application/json',
+            }).always(function (data) {
+                console.log(data);
+                if (data == true) {
+                    _self.addClass('errorFeild');
+                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+                    return false;
+                } else {
+                    var jsondata = $("input#" + item_id).val();
+                    var itemdata = JSON.parse(jsondata);
+                    var id = itemdata.item_id
+                    itemdata.barcode = barcode;
+                    $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                    console.log($("input#" + item_id).val());
+
+                    $.ajax({
+                        url: "/purchaseorders/itemupdate/" + id,
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(itemdata),
+                        processData: false
+                    }).always(function (data) {
+                        console.log(data);
+                        if (data.responseText == "Success") {
+                            _self.attr('data-barcode', barcode);
+                            alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                        } else {
+                            alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                        }
+
+                    });
+                }
+            });
+        }
+    }
+    else {
+        _self.removeClass('errorFeild');
+        $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
+        $.ajax({
+            url: "/purchaseorders/checkbarcodeexist/" + barcode,
+            dataType: 'json',
+            type: 'Get',
+            contentType: 'application/json',
+        }).always(function (data) {
+            console.log(data);
+            if (data == true) {
+                _self.addClass('errorFeild');
+                alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
+                return false;
+            } else {
+                var jsondata = $("input#" + item_id).val();
+                var itemdata = JSON.parse(jsondata);
+                var id = itemdata.item_id
+                itemdata.barcode = barcode;
+                $("input#" + item_id).val(JSON.stringify(itemdata));
+
+                console.log($("input#" + item_id).val());
+
+                $.ajax({
+                    url: "/purchaseorders/itemupdate/" + id,
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(itemdata),
+                    processData: false
+                }).always(function (data) {
+                    console.log(data);
+                    if (data.responseText == "Success") {
+                        _self.attr('data-barcode', barcode);
+                        alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
+                    } else {
+                        alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                    }
+
+                });
+            }
+        });
+    }
+
 
 
 
@@ -676,11 +789,14 @@ $('.POListCheckIn .card-header .card-box').click(function () {
     var POid = thisPO.attr("data-POId");
 
     console.log($("#collapse_" + POid));
-    console.log($("#collapse_" + POid).is(":visible"))
+    console.log($("#collapse_" + POid).is(":visible")) 
     console.log($("#collapse_" + POid).is(":hidden"))
 
     if ($("#collapse_" + POid).is(":hidden")) {
-        getPurchaseOrdersItemdetails(POid);
+        if ($("#collapse_" + POid).find('.card-body').length == 0) {
+             getPurchaseOrdersItemdetails(POid);
+        }
+        $("#collapse_" + POid).show();
         $("#collapse_" + POid).attr('data-colapse', true);
     } else if ($("#collapse_" + POid).attr('data-colapse')) {
         $("#collapse_" + POid).hide();
@@ -823,46 +939,14 @@ $(document).on("click", "#sku_weight", function () {
 
     $("#weight_form .weight_image").attr("src", img_src);
     $("#weight_form .weight_sku").text(sku);
-
-    $(".table-data-" + productid + " tbody tr").each(function () {
+    var html = '<div class="form-group col-md-3 pl-5"></div>';
+    $(".table-data-" + productid + " tbody tr:visible").each(function () {
         var weight = $(this).attr("data-weight");
-        var size = $(this).attr("data-size");
+        var size = $(this).attr("data-size").toLowerCase();
         var skuid = $(this).attr("data-skuid");
-
-        if (productid == $(this).attr("data-productid")) {
-            console.log(size + " -- " + weight + " --- " + skuid)
-            if (size.toLowerCase() == "x") {
-                $("#weight_form #x_weight").parents(".x").removeClass("d-none");
-                $("#weight_form #x_weight").val(weight);
-                $("#weight_form #x_weight").attr("data-skuid",skuid);
-            }
-
-            if (size.toLowerCase() == "xs") {
-                $("#weight_form #xs_weight").parents(".xs").removeClass("d-none");
-                $("#weight_form #xs_weight").val(weight);
-                $("#weight_form #xs_weight").attr("data-skuid", skuid);
-            }
-
-            if (size.toLowerCase() == "s") {
-                $("#weight_form #s_weight").parents(".s").removeClass("d-none");
-                $("#weight_form #s_weight").val(weight);
-                $("#weight_form #s_weight").attr("data-skuid", skuid);
-            }
-
-            if (size.toLowerCase() == "m") {
-                $("#weight_form #m_weight").parents(".m").removeClass("d-none");
-                $("#weight_form #m_weight").val(weight);
-                $("#weight_form #m_weight").attr("data-skuid", skuid);
-            }
-
-            if (size.toLowerCase() == "l") {
-                $("#weight_form #l_weight").parents(".l").removeClass("d-none");
-                $("#weight_form #l_weight").val(weight);
-                $("#weight_form #l_weight").attr("data-skuid", skuid);
-            }
-
-        }
+        html += '<div class="form-group col-md-2 text-center sku_weight_field"><strong>' + size.toUpperCase() + '</strong><input data-skuid="' + skuid + '" type="text" value="' + weight + '" class="form-control" id="' + size + '_weight" name="' + size + '_weight"></div>';
     });
+    $('.sku_weight_inputs').html(html);
     $('#modaladdweight').modal('show');
 });
 
@@ -879,6 +963,8 @@ $(document).on("click", "#weight_submit", function () {
     var error = "";
     var sku_weight = "";
     var sku_id = "";
+    var sku = {};
+    sku["skuData"] = [];
     $('#weight_form input').each(function () {
         sku_weight = $(this).val();
         sku_id = $(this).attr("data-skuid");
@@ -888,48 +974,37 @@ $(document).on("click", "#weight_submit", function () {
             var jsonData = {};
             jsonData["sku_id"] = sku_id;
             jsonData["weight"] = sku_weight;
-
-            $.ajax({
-                url: "/purchaseorders/skuweightupdate/" + sku_id,
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(jsonData),
-                processData: false,
-                async: false,
-            }).always(function (data) {
-                console.log(data);
-                if (data.responseText == "Success") {
-                    result = true;
-                    $(".table-data-" + productid + " tbody tr").each(function () {
-
-                        if ($(this).attr("data-skuid") == sku_id) {
-                            $(this).attr("data-skuid", sku_id);
-                            $(this).attr("data-weight", sku_weight);
-                        }
-
-                    });
-                } else {
-                    result = "error";
-                    error = data.responseText;
-                    console.log(error);
-                }
-            });           
+            sku["skuData"].push(jsonData);
         }
     });
 
-   var checkInterval = setInterval(function () { 
-       if (result) {
-           $("#sku_weight[data-productid='"+productid+"']").addClass("btn-primary").removeClass("btn-success").text("Edit Weight")
-                $('#modaladdweight').modal('hide');
-                alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
-                clearInterval(checkInterval);
-            } else if (result == "error") {
-                //$('#modaladdweight').modal('show');
-                alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
-                clearInterval(checkInterval);
+    $.ajax({
+        url: "/purchaseorders/MultipleskuWeightUpdate/",
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(sku),
+        processData: false,
+        async: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.responseText == "Success") {
+            result = true;
+            for (i = 0; i < sku.skuData.length; i++) {
+                    $(".table-data-" + productid + " tbody tr[data-skuid='"+sku.skuData[i].sku_id+"']").attr("data-weight", sku.skuData[i].weight);
+                
             }
-    }, 1000);
+            $('#modaladdweight').modal('hide');
+            alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
+   
+        } else {
+            result = "error";
+            error = data.responseText;
+            console.log(error);
+            alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
+
+        }
+    }); 
    
 });
 
@@ -981,6 +1056,7 @@ $(document).on('click', ".podeleteImage", function (e) {
 
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
+    var itemid = _this.parents('.documentsLink').attr('data-itemid');
     var url = _this.parents('.documentsLink').attr('data-val');
     var poid = $('#document_form').attr("data-documentid");
 
@@ -988,6 +1064,8 @@ $(document).on('click', ".podeleteImage", function (e) {
     jsonData["doc_id"] = docid;
     jsonData["po_id"] = poid;
     jsonData["url"] = url;
+    jsonData["item"] = "item";
+    jsonData['itemid'] = itemid;
     console.log(jsonData);
 
     $.ajax({
@@ -1001,6 +1079,10 @@ $(document).on('click', ".podeleteImage", function (e) {
         console.log(data);
         if (data.responseText != '0')
             _this.parents('.documentsLink').remove();
+
+        if ($('#modaladddocument .po_doc_section a').length == 0) {
+            $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").removeClass("redDOtElement");
+        }
     });
 });
 

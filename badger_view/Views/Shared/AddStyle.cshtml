@@ -2,13 +2,14 @@
 @section Scripts {
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/POManagementPage.js" asp-append-version="true"></script>
+   
 }
 
 <div class="modal fade" id="modaladdstylec" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O (<span class="poNumber"></span>)</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O (<span class="poNumber"></span>)  Vendor Code (<span class="poVendor"></span>) SKU Family (<span class="poSkuFamily"></span>) </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -37,6 +38,16 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
+                                <label>Style No</label>
+                                <input name="StyleNo" id="product_title_no" type="text" class="form-control required">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Color Code</label>
+                                <input name="ColorCode" id="product_color_code" type="text" class="form-control required">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label>Unit Cost</label>
                                 <input name="UnitCost" id="product_unit_cost" type="text" class="form-control required">
                             </div>
@@ -48,17 +59,11 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>Type</label>
-                                <select id="StyleType" class="form-control required">
-                                    <option selected value="">Choose...</option>
-                                    <option value="1">Colothing</option>
-                                    <option value="2">Accessories</option>
-                                </select>
+                                <select id="StyleType" class="form-control required"></select>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label>Subtype</label>
-                                <select id="StyleSubType" class="form-control">
-                                    <option selected>Choose...</option>
-                                    <option>...</option>
+                            <div class="form-group col-md-6" >
+                                <label style="display: block;">Subtype</label>
+                                <select  id="StyleSubType" name="StyleSubType" class="form-control required custom-select" multiple>
                                 </select>
                             </div>
                         </div>
@@ -72,13 +77,18 @@
                                         <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
                                     </div>-->
                                 </div>
-                                <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+                                <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: none;">Add Another</a>
                             </div>
                         </div>
                         <div class="form-row">
+                            @*<div class="form-group col-md-8" >
+                                    <label>Vendor Notes</label>
+                                    <textarea class="form-control"></textarea>
+                                </div>*@
                             <div class="form-group col-md-8">
-                                <label>Vendor Notes</label>
-                                <textarea class="form-control"></textarea>
+                                <label>Upload Files</label>
+                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
+                                <div class="style_doc_section d-none"></div>
                             </div>
                             <div class="form-group col-md-4 text-center">
                                 <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
@@ -87,10 +97,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-8">
-                                <label>Upload Files</label>
-                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
-                            </div>
+
                         </div>
                         <input id="po_id" name="po_id" type="hidden" class="form-control">
                         <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
@@ -99,7 +106,7 @@
             </div>
             <div class="modal-footer">
                 <div class="poAlertMsg"></div>
-                <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                <button type="button" id="DeletefromPOButton" class="btn btn-warning DeletefromPOButton" data-action="refreshValue" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>

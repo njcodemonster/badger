@@ -16,7 +16,7 @@
             jsonData["search"] = request.term;
             console.log(jsonData);
 
-            if (request.term.length > 3) {
+            if (request.term.length > 2) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
                     dataType: 'json',
@@ -25,7 +25,6 @@
                     contentType: 'application/json',
                     processData: false,
                 }).always(function (data) {
-debugger;
                     console.log(data);
                     if (data.length > 0) {
                         response(data);
@@ -36,6 +35,7 @@ debugger;
                         $('.errorMsg').remove();
                         $('#poVendor').addClass('errorFeild');
                         $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                        $('.ui-autocomplete').empty().css("border","0");    
                     }
                    
                 });
@@ -78,7 +78,6 @@ debugger;
                     contentType: 'application/json',
                     processData: false,
                 }).always(function (data) {
-debugger;
                     console.log(data);
                     if (data.length > 0) {
                         response(data);
@@ -134,8 +133,12 @@ debugger;
         Input:any keypress
         output: true/false
     */
-    $("#poTotalStyles,#poOrderNumber").on("keydown", function (event) {
+    $("#poTotalStyles,#poOrderNumber,.poTracking").on("keydown", function (event) {
         return isNumber(event);
+    });
+
+    $(document).on('keydown', "#wrapper_tracking .poTracking, #wrapper_checkin_tracking .poTracking", function (e) {
+        return isNumber(e);
     });
       /*
         Developer: Azeem Hassan
@@ -231,22 +234,22 @@ $('#purchaseorderlists').on('page.dt', function () {
                         statusButton = "<button type='button' class='btn btn-success btn-sm'>Checked-In</button>";                        
                     }
                     var status = getPoStatusById(data2.po_status);
-                    $('#purchaseorderlists').DataTable().row.add([data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", data2.custom_delivery_window_start_end, data2.num_of_days, status, statusButton, "<button type='button' id='EditPurhaseOrder' data-id='" + data2.po_id +"' class='btn btn-light btn-sm'>Edit</button>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderNote'><i class='fa fa-edit h3'></i></a>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderDocument'><i class='fa fa-upload h3'></i></a>", "<a href='javascript: void (0)'>Claim</a>", "<a href='javascript: void (0)'>Claim</a>"]).draw(false);
+                    $('#purchaseorderlists').DataTable().row.add([data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", data2.custom_delivery_window_start_end, data2.num_of_days, status, statusButton, "<button type='button' id='EditPurhaseOrder' data-id='" + data2.po_id +"' class='btn btn-light btn-sm'>Edit</button>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderNote'><div class='redDotNote'></div><i class='fa fa-edit h3'></i></a>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderDocument'><div class='redDotDoc'></div><i class='fa fa-upload h3'></i></a>", "<a href='javascript: void (0)'>Claim</a>", "<a href='javascript: void (0)'>Claim</a>"]).draw(false);
                 }
                 $('.loading').addClass("d-none");
             }
         });
     }*/
 });
-function getPoStatusById(po_status) {
+function getPoStatusById(po_status, poid) {
     if (po_status == 1) {
-        return '<span>Open</span>';
+        return '<span class="postatus-'+poid+'">Open</span>';
     } else if (po_status == 3) {
-        return '<span>In Progress</span>';
+        return '<span class="postatus-'+ poid+'">In Progress</span>';
     } else if (po_status == 6) {
-        return '<span>Recieved</span>';
+        return '<span class="postatus-'+ poid+'">Received</span>';
     } else {
-        return '<span>Not Recieved</span>';
+        return '<span class="postatus-'+ poid+'">Not Received</span>';
     }
 }
 $('#poOrderDate').datepicker({
@@ -269,6 +272,36 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
         $(this).parents('.form-group').find('.errorMsg').remove();
     }
 });
+
+
+/*$(document).on('blur', "#poNumber", function () {
+    $('.errorMsg').remove();
+    console.log($(this).val());
+    var ponumber = $(this).val();
+    $.ajax({
+        url: "/purchaseorders/checkpoexist/vendor_po_number/"+ponumber,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+        $('#poNumber').removeClass("errorFeild");
+        $('.errorMsg').remove();
+        if (data == true) {
+            $('#poNumber').addClass('errorFeild');
+            $('#poNumber').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">PO # is already exists</span>')
+            return false;
+        } else {
+
+        }
+    });
+});*/
+
+
+
+
+
+
 /*
     Developer: Azeem Hassan
     Date: 7-6-19 
@@ -281,7 +314,15 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
 $(document).on('click', "#NewPurchaseOrderButton", function () {
     _self = $(this);
     _self.attr('disabled', true);
+
     if (emptyFeildValidation('newPurchaseOrderForm') == false) {
+        _self.attr('disabled', false);
+        return false;
+    }
+
+    if ($("#newPurchaseOrderForm #poNumber").val().trim().length == 0) {
+        $("#newPurchaseOrderForm #poNumber").addClass('errorFeild');
+        $("#newPurchaseOrderForm #poNumber").parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
         _self.attr('disabled', false);
         return false;
     }
@@ -293,29 +334,33 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     var jsonData = {};
 
     var delieveryRange  = $("#newPurchaseOrderForm #poDelieveryRange").val();
-        delieveryRange = delieveryRange.split("-");
+        if(delieveryRange != ""){
+            delieveryRange = delieveryRange.split("-");
 
-    var delivery_window_start = new Date(delieveryRange[0].trim());
-        delivery_window_start_milliseconds = delivery_window_start.getTime();
-        delivery_window_start_seconds = delivery_window_start_milliseconds / 1000;
+            var delivery_window_start = new Date(delieveryRange[0].trim());
+                delivery_window_start_milliseconds = delivery_window_start.getTime();
+                delivery_window_start_seconds = delivery_window_start_milliseconds / 1000;
 
-    var delivery_window_end = new Date(delieveryRange[1].trim());
-        delivery_window_end_milliseconds = delivery_window_end.getTime();
-        delivery_window_end_seconds = delivery_window_end_milliseconds / 1000;
+            var delivery_window_end = new Date(delieveryRange[1].trim());
+                delivery_window_end_milliseconds = delivery_window_end.getTime();
+                delivery_window_end_seconds = delivery_window_end_milliseconds / 1000;
 
-    var delivery_window = (delivery_window_start.getMonth() + 1) + "/" + delivery_window_start.getDate() + "-"+ (delivery_window_end.getMonth() + 1) + "/" + delivery_window_end.getDate() + "/" + delivery_window_end.getFullYear();
+            var delivery_window = (delivery_window_start.getMonth() + 1) + "/" + delivery_window_start.getDate() + "-"+ (delivery_window_end.getMonth() + 1) + "/" + delivery_window_end.getDate() + "/" + delivery_window_end.getFullYear();
+        }
 
-    var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
-        order_date_milliseconds = order_date.getTime();
-        order_date_seconds = order_date_milliseconds / 1000;
-
-    var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+        if ($("#newPurchaseOrderForm #poOrderDate").val() != "") {
+            var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
+                order_date_milliseconds = order_date.getTime();
+                order_date_seconds = order_date_milliseconds / 1000;
+                var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+        }
+       
     var shipping = $("#newPurchaseOrderForm #poShipping").val();
 
     jsonData["vendor_po_delievery_range"] = $("#newPurchaseOrderForm #poDelieveryRange").val();
-    jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val();
-    jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val();
-    jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val();
+    jsonData["vendor_po_number"] = $("#newPurchaseOrderForm #poNumber").val().trim();
+    jsonData["vendor_invoice_number"] = $("#newPurchaseOrderForm #poInvoiceNumber").val().trim();
+    jsonData["vendor_order_number"] = $("#newPurchaseOrderForm #poOrderNumber").val().trim();
     jsonData["vendor_id"] = $("#newPurchaseOrderForm #poVendor").attr("data-val");
     jsonData["total_styles"] = $("#newPurchaseOrderForm #poTotalStyles").val();
     jsonData["total_quantity"] = $("#newPurchaseOrderForm #poTotalQuantity").val();
@@ -326,7 +371,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
 
     console.log(jsonData);
-    
+    var note = $("#newPurchaseOrderForm #poNotes").val();
     
     $.ajax({
         url: '/purchaseorders/newpurchaseorder',
@@ -368,15 +413,30 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
+                        $("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
                         console.log(data.responseText);
                     }
                 });
             }
-            $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", "Not Recieved", '<button type="button" class="btn btn-warning btn-sm" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+            
+            if (delieveryRange != "") {
+                if (order_date == undefined) {
+                    order_date = "";
+                }
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + data + "'><span class='postatus-" + data + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + data + '" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+            }else{
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), " ", vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + data + "'><span class='postatus-" + data + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + data + '" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+            }
 
             table.page('last').draw('page');
 
             $('#modalPurchaseOrder').modal('hide');
+
+            if (note != "") {
+                $("#EditPurhaseOrderNote[data-id='" + data + "']").find(".redDotNote").addClass("redDOtElement");
+            } else {
+                $("#EditPurhaseOrderNote[data-id='" + data + "']").find(".redDotNote").removeClass("redDOtElement");
+            }
 
             alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             
@@ -428,6 +488,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
     $("#newPurchaseOrderForm input,textarea").val("").removeClass('errorFeild');
     $('.errorMsg').remove();
     $(".error").remove();
+    $('.msg').html("");
     $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
     $('.poTracking, #poNotes').val("");
 
@@ -562,23 +623,29 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
   
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     var delieveryRange = $("#newPurchaseOrderForm #poDelieveryRange").val();
-    delieveryRange = delieveryRange.split("-");
 
-    var delivery_window_start = new Date(delieveryRange[0].trim());
-    delivery_window_start_milliseconds = delivery_window_start.getTime();
-    delivery_window_start_seconds = delivery_window_start_milliseconds / 1000;
+    if (delieveryRange != "") {
+        delieveryRange = delieveryRange.split("-");
 
-    var delivery_window_end = new Date(delieveryRange[1].trim());
-    delivery_window_end_milliseconds = delivery_window_end.getTime();
-    delivery_window_end_seconds = delivery_window_end_milliseconds / 1000;
+        var delivery_window_start = new Date(delieveryRange[0].trim());
+        delivery_window_start_milliseconds = delivery_window_start.getTime();
+        delivery_window_start_seconds = delivery_window_start_milliseconds / 1000;
 
-    var delivery_window = (delivery_window_start.getMonth() + 1) + "/" + delivery_window_start.getDate() + "-" + (delivery_window_end.getMonth() + 1) + "/" + delivery_window_end.getDate() + "/" + delivery_window_end.getFullYear();
+        var delivery_window_end = new Date(delieveryRange[1].trim());
+        delivery_window_end_milliseconds = delivery_window_end.getTime();
+        delivery_window_end_seconds = delivery_window_end_milliseconds / 1000;
 
-    var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
-    order_date_milliseconds = order_date.getTime();
-    order_date_seconds = order_date_milliseconds / 1000;
+        var delivery_window = (delivery_window_start.getMonth() + 1) + "/" + delivery_window_start.getDate() + "-" + (delivery_window_end.getMonth() + 1) + "/" + delivery_window_end.getDate() + "/" + delivery_window_end.getFullYear();
+    }
 
-    var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+    if ($("#newPurchaseOrderForm #poOrderDate").val() != "") {
+        var order_date = new Date($("#newPurchaseOrderForm #poOrderDate").val());
+        order_date_milliseconds = order_date.getTime();
+        order_date_seconds = order_date_milliseconds / 1000;
+
+        var orderdate = order_date.getMonth() + 1 + "/" + order_date.getDate() + "/" + order_date.getFullYear();
+    }
+   
     var shipping = $("#newPurchaseOrderForm #poShipping").val();
 
     var jsonData = {};
@@ -595,10 +662,12 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     jsonData["order_date"] = $("#newPurchaseOrderForm #poOrderDate").val();
     jsonData["old_note"] = window.notes;
     jsonData["note"] = $("#newPurchaseOrderForm #poNotes").val();
-
+    var note = $("#newPurchaseOrderForm #poNotes").val();
     jsonData['tracking'] = [];
 
     var postatus = $('#po_status').val();
+    var photos = $('#photos').val();
+    var remaining = $('#remaining').val();
 
     $('.poTracking').each(function () {
         var tracking_json = {};
@@ -656,6 +725,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
+                        $("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
                         console.log(data.responseText);
                     }
                 });
@@ -664,8 +734,32 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
             if (window.purchaseorderrownumber!= "" && window.purchaseorderrownumber >= 0) {
 
-                $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), 5, 3, delivery_window, 0 + " Day", getPoStatusById(postatus), '<button type="button" class="btn btn-success btn-sm" data-shipping="' + shipping + '" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                if (postatus == 5) {
+                    if (delieveryRange != "") {
+                        if (orderdate == undefined) {
+                            orderdate = " ";
+                        }
+                        $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), photos, remaining, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + id + "'>" + getPoStatusById(postatus, id) + "</a>", '<button type="button" class="btn btn-warning btn-sm checked-' + id + '" data-shipping="' + shipping + '" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                    } else {
+                        $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), " ", vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), photos, remaining, "", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/"+id+"'>"+getPoStatusById(postatus, id)+"</a>", '<button type="button" class="btn btn-warning btn-sm checked-' + id + '" data-shipping="' + shipping + '" data-ID="' + id + '" id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                    }
+                    
+                } else {
+                    if (delieveryRange != "") {
+                        if (orderdate == undefined) {
+                            orderdate = " ";
+                        }
+                        $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), photos, remaining, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + id + "'>" + getPoStatusById(postatus, id) + "</a>", '<button type="button" class="btn btn-success btn-sm">Checked-In</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                    } else {
+                        $('#purchaseorderlists').dataTable().fnUpdate([$("#newPurchaseOrderForm #poNumber").val(), " ", vendorname, $("#newPurchaseOrderForm #poTotalStyles").val(), photos, remaining, "", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + id + "'>" + getPoStatusById(postatus, id) + "</a>", '<button type="button" class="btn btn-success btn-sm">Checked-In</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + id + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderNote"><div class="redDotNote"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + id + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>'], window.purchaseorderrownumber);
+                    }
+                }
 
+                if (note != "") {
+                    $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").addClass("redDOtElement");
+                } else {
+                    $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").removeClass("redDOtElement");
+                }
                 window.purchaseorderrownumber = "";
             }
 
@@ -809,10 +903,10 @@ $(document).on("click", "#note_submit", function () {
 
     var _self = $(this);
 
-    if ($("#po_notes").val() == "") {
+    /*if ($("#po_notes").val() == "") {
         $(".poNoteAlertMsg").css("color", "red").text("Please fill empty field.");
         return false;
-    }
+    }*/
 
     _self.attr("disabled", true);
     var jsonData = {};
@@ -821,7 +915,9 @@ $(document).on("click", "#note_submit", function () {
     jsonData["po_notes"] = $("#po_notes").val();
 
     console.log(jsonData);
-
+    var poid = $("#note_form").attr("data-noteid");
+    var note = $("#po_notes").val();
+    
     $.ajax({
         url: '/purchaseorders/notecreate',
         dataType: 'json',
@@ -837,6 +933,11 @@ $(document).on("click", "#note_submit", function () {
             _self.attr("disabled", false);
             $("#modaladdnote").modal("hide");
             alertBox('poAlertMsg', 'green', 'Purchase order note updated successfully.');
+            if (note != "") {
+                $("#EditPurhaseOrderNote[data-id='" + poid + "']").find(".redDotNote").addClass("redDOtElement");
+            } else {
+                $("#EditPurhaseOrderNote[data-id='" + poid + "']").find(".redDotNote").removeClass("redDOtElement");
+            }
         }
         console.log(data);
        
@@ -908,9 +1009,9 @@ $(document).on("click", "#document_submit", function () {
     var fileLength = $("#poUploadImages")[0].files.length;
     if (fileLength != 0) {
         var files = $("#poUploadImages")[0].files;
-
+        var poid = $('#document_form').attr("data-documentid");
         var formData = new FormData();
-        formData.append('po_id', $('#document_form').attr("data-documentid"));
+        formData.append('po_id', poid);
 
         for (var i = 0; i != files.length; i++) {
             formData.append("purchaseOrderDocuments", files[i]);
@@ -934,7 +1035,8 @@ $(document).on("click", "#document_submit", function () {
                 _self.attr("disabled", false);
                 if (data.responseText.indexOf('File Already') > -1) {
                     $(".poDocAlertMsg").css("color", "red").text(data.responseText);
-                } else {                    
+                } else {    
+                    $("#EditPurhaseOrderDocument[data-id='" + poid + "']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
                     alertBox('poAlertMsg', 'green', 'Purchase order document updated successfully.');
                 }
@@ -959,7 +1061,7 @@ $(document).on('click', "#poDelete", function () {
 
     var id = $("#newPurchaseOrderForm").data("currentid");
 
-    confirmationAlertBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
+    confirmationAlertInnerBox("Purchase Order Delete", "Are you sure that you want to delete this record?", function (result) {
 
         if (result == "yes") {
             $.ajax({
@@ -1003,17 +1105,19 @@ function purchaseOrderData(data) {
         if (podata.length > 0) {
             podata = data['purchase_order'][0];
 
-            var startDate = timeToDateConvert(podata.delivery_window_start);
-            var endDate = timeToDateConvert(podata.delivery_window_end);
-            $("#newPurchaseOrderForm #poDelieveryRange").daterangepicker({
-                startDate: startDate, // after open picker you'll see this dates as picked
-                endDate: endDate,
-                locale: {
-                    format: 'M/D/YYYY',
-                }
-            }, function (start, end, label) {
-                //what to do after change
-            }).val(startDate + " - " + endDate); 
+            if (podata.delivery_window_start > 0) {
+                var startDate = timeToDateConvert(podata.delivery_window_start);
+                var endDate = timeToDateConvert(podata.delivery_window_end);
+                $("#newPurchaseOrderForm #poDelieveryRange").daterangepicker({
+                    startDate: startDate, // after open picker you'll see this dates as picked
+                    endDate: endDate,
+                    locale: {
+                        format: 'M/D/YYYY',
+                    }
+                }, function (start, end, label) {
+                    //what to do after change
+                }).val(startDate + " - " + endDate); 
+            }
 
             $("#newPurchaseOrderForm #poVendor").val(data["vendor"][0].vendor_name);
             $("#newPurchaseOrderForm #poVendor").attr("data-val", data["vendor"][0].vendor_id);
@@ -1023,9 +1127,11 @@ function purchaseOrderData(data) {
             $("#newPurchaseOrderForm #poTotalQuantity").val(podata.total_quantity);
             $("#newPurchaseOrderForm #poOrderNumber").val(podata.vendor_order_number);
             $("#newPurchaseOrderForm #poSubtotal").val(podata.subtotal);
-            $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
+            if (podata.order_date > 0) {
+                $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
+            }            
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
-            debugger;
+            
             var it = data.Items.LineItemDetails;
             if (it.length > 0) {
                 jQuery.each(it, function (i, dataNew) {
@@ -1034,7 +1140,7 @@ function purchaseOrderData(data) {
                         //$("#itemsTable").append("<td width = '60' > <img src=" + dataNew.product_vendor_image + " width='50' /></td>");
                         $("#itemsTable").append("<td width='60'><img src='/images/dress-clipart.jpg' width='50' /></td>");
                         $("#itemsTable").append("<td class='h6'>" + dataNew.product_name + " (DP007) in " + dataNew.vendor_color_name + " - " + dataNew.sku + "</td>");
-                        $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='EditItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber=" + data["purchase_order"][0].vendor_po_number + " data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
+                        $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='AddItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber=" + data["purchase_order"][0].vendor_po_number + " data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
                         $("#itemsTable").append("<td><a href='/Product/EditAttributes/" + dataNew.product_id +"'"+ " class='h6 text-primary'>Edit Attributes</a></td>");
                         $("#itemsTable").append("<td><a href='#' class='h6 text-danger'>Remove</a></td>");
                         $("#itemsTable").append("</tr>");
@@ -1042,6 +1148,8 @@ function purchaseOrderData(data) {
                 });
             }
             $("#newPurchaseOrderForm #po_status").val(podata.po_status);
+            $("#newPurchaseOrderForm #photos").val(podata.photos);
+            $("#newPurchaseOrderForm #remaining").val(podata.remaining);
         }
         window.notes = "";
         var note = data['notes'];
@@ -1150,28 +1258,28 @@ function getSinglePurchaseOrder(id) {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
-
-        if (data.purchase_order[0].po_status == 4) {
+        var po = data.purchase_order[0];
+        if (po.po_status == 4) {
 
             alert("This P.O does not exist.");
             window.location = location.protocol + "//" + location.host;
             return false;
 
         } else {
-
-            $('.orderNumber').text(data.purchase_order[0].vendor_po_number);
-            $('#AddItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
-            $('#EditItemButton').attr("data-poid", data.purchase_order[0].po_id).attr("data-ponumber", data.purchase_order[0].vendor_po_number).attr("data-vendorid", data.purchase_order[0].vendor_id);
+            $("#poId").val(po.po_id);
+            $('.orderNumber').text(po.vendor_po_number);
+            $('#AddItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id);
+            $('#EditItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id);
 
             purchaseOrderData(data);
             $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
-            if (data.purchase_order[0].po_status == 5) {
-                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data.purchase_order[0].shipping + '" data-ID="' + data.purchase_order[0].po_id + '" id = "EditPurhaseOrderCheckedIn">Checkin</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
+            if (po.po_status == 5) {
+                $('.checkin_btn').html('<button type="button" class="btn btn-warning btn-sm" data-shipping="' + po.shipping + '" data-ID="' + po.po_id + '" id = "EditPurhaseOrderCheckedIn">Checkin</button> <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
             } else {
                 $('.checkin_btn').html('<button type="button" class="btn btn-success btn-sm">Checked-In</button>  <button type="button" id="poDelete" class="btn btn-danger btn-sm">Delete this P.O</button >');
             }
-
+            LoadClaim();
             $('.loading').addClass("d-none");
         }
 
@@ -1180,185 +1288,6 @@ function getSinglePurchaseOrder(id) {
     })
 
 }
-
-$(document).on("keydown", "#item_barcode", function (e) {
-    return isNumber(e);
-});
-
-/*
-Developer: Sajid Khan
-Date: 7-13-19
-Action: Checkin button click
-output: Checkin Model Show
-*/
-$(document).on('click', "#EditPurhaseOrderCheckedIn", function (){
-
-    var producthtml = "";
-    var po_number = $(this).parents("tr").children("td:first").text();
-    var vendor = $(this).parents("tr").children("td:nth-child(3)").text();
-    console.log(po_number + " -- " + vendor);
-    $("#checkinModalLongTitle").text("Purchase Order #" + po_number + " - " + vendor+" - Check-in");
-    var poid = $(this).attr("data-ID");
-    var shipping = $(this).attr("data-shipping");
-    $("#checkin_form #poShipping").val(shipping);
-    $('.loading').removeClass("d-none");
-    $.ajax({
-        url: '/purchaseorders/PurchaseOrderItemDetails/' + poid,
-        dataType: 'json',
-        type: 'Get',
-        contentType: 'application/json',
-    }).always(function (data) {
-        console.log(data);
-        if (data != "0") {
-
-            if (data.itemsList.length > 0) {
-                $(data.itemsList).each(function (e, i) {
-                    console.log(i.product_name + " (" + i.small_sku + ")-" + i.size);
-                    producthtml += "<div class='form-row align-items-center product_name_with_small_sku_size'><div class='form-group col-md-6' ><label>" + i.product_name + " (" + i.small_sku + ")-" + i.size + "</label></div><div class='form-group col-md-6'><input type='text' class='form-control' name='item_barcode' id='item_barcode' data-itemid=" + i.item_id + " value=" + i.barcode + " maxlength='8'></div></div>";
-                });
-            }
-
-            $(".po_doc_section").empty();
-            if (data.documents.length > 0) {
-
-                $(data.documents).each(function (e, i) {
-                    $(".po_doc_section").append("<a href='uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
-                });
-
-                $(".po_doc_section").removeClass('d-none');
-
-            } else {
-                $(".po_doc_section").addClass('d-none');
-            }
-
-
-            $(".poTracking").val("");
-            $("#wrapper_checkin_tracking").empty().html("");
-            if (data.tracking.length > 0) {
-                $(data.tracking).each(function (e, i) {
-                    if (e == 0) {
-                        $(".poTracking").val(i.tracking_number);
-                        $(".poTracking").attr("id", i.po_tracking_id);
-                    } else {
-                        $("#wrapper_checkin_tracking").append('<div class="tracking_add_more_box"><input type="text" class="form-control d-inline-block poTracking" name="poTracking[]" id="' + i.po_tracking_id + '" value="' + i.tracking_number + '" style="width: 90%"> <a href="#" class="h4 red_color remove_tracking">-</a></div>');
-                    }
-                });
-            }
-
-        }
-
-        $('.loading').addClass("d-none");
-        $(".wrapper_product").empty().html(producthtml);
-        $("#checkin_form").attr("data-poid", poid);
-        $("#modalcheckin").modal("show");
-    });
-});
-
-/*
-Developer: Sajid Khan
-Date: 7-13-19
-Action: Checkin button click submit form data to item and purchase order update with status
-output: Success or failed alert show
-*/
-$(document).on('click', ".submit-check-in", function () {
-    var po_id = $("#checkin_form").attr("data-poid");
-    var shipping = $("#checkin_form #poShipping").val(); 
-
-    console.log(po_id + " -- " + shipping);
-
-    var jsonData = {};
-
-    jsonData["shipping"] = shipping;
-
-    jsonData['tracking'] = [];
-
-    $('#checkin_form .poTracking').each(function () {
-        var tracking_json = {};
-
-        tracking_json['track'] = $(this).val();
-        if ($(this).attr("id") == "undefined") {
-            tracking_json['id'] = "";
-        } else {
-            tracking_json['id'] = $(this).attr("id");
-        }
-
-        jsonData['tracking'].push(tracking_json);
-    });
-
-    console.log(jsonData['tracking']);
-
-    jsonData['items_barcodes'] = [];
-   
-    $(".product_name_with_small_sku_size :input").each(function () {
-
-        if ($(this).val().length == 8) {
-
-            var jsonItemData = {
-                "item_id": $(this).attr("data-itemid"),
-                "barcode": $(this).val()
-            };
-            jsonData['items_barcodes'].push(jsonItemData);
-        }
-        
-    })
-
-    console.log(jsonData);
-
-    $.ajax({
-        url: '/purchaseorders/updatepurchaseordercheckin/' + po_id,
-        dataType: 'json',
-        type: 'post',
-        contentType: 'application/json',
-        data: JSON.stringify(jsonData),
-        processData: false,
-
-    }).always(function (data) {
-        console.log(data);
-
-        if (data.responseText == "Success") {
-
-            var fileLength = $("#checkin_form #poUploadImage")[0].files.length;
-            if (fileLength != 0) {
-                var files = $("#checkin_form #poUploadImage")[0].files;
-
-                var formData = new FormData();
-                formData.append('po_id', po_id);
-
-                for (var i = 0; i != files.length; i++) {
-                    formData.append("purchaseOrderDocuments", files[i]);
-                }
-
-                $.ajax({
-                    url: "/purchaseorders/purchaseorder_doc",
-                    type: 'POST',
-                    data: formData,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                }).always(function (data) {
-                    console.log(data);
-                    if (data == "0") {
-                        console.log("Exception Error");
-                        alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
-                    } else {
-                        console.log(data.responseText);
-                    }
-                });
-            }
-            $('#modalcheckin').modal('hide');
-            alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
-
-            $('#checkin_form')[0].reset();
-        } else {
-            alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
-        }
-
-    })
-
-
-});
-
-
 
 /*
 Developer: Sajid Khan
@@ -1413,5 +1342,9 @@ $(document).on('click', ".podeleteImage", function (e) {
         console.log(data);
         if (data.responseText != '0')
             _this.parents('.documentsLink').remove();
+
+        if ($('#modaladddocument .po_doc_section a').length == 0) {
+            $("#EditPurhaseOrderDocument[data-id='" + poid + "']").find(".redDotDoc").removeClass("redDOtElement");
+        }
     });
 });

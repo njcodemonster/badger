@@ -8,12 +8,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using badger_view.Models;
+using GenericModals.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using GenericModals;
 
-namespace badger_view.Models
+namespace badger_view.Models_Backup
 {
     [Table("users")]
     public partial class Users
@@ -50,7 +51,7 @@ namespace badger_view.Helpers
     {
        
         Task<Boolean> CheckLogin();
-        Task<Boolean> DoLogin(badger_view.Models.LogiDetails logiDetails);
+        Task<Boolean> DoLogin(badger_view.Models_Backup.LogiDetails logiDetails);
         Task<string> GetLoginUserId();
         Task<string> GetLoginUserFirstName();
         Task<bool> Logout(string user_id);
@@ -146,7 +147,7 @@ namespace badger_view.Helpers
         Input:  Login data email and password
         output: boolean
         */
-        public async Task<bool> DoLogin(badger_view.Models.LogiDetails logiDetails)
+        public async Task<bool> DoLogin(badger_view.Models_Backup.LogiDetails logiDetails)
         {
             SetBadgerHelper();
             Boolean isLoedIn = false;

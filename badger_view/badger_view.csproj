@@ -7,6 +7,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Barcode.cs" />
+    <Compile Remove="Models\Categories.cs" />
+    <Compile Remove="Models\CategoryOptionPage.cs" />
+    <Compile Remove="Models\CategoryOptions.cs" />
+    <Compile Remove="Models\ErrorViewModel.cs" />
+    <Compile Remove="Models\ItemsList.cs" />
+    <Compile Remove="Models\Product.cs" />
+    <Compile Remove="Models\ProductDetailPagePOCO.cs" />
+    <Compile Remove="Models\ProductImages.cs" />
+    <Compile Remove="Models\ProductPageDetails.cs" />
+    <Compile Remove="Models\ProductPhotoshootRep.cs" />
+    <Compile Remove="Models\ProductPhotoshoots.cs" />
+    <Compile Remove="Models\PurchaseOrderDiscounts.cs" />
+    <Compile Remove="Models\PurchaseOrderLedger.cs" />
+    <Compile Remove="Models\PurchaseOrders.cs" />
+    <Compile Remove="Models\PurchaseOrdersPagerList.cs" />
+    <Compile Remove="Models\PurchaseOrdersTracking.cs" />
+    <Compile Remove="Models\Sku.cs" />
+    <Compile Remove="Models\Vendor.cs" />
+    <Compile Remove="Models\VendorAddress.cs" />
+    <Compile Remove="Models\VendorAdressandRep.cs" />
+    <Compile Remove="Models\VendorContactPerson.cs" />
+    <Compile Remove="Models\VendorNote.cs" />
+    <Compile Remove="Models\VendorPagerList.cs" />
+    <Compile Remove="Models\VendorProducts.cs" />
+    <Compile Remove="Models\VendorTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+   
+    <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.1" />
    
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
@@ -18,10 +49,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\VendorNote.cs" />
+    <ProjectReference Include="..\GenericModals\GenericModals.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +58,11 @@
     <None Remove="uploads\image-2.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Models\" />
     <Folder Include="uploads\" />
     <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\lib\signalr\signalr.js" />
   </ItemGroup>
 </Project>

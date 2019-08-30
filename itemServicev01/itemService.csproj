@@ -24,10 +24,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
+    <ProjectReference Include="..\GenericModals\GenericModals.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Logs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.Stage2.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
