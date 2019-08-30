@@ -113,5 +113,50 @@
     "EventId": 16,
     "EventName": "photoshoot_created",
     "EventDescription": "Photoshoot created by user =%%userid%% with photoshoot id = %%entityId%%"
+  },
+  {
+    "EventId": 1,
+    "EventName": "create_vendor",
+    "EventDescription": "Vendor created by user =%%userid%% with vendor id= %%entityId%%"
+  },
+  {
+    "EventId": 22,
+    "EventName": "create_vendor_note",
+    "EventDescription": "Vendor note created by user =%%userid%% with note id= %%entityId%%"
+  },
+  {
+    "EventId": 21,
+    "EventName": "create_vendor_document",
+    "EventDescription": "Vendor document created by user =%%userid%% with document id= %%entityId%%"
+  },
+  {
+    "EventId": 23,
+    "EventName": "update_vendor",
+    "EventDescription": "Vendor updated by user =%%userid%% with vendor id= %%entityId%%"
+  },
+  {
+    "EventId": 1,
+    "EventName": "create_vendor_product",
+    "EventDescription": "Vendor product created by user =%%userid%% with product id= %%entityId%%"
+  },
+  {
+    "EventId": 25,
+    "EventName": "vendor_address_created",
+    "EventDescription": "Vendor address created by user =%%userid%% with vendor id= %%entityId%%"
+  },
+  {
+    "EventId": 27,
+    "EventName": "vendor_address_updated",
+    "EventDescription": "Vendor address updated by user =%%userid%% with vendor id= %%entityId%%"
+  },
+  {
+    "EventId":26,
+    "EventName": "create_vendor_repo",
+    "EventDescription": "Vendor repo created by user =%%userid%% with vendor id= %%entityId%%"
+  },
+  {
+    "EventId": 28,
+    "EventName": "update_vendor_repo",
+    "EventDescription": "Vendor repo updated by user =%%userid%% with vendor id= %%entityId%%"
   }
 ]
