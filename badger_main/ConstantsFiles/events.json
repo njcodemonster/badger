@@ -36,7 +36,7 @@
   },
   {
     "EventId": 5,
-    "EventName": "discount",
+    "EventName": "discount_create",
     "EventDescription": "Purchase order discount created by user =%%userid%% with purchase order discount id= %%entityId%%"
   },
   {
@@ -48,6 +48,66 @@
     "EventId": 13,
     "EventName": "discount_specificupdate",
     "EventDescription": "Purchase order discount specific updated by user =%%userid%% with purchase order discount id= %%entityId%%"
+  },
+  {
+    "EventId": 3,
+    "EventName": "ledger_create",
+    "EventDescription": "Purchase order ledger created by user =%%userid%% with purchase order ledger id= %%entityId%%"
+  },
+  {
+    "EventId": 10,
+    "EventName": "ledger_update",
+    "EventDescription": "Purchase order ledger updated by user =%%userid%% with purchase order ledger id= %%entityId%%"
+  },
+  {
+    "EventId": 11,
+    "EventName": "ledger_specificupdate",
+    "EventDescription": "Purchase order ledger specific updated by user =%%userid%% with purchase order ledger id= %%entityId%%"
+  },
+  {
+    "EventId": 4,
+    "EventName": "tracking_create",
+    "EventDescription": "Purchase order tracking created by user =%%userid%% with purchase order tracking id= %%entityId%%"
+  },
+  {
+    "EventId": 14,
+    "EventName": "tracking_update",
+    "EventDescription": "Purchase order tracking updated by user =%%userid%% with purchase order tracking id= %%entityId%%"
+  },
+  {
+    "EventId": 15,
+    "EventName": "tracking_specific_update",
+    "EventDescription": "Purchase order tracking specific updated by user =%%userid%% with purchase order tracking id= %%entityId%%"
+  },
+  {
+    "EventId": 20,
+    "EventName": "tracking_delete",
+    "EventDescription": "Purchase order tracking deleted by user =%%userid%% with purchase order tracking id= %%entityId%%"
+  },
+  {
+    "EventId": 29,
+    "EventName": "item_note_create",
+    "EventDescription": "Item note created by user =%%userid%% with note id= %%entityId%%"
+  },
+  {
+    "EventId": 30,
+    "EventName": "item_document_create",
+    "EventDescription": "Item document created by user =%%userid%% with document id= %%entityId%%"
+  },
+  {
+    "EventId": 38,
+    "EventName": "po_lineitem_created",
+    "EventDescription": "Purchase order line item created by user =%%userId%% with purchase order id= %%entityId%%"
+  },
+  {
+    "EventId": 39,
+    "EventName": "po_lineitem_update",
+    "EventDescription": "Purchase order line item updated by user =%%userid%% with purchase order id= %%entityId%%"
+  },
+  {
+    "EventId": 40,
+    "EventName": "po_lineitem_specific_update",
+    "EventDescription": "Purchase order line item specific updated by user =%%userid%% with purchase order id= %%entityId%%"
   },
   {
     "EventId": 16,

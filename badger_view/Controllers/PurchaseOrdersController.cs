@@ -991,7 +991,7 @@ namespace badger_view.Controllers
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
             if (id == 0)
             {
-                 purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+                 purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
 
             }
             else
@@ -1006,8 +1006,8 @@ namespace badger_view.Controllers
             
 
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
+            //int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
+            //PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
             ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges); 

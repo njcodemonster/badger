@@ -38,24 +38,16 @@ namespace badgerApi.Controllers
 
         private int note_type = 4;
 
-        /*private int event_type_po_id = 2;
-        private int event_type_po_note_create_id = 6;
-        private int event_type_po_document_create_id = 7;
-        private int event_type_po_update_id = 8;
-        private int event_type_po_specific_update_id = 9;
-        private int event_type_po_delete_id = 24;
-        private int event_type_po_delete_document_id = 31;*/
-
         private string userEventTableName = "user_events";
         private string poEventTableName = "purchase_order_events";
 
-        /*private string event_create_purchase_orders = "Purchase order created by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_create_purchase_orders_notecreate = "Purchase order note created by user =%%userid%% with note id= %%noteid%%";
-        private string event_create_purchase_orders_documentcreate = "Purchase order document created by user =%%userid%% with document id= %%documentid%%";
-        private string event_update_purchase_orders = "Purchase order updated by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_delete_purchase_orders = "Purchase order deleted by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_delete_document_purchase_orders = "Purchase order document deleted by user =%%userid%% with document id= %%documentid%%";*/
+        string po_created = "po_created";
+        string po_note_create = "po_note_create";
+        string po_document_create = "po_document_create";
+        string po_update = "po_update";
+        string po_delete = "po_delete";
+        string po_specific_update = "po_specific_update";
+        string po_delete_document = "po_delete_document";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
 
@@ -225,7 +217,7 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 newPOId = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
-                var po_created = "po_created";
+                
                 var eventModel = new EventModel(poEventTableName)
                 {
                     EventName = po_created,
@@ -274,11 +266,10 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
 
-                var poEvent = _eventRepo.GetEventTypeByName("po_note_create");
                 var eventModel = new EventModel(poEventTableName)
                 {
                     EntityId = Int32.Parse(newNoteID),
-                    EventType = poEvent,
+                    EventName = po_note_create,
                     RefrenceId = ref_id,
                     UserId = created_by,
                 };
@@ -287,7 +278,7 @@ namespace badgerApi.Controllers
                 var userEvent = new EventModel(userEventTableName)
                 {
                     EntityId = created_by,
-                    EventType = poEvent,
+                    EventName = po_note_create,
                     RefrenceId = Convert.ToInt32(newNoteID),
                     UserId = created_by,
                 };
@@ -326,11 +317,10 @@ namespace badgerApi.Controllers
 
                 NewInsertionID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
 
-                var poEvent = _eventRepo.GetEventTypeByName("po_document_create");
                 var eventModel = new EventModel(poEventTableName)
                 {
                     EntityId = Int32.Parse(NewInsertionID),
-                    EventType = poEvent,
+                    EventName = po_document_create,
                     RefrenceId = ref_id,
                     UserId = created_by,
                 };
@@ -339,7 +329,7 @@ namespace badgerApi.Controllers
                 var userEvent = new EventModel(userEventTableName)
                 {
                     EntityId = created_by,
-                    EventType = poEvent,
+                    EventName = po_document_create,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = created_by,
                 };
@@ -429,12 +419,11 @@ namespace badgerApi.Controllers
                 PurchaseOrders PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 PurchaseOrdersToUpdate.po_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
-
-                var poEvent = _eventRepo.GetEventTypeByName("po_update");
+                
                 var eventModel = new EventModel(poEventTableName)
                 {
                     EntityId = id,
-                    EventType = poEvent,
+                    EventName = po_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
                 };
@@ -443,7 +432,7 @@ namespace badgerApi.Controllers
                 var userEvent = new EventModel(userEventTableName)
                 {
                     EntityId = PurchaseOrdersToUpdate.updated_by,
-                    EventType = poEvent,
+                    EventName = po_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
                 };
@@ -580,12 +569,10 @@ namespace badgerApi.Controllers
 
                 if (PurchaseOrdersToUpdate.po_status == 4)
                 {
-
-                    var poEvent = _eventRepo.GetEventTypeByName("po_delete");
                     var eventModel = new EventModel(poEventTableName)
                     {
                         EntityId = id,
-                        EventType = poEvent,
+                        EventName = po_delete,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
@@ -594,7 +581,7 @@ namespace badgerApi.Controllers
                     var userEvent = new EventModel(userEventTableName)
                     {
                         EntityId = PurchaseOrdersToUpdate.updated_by,
-                        EventType = poEvent,
+                        EventName = po_delete,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
@@ -602,11 +589,10 @@ namespace badgerApi.Controllers
                 }
                 else
                 {
-                    var poEvent = _eventRepo.GetEventTypeByName("po_specific_update");
                     var eventModel = new EventModel(poEventTableName)
                     {
                         EntityId = id,
-                        EventType = poEvent,
+                        EventName = po_specific_update,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
@@ -615,7 +601,7 @@ namespace badgerApi.Controllers
                     var userEvent = new EventModel(userEventTableName)
                     {
                         EntityId = PurchaseOrdersToUpdate.updated_by,
-                        EventType = poEvent,
+                        EventName = po_specific_update,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
@@ -684,11 +670,10 @@ namespace badgerApi.Controllers
                     int po_id = PurchaseOrdersToUpdate.po_id;
                     int updated_by = PurchaseOrdersToUpdate.updated_by;
 
-                    var poEvent = _eventRepo.GetEventTypeByName("po_delete_document");
                     var eventModel = new EventModel(poEventTableName)
                     {
                         EntityId = id,
-                        EventType = poEvent,
+                        EventName = po_delete_document,
                         RefrenceId = po_id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
@@ -697,7 +682,7 @@ namespace badgerApi.Controllers
                     var userEvent = new EventModel(userEventTableName)
                     {
                         EntityId = PurchaseOrdersToUpdate.updated_by,
-                        EventType = poEvent,
+                        EventName = po_delete_document,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };

@@ -11,3 +11,13 @@ ALTER TABLE `purchase_orders` CHANGE `total_quantity` `total_quantity` DECIMAL(1
 
 /*29-08-2019 by Sajid Khan*/
 ALTER TABLE `items` ADD COLUMN `has_doc` INT NULL AFTER `published_by`;
+
+
+
+/*30-08-2019 by Sajid Khan*/
+INSERT INTO `event_types` (`event_type_name`, `event_type_description`) VALUES ('purchase order line item created', 'A new purchase order line item is created via api'); 
+UPDATE `event_types` SET `event_type_name` = 'purchase order line item updated' WHERE `event_type_id` = '39'; 
+UPDATE `event_types` SET `event_type_description` = 'A purchase order line item is updated via API' WHERE `event_type_id` = '39'; 
+INSERT INTO `event_types` (`event_type_name`) VALUES ('purchase order line item specific updated'); 
+UPDATE `event_types` SET `event_type_description` = 'A purchase order line item is specific updated via API' WHERE `event_type_id` = '40'; 
+

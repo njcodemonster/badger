@@ -26,6 +26,10 @@ namespace badgerApi.Controllers
         private string userEventTableName = "user_events";
         private string tableName = "purchase_order_events";
 
+        string discount_create = "discount_create";
+        string discount_update = "discount_update";
+        string discount_specificupdate = "discount_specificupdate";
+
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         public PurchaseOrdersDiscountsController(IPurchaseOrdersDiscountsRepository PurchaseOrdersDiscountsRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo)
         {
@@ -148,11 +152,10 @@ namespace badgerApi.Controllers
                 PurchaseOrderDiscounts newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrderDiscounts>(value);
                 NewInsertionID = await _PurchaseOrdersDiscountsRepo.Create(newPurchaseOrder);
 
-                var poEvent = _eventRepo.GetEventTypeByName("discount");
                 var eventModel = new EventModel(tableName)
                 {
                     EntityId = Int32.Parse(NewInsertionID),
-                    EventType = poEvent,
+                    EventName = discount_create,
                     RefrenceId = newPurchaseOrder.po_id,
                     UserId = newPurchaseOrder.created_by,
                 };
@@ -161,7 +164,7 @@ namespace badgerApi.Controllers
                 var userEvent = new EventModel(userEventTableName)
                 {
                     EntityId = newPurchaseOrder.created_by,
-                    EventType = poEvent,
+                    EventName = discount_create,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = newPurchaseOrder.created_by,
                 };
@@ -195,12 +198,11 @@ namespace badgerApi.Controllers
                 PurchaseOrderDiscounts PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrderDiscounts>(value);
                 PurchaseOrdersToUpdate.po_discount_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersDiscountsRepo.Update(PurchaseOrdersToUpdate);
-
-                var poEvent = _eventRepo.GetEventTypeByName("discount_update");
+                
                 var eventModel = new EventModel(tableName)
                 {
                     EntityId = id,
-                    EventType = poEvent,
+                    EventName = discount_update,
                     RefrenceId = PurchaseOrdersToUpdate.po_id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
                 };
@@ -209,17 +211,11 @@ namespace badgerApi.Controllers
                 var userEvent = new EventModel(userEventTableName)
                 {
                     EntityId = PurchaseOrdersToUpdate.updated_by,
-                    EventType = userEvent,
+                    EventName = discount_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
                 };
                 await _eventRepo.AddEventAsync(userEvent);
-
-                event_update_purchase_orders_discount = event_update_purchase_orders_discount.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%discountid%%", id.ToString());
-
-                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_discount_update_id, id, event_update_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
-
-                _eventRepo.AddEventAsync(event_type_discount_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders_discount, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -287,13 +283,24 @@ namespace badgerApi.Controllers
                 }
 
                 await _PurchaseOrdersDiscountsRepo.UpdateSpecific(ValuesToUpdate, "po_discount_id=" + id);
+                
+                var eventModel = new EventModel(tableName)
+                {
+                    EntityId = id,
+                    EventName = discount_specificupdate,
+                    RefrenceId = PurchaseOrdersToUpdate.po_id,
+                    UserId = PurchaseOrdersToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                event_updatespecific_purchase_orders_discount = event_updatespecific_purchase_orders_discount.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%discountid%%", id.ToString());
-
-                _eventRepo.AddPurchaseOrdersEventAsync(PurchaseOrdersToUpdate.po_id, event_type_discount_specificupdate_id, id, event_updatespecific_purchase_orders_discount, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), tableName);
-
-                _eventRepo.AddEventAsync(event_type_discount_specificupdate_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders_discount, _common.GetTimeStemp(), userEventTableName);
-
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = PurchaseOrdersToUpdate.updated_by,
+                    EventName = discount_specificupdate,
+                    RefrenceId = id,
+                    UserId = PurchaseOrdersToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
