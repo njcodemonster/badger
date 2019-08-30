@@ -757,7 +757,7 @@ $('#vendorListingArea').on('page.dt', function () {
         });
     }*/
 });
-$(document).on('keydown', '.required', function (e) {
+$(document).on('keydown', '#vendorNote,#vendorDec,#vendorNotes', function (e) {
     console.log(this.value);
     if (e.which === 32 && e.target.selectionStart === 0) {
         return false;
