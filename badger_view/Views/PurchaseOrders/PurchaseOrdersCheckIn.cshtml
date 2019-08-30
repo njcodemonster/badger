@@ -4,8 +4,10 @@
 
 @model dynamic
 @section Scripts {
+    <script src="~/lib/signalr/signalr.js" asp-append-version="true"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/POManagementPage.js" asp-append-version="true"></script>
+    <script src="~/js/POClaim.js" asp-append-version="true"></script>
     <script src="~/js/checkin.js" asp-append-version="true"></script>
 }
 
@@ -213,8 +215,8 @@
 
 <div class="">
 
-
-    @foreach (GenericModals.Models.PurchaseOrdersInfo purchaseOrder in Model.POList)
+    @using CommonHelper;
+    @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrder in Model.POList)
     {
         <div class="accordion" id="accordionpocheck-@purchaseOrder.po_id">
             <div class="card POListCheckIn">
@@ -233,11 +235,36 @@
                             <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12" style="white-space: nowrap">
-                            <span class="text-center d-inline-block">
-                                <b>Inspect</b><br /><a href="#">Claim</a>
+                            <span class="text-center d-inline-block" id="inspect-claim-@purchaseOrder.po_id">
+
+                                @if (purchaseOrder.Claim?.inspect_claimer > 0)
+                                {
+                                   
+                                    <b>Inspect</b><br />
+                                    <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))" id="remove-claim-inspect-btn">
+                                        <span style="padding:inherit">@purchaseOrder.Claim.inspect_claimer_name</span>
+                                        <span class="fa fa-times"></span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <b>Inspect</b><br />
+                                    <button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))">Claim</button>
+                                }
                             </span>
-                            <span class="text-center d-inline-block pl-4">
-                                <b>Go Live</b><br /><a href="#">Claim</a>
+                            <span class="text-center d-inline-block pl-4" id="publish-claim-@purchaseOrder.po_id">
+                                <b>Go Live</b><br />
+                                @if (purchaseOrder.Claim?.publish_claimer > 0)
+                                {
+                                    <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.PublishClaimer))" id="remove-claim-publish-btn">
+                                        <span style="padding:inherit">@purchaseOrder.Claim.publish_claimer_name</span>
+                                        <span class="fa fa-times"></span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(@purchaseOrder.po_id, @((int)ClaimerType.PublishClaimer))">Claim</button>
+                                }
                             </span>
                             <span class="d-inline-block pl-4 align-top pt-2">
                                 <b> @purchaseOrder.total_styles total styles  <!-- , 5 have photos, 3 are live--></b>

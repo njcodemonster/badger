@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using badger_view.Helpers;
 using GenericModals.Models;
 using System.Dynamic;
-using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommonHelper;
@@ -15,6 +14,10 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using GenericModals.Claim;
+using GenericModals.PurchaseOrder;
+using GenericModals;
+using CommonHelper.Extensions;
 
 namespace badger_view.Controllers
 {
@@ -69,9 +72,12 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
-
+            
+            var exceptionTest = await _BadgerApiHelper.GetAsync<string>("/values/test");
+            
+            // PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
+            var purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
+            
             String poIdsList = "";
 
             dynamic ProductIdsList = await _BadgerApiHelper.GenericGetAsync<object>("/product/getproductidsbypurchaseorder/");
@@ -902,9 +908,10 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+            var purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            int purchase_order_id = PageModal.POList[0].po_id;
+            int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
@@ -1765,5 +1772,62 @@ namespace badger_view.Controllers
             return newPurchaseOrderID;
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Claim([FromBody] ClaimModel claim)
+        {
+            try
+            {
+                SetBadgerHelper();
+                var userId = await _LoginHelper.GetLoginUserId();
+                BindClaimerType(claim, userId);
+                var response = await _BadgerApiHelper.GenericPostAsync(claim, "/PurchaseOrders/Claim/");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
+        }
+
+        private static void BindClaimerType(ClaimModel claim, string userId)
+        {
+            if (claim.claim_type == ClaimerType.InspectClaimer)
+                claim.inspect_claimer = Convert.ToInt32(userId);
+            else
+                claim.publish_claimer = Convert.ToInt32(userId);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RemoveClaim([FromBody] ClaimModel claim)
+        {
+            try
+            {
+                SetBadgerHelper();
+                var userId = await _LoginHelper.GetLoginUserId();
+                BindClaimerType(claim, userId);
+                var response = await _BadgerApiHelper.GenericPostAsync(claim, "/PurchaseOrders/removeclaim/");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet("purchaseorders/loadclaim/{poId:int}")]
+        public async Task<IActionResult> LoadClaim(int poId)
+        {
+            SetBadgerHelper();
+            var userId = await _LoginHelper.GetLoginUserId();
+            string a = "aa";
+            int i = int.Parse(a);
+            var response = await _BadgerApiHelper.GetAsync<PoClaim>("/PurchaseOrders/loadclaim/" + poId);
+            return Ok(response);
+        }
     }
 }

@@ -8,6 +8,7 @@ using badgerApi.Interfaces;
 using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using GenericModals.PurchaseOrder;
 
 namespace badgerApi.Controllers
 {

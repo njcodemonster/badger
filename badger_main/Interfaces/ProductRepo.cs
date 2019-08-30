@@ -14,6 +14,7 @@ using CommonHelper;
 using Newtonsoft.Json;
 
 using System.Dynamic;
+using GenericModals.PurchaseOrder;
 
 namespace badgerApi.Interfaces
 {
