@@ -6,11 +6,15 @@
 // Initiate data table
 
 $(document).ajaxStart(function () {
-    alert("request started");
+    // alert("request started");
+    console.log("request started");
 });
 
 $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
-    alertBox('vendorAlertMsg', 'red', jqxhr.responseJSON.Message);
+    if (jqxhr.responseJSON)
+        alertBox('vendorAlertMsg', 'red', jqxhr.responseJSON.Message);
+    else
+        alertBox('vendorAlertMsg', 'red', jqxhr.responseText, 50000);
 });
 
 //$(document).ajaxSuccess(function () {

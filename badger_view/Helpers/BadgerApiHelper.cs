@@ -97,7 +97,7 @@ namespace badger_view.Helpers
         {
             var client = new HttpClient();
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
-            var response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json);
+            var response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json.ToString());
 
             var data = await response.Content.ReadAsStringAsync();
             

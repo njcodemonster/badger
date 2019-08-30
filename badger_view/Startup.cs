@@ -69,8 +69,8 @@ namespace badger_view
             
             if (env.IsDevelopment())
             {
-                // app.UseDeveloperExceptionPage();
-                LogGloblaErrors(app);
+                 app.UseDeveloperExceptionPage();
+               // LogGloblaErrors(app);
             }
             else
             {

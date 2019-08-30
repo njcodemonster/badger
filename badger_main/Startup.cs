@@ -75,8 +75,8 @@ namespace badgerApi
             loggerFactory.AddFile("Logs/BadgerAPIFunctional-{Date}.txt");
             if (env.IsDevelopment())
             {
-                // app.UseDeveloperExceptionPage();
-                LogGloblaErrors(app, loggerFactory);
+                 app.UseDeveloperExceptionPage();
+               // LogGloblaErrors(app, loggerFactory);
             }
             else
             {
