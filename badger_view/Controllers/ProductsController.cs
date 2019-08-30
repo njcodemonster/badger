@@ -94,15 +94,82 @@ namespace badger_view.Controllers
             product.Add("product_detail_2", json.Value<string>("product_detail_2"));
             product.Add("product_detail_3", json.Value<string>("product_detail_3"));
             product.Add("product_detail_4", json.Value<string>("product_detail_4"));
+
+            product.Add("pairProductIds", json.Value<string>("pairProductIds"));
+            product.Add("RemovePairWithProductIds", json.Value<string>("RemovePairWithProductIds"));
+            product.Add("otherColorsProductIds", json.Value<string>("otherColorsProductIds"));
+            product.Add("RemoveOtherColorProductIds", json.Value<string>("RemoveOtherColorProductIds"));
+            
+
+            product.Add("photoshootStatus", json.Value<string>("photoshootStatus"));
+            product.Add("photoshootStatusOld", json.Value<string>("photoshootStatusOld"));
+
             product.Add("updated_by", user_id);
             product.Add("updated_at", _common.GetTimeStemp());
             
             string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(product.ToString(Formatting.None), "/Product/UpdateAttributes/" + productId.ToString());
- 
-            if (json.Value<string>("oldInternalNotes") == json.Value<string>("internalNotes"))
+
+            string sku = "";
+            string tagAddedIds = json.Value<string>("tagAddedIds");
+
+            if (tagAddedIds != "")
             {
+                int countComma = tagAddedIds.Count(c => c == ',');
+                if (countComma > 0)
+                {
+                    var ids = tagAddedIds.Split(",");
+                    foreach (var tagId in ids)
+                    {
+                        JObject product_attr = new JObject();
+                        Int16 attribute_id = Int16.Parse(tagId); 
+
+                        product_attr.Add("attribute_id", attribute_id);
+                        product_attr.Add("product_id", productId);
+                        product_attr.Add("value", "");
+
+                        product_attr.Add("created_by", user_id);
+                        product_attr.Add("created_at", _common.GetTimeStemp());
+                        String attr_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr.ToString(Formatting.None), "/attributevalues/create");
+
+
+                        JObject product_attr_value = new JObject();
+                        product_attr_value.Add("product_id", productId);
+                        product_attr_value.Add("attribute_id", attribute_id);
+                        product_attr_value.Add("value_id", attr_value_id);
+
+                        product_attr_value.Add("created_by", user_id);
+                        // product_attr_value.Add("created_at", _common.GetTimeStemp()); need to create in DB
+                        String product_attribute_value_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attr_value.ToString(Formatting.None), "/product/createAttributesValues");
+
+                        JObject product_attribute_obj = new JObject();
+                        product_attribute_obj.Add("product_id", productId);
+                        product_attribute_obj.Add("attribute_id", attribute_id);
+                        product_attribute_obj.Add("value_id", attr_value_id);
+                        product_attribute_obj.Add("sku", sku);
+
+                        product_attribute_obj.Add("created_by", user_id);
+                        //product_attribute_obj.Add("created_at", _common.GetTimeStemp()); need to create in DB
+                        String product_attribute_id = await _BadgerApiHelper.GenericPostAsyncString<String>(product_attribute_obj.ToString(Formatting.None), "/product/createProductAttribute");
+
+
+                    }
+                }
+                else
+                {
+
+                }
+            } 
+
+            if (json.Value<string>("photoshootStatus") != json.Value<string>("photoshootStatusOld"))
+            {
+                JObject photoshoot = new JObject();
+                photoshoot.Add("product_shoot_status_id", json.Value<string>("photoshootStatus"));
+                photoshoot.Add("updated_by", user_id);
+                photoshoot.Add("updated_at", _common.GetTimeStemp());
+                await _BadgerApiHelper.GenericPutAsyncString<string>(photoshoot.ToString(Formatting.None), "/Photoshoots/UpdatePhotoshootProductStatus/" + productId.ToString());
             }
-            else
+
+            if (json.Value<string>("oldInternalNotes") != json.Value<string>("internalNotes"))
             {
                 JObject productNote = new JObject();
                 productNote.Add("ref_id", productId);
@@ -111,11 +178,28 @@ namespace badger_view.Controllers
 
                 await _BadgerApiHelper.GenericPostAsyncString<String>(productNote.ToString(Formatting.None), "/product/notecreate");
             }
-          
-
-
             return "success";
         }
+
+        /*
+        Developer: Mohi
+        Date: 8-21-19
+        Request: GET
+        Action:Get product with vendor for pair with autocomplete
+        URL: product/PairWithProductsAutocomplete/id
+        Input: product  id
+        output: List of products with vendor 
+        */
+        [Authorize]
+        [HttpGet("product/PairWithProductsAutocomplete/{id}")]
+        public async Task<string> PairWithProductsAutocomplete(string id)
+        {
+            SetBadgerHelper();
+
+            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/"+id);
+            return ProductsPairWithSearch.ToString();
+        } 
+
         /*
            Developer: Azeem Hassan
            Date: 7-30-19

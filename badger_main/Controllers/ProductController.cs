@@ -70,6 +70,33 @@ namespace badgerApi.Controllers
             }
         }
 
+
+        /*
+        Developer: Mohi
+        Date:8-21-19
+        Action: getting all Products list with vendor for Product Pair With 
+        Request:GET
+        URL: api/Product
+        Input: null
+        output: list of Products
+        */
+        [HttpGet("ProductsPairWithSearch/{prodcut_id}")]
+        public async Task<object> ProductsPairWithSearch(string prodcut_id)
+        {
+            dynamic ToReturn = new object();
+            try
+            {
+                ToReturn = await _ProductRepo.GetProductsPairWithSearch(prodcut_id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for ProductsPairWithSearch with message" + ex.Message);
+            }
+            return ToReturn;
+        }
+
+
         /*
         Developer: Azeem Hassan
         Date:7-8-19
@@ -103,11 +130,12 @@ namespace badgerApi.Controllers
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
                 productDetailsPageData.shootModels= await _ProductRepo.GetPhotoshootModels();
-
+                productDetailsPageData.productPhotoshootModel = await _ProductRepo.GetProductPhotoshootModel(id);
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for ProductDetailsPageData with message" + ex.Message);
             }
             return productDetailsPageData;
 
@@ -164,21 +192,94 @@ namespace badgerApi.Controllers
                 Dictionary<String, String> ProductDetailValuesToUpdate = new Dictionary<string, string>();
                 if (ProductToUpdate.product_detail_1 != null  && ProductToUpdate.product_detail_1.ToString() != "")
                 {
-                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "1", ProductToUpdate.product_detail_1.ToString());
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "1", ProductToUpdate.product_detail_1.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
                 }
                 if (ProductToUpdate.product_detail_2 != null && ProductToUpdate.product_detail_2.ToString() != "")
                 {
-                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "2", ProductToUpdate.product_detail_2.ToString());
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "2", ProductToUpdate.product_detail_2.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
                 }
                 if (ProductToUpdate.product_detail_3 != null && ProductToUpdate.product_detail_3.ToString() != "")
                 {
-                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "3", ProductToUpdate.product_detail_3.ToString());
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "3", ProductToUpdate.product_detail_3.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
                 }
                 if (ProductToUpdate.product_detail_4 != null && ProductToUpdate.product_detail_4.ToString() != "")
                 {
-                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "4", ProductToUpdate.product_detail_4.ToString());
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "4", ProductToUpdate.product_detail_4.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
                 }
 
+
+                if (ProductToUpdate.pairProductIds != null && ProductToUpdate.pairProductIds.ToString() != "")
+                {
+                    string PairProductIds = ProductToUpdate.pairProductIds.ToString();
+                    int countComma = PairProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = PairProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.AddPairWithProduct(id.ToString(), pair_product_id, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.AddPairWithProduct(id.ToString(), PairProductIds, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                    }
+                }
+
+                if (ProductToUpdate.RemovePairWithProductIds != null && ProductToUpdate.RemovePairWithProductIds.ToString() != "")
+                {
+                    string RemovePairProductIds = ProductToUpdate.RemovePairWithProductIds.ToString();
+                    int countComma = RemovePairProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = RemovePairProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.RemovePairWithProduct(id.ToString(), pair_product_id);
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.RemovePairWithProduct(id.ToString(), RemovePairProductIds);
+                    }
+                }
+
+                if (ProductToUpdate.RemoveOtherColorProductIds != null && ProductToUpdate.RemoveOtherColorProductIds.ToString() != "")
+                {
+                    string RemoveOtherColorProductIds = ProductToUpdate.RemoveOtherColorProductIds.ToString();
+                    int countComma = RemoveOtherColorProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = RemoveOtherColorProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.RemoveOtherColorProducts(id.ToString(), pair_product_id);
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.RemoveOtherColorProducts(id.ToString(), RemoveOtherColorProductIds);
+                    }
+                }
+
+
+                if (ProductToUpdate.otherColorsProductIds != null && ProductToUpdate.otherColorsProductIds.ToString() != "")
+                {
+                    string OtherColorsProductIds = ProductToUpdate.otherColorsProductIds.ToString();
+                    int countComma = OtherColorsProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = OtherColorsProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.AddOtherColorProducts(id.ToString(), pair_product_id, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.AddOtherColorProducts(id.ToString(), OtherColorsProductIds, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                    }
+                }
 
                 /**
                                 product.Add("", json.Value<string>("product_detail_1"));
