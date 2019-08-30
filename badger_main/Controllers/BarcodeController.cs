@@ -39,7 +39,7 @@ namespace badgerApi.Controllers
             dynamic barcodes = new object();
             try
             {
-                barcodes = await _BarcodeRangeRepo.GetBarcodeRangeList();
+                barcodes = await _BarcodeRangeRepo.GetBarcodeRangeList(start,limit);
 
             }
             catch (Exception ex)

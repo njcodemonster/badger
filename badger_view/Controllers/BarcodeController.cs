@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using badger_view.Helpers;
+using GenericModals.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -50,14 +51,8 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            dynamic vendorPagerList = await _BadgerApiHelper.GenericGetAsync<object>("/Barcode/getBarcodeRange/0/0");
-
-            dynamic VendorPageModal = new ExpandoObject();
-            VendorPageModal.VendorCount = vendorPagerList.Count;
-            VendorPageModal.VendorLists = vendorPagerList.vendorInfo;
-            VendorPageModal.VendorType = vendorPagerList.vendorType;
-
-            return View("Index", VendorPageModal);
+            dynamic barcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/Barcode/getBarcodeRange/0/0");
+            return View("Index", barcodeRanges);
         }
     }
 }

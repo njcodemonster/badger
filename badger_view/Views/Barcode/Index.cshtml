@@ -4,14 +4,18 @@
 }
 
 @model dynamic
-
+@section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/Barcode.js" asp-append-version="true"></script>
+}
 <div class="loading d-none"></div>
 <div class="row">
     <div class="col-md-2 col-sm-12">
         <h4 class="text-info">Barcode Range</h4>
     </div>
     <div class="col-md-10">
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="AddNewVarcodeButton" data-target="#newBarcodeModal">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="AddNewBarcodeButton" data-target="#newBarcodeModal">
             Add New Barcode Range
         </button>
     </div>
@@ -24,49 +28,37 @@
                 <th>Barcode From:</th>
                 <th>Barcode To:</th>
                 <th>Last Updated</th>
-                <th>Edit Barcode Range</th>
-                <th>Delete</th>
+                <th>Actions</th>
             </tr>
         </thead>
-        @*<tbody>
-            @foreach (GenericModals.Models.VendorInfo vendor in Model.VendorLists)
+        <tbody>
+            @foreach (GenericModals.Models.Barcode barcode in Model)
             {
                 <tr>
-                    <td class="vendorName">@vendor.vendor_name</td>
-                    <td>@vendor.vendor_code</td>
-                    <td>@vendor.order_count</td>
-                    <td><a href="/PurchaseOrders/Single/@vendor.last_order" target="_blank">@vendor.last_order</a></td>
+                    <td class="vendorName">@barcode.size</td>
+                    <td>@barcode.barcode_from</td>
+                    <td>@barcode.barcode_to</td>
+                    <td>@barcode.updated_at</td>
                     <td>
-                        <button type="button" id="EditVendor" data-ID="@vendor.vendor_id" class="btn btn-light btn-sm">Edit</button>
+                        <button type="button" id="EditBarcode" data-ID="@barcode.id" data-Size="@barcode.size" data-from="@barcode.barcode_from" data-to="@barcode.barcode_to" class="btn btn-light btn-sm">Edit</button>
+                    
+                        <button type="button" id="deleteBarcode" data-ID="@barcode.id" class="btn btn-light btn-sm">Delete</button>
                     </td>
-                    <td>
-                        <a href="#" data-toggle="modal" data-ID="@vendor.vendor_id" style="position:relative" id="VendorNoteButton" data-target="#modaladdnote">
-                            @if (vendor.has_note == 1)
-                            {<div class="redDotArea redDOtElement"></div>}
-                            else
-                            {<div class="redDotArea"></div>}<i class="fa fa-edit h3"></i>
-                    </a>
-                </td>
-            </tr>
-        }
-        </tbody>*@
+                </tr>
+            }
+        </tbody>
         <tfoot>
             <tr>
                 <th>Size</th>
                 <th>Barcode From:</th>
                 <th>Barcode To:</th>
                 <th>Last Updated</th>
-                <th>Edit Barcode Range</th>
-                <th>Delete</th>
+                <th>Actions</th>
             </tr>
         </tfoot>
     </table>
 </div>
-@section Scripts {
-    <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
-    <script src="~/js/common.js" asp-append-version="true"></script>
-    <script src="~/js/CategoryOptionPage.js" asp-append-version="true"></script>
-}
+
 <div class="loaderBox"><div class="spinner-border text-info"></div></div>
 <div class="text-right w-100">
 
@@ -78,31 +70,35 @@
 
 @section page_popup_area{
 
-    <div class="modal fade" id="modalAddSubCategory" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modalAddBarcode" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add Sub Category</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add New Range</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form id="AddCatForm">
+                        <form id="AddBarcodeForm">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label>Parent Category</label>
-                                    <select id="ParentCategorySelect" class="form-control">
-                                        <option selected data-name="" value="">Choose...</option>
-                                        <option>...</option>
-                                    </select>
+                                    <label>Size</label>
+                                    <input name="Size" id="Size" type="text" class="form-control required">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label>Sub Category Title</label>
-                                    <input name="SubCat" id="SubCat" type="text" class="form-control required">
+                                    <label>Barcode from</label>
+                                    <input name="BarcodeFrom" id="BarcodeFrom" type="text" class="form-control required">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Barcode to</label>
+                                    <input name="BarcodeTo" id="BarcodeTo" type="text" class="form-control required">
+                                    <input name="barcodeid" id="barcodeid" type="hidden" class="form-control required">
                                 </div>
                             </div>
 
@@ -111,7 +107,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="poAlertMsg"></div>
-                    <button type="button" id="SaveSubCategoryButton" class="btn btn-green SaveSubCategoryButton" data-action="refreshValue">Save</button>
+                    <button type="button" id="SaveBarcodeButton" class="btn btn-green SaveBarcodeButton" data-action="refreshValue">Add</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>

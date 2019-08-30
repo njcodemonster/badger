@@ -13,7 +13,7 @@ namespace badgerApi.Interfaces
     public interface iBarcodeRangeRepo
     {
         Task<List<Barcode>> GetBarcodeRangeList();
-
+        Task<List<Barcode>> GetBarcodeRangeList(int start,int limit);
 
 
     }
@@ -43,6 +43,19 @@ namespace badgerApi.Interfaces
                 IEnumerable<Barcode> result = new List<Barcode>();
                 result = await conn.QueryAsync<Barcode>("Select * from " + TableName + ";");
                
+                return result.ToList();
+            }
+        }
+
+        public async Task<List<Barcode>> GetBarcodeRangeList(int start, int limit)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Barcode> result = new List<Barcode>();
+                if(limit > 0)
+                result = await conn.QueryAsync<Barcode>("Select * from " + TableName + " limit " + start + "," + limit + ";");
+                else
+                    result = await conn.QueryAsync<Barcode>("Select * from " + TableName + ";");
                 return result.ToList();
             }
         }
