@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace GenericModals.Models
 {
-   
+
+    [Table("vendor")]
     public partial class Vendor
     {
-    
+        [Key]
         public int vendor_id { get; set; }
         public int vendor_type { get; set; }
         public string vendor_name { get; set; }
@@ -23,5 +25,6 @@ namespace GenericModals.Models
         public double created_at { get; set; }
         public double updated_at { get; set; }
         public int has_note { get; set; }
+
     }
 }

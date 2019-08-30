@@ -121,15 +121,25 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
     datatosend["category_id"] = $('#StyleType option:selected').val();
-    //datatosend["color_added"] = color_added;
-    //datatosend["color_removed"] = color_removed;
     //debugger;
-    //$("input.form-control.dirty").each(function (item) {
-    //    datatosend[$(this).attr("id")] = $(this).val();
-    //});
-    //$("select.form-control.dirty").each(function (item) {
-    //    datatosend[$(this).attr("id")] = $(this).val();
-    //});
+    if (datatosend["category_id"] == "0") {
+
+        alertBox('poAlertMsg', 'red', 'Please Select category');
+        return false;
+    }
+    if (tag_added.length == 0 && tag_removed.length == 0) {
+        alertBox('poAlertMsg', 'red', 'No changes to save');
+        return false;
+    }
+    ////datatosend["color_added"] = color_added;
+    ////datatosend["color_removed"] = color_removed;
+    ////debugger;
+    ////$("input.form-control.dirty").each(function (item) {
+    ////    datatosend[$(this).attr("id")] = $(this).val();
+    ////});
+    ////$("select.form-control.dirty").each(function (item) {
+    ////    datatosend[$(this).attr("id")] = $(this).val();
+    ////});
     $.ajax({
 
         url: '/categoryoption/updateattributes/',
@@ -163,7 +173,9 @@ Output: get data in fields
 $(document).on('change', '#StyleType', function () {
     debugger;
     var SelectedStyleType = $(this.options[this.selectedIndex]).val();
+    $('#loading').show();
     GetTags(SelectedStyleType);
+    //$('.loading').addClass("d-none");
 });
 
 
@@ -216,7 +228,7 @@ $(document).on('click', "#AddSubCat", function () {
         debugger;
 
         $('#modalAddSubCategory #ParentCategorySelect option').remove();
-        $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value='-1'>Choose...</option>");
+        $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value=''>Choose...</option>");
 
         data = data.vendorProducts;
         if (data.length) {

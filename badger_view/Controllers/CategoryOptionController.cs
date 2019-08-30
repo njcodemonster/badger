@@ -73,8 +73,8 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             if (id == "0")
             {
-                ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<object>>("/CategoryOption/SubCategoryAll/");
-                categoryOption = await _BadgerApiHelper.GenericGetAsync<dynamic>("/CategoryOption/CategoryOptionPage/");
+                ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<Categories>>("/CategoryOption/SubCategoryAll/");
+                categoryOption = await _BadgerApiHelper.GenericGetAsync<CategoryOptionPage>("/CategoryOption/CategoryOptionPage/");
                 ViewBag.selected = 0;
             }
             else

@@ -14,6 +14,7 @@ using CommonHelper;
 using Newtonsoft.Json;
 
 using System.Dynamic;
+using GenericModals.PurchaseOrder;
 
 namespace badgerApi.Interfaces
 {
@@ -203,9 +204,9 @@ namespace badgerApi.Interfaces
                     ",vendor_products.vendor_color_code" +
                     ",vendor_products.vendor_product_code " +
                     ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id,'category_id', pc.category_id)),']') AS JSON) AS productCategories " +
-                    " from product,vendor_products , product_categories pc" +
-                    " where pc.product_id=product.product_id and product.vendor_id = vendor_products.vendor_id " +
-                    " and product.product_id = vendor_products.product_id" +
+					" from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
+				    " LEFT JOIN product_categories pc ON pc.product_id=product.product_id " +
+                    " where product.product_id = vendor_products.product_id" +
                     " and product.vendor_id=" + Vendor_id + " " +
                     " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +
                     ",product.product_discount  ,product.product_cost ,product.product_retail " +

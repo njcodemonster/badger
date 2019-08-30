@@ -10,6 +10,7 @@ using System.Dynamic;
 using badgerApi.Helper;
 using Microsoft.Extensions.Configuration;
 using CommonHelper;
+using GenericModals;
 
 namespace badgerApi.Controllers
 {
@@ -354,27 +355,28 @@ namespace badgerApi.Controllers
         */
         // POST: api/vendor/create
         [HttpPost("create")]
-        public async Task<string> PostAsync([FromBody]   string value)
+        public async Task<ResponseModel> PostAsync([FromBody]   string value)
         {
             string NewInsertionID = "0";
-            try
-            {
+            ResponseModel response;
+            //try
+            //{
                 Vendor newVendor = JsonConvert.DeserializeObject<Vendor>(value);
                 int created_by = newVendor.created_by;
                 NewInsertionID = await _VendorRepo.Create(newVendor);
-
+                response = new ResponseModel { Data = NewInsertionID, Status = System.Net.HttpStatusCode.OK, Message = "Success" };
                 event_create_vendor = event_create_vendor.Replace("%%userid%%", created_by.ToString()).Replace("%%vendorid%%", NewInsertionID);
 
                 _eventRepo.AddVendorEventAsync(Int32.Parse(NewInsertionID), event_vendor_id, 0, created_by, event_create_vendor, _common.GetTimeStemp(), vendorEventTableName);
 
                 _eventRepo.AddEventAsync(event_vendor_id, created_by, Int32.Parse(NewInsertionID), event_create_vendor, _common.GetTimeStemp(), userEventTableName);
-            }
-            catch(Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
-            }
-            return NewInsertionID;
+            //}
+            //catch(Exception ex)
+            //{
+            //    var logger = _loggerFactory.CreateLogger("internal_error_log");
+            //    logger.LogInformation("Problem happened in making new vendor with message" + ex.Message);
+            //}
+            return response;
         }
 
         /*

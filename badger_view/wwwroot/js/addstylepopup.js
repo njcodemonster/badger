@@ -7,7 +7,7 @@ Input: styles data
 Output: string of style
 */
 $(document).on('click', ".DeletefromPOButton", function () {
-    debugger;
+    
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
@@ -69,11 +69,6 @@ $(document).on('click', ".AddNewStyleButton", function () {
     }
 
  
-    if (productSubCategoriesAction.length == 0 && $('#StyleSubType').val() !=0 ) {
-
-        $('#StyleSubType').addClass('errorFeild');
-        $('#StyleSubType').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Please select atleast one.</span>')
-    } 
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
@@ -318,14 +313,16 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
 
     } else {
         $(".style_doc_section").addClass('d-none');
-    }
+	}
+	
     selectProductCategories = SelectedProduct.data('product_categories')
     if (selectProductCategories != null) {
         var categoryIds = [];
         for (var i = 0; i < selectProductCategories.length; i++) {
             var Category = selectProductCategories[i];
             categoryIds.push(Category.category_id);
-        }
+		}
+		$('#StyleSubType').multiselect('select', categoryIds);
     }
     $.ajax({
         url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
@@ -547,18 +544,24 @@ $(document).on('change', "#StyleType", function (event) {
     $('#StyleSubType option').remove();
     $('#StyleSubType').multiselect('rebuild');
 
-    var subCategories = data_Categories.filter(function (category) {
-        return category.category_parent_id == selectedStyleType;
-    });
+	
+	if (selectedStyleType !=0) {
 
-    if (subCategories.length) {
-        for (var i = 0; i < subCategories.length; i++) {
-            $('#StyleSubType').append("<option value='" + subCategories[i].category_id + "'>" + subCategories[i].category_name + "</option >")
-        }
+		var subCategories = data_Categories.filter(function (category) {
+			return category.category_parent_id == selectedStyleType;
+		});
 
-        $('#StyleSubType').multiselect('rebuild');
+		if (subCategories.length) {
+			for (var i = 0; i < subCategories.length; i++) {
+				$('#StyleSubType').append("<option value='" + subCategories[i].category_id + "'>" + subCategories[i].category_name + "</option >")
+			}
 
-    }
+			$('#StyleSubType').multiselect('rebuild');
+
+		}
+	}
+
+    
 
 
 

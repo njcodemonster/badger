@@ -1,11 +1,16 @@
-﻿using Dapper;
+using CommonHelper;
+// using CommonHelper.Extensions;
+using Dapper;
 using Dapper.Contrib.Extensions;
+using GenericModals.Event;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,23 +23,31 @@ namespace badgerApi.Interfaces
         Task<bool> AddPhotoshootAsync(int productId, int eventTypeId, int reffrenceId, string eventNotes, int userId, double createdAt, string tableName);
         Task<bool> AddVendorEventAsync(int vendor_id,int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
         Task<bool> AddItemEventAsync(int item_id, int barcode, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName);
+        Task<int> AddEventAsync(EventModel eventModel);
+        EventTypeModel GetEventTypeByName(string name);
+        
     }
     public class EventsRepo : IEventRepo
     {
         private readonly IConfiguration _config;
+        public IDbConnection Connection => new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
+        private List<EventTypeModel> EventTypes { get; set; }
         public EventsRepo(IConfiguration config)
         {
-
             _config = config;
-           
-
+            EventTypes = GetEventTypeList();
         }
-        public IDbConnection Connection
+
+        public List<EventTypeModel> GetEventTypeList()
         {
-            get
-            {
-                return new MySqlConnection(_config.GetConnectionString("ProductsDatabase"));
-            }
+           string events = File.ReadAllText(Path.Combine("ConstantsFiles/events.json"));
+            var eventTypeList = JsonConvert.DeserializeObject<List<EventTypeModel>>(events);
+            return eventTypeList;
+        }
+
+        public EventTypeModel GetEventTypeByName(string name)
+        {
+            return EventTypes.Single(x => x.EventName == name?.ToLower());
         }
 
         /*
@@ -89,6 +102,29 @@ namespace badgerApi.Interfaces
 
             }
             return res;
+        }
+
+        public async Task<int> AddEventAsync(EventModel eventModel)
+        {
+            try
+            {
+                var eventNote = eventModel.EventType.EventDescription
+                    .Replace("%%userId%%", eventModel.UserId.ToString())
+                    .Replace("%%entityId%%", eventModel.EntityId.ToString());
+                eventModel.EventNotes = eventNote;
+                eventModel.EventId = eventModel.EventType.EventId;
+                using (IDbConnection conn = Connection)
+                {
+                   // string query = "insert into @Table values (null,@EntityId,@EventId,@RefrenceId,@EventNotes,@UserId,@CreatedAt)";
+                    string query = "insert into " + eventModel.Table + " values (null," + eventModel.EntityId + "," + eventModel.EventId + "," + eventModel.RefrenceId + ",\"" + eventModel.EventNotes + "\"," + eventModel.UserId + "," + eventModel.CreatedAt + ")";
+                    await conn.ExecuteAsync(query);
+                    return 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
         }
 
         /*
