@@ -980,7 +980,7 @@ namespace badger_view.Controllers
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
             if (id == 0)
             {
-                 purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+                 purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
 
             }
             else
