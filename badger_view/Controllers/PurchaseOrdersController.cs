@@ -648,6 +648,7 @@ namespace badger_view.Controllers
 
             if (newPurchaseOrderID == "Success")
             {
+                JObject purchaseOrderStatusNote = new JObject();
 
                 if (json.Value<string>("old_note") != "")
                 {
@@ -664,8 +665,14 @@ namespace badger_view.Controllers
                         await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
                     }
 
-                    JObject purchaseOrderStatusNote = new JObject();
-                    purchaseOrderStatusNote.Add("has_note", 1);
+                    if (json.Value<string>("note") != "")
+                    {
+                        purchaseOrderStatusNote.Add("has_note", 1);
+                    }
+                    else
+                    {
+                        purchaseOrderStatusNote.Add("has_note", 2);
+                    }
                     await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
 
                 }
@@ -678,8 +685,13 @@ namespace badger_view.Controllers
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
 
-                    JObject purchaseOrderStatusNote = new JObject();
-                    purchaseOrderStatusNote.Add("has_note", 2);
+                    if (json.Value<string>("note") != ""){
+                        purchaseOrderStatusNote.Add("has_note", 1);
+                    }
+                    else
+                    {
+                        purchaseOrderStatusNote.Add("has_note", 2);
+                    }                    
                     await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
                 }
 
@@ -692,7 +704,6 @@ namespace badger_view.Controllers
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
 
-                    JObject purchaseOrderStatusNote = new JObject();
                     purchaseOrderStatusNote.Add("has_note", 1);
                     await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusNote.ToString(Formatting.None), "/purchaseorders/updatespecific/" + id);
                 }
@@ -995,8 +1006,8 @@ namespace badger_view.Controllers
             
 
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
-            int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
-            PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
+            //int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
+            //PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
             ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges); 
@@ -1313,7 +1324,9 @@ namespace badger_view.Controllers
                                 itemDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocuments.ToString(Formatting.None), "/purchaseordermanagement/documentcreate");
 
-
+                                JObject itemDocStatus = new JObject();
+                                itemDocStatus.Add("has_doc", 1);
+                                await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocStatus.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/"+purchaseorderfile.po_id);
                             }
                         }
                     }
@@ -1369,7 +1382,7 @@ namespace badger_view.Controllers
                     }
                     else
                     {
-                        purchaseOrdersData.Add("ra_flag", 0);
+                        purchaseOrdersData.Add("ra_flag", 2);
                     }
 
                     purchaseOrdersData.Add("updated_by", Int32.Parse(loginUserId));
@@ -1608,13 +1621,28 @@ namespace badger_view.Controllers
 
             if (res != "0")
             {
-                dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + json.Value<string>("po_id") + "/0");
-                if(purchaseOrderDocs.Count == 0)
+                if (json.Value<string>("item") == "item")
                 {
-                    JObject purchaseOrderStatusDoc = new JObject();
-                    purchaseOrderStatusDoc.Add("has_doc", 2);
-                    await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusDoc.ToString(Formatting.None), "/purchaseorders/updatespecific/" + json.Value<string>("po_id"));
+                    dynamic purchaseOrderItemDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemdocuments/"+json.Value<string>("itemid") + "/0");
+                    if (purchaseOrderItemDocs.Count == 0)
+                    {
+                        JObject itemDocStatus = new JObject();
+                        itemDocStatus.Add("has_doc", 2);
+                        await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocStatus.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/"+json.Value<string>("itemid"));
+                    }
                 }
+                else
+                {
+                    dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + json.Value<string>("po_id") + "/0");
+                    if (purchaseOrderDocs.Count == 0)
+                    {
+                        JObject purchaseOrderStatusDoc = new JObject();
+                        purchaseOrderStatusDoc.Add("has_doc", 2);
+                        await _BadgerApiHelper.GenericPutAsyncString<String>(purchaseOrderStatusDoc.ToString(Formatting.None), "/purchaseorders/updatespecific/" + json.Value<string>("po_id"));
+                    }
+                }
+
+                
             }
 
             return res;

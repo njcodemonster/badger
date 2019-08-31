@@ -103,7 +103,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-itemid="+id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -124,6 +124,8 @@ Output: item document id
 */
 $(document).on("click", "#document_submit", function () {
     var po_id = $('#document_form').attr("data-productid");
+    var itemid = $('#document_form').attr("data-documentid");
+    
     $(".poDocAlertMsg").text("");
     if ($('#poUploadImages').val() == "") {
         $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
@@ -161,10 +163,9 @@ $(document).on("click", "#document_submit", function () {
                 } else {
                     alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
                     console.log(data.responseText);
+                    $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
                 }
-
-               
             }
         });
     }
@@ -1055,6 +1056,7 @@ $(document).on('click', ".podeleteImage", function (e) {
 
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
+    var itemid = _this.parents('.documentsLink').attr('data-itemid');
     var url = _this.parents('.documentsLink').attr('data-val');
     var poid = $('#document_form').attr("data-documentid");
 
@@ -1062,6 +1064,8 @@ $(document).on('click', ".podeleteImage", function (e) {
     jsonData["doc_id"] = docid;
     jsonData["po_id"] = poid;
     jsonData["url"] = url;
+    jsonData["item"] = "item";
+    jsonData['itemid'] = itemid;
     console.log(jsonData);
 
     $.ajax({
@@ -1075,6 +1079,10 @@ $(document).on('click', ".podeleteImage", function (e) {
         console.log(data);
         if (data.responseText != '0')
             _this.parents('.documentsLink').remove();
+
+        if ($('#modaladddocument .po_doc_section a').length == 0) {
+            $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").removeClass("redDOtElement");
+        }
     });
 });
 

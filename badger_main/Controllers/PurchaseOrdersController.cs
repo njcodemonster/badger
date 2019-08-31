@@ -38,24 +38,16 @@ namespace badgerApi.Controllers
 
         private int note_type = 4;
 
-        private int event_type_po_id = 2;
-        private int event_type_po_note_create_id = 6;
-        private int event_type_po_document_create_id = 7;
-        private int event_type_po_update_id = 8;
-        private int event_type_po_specific_update_id = 9;
-        private int event_type_po_delete_id = 24;
-        private int event_type_po_delete_document_id = 31;
-
         private string userEventTableName = "user_events";
         private string poEventTableName = "purchase_order_events";
 
-        private string event_create_purchase_orders = "Purchase order created by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_create_purchase_orders_notecreate = "Purchase order note created by user =%%userid%% with note id= %%noteid%%";
-        private string event_create_purchase_orders_documentcreate = "Purchase order document created by user =%%userid%% with document id= %%documentid%%";
-        private string event_update_purchase_orders = "Purchase order updated by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_updatespecific_purchase_orders = "Purchase order specific updated by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_delete_purchase_orders = "Purchase order deleted by user =%%userid%% with purchase order id= %%poid%%";
-        private string event_delete_document_purchase_orders = "Purchase order document deleted by user =%%userid%% with document id= %%documentid%%";
+        string po_created = "po_created";
+        string po_note_create = "po_note_create";
+        string po_document_create = "po_document_create";
+        string po_update = "po_update";
+        string po_delete = "po_delete";
+        string po_specific_update = "po_specific_update";
+        string po_delete_document = "po_delete_document";
 
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
 
@@ -225,7 +217,7 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrders newPurchaseOrder = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 newPOId = await _PurchaseOrdersRepo.Create(newPurchaseOrder);
-                var po_created = "po_created";
+                
                 var eventModel = new EventModel(poEventTableName)
                 {
                     EventName = po_created,
@@ -234,7 +226,7 @@ namespace badgerApi.Controllers
                     UserId = newPurchaseOrder.created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
-               //   await _eventRepo.AddPurchaseOrdersEventAsync(Int32.Parse(newPOId), event_type_po_id, 0, event_create_purchase_orders, newPurchaseOrder.created_by, _common.GetTimeStemp(), poEventTableName);
+
                 var userEvent = new EventModel(userEventTableName)
                 {
                     EventName = po_created,
@@ -243,7 +235,6 @@ namespace badgerApi.Controllers
                     UserId = newPurchaseOrder.created_by,
                 };
                 await _eventRepo.AddEventAsync(userEvent);
-               // await _eventRepo.AddEventAsync(event_type_po_id, newPurchaseOrder.created_by, Int32.Parse(newPOId), event_create_purchase_orders, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -275,11 +266,24 @@ namespace badgerApi.Controllers
                 double created_at = _common.GetTimeStemp();
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
 
-                event_create_purchase_orders_notecreate = event_create_purchase_orders_notecreate.Replace("%%userid%%", created_by.ToString()).Replace("%%noteid%%", newNoteID);
+                var eventModel = new EventModel(poEventTableName)
+                {
+                    EntityId = Int32.Parse(newNoteID),
+                    EventName = po_note_create,
+                    RefrenceId = ref_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                await _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_note_create_id, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, created_by, _common.GetTimeStemp(), poEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = created_by,
+                    EventName = po_note_create,
+                    RefrenceId = Convert.ToInt32(newNoteID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
 
-                await _eventRepo.AddEventAsync(event_type_po_note_create_id, created_by, Int32.Parse(newNoteID), event_create_purchase_orders_notecreate, _common.GetTimeStemp(), userEventTableName);
             }
             catch (Exception ex)
             {
@@ -313,11 +317,23 @@ namespace badgerApi.Controllers
 
                 NewInsertionID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
 
-                event_create_purchase_orders_documentcreate = event_create_purchase_orders_documentcreate.Replace("%%userid%%", created_by.ToString()).Replace("%%documentid%%", NewInsertionID);
+                var eventModel = new EventModel(poEventTableName)
+                {
+                    EntityId = Int32.Parse(NewInsertionID),
+                    EventName = po_document_create,
+                    RefrenceId = ref_id,
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                _eventRepo.AddPurchaseOrdersEventAsync(ref_id, event_type_po_document_create_id, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, created_by, _common.GetTimeStemp(), poEventTableName);
-
-                _eventRepo.AddEventAsync(event_type_po_document_create_id, created_by, Int32.Parse(NewInsertionID), event_create_purchase_orders_documentcreate, _common.GetTimeStemp(), userEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = created_by,
+                    EventName = po_document_create,
+                    RefrenceId = Convert.ToInt32(NewInsertionID),
+                    UserId = created_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -403,12 +419,24 @@ namespace badgerApi.Controllers
                 PurchaseOrders PurchaseOrdersToUpdate = JsonConvert.DeserializeObject<PurchaseOrders>(value);
                 PurchaseOrdersToUpdate.po_id = id;
                 UpdateProcessOutput = await _PurchaseOrdersRepo.Update(PurchaseOrdersToUpdate);
+                
+                var eventModel = new EventModel(poEventTableName)
+                {
+                    EntityId = id,
+                    EventName = po_update,
+                    RefrenceId = id,
+                    UserId = PurchaseOrdersToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(eventModel);
 
-                event_update_purchase_orders = event_update_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
-
-                _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_update_id, id, event_update_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), poEventTableName);
-
-                _eventRepo.AddEventAsync(event_type_po_update_id, PurchaseOrdersToUpdate.updated_by, id, event_update_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                var userEvent = new EventModel(userEventTableName)
+                {
+                    EntityId = PurchaseOrdersToUpdate.updated_by,
+                    EventName = po_update,
+                    RefrenceId = id,
+                    UserId = PurchaseOrdersToUpdate.updated_by,
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -504,7 +532,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("deleted", PurchaseOrdersToUpdate.deleted.ToString());
                 }
-                if (PurchaseOrdersToUpdate.ra_flag == 0 || PurchaseOrdersToUpdate.ra_flag == 1)
+                if (PurchaseOrdersToUpdate.ra_flag != 0)
                 {
                     ValuesToUpdate.Add("ra_flag", PurchaseOrdersToUpdate.ra_flag.ToString());
                 }
@@ -541,19 +569,43 @@ namespace badgerApi.Controllers
 
                 if (PurchaseOrdersToUpdate.po_status == 4)
                 {
-                    event_delete_purchase_orders = event_delete_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+                    var eventModel = new EventModel(poEventTableName)
+                    {
+                        EntityId = id,
+                        EventName = po_delete,
+                        RefrenceId = id,
+                        UserId = PurchaseOrdersToUpdate.updated_by,
+                    };
+                    await _eventRepo.AddEventAsync(eventModel);
 
-                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_delete_id, id, event_delete_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), poEventTableName);
-
-                    _eventRepo.AddEventAsync(event_type_po_delete_id, PurchaseOrdersToUpdate.updated_by, id, event_delete_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                    var userEvent = new EventModel(userEventTableName)
+                    {
+                        EntityId = PurchaseOrdersToUpdate.updated_by,
+                        EventName = po_delete,
+                        RefrenceId = id,
+                        UserId = PurchaseOrdersToUpdate.updated_by,
+                    };
+                    await _eventRepo.AddEventAsync(userEvent);
                 }
                 else
                 {
-                    event_updatespecific_purchase_orders = event_updatespecific_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%poid%%", id.ToString());
+                    var eventModel = new EventModel(poEventTableName)
+                    {
+                        EntityId = id,
+                        EventName = po_specific_update,
+                        RefrenceId = id,
+                        UserId = PurchaseOrdersToUpdate.updated_by,
+                    };
+                    await _eventRepo.AddEventAsync(eventModel);
 
-                    _eventRepo.AddPurchaseOrdersEventAsync(id, event_type_po_specific_update_id, id, event_updatespecific_purchase_orders, PurchaseOrdersToUpdate.updated_by, _common.GetTimeStemp(), poEventTableName);
-
-                    _eventRepo.AddEventAsync(event_type_po_specific_update_id, PurchaseOrdersToUpdate.updated_by, id, event_updatespecific_purchase_orders, _common.GetTimeStemp(), userEventTableName);
+                    var userEvent = new EventModel(userEventTableName)
+                    {
+                        EntityId = PurchaseOrdersToUpdate.updated_by,
+                        EventName = po_specific_update,
+                        RefrenceId = id,
+                        UserId = PurchaseOrdersToUpdate.updated_by,
+                    };
+                    await _eventRepo.AddEventAsync(userEvent);                    
                 }
             }
             catch (Exception ex)
@@ -618,12 +670,23 @@ namespace badgerApi.Controllers
                     int po_id = PurchaseOrdersToUpdate.po_id;
                     int updated_by = PurchaseOrdersToUpdate.updated_by;
 
-                    event_delete_document_purchase_orders = event_delete_document_purchase_orders.Replace("%%userid%%", PurchaseOrdersToUpdate.updated_by.ToString()).Replace("%%documentid%%", id.ToString());
+                    var eventModel = new EventModel(poEventTableName)
+                    {
+                        EntityId = id,
+                        EventName = po_delete_document,
+                        RefrenceId = po_id,
+                        UserId = PurchaseOrdersToUpdate.updated_by,
+                    };
+                    await _eventRepo.AddEventAsync(eventModel);
 
-                    _eventRepo.AddPurchaseOrdersEventAsync(po_id, event_type_po_delete_document_id, id, event_delete_document_purchase_orders, updated_by, _common.GetTimeStemp(), poEventTableName);
-
-                    _eventRepo.AddEventAsync(event_type_po_delete_document_id, updated_by, id, event_delete_document_purchase_orders, _common.GetTimeStemp(), userEventTableName);
-
+                    var userEvent = new EventModel(userEventTableName)
+                    {
+                        EntityId = PurchaseOrdersToUpdate.updated_by,
+                        EventName = po_delete_document,
+                        RefrenceId = id,
+                        UserId = PurchaseOrdersToUpdate.updated_by,
+                    };
+                    await _eventRepo.AddEventAsync(userEvent);
                 }
             }
             catch (Exception ex)

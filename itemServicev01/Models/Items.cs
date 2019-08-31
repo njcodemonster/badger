@@ -22,6 +22,7 @@ namespace GenericModals.Models
         public int? PO_id { get; set; }
         public int? published { get; set; }
         public int? published_by { get; set; }
+        public int has_doc { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double created_at { get; set; }
