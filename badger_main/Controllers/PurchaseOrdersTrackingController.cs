@@ -98,9 +98,9 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = Int32.Parse(NewInsertionID),
+                    EntityId = newPurchaseOrderTracking.po_id,
                     EventName = tracking_create,
-                    RefrenceId = newPurchaseOrderTracking.po_id,
+                    RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = newPurchaseOrderTracking.created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -145,9 +145,9 @@ namespace badgerApi.Controllers
                
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = id,
+                    EntityId = PurchaseOrdersTrackingToUpdate.po_id,
                     EventName = tracking_update,
-                    RefrenceId = PurchaseOrdersTrackingToUpdate.po_id,
+                    RefrenceId = id,
                     UserId = PurchaseOrdersTrackingToUpdate.updated_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -225,9 +225,9 @@ namespace badgerApi.Controllers
                 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = id,
+                    EntityId = PurchaseOrdersToUpdate.po_id,
                     EventName = tracking_specific_update,
-                    RefrenceId = PurchaseOrdersToUpdate.po_id,
+                    RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -276,9 +276,9 @@ namespace badgerApi.Controllers
                    
                     var eventModel = new EventModel(tableName)
                     {
-                        EntityId = id,
+                        EntityId = PurchaseOrdersToUpdate.po_id,
                         EventName = tracking_delete,
-                        RefrenceId = PurchaseOrdersToUpdate.po_id,
+                        RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
                     await _eventRepo.AddEventAsync(eventModel);

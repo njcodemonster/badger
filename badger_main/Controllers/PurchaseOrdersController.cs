@@ -268,9 +268,9 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(poEventTableName)
                 {
-                    EntityId = Int32.Parse(newNoteID),
+                    EntityId = ref_id,
                     EventName = po_note_create,
-                    RefrenceId = ref_id,
+                    RefrenceId = Int32.Parse(newNoteID),
                     UserId = created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -319,9 +319,9 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(poEventTableName)
                 {
-                    EntityId = Int32.Parse(NewInsertionID),
+                    EntityId = ref_id,
                     EventName = po_document_create,
-                    RefrenceId = ref_id,
+                    RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -672,9 +672,9 @@ namespace badgerApi.Controllers
 
                     var eventModel = new EventModel(poEventTableName)
                     {
-                        EntityId = id,
+                        EntityId = po_id,
                         EventName = po_delete_document,
-                        RefrenceId = po_id,
+                        RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
                     };
                     await _eventRepo.AddEventAsync(eventModel);
