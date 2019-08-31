@@ -205,6 +205,29 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+        /*
+         Developer: Hamza Haq
+         Date:31-8-19
+         Action:get Item Count by status - (not received)
+         URL: /product/getitems/{po_id}/{sku}
+         Input: Po ID and Sku
+         output: old item id
+        */
+        [HttpGet("getitems/{po_id}/{sku}")]
+        public async Task<string> getitemsAsync( int po_id,string sku)
+        {
+            string itemQuantity = "0";
+            try
+            {
+                itemQuantity= await _ItemsHelper.GenericGetsAsync("/item/GetitemCountBySkuStatus/" + po_id.ToString()+"/"+ sku+"/1");
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return itemQuantity;
+        }
 
         /*
         Developer: Azeem Hassan
