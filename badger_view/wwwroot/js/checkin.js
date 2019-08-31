@@ -13,6 +13,13 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     var producthtml = "";
     var po_number = $(this).parents("tr").children("td:first").text();
     var vendor = $(this).parents("tr").children("td:nth-child(3)").text();
+
+    if (po_number == "") {
+        po_number = $(".orderNumber").text();
+    }
+    if (vendor == "") {
+        vendor = $("#poVendor").val();
+    }
     console.log(po_number + " -- " + vendor);
     $("#checkinModalLongTitle").text("Purchase Order #" + po_number + " - " + vendor + " - Check-in");
     var poid = $(this).attr("data-ID");
