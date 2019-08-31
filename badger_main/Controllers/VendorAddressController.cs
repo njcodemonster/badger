@@ -54,8 +54,8 @@ namespace badgerApi.Controllers
                 var eventModel = new EventModel(vendorEventTableName)
                 {
                     EventName = vendor_address_created,
-                    EntityId = Int32.Parse(NewInsertionID),
-                    RefrenceId = vendor_id,
+                    EntityId = vendor_id ,
+                    RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
