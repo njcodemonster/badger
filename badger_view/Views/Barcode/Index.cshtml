@@ -27,7 +27,6 @@
                 <th>Size</th>
                 <th>Barcode From:</th>
                 <th>Barcode To:</th>
-                <th>Last Updated</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -38,7 +37,6 @@
                     <td class="vendorName">@barcode.size</td>
                     <td>@barcode.barcode_from</td>
                     <td>@barcode.barcode_to</td>
-                    <td>@barcode.updated_at</td>
                     <td>
                         <button type="button" id="EditBarcode" data-ID="@barcode.id" data-Size="@barcode.size" data-from="@barcode.barcode_from" data-to="@barcode.barcode_to" class="btn btn-light btn-sm">Edit</button>
                     
@@ -52,7 +50,6 @@
                 <th>Size</th>
                 <th>Barcode From:</th>
                 <th>Barcode To:</th>
-                <th>Last Updated</th>
                 <th>Actions</th>
             </tr>
         </tfoot>
@@ -91,7 +88,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Barcode from</label>
-                                    <input name="BarcodeFrom" id="BarcodeFrom" type="text" class="form-control required">
+                                    <input name="BarcodeFrom" id="BarcodeFrom" type="text" class="form-control required" >
                                 </div>
                             </div>
                             <div class="form-row">
