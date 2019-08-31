@@ -142,27 +142,27 @@
   {
     "EventId": 25,
     "EventName": "vendor_address_created",
-    "EventDescription": "Vendor address created by user =%%userId%% with vendor id= %%entityId%%"
+    "EventDescription": "Vendor address created by user =%%userId%% with address id= %%entityId%%"
   },
   {
     "EventId": 27,
     "EventName": "vendor_address_updated",
-    "EventDescription": "Vendor address updated by user =%%userId%% with vendor id= %%entityId%%"
+    "EventDescription": "Vendor address updated by user =%%userId%% with address id= %%entityId%%"
   },
   {
     "EventId":26,
     "EventName": "create_vendor_repo",
-    "EventDescription": "Vendor repo created by user =%%userId%% with vendor id= %%entityId%%"
+    "EventDescription": "Vendor repo created by user =%%userId%% with repo id= %%entityId%%"
   },
   {
     "EventId": 28,
     "EventName": "update_vendor_repo",
-    "EventDescription": "Vendor repo updated by user =%%userId%% with vendor id= %%entityId%%"
+    "EventDescription": "Vendor repo updated by user =%%userId%% with repo id= %%entityId%%"
   },
   {
     "EventId": 34,
     "EventName": "product_photoshoot_created",
-    "EventDescription": "Photoshoot product created by user =%%userId%% with photoshoot id = %%entityId%%"
+    "EventDescription": "Photoshoot product created by user =%%userId%% with product id = %%entityId%%"
   },
   {
     "EventId": 17,
@@ -182,11 +182,11 @@
   {
     "EventId": 32,
     "EventName": "photoshoot_note_created",
-    "EventDescription": "Photoshoot note created by user =%%userId%% with photoshoot id = %%entityId%%"
+    "EventDescription": "Photoshoot note created by user =%%userId%% with note id = %%entityId%%"
   },
   {
     "EventId": 33,
     "EventName": "photoshoot_summmary_updated",
-    "EventDescription": "Photoshoot summary update by user =%%userId%% with photoshoot id = %%entityId%%"
+    "EventDescription": "Photoshoot summary update by user =%%userId%% with summary id = %%entityId%%"
   }
 ]
