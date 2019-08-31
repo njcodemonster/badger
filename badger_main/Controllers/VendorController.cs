@@ -401,8 +401,8 @@ namespace badgerApi.Controllers
                 var eventModel = new EventModel(vendorEventTableName)
                 {
                     EventName = create_vendor_product,
-                    EntityId = Int32.Parse(NewInsertionID),
-                    RefrenceId = 0,
+                    EntityId = newVendor.vendor_id,
+                    RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -451,8 +451,8 @@ namespace badgerApi.Controllers
                 var eventModel = new EventModel(vendorEventTableName)
                 {
                     EventName = create_vendor_note,
-                    EntityId = Int32.Parse(newNoteID),
-                    RefrenceId = ref_id,
+                    EntityId = ref_id,
+                    RefrenceId = Int32.Parse(newNoteID),
                     UserId = created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
@@ -499,8 +499,8 @@ namespace badgerApi.Controllers
                 var eventModel = new EventModel(vendorEventTableName)
                 {
                     EventName = create_vendor_document,
-                    EntityId = Int32.Parse(newDocID),
-                    RefrenceId = ref_id,
+                    EntityId = ref_id,
+                    RefrenceId = Int32.Parse(newDocID),
                     UserId = created_by,
                 };
                 await _eventRepo.AddEventAsync(eventModel);
