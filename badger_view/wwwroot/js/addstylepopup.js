@@ -115,7 +115,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
         style_sku["style_qty"] = styleSkuQty;
         style_sku["IsNewSku"] = IsNewSku;
         style_sku["original_qty"] = OriginalQty;
-        if (styleVendorSize != null && styleSize != null && styleSku != null && styleSkuQty != null) {
+        if (styleVendorSize != null && styleSize != null && styleSku != null && styleSkuQty) {
             jsonData["vendor_style_sku"].push(style_sku);
         }
     });
@@ -427,7 +427,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
                             options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
                         }
 
-                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"    name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required "  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
+                        $(wrapper).append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize"  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize" >' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;"    name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline"  placeholder="Qty"  id="styleSkuQty"   />  '); // add input boxes.
 
                         Temp_Sku = skulist[y].sku.split('-')[0];
                     }

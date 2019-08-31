@@ -442,17 +442,18 @@ namespace badgerApi.Interfaces
             }
 
         }
-        /*Developer: ubaid
-        Date:5-7-19
-        Action:get PurchaseOrderLineItems Model from controller and insert the PurchaseOrderLineItems
+        /*Developer: Hamza Haq
+        Date:31-8-19
+        Action:get PurchaseOrderLineItems Model from controller and Update the PurchaseOrderLineItems
         Input: PurchaseOrderLineItems Model 
-        output: New PO LineItem id
+        output: old PO LineItem id
         */
         public async Task<string> UpdatePoLineItems(PurchaseOrderLineItems NewLineitem)
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<PurchaseOrderLineItems>(NewLineitem);
+                String updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " where vendor_id='" + NewLineitem.vendor_id + "' and  sku='" + NewLineitem.sku + "' and  po_id = " + NewLineitem.po_id;
+                var result = await conn.QueryAsync(updateQuery);
                 return result.ToString();
             }
 

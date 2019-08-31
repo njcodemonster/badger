@@ -198,10 +198,8 @@ namespace badger_view.Controllers
             product.Add("published_status", published_status);
             product.Add("is_on_site_status", is_on_site_status);
 
-
             product.Add("created_by", user_id);
             product.Add("created_at", _common.GetTimeStemp());
-
 
 
             vendorProduct.Add("vendor_id", vendor_id);
@@ -211,12 +209,6 @@ namespace badger_view.Controllers
             vendorProduct.Add("vendor_product_name", product_name);
             vendorProduct.Add("created_by", user_id);
             vendorProduct.Add("created_at", _common.GetTimeStemp());
-
-
-
-
-
-
 
 
             if (product_id_current > 0)
@@ -407,25 +399,32 @@ namespace badger_view.Controllers
 
                 if (!IsLineItemExists || IsNewSku)
                 {
-
-                    String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/createLineitems");
                     String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/createitems/" + style_qty);
-
+                    String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/createLineitems");
                 }
                 else
                 {
-                    String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/updateitems/" + style_qty);
-                    String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/updateLineitems");
+                    int _style_qty = int.Parse(style_qty);
+                    if (original_qty != _style_qty)
+                    {
+                        int qty = 0;
+                        if (_style_qty < original_qty)
+                        {
+                            //Deleting new items in existing line item
+                            qty = original_qty - _style_qty;
+                        }
+                        else
+                        {
+                            //Adding new items in existing Line items
+                            String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/updateitems/" + style_qty);
+                            String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/updateLineitems");
+                        }
+                    }
 
 
                 }
 
             }
-
-
-
-
-
             return product_id;
 
         }
