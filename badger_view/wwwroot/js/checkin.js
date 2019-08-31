@@ -89,7 +89,10 @@ $(document).on('click', ".submit-check-in", function () {
 
     jsonData['tracking'] = [];
 
-    $('#checkin_form .poTracking').each(function () {
+
+    $(".poTracking").removeAttr("id");
+    $(".poTracking").val("");
+    $('#checkin_form .poTracking:visible').each(function () {
         var tracking_json = {};
 
         tracking_json['track'] = $(this).val();

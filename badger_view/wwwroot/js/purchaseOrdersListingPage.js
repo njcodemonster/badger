@@ -1173,6 +1173,7 @@ function purchaseOrderData(data) {
             $(".po_doc_section").addClass('d-none');
         }
 
+        $(".poTracking").removeAttr("id");
         $(".poTracking").val("");
         $("#wrapper_tracking").empty().html("");
 

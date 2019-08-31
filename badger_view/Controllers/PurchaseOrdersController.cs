@@ -734,6 +734,13 @@ namespace badger_view.Controllers
                         }
 
                     }
+
+                    if (track.Value<string>("track") == "" && track.Value<string>("id") != null)
+                    {
+                        JObject purchaseOrdersTrackingData = new JObject();
+                        purchaseOrdersTrackingData.Add("po_id", id);
+                        await _BadgerApiHelper.GenericPostAsyncString<string>(purchaseOrdersTrackingData.ToString(Formatting.None), "/purchaseorderstracking/delete/" + track.Value<string>("id").ToString());
+                    }
                 }
 
             }
