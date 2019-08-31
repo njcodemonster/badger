@@ -101,7 +101,7 @@ namespace badgerApi.Controllers
                 var eventModel = new EventModel(vendorEventTableName)
                 {
                     EventName = update_vendor_repo,
-                    EntityId = id,
+                    EntityId = VendorToUpdate.vendor_id,
                     RefrenceId = id,
                     UserId = updated_by,
                 };
