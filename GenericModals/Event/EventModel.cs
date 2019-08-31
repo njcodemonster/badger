@@ -19,6 +19,7 @@ namespace GenericModals.Event
         public int UserId { get; set; }
         public double CreatedAt { get; set; }
         public string Table { get; set; }
+        public int EventNoteId { get; set; }
 
     }
 }
