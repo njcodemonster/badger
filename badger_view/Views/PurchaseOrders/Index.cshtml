@@ -47,7 +47,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (GenericModals.Models.PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
+            @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
             {
                 string pinkbgclass = "";
                 @if (@purchaseOrders.ra_flag == 1)
@@ -58,39 +58,55 @@
                 <tr @pinkbgclass>
                     <td>@purchaseOrders.vendor_po_number</td>
                     <td>
-                        @purchaseOrders.custom_order_date
+                        @if (purchaseOrders.custom_order_date != "1/1/1970")
+                        {
+                            @purchaseOrders.custom_order_date
+                        }
                     </td>
                     <td>@purchaseOrders.vendor</td>
                     <td>@purchaseOrders.total_styles</td>
                     <td>@purchaseOrders.photos</td>
                     <td>@purchaseOrders.remaining</td>
-                    @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5)
+                    @if (purchaseOrders.check_days_range == false && @purchaseOrders.po_status == 5 && purchaseOrders.custom_delivery_window_start_end != "1/1-1/1/1970")
                     {
-                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id">@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id">
+                            @if (purchaseOrders.custom_delivery_window_start_end != "1/1-1/1/1970")
+                            {
+                                @purchaseOrders.custom_delivery_window_start_end
+                            }
+                        </td>
                         <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
-                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"> <span class="postatus-@purchaseOrders.po_id">Not Recieved</span> </td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><a class="text-danger font-weight-bold" target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id"><span class="postatus-@purchaseOrders.po_id">Not Recieved</span></a></td>
                     }
                     else
                     {
-                        <td>@purchaseOrders.custom_delivery_window_start_end</td>
+                        <td>
+                            @if (purchaseOrders.custom_delivery_window_start_end != "1/1-1/1/1970")
+                            {
+                                @purchaseOrders.custom_delivery_window_start_end
+                            }
+                        </td>
                         <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
                         <td>
-                            @if (@purchaseOrders.po_status == 1)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">Open</span>
-                            }
-                            @if (@purchaseOrders.po_status == 3)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">In Progress</span>
-                            }
-                            @if (@purchaseOrders.po_status == 5)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">Not Recieved</span>
-                            }
-                            @if (@purchaseOrders.po_status == 6)
-                            {
-                                <span class="postatus-@purchaseOrders.po_id">Recieved</span>
-                            }
+                            <a target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id">
+                                @if (@purchaseOrders.po_status == 1)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">Open</span>
+                                }
+                                @if (@purchaseOrders.po_status == 3)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">In Progress</span>
+                                }
+                                @if (@purchaseOrders.po_status == 5)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">Not Recieved</span>
+                                }
+                                @if (@purchaseOrders.po_status == 6)
+                                {
+                                    <span class="postatus-@purchaseOrders.po_id">Recieved</span>
+                                }
+                            </a>
+
                         </td>
                     }
                     <td>
@@ -174,7 +190,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Order Delivery Range</label>
-                                    <input type="text" class="form-control required" id="poDelieveryRange">
+                                    <input type="text" class="form-control" id="poDelieveryRange">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -187,37 +203,37 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Total Styles</label>
-                                    <input type="text" class="form-control required" id="poTotalStyles">
+                                    <input type="text" class="form-control" id="poTotalStyles">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Invoice Number</label>
-                                    <input type="text" class="form-control required" id="poInvoiceNumber">
+                                    <input type="text" class="form-control" id="poInvoiceNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Total Quantity</label>
-                                    <input type="text" class="form-control required" id="poTotalQuantity">
+                                    <input type="text" class="form-control" id="poTotalQuantity">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Order Number</label>
-                                    <input type="text" class="form-control required" id="poOrderNumber">
+                                    <input type="text" class="form-control" id="poOrderNumber">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Subtotal</label>
-                                    <input type="text" class="form-control required" id="poSubtotal">
+                                    <input type="text" class="form-control" id="poSubtotal">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label>Order Date</label>
-                                    <input type="text" class="form-control required" id="poOrderDate">
+                                    <input type="text" class="form-control" id="poOrderDate">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label>Shipping &amp; Handling</label>
-                                    <input type="text" class="form-control required" id="poShipping">
+                                    <input type="text" class="form-control" id="poShipping">
                                 </div>
                             </div>
                             <div class="form-row po_section d-none">

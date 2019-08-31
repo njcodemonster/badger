@@ -41,6 +41,8 @@
 
   <ItemGroup>
    
+    <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.1" />
+   
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
@@ -63,5 +65,8 @@
     <Folder Include="Models\" />
     <Folder Include="uploads\" />
     <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\lib\signalr\signalr.js" />
   </ItemGroup>
 </Project>

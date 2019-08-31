@@ -309,6 +309,7 @@ label.error {
 
 .ui-widget.ui-widget-content, .ui-front{
     z-index: 9999 !important;
+    position:absolute !important;
 }
 .loading-box-light {
     display: none;
@@ -506,7 +507,7 @@ label.error {
 }
 
 .po_tble_list input[type=text] {
-    width:100px;
+    width:105px;
 }
 
 .search_result_list {

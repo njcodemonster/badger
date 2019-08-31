@@ -25,6 +25,7 @@ namespace GenericModals.Models
         public string product_name { get; set; }
         public string size { get; set; }
         public int? published_by { get; set; }
+        public int has_doc { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double created_at { get; set; }

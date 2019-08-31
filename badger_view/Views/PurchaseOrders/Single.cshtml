@@ -1,30 +1,33 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Single P.O.";
 }
 @section Scripts {
-    <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
-    <script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
-    <script src="~/js/common.js" asp-append-version="true"></script>
-    <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
-    <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
-    <script src="~/js/checkin.js" asp-append-version="true"></script>
-    <script src="~/js/addstylepopup.js" asp-append-version="true"></script>
+<link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
+<script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
+<script src="~/js/common.js" asp-append-version="true"></script>
+<script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
+<script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
+<script src="~/js/checkin.js" asp-append-version="true"></script>
+<script src="~/lib/signalr/signalr.js" asp-append-version="true"></script>
+<script src="~/js/POClaim.js" asp-append-version="true"></script>
+<script src="~/js/addstylepopup.js" asp-append-version="true"></script>
 }
 <div class="loading d-none"></div>
+<div class="msg"></div>
 <div class="row">
     <div class="col-md-3 col-sm-10  col-xs-10">
         <h4 class="text-dark">Purchase Order #: <a href="#" class="orderNumber"></a></h4>
+        <input type="hidden" id="poId" />
     </div>
     <div class="col-md-2 col-sm-2 col-xs-2">
         <button type="button" id="AddItemButton" class="btn btn-light btn-sm">Add an item</button>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12" style="white-space: nowrap">
-        <span class="text-center d-inline-block">
-            <b>Inspect</b><br /><a href="#">Claim</a>
+        <span class="text-center d-inline-block" id="inspect-claim">
+
         </span>
-        <span class="text-center d-inline-block pl-4">
-            <b>Go Live</b><br /><a href="#">Claim</a>
+        <span class="text-center d-inline-block pl-4" id="publish-claim">
+
         </span>
         <span class="d-inline-block pl-4 align-top pt-2">
             <!-- b>6 total styles, 5 have photos</b -->
@@ -58,6 +61,9 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>P.O. Number</label>
+                    <input type="hidden" id="po_status" style="display:none;">
+                    <input type="hidden" id="photos" style="display:none;">
+                    <input type="hidden" id="remaining" style="display:none;">
                     <input type="text" class="form-control" id="poNumber">
                 </div>
                 <div class="form-group col-md-6">
@@ -146,13 +152,14 @@
     <div class="col-md-6 offset-md-6">
         <span class="h6 pb-2 d-block">Calculated totals:<br />6 styles, 71 units, total cost $1.245.50</span>
         <table class="w-100 table-bordered" id="itemsTable">
-            @*<tr>
-                    <td width="60"><img src="~/images/dress-clipart.jpg" width="50" /></td>
-                    <td class="h6">Faded Denim Pant (DP007) in Blue (BL) - AD114</td>
-                    <td><a href="#" class="h6 text-success">Edit Style</a></td>
-                    <td><a href="#" class="h6 text-primary">Edit Attributes</a></td>
-                    <td><a href="#" class="h6 text-danger">Remove</a></td>
-                </tr>*@
+            @*
+            <tr>
+                <td width="60"><img src="~/images/dress-clipart.jpg" width="50" /></td>
+                <td class="h6">Faded Denim Pant (DP007) in Blue (BL) - AD114</td>
+                <td><a href="#" class="h6 text-success">Edit Style</a></td>
+                <td><a href="#" class="h6 text-primary">Edit Attributes</a></td>
+                <td><a href="#" class="h6 text-danger">Remove</a></td>
+            </tr>*@
 
         </table>
     </div>
@@ -160,113 +167,414 @@
 
 @section page_popup_area{
 
-    <!-- Modal Check-in -->
+<!-- Modal Check-in -->
     @{ Html.RenderPartial("~/Views/Shared/model_checkin.cshtml"); }
 
 
+<!-- Modal Add Style Item Clothing -->
+<div class="modal fade" id="modaladdstylec" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O (<span class="poNumber"></span>)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="newAddStyleForm">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Link to existing product</label>
+                                <select id="ExistingProductSelect" class="form-control">
+                                    <option selected data-name="" value="">Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Style Name</label>
+                                <input name="StyleName" id="product_title" type="text" class="form-control required">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Color Name</label>
+                                <input name="ColorName" id="product_color" type="text" class="form-control required">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Unit Cost</label>
+                                <input name="UnitCost" id="product_unit_cost" type="text" class="form-control required">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Retail</label>
+                                <input name="RetailCost" id="product_retail" type="text" class="form-control required">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Type</label>
+                                <select id="StyleType" class="form-control required">
+                                    <option selected value="">Choose...</option>
+                                    <option value="1">Colothing</option>
+                                    <option value="2">Accessories</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Subtype</label>
+                                <select id="StyleSubType" class="form-control">
+                                    <option selected>Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row vendorSkuArea">
+                            <div class="col-md-8 pt-4">
+                                <div id="po_input_fields_wrap" class="po_input_fields_wrap pb-3">
+                                    <!---<div class="pb-3 vendorSkuBox">
+                                        <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Vendor Size">
+                                        <input type="text" class="form-control d-inline w-25" name="vendorcsize[1]" placeholder="Size">
+                                        <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                                        <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                                    </div>-->
+                                </div>
+                                <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label>Vendor Notes</label>
+                                <textarea class="form-control"></textarea>
+                            </div>
+                            <div class="form-group col-md-4 text-center">
+                                <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
+                                <button type="button" id="AddStyleButton" data-action="closepop" class="btn btn-primary btn-sm mt-2 AddNewStyleButton">Add and view P.O.</button><br />
+                                <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label>Upload Files</label>
+                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
+                            </div>
+                        </div>
+                        <input id="po_id" name="po_id" type="hidden" class="form-control">
+                        <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="poAlertMsg"></div>
+                <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Modal Add Style Item Clothing -->
     @{ Html.RenderPartial("~/Views/Shared/AddStyle.cshtml"); }
 
-
-
-    <!-- Modal Add Invoice -->
-    <div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <form id="ledger_form" data-adjustment="">
-                            <div class="form-row">
-                                <div class="form-group col-md-4">
-                                    <label>Adjustment</label>
-                                    <select id="ledger_adjustment" name="ledger_adjustment" class="form-control">
-                                        <option selected>Choose...</option>
-                                        <option value="credit">Credit</option>
-                                        <option value="debit">Debit</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label>Amount</label>
-                                    <input type="text" class="form-control" id="ledger_amount" name="ledger_amount" placeholder="$">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label>Note</label>
-                                    <input type="text" class="form-control" id="ledger_note" name="ledger_note">
-                                </div>
+<!-- Modal Add Style Item Accessories -->
+<div class="modal fade" id="modaladdstylea" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Style Item to P.O. &lt;number&gt;</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Link to existing product</label>
+                                <select id="inputState" class="form-control">
+                                    <option selected value="">Choose...</option>
+                                    <option> ... </option>
+                                </select>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Style Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Color Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Unit Cost</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Retail</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Type</label>
+                                <select id="inputState" class="form-control">
+                                    <option selected value="">Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Subtype</label>
+                                <select id="inputState" class="form-control">
+                                    <option selected value="">Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8 pt-4">
+                                <div class="input_fields_wrap pb-2">
+                                    <div class="pb-2">
+                                        <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Size">
+                                        <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                                        <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                                    </div>
+                                </div>
+                                <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label>Vendor Notes</label>
+                                <textarea class="form-control"></textarea>
+                            </div>
+                            <div class="form-group col-md-4 text-center">
+                                <button type="button" class="btn btn-success btn-sm">Add another style</button><br />
+                                <button type="button" class="btn btn-primary btn-sm mt-2">Add and view P.O.</button><br />
+                                <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label>Upload Files</label>
+                                <input type="file" class="form-control" />
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="ledger_submit" style="margin: 0 auto;">Submit</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal Add Discount -->
-    <div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="discountModalLongTitle">Add Discount %</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <form id="discount_form" data-discount="">
-                            <div class="form-row">
-                                <div class="form-group col-md-4">
-                                    <label>Discount</label>
-                                    <input type="text" class="form-control" id="discount_percentage" name="discount" placeholder="%">
-                                </div>
-                                <div class="form-group col-md-8">
-                                    <label>Note</label>
-                                    <input type="text" class="form-control" id="discount_note" name="discount_note">
-                                </div>
+<!-- Modal Add Invoice -->
+<div class="modal fade" id="modaladdinvoice" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ledgerModalLongTitle">Add an Invoice Adjustment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="ledger_form" data-adjustment="">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Adjustment</label>
+                                <select id="ledger_adjustment" name="ledger_adjustment" class="form-control">
+                                    <option selected>Choose...</option>
+                                    <option value="credit">Credit</option>
+                                    <option value="debit">Debit</option>
+                                </select>
                             </div>
-                            <div class="text-center w-100">
-                                <span class="text-danger"><b>IMPORTANT:</b> </span>Your unit costs should be inputted with discounts already applied to them.
+                            <div class="form-group col-md-4">
+                                <label>Amount</label>
+                                <input type="text" class="form-control" id="ledger_amount" name="ledger_amount" placeholder="$">
                             </div>
-                        </form>
-                    </div>
+                            <div class="form-group col-md-4">
+                                <label>Note</label>
+                                <input type="text" class="form-control" id="ledger_note" name="ledger_note">
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="discount_submit" style="margin: 0 auto;">Submit</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="ledger_submit" style="margin: 0 auto;">Submit</button>
             </div>
         </div>
     </div>
+</div>
 
-    
-    <!-- Modal Vendor -->
-    <div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<!-- Modal Add Discount -->
+<div class="modal fade" id="modaladddiscount" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="discountModalLongTitle">Add Discount %</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="discount_form" data-discount="">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Discount</label>
+                                <input type="text" class="form-control" id="discount_percentage" name="discount" placeholder="%">
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label>Note</label>
+                                <input type="text" class="form-control" id="discount_note" name="discount_note">
+                            </div>
+                        </div>
+                        <div class="text-center w-100">
+                            <span class="text-danger"><b>IMPORTANT:</b> </span>Your unit costs should be inputted with discounts already applied to them.
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-body">
-                    @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
-                </div>
-                <div class="modal-footer">
-                    <div class="vendorAlertMsg"></div>
-                    <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="discount_submit" style="margin: 0 auto;">Submit</button>
             </div>
         </div>
     </div>
+</div>
 
+<!-- Modal Edit Style Item Clothing -->
+<div class="modal fade" id="modaleditstylec" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Edit Style Item to P.O (<span class="poNumber"></span>)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="newAddStyleForm">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Link to existing product</label>
+                                @* <input type="text" class="form-control required d-inline-block autocomplete" id="productSelect" style="width: 90%">*@
+                                <select id="ExistingProductSelect" class="form-control">
+                                    <option selected data-name="" value="">Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Style Name</label>
+                                <input name="StyleName" id="product_title" type="text" class="form-control required">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Color Name</label>
+                                <input name="ColorName" id="product_color" type="text" class="form-control required">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Unit Cost</label>
+                                <input name="UnitCost" id="product_unit_cost" type="text" class="form-control required">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Retail</label>
+                                <input name="RetailCost" id="product_retail" type="text" class="form-control required">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Type</label>
+                                <select id="StyleType" class="form-control required">
+                                    <option selected value="">Choose...</option>
+                                    <option value="1">Colothing</option>
+                                    <option value="2">Accessories</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Subtype</label>
+                                <select id="StyleSubType" class="form-control">
+                                    <option selected>Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row vendorSkuArea">
+                            <div class="col-md-8 pt-4">
+                                <div id="po_input_fields_wrap" class="po_input_fields_wrap pb-3">
+                                    <!---<div class="pb-3 vendorSkuBox">
+                                        <input type="text" class="form-control d-inline w-25" name="csize[1]" placeholder="Vendor Size">
+                                        <input type="text" class="form-control d-inline w-25" name="vendorcsize[1]" placeholder="Size">
+                                        <input type="text" class="form-control d-inline w-25" name="csku[1]" placeholder="SKU">
+                                        <input type="text" class="form-control d-inline w-25" name="cqty[1]" placeholder="Qty">
+                                    </div>-->
+                                </div>
+                                <a class="add_field_button text-primary" style="cursor: pointer; margin-top: -15px; display: table;">Add Another</a>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label>Vendor Notes</label>
+                                <textarea class="form-control"></textarea>
+                            </div>
+                            <div class="form-group col-md-4 text-center">
+                                <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
+                                <button type="button" id="AddStyleButton" data-action="closepop" class="btn btn-primary btn-sm mt-2 AddNewStyleButton">Add and view P.O.</button><br />
+                                <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label>Upload Files</label>
+                                <input type="file" id="StyleImage" class="form-control" accept="image/x-png,image/gif,image/jpeg" />
+                                <div class="style_doc_section d-none"></div>
+                            </div>
+
+                        </div>
+                        <input id="po_id" name="po_id" type="hidden" class="form-control">
+                        <input id="vendor_id" name="vendor_id" type="hidden" class="form-control">
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="poAlertMsg"></div>
+                @* <button type="button" class="btn btn-warning" style="margin: 0 auto; background-color: #f35d47 !important;">Delete from P.O.</button>*@
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Vendor -->
+<div class="modal fade" id="newVendorModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vendorModalLongTitle">Add a New Vendor Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @{ Html.RenderPartial("~/Views/Shared/AddVendor.cshtml"); }
+            </div>
+            <div class="modal-footer">
+                <div class="vendorAlertMsg"></div>
+                <button type="button" class="btn btn-primary" id="NewVendorButton">Add</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 }

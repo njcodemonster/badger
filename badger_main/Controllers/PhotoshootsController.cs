@@ -12,6 +12,7 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using badgerApi.Helper;
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -31,31 +32,12 @@ namespace badgerApi.Controllers
         string table_name = "product_events";
         string user_event_table_name = "user_events";
 
-        string event_create_photoshoot = "Photoshoot created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot
-        int event_photoshoot_created_id = 16;
-
-        string event_add_product_photoshoot = "Photoshoot product added by user =%%userid%% with product id = %%pid%%"; ///event_add_product_photoshoot
-        int event_add_product_photoshoot_id = 34;
-
-        string event_photoshoot_started = "Photoshoot started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
-        int event_photoshoot_started_id = 17;
-
-        string event_photoshoot_not_started = "Photoshoot not started by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
-        int event_photoshoot_not_started_id = 18;
-
-        string event_photoshoot_sent_to_editor = "Photoshoot sent to editor by user =%%userid%% with product id = %%pid%%"; ///event_create_photoshoot
-        int event_photoshoot_sent_to_editor_id = 19;
-
-        string event_photoshoot_note_create = "Photoshoot note created by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
-        int event_photoshoot_note_create_id = 32;
-
-        string event_photoshoot_summmary_update = "Photoshoot summary update by user =%%userid%% with photoshoot id = %%pid%%"; ///event_create_photoshoot_note
-        int event_photoshoot_summmary_update_id = 33;
-
-        string user_event_create_photoshoot = "Photoshoot created with photoshoot id = %%pid%%";
-        string user_event_photoshoot_started = "Photoshoot started product id = %%pid%%";
-        string user_event_photoshoot_not_started = "Photoshoot not started with product id = %%pid%%";
-        string user_event_photoshoot_sent_to_editor = "Photoshoot sent to editor with product id = %%pid%%";
+        string product_photoshoot_created = "product_photoshoot_created";
+        string photoshoot_started = "photoshoot_started";
+        string photoshoot_not_started = "photoshoot_not_started";
+        string photoshoot_sent_to_editor = "photoshoot_sent_to_editor";
+        string photoshoot_note_created = "photoshoot_note_created";
+        string photoshoot_summmary_updated = "photoshoot_summmary_updated";
 
         public PhotoshootsController(IPhotoshootRepository PhotoshootRepo, ILoggerFactory loggerFactory, IEventRepo eventRepo, IItemServiceHelper ItemServiceHelper, INotesAndDocHelper NotesAndDoc)
         {
@@ -312,16 +294,17 @@ namespace badgerApi.Controllers
                 Photoshoots newPhotoshoots = JsonConvert.DeserializeObject<Photoshoots>(value);
                 NewInsertionID = await _PhotoshootRepo.Create(newPhotoshoots);
                 int userId = newPhotoshoots.created_by;
-                event_create_photoshoot = event_create_photoshoot.Replace("%%userid%%", userId.ToString());
-                event_create_photoshoot = event_create_photoshoot.Replace("%%pid%%", NewInsertionID.ToString());
+
                 int countComma = productId.Count(c => c == ',');
                 if (countComma > 0)
                 {
                     var ids = productId.Split(",");
+                    var photoshoot_created = "photoshoot_created";
                     foreach (var product_id in ids)
                     {
-                        await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_created_id, Int32.Parse(NewInsertionID), event_create_photoshoot, userId, _common.GetTimeStemp(), table_name);
-                        await _eventRepo.AddEventAsync(event_photoshoot_created_id, userId, Int32.Parse(product_id), event_create_photoshoot, _common.GetTimeStemp(), user_event_table_name);
+                        int prodId = Int32.Parse(product_id);
+                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId });
                     }
                 }
             }
@@ -367,24 +350,18 @@ namespace badgerApi.Controllers
                         int ProductId = Int32.Parse(product_id);
                         if (PhotoshootStatus == "1")
                         {
-                            event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
-                            event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
-                            await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_started_id, ProductId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
-                            await _eventRepo.AddEventAsync(event_photoshoot_started_id, userId, ProductId, event_photoshoot_started, _common.GetTimeStemp(), user_event_table_name);
+                            await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = ProductId, RefrenceId = 0, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
                         }
                         else if (PhotoshootStatus == "2")
                         {
-                            event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
-                            event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
-                            await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_sent_to_editor_id, ProductId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
-                            await _eventRepo.AddEventAsync(event_photoshoot_sent_to_editor_id, userId, ProductId, event_photoshoot_sent_to_editor, _common.GetTimeStemp(), user_event_table_name);
+                            await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_sent_to_editor, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = userId, RefrenceId = ProductId, UserId = userId });
                         }
                         else if (PhotoshootStatus == "0")
                         {
-                            event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
-                            event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", ProductId.ToString());
-                            await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_not_started_id, ProductId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
-                            await _eventRepo.AddEventAsync(event_photoshoot_not_started_id, userId, ProductId, event_photoshoot_not_started, _common.GetTimeStemp(), user_event_table_name);
+                            await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_not_started, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_not_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
                         }
                     }
                 }
@@ -395,24 +372,18 @@ namespace badgerApi.Controllers
                     int ProductId = Int32.Parse(productId);
                     if (PhotoshootStatus == "1")
                     {
-                        event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
-                        event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
-                        await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_started_id, ProductId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
-                        await _eventRepo.AddEventAsync(event_photoshoot_started_id, userId, ProductId, event_photoshoot_started, _common.GetTimeStemp(), user_event_table_name);
+                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = ProductId, RefrenceId = 0, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
                     }
                     else if (PhotoshootStatus == "2")
                     {
-                        event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%userid%%", userId.ToString());
-                        event_photoshoot_sent_to_editor = event_photoshoot_sent_to_editor.Replace("%%pid%%", productId.ToString());
-                        await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_sent_to_editor_id, ProductId, event_photoshoot_sent_to_editor, userId, _common.GetTimeStemp(), table_name);
-                        await _eventRepo.AddEventAsync(event_photoshoot_sent_to_editor_id, userId, ProductId, event_photoshoot_sent_to_editor, _common.GetTimeStemp(), user_event_table_name);
+                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_sent_to_editor, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = userId, RefrenceId = ProductId, UserId = userId });
                     }
                     else if (PhotoshootStatus == "0")
                     {
-                        event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%userid%%", userId.ToString());
-                        event_photoshoot_not_started = event_photoshoot_not_started.Replace("%%pid%%", ProductId.ToString());
-                        await _eventRepo.AddPhotoshootAsync(ProductId, event_photoshoot_not_started_id, ProductId, event_photoshoot_not_started, userId, _common.GetTimeStemp(), table_name);
-                        await _eventRepo.AddEventAsync(event_photoshoot_not_started_id, userId, ProductId, event_photoshoot_not_started, _common.GetTimeStemp(), user_event_table_name);
+                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_not_started, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_not_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
                     }
                 }
 
@@ -578,9 +549,6 @@ namespace badgerApi.Controllers
                 int userId = PhotoshootToUpdate.updated_by;
                 int photoshootId = PhotoshootToUpdate.photoshoot_id;
 
-                event_photoshoot_started = event_photoshoot_started.Replace("%%userid%%", userId.ToString());
-                event_photoshoot_started = event_photoshoot_started.Replace("%%pid%%", productId.ToString());
-
                 int photoShootStatus = 1;
                 await SetProductItemStatusForPhotoshoot(productId, photoShootStatus);
 
@@ -590,12 +558,13 @@ namespace badgerApi.Controllers
                     var ids = productId.Split(",");
                     foreach (var product_id in ids)
                     {
-                        await _eventRepo.AddPhotoshootAsync(Int32.Parse(product_id), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                        int prodId = Int32.Parse(product_id);
+                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = prodId, RefrenceId = photoshootId, UserId = userId });
                     }
                 }
                 else
                 {
-                    await _eventRepo.AddPhotoshootAsync(Int32.Parse(productId), event_photoshoot_started_id, photoshootId, event_photoshoot_started, userId, _common.GetTimeStemp(), table_name);
+                    await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = int.Parse(productId), RefrenceId = photoshootId, UserId = userId });
                 }
 
 
@@ -638,11 +607,8 @@ namespace badgerApi.Controllers
                 int userId = PhotoshootToUpdate.Value<int>("updated_by");
                 await _PhotoshootRepo.UpdatePhotoshootForSummary(ValuesToUpdate, " photoshoot_id = " + photoshootId.ToString());
 
-                event_photoshoot_summmary_update = event_photoshoot_summmary_update.Replace("%%userid%%", userId.ToString());
-                event_photoshoot_summmary_update = event_photoshoot_summmary_update.Replace("%%pid%%", photoshootId.ToString());
-                await _eventRepo.AddPhotoshootAsync(photoshootId, event_photoshoot_summmary_update_id, photoshootId, event_photoshoot_summmary_update, userId, _common.GetTimeStemp(), table_name);
-                await _eventRepo.AddEventAsync(event_photoshoot_summmary_update_id, userId, photoshootId, event_photoshoot_summmary_update, _common.GetTimeStemp(), user_event_table_name);
-
+                await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_summmary_updated, EntityId = photoshootId, RefrenceId = photoshootId, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_summmary_updated, EntityId = userId, RefrenceId = photoshootId, UserId = userId });
             }
             catch (Exception ex)
             {
@@ -679,11 +645,8 @@ namespace badgerApi.Controllers
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
 
                 int userId = photoshootNote.created_by;
-
-                event_photoshoot_note_create = event_photoshoot_note_create.Replace("%%userid%%", userId.ToString());
-                event_photoshoot_note_create = event_photoshoot_note_create.Replace("%%pid%%", ref_id.ToString());
-                await _eventRepo.AddPhotoshootAsync(ref_id, event_photoshoot_note_create_id, ref_id, event_photoshoot_note_create, userId, _common.GetTimeStemp(), table_name);
-                await _eventRepo.AddEventAsync(event_photoshoot_note_create_id, userId, ref_id, event_photoshoot_note_create, _common.GetTimeStemp(), user_event_table_name);
+                await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_note_created, EntityId = ref_id, RefrenceId = ref_id, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_note_created, EntityId = userId, RefrenceId = ref_id, UserId = userId });
             }
             catch (Exception ex)
             {
@@ -767,12 +730,8 @@ namespace badgerApi.Controllers
                 int userId = newPhotoshoots.created_by;
                 int productId = newPhotoshoots.product_id;
 
-                event_add_product_photoshoot = event_add_product_photoshoot.Replace("%%userid%%", userId.ToString());
-                event_add_product_photoshoot = event_add_product_photoshoot.Replace("%%pid%%", productId.ToString());
-
-                await _eventRepo.AddPhotoshootAsync(productId, event_add_product_photoshoot_id, productId, event_add_product_photoshoot, userId, _common.GetTimeStemp(), table_name);
-                await _eventRepo.AddEventAsync(event_add_product_photoshoot_id, userId, productId, event_add_product_photoshoot, _common.GetTimeStemp(), user_event_table_name);
-
+                await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = product_photoshoot_created, EntityId = productId, RefrenceId = 0, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = product_photoshoot_created, EntityId = userId, RefrenceId = productId, UserId = userId });
             }
             catch (Exception ex)
             {

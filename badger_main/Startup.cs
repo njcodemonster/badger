@@ -12,6 +12,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using badgerApi.Interfaces;
 using badgerApi.Helper;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using GenericModals;
+using badgerApi.Helpers;
+
 namespace badgerApi
 {
     public class Startup
@@ -29,7 +36,6 @@ namespace badgerApi
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<INotesAndDocHelper, NotesAndDocHelper>();
             services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
-            services.AddTransient<IEventRepo, EventsRepo>();
             services.AddTransient<IVendorRepository, VendorRepo>();
             services.AddTransient<IProductRepository, ProductRepo>();
             services.AddTransient<IPurchaseOrderStatusRepository, PurchaseOrderStatusRepo>();
@@ -51,11 +57,15 @@ namespace badgerApi
             services.AddTransient<iBarcodeRangeRepo, BarcodeRangeRepo>();
             services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
 
-
             //*              Singletons                                   *\\
             services.AddSingleton<ICategoriesRepository, CategoriesRepo>();
-
             services.AddTransient<ICategoryRepository, CategoryRepo>();
+            services.AddSingleton<IEventRepo, EventsRepo>();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
+            });
         }
 
 
@@ -65,16 +75,39 @@ namespace badgerApi
             loggerFactory.AddFile("Logs/BadgerAPIFunctional-{Date}.txt");
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                 app.UseDeveloperExceptionPage();
+               // LogGloblaErrors(app, loggerFactory);
             }
             else
             {
-                app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
                 //app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void LogGloblaErrors(IApplicationBuilder app,ILoggerFactory loggerFactory)
+        {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var exceptionHandlerPathFeature =
+                        context.Features.Get<IExceptionHandlerPathFeature>();
+                    var logger = loggerFactory.CreateLogger("Api Logs");
+                    logger.LogInformation("Error: ", exceptionHandlerPathFeature.Error.ToString());
+
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    var responseObj = JsonConvert.SerializeObject(new ResponseModel
+                    {
+                        Status = HttpStatusCode.InternalServerError,
+                        Message = exceptionHandlerPathFeature.Error.ToString()
+                    });
+                    await context.Response.WriteAsync(responseObj);
+                });
+            });
         }
     }
 }
