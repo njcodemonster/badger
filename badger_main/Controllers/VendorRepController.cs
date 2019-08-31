@@ -56,6 +56,7 @@ namespace badgerApi.Controllers
                     EntityId = newVendorRep.vendor_id,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -65,6 +66,7 @@ namespace badgerApi.Controllers
                     EntityId = created_by,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -104,6 +106,7 @@ namespace badgerApi.Controllers
                     EntityId = VendorToUpdate.vendor_id,
                     RefrenceId = id,
                     UserId = updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -113,6 +116,7 @@ namespace badgerApi.Controllers
                     EntityId = updated_by,
                     RefrenceId = id,
                     UserId = updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }

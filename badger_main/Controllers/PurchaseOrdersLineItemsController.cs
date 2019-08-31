@@ -113,6 +113,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_created,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = NewPoLineItem.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -122,6 +123,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_created,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = NewPoLineItem.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -160,6 +162,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_update,
                     RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -169,6 +172,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_update,
                     RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -263,6 +267,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_specific_update,
                     RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -272,6 +277,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_specific_update,
                     RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }

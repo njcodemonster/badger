@@ -365,6 +365,7 @@ namespace badgerApi.Controllers
                 EntityId = Int32.Parse(NewInsertionID),
                 RefrenceId = 0,
                 UserId = created_by,
+                EventNoteId = Int32.Parse(NewInsertionID)
             };
             await _eventRepo.AddEventAsync(eventModel);
 
@@ -374,6 +375,7 @@ namespace badgerApi.Controllers
                 EntityId = created_by,
                 RefrenceId = Convert.ToInt32(NewInsertionID),
                 UserId = created_by,
+                EventNoteId = Int32.Parse(NewInsertionID)
             };
             await _eventRepo.AddEventAsync(userEvent);
             return response;
@@ -404,6 +406,7 @@ namespace badgerApi.Controllers
                     EntityId = newVendor.vendor_id,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -413,6 +416,7 @@ namespace badgerApi.Controllers
                     EntityId = created_by,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -454,6 +458,7 @@ namespace badgerApi.Controllers
                     EntityId = ref_id,
                     RefrenceId = Int32.Parse(newNoteID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(newNoteID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -463,6 +468,7 @@ namespace badgerApi.Controllers
                     EntityId = created_by,
                     RefrenceId = Convert.ToInt32(newNoteID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(newNoteID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -502,6 +508,7 @@ namespace badgerApi.Controllers
                     EntityId = ref_id,
                     RefrenceId = Int32.Parse(newDocID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(newDocID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -511,6 +518,7 @@ namespace badgerApi.Controllers
                     EntityId = created_by,
                     RefrenceId = Convert.ToInt32(newDocID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(newDocID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -550,6 +558,7 @@ namespace badgerApi.Controllers
                     EntityId = id,
                     RefrenceId = id,
                     UserId = updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -559,6 +568,7 @@ namespace badgerApi.Controllers
                     EntityId = id,
                     RefrenceId = Convert.ToInt32(id),
                     UserId = updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
 

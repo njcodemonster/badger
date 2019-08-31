@@ -155,6 +155,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_create,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = newPurchaseOrder.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -164,6 +165,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_create,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = newPurchaseOrder.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
 
@@ -203,6 +205,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -212,6 +215,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -288,6 +292,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_specificupdate,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -297,6 +302,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_specificupdate,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }

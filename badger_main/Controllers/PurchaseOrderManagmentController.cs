@@ -178,6 +178,7 @@ namespace badgerApi.Controllers
                     EventName = item_note_create,
                     RefrenceId = Int32.Parse(newNoteID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(newNoteID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -187,6 +188,7 @@ namespace badgerApi.Controllers
                     EventName = item_note_create,
                     RefrenceId = Int32.Parse(newNoteID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(newNoteID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -283,6 +285,7 @@ namespace badgerApi.Controllers
                     EventName = item_document_create,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -292,6 +295,7 @@ namespace badgerApi.Controllers
                     EventName = item_document_create,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);              
             }

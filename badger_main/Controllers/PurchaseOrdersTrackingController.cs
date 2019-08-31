@@ -102,6 +102,7 @@ namespace badgerApi.Controllers
                     EventName = tracking_create,
                     RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = newPurchaseOrderTracking.created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -111,6 +112,7 @@ namespace badgerApi.Controllers
                     EventName = tracking_create,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = newPurchaseOrderTracking.created_by,
+                    EventNoteId = Int32.Parse(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -149,6 +151,7 @@ namespace badgerApi.Controllers
                     EventName = tracking_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersTrackingToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -158,6 +161,7 @@ namespace badgerApi.Controllers
                     EventName = tracking_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersTrackingToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
 
@@ -229,6 +233,7 @@ namespace badgerApi.Controllers
                     EventName = tracking_specific_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -238,6 +243,7 @@ namespace badgerApi.Controllers
                     EventName = tracking_specific_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -280,6 +286,7 @@ namespace badgerApi.Controllers
                         EventName = tracking_delete,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
+                        EventNoteId = id
                     };
                     await _eventRepo.AddEventAsync(eventModel);
 
@@ -289,6 +296,7 @@ namespace badgerApi.Controllers
                         EventName = tracking_delete,
                         RefrenceId = id,
                         UserId = PurchaseOrdersToUpdate.updated_by,
+                        EventNoteId = id
                     };
                     await _eventRepo.AddEventAsync(userEvent);
                 }
