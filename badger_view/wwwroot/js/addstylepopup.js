@@ -163,13 +163,17 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
             }
             alertBox('poAlertMsg', 'green', 'New style inserted successfully');
+  
             if (action == 'refreshValue') {
                 var selectedPurchaseOrderID = $('#newAddStyleForm #po_id').val();
                 $('button[data-poid="' + selectedPurchaseOrderID + '"]').trigger("click");
                 $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
 
             } else {
-                //$('#collapse_' + selectedPurchaseOrderID).collapse();
+                var selectedPurchaseOrderID = $('#newAddStyleForm #po_id').val();
+                $("#collapse_" + selectedPurchaseOrderID).html("");
+                $("#collapse_" + selectedPurchaseOrderID).hide();
+                $('a[data-poid=' + selectedPurchaseOrderID + ']').trigger('click');
                 $('#modaladdstylec').modal('hide')
             }
             $('.poAlertMsg').html('')
