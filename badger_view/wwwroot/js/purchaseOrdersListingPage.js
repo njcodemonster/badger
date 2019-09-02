@@ -406,7 +406,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
                 }
-
+                var doc_upload = "failed"
                 $.ajax({
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
@@ -420,7 +420,8 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
-                        $("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
+                        doc_upload = "success"
+                       // $("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
                         console.log(data.responseText);
                     }
                 });
@@ -444,6 +445,11 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
             } else {
                 $("#EditPurhaseOrderNote[data-id='" + data + "']").find(".redDotNote").removeClass("redDOtElement");
             }
+
+            if (doc_upload == "success") {
+                $("#EditPurhaseOrderDocument[data-id='" + data + "']").find(".redDotDoc").addClass("redDOtElement");
+            }
+            
 
             alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             
@@ -718,7 +724,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
                 }
-
+                var doc_upload = "failed";
                 $.ajax({
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
@@ -732,7 +738,8 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
-                        $("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
+                        doc_upload = "success";
+                        //$("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
                         console.log(data.responseText);
                     }
                 });
@@ -768,6 +775,10 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     $("#EditPurhaseOrderNote[data-id='" + id + "']").find(".redDotNote").removeClass("redDOtElement");
                 }
                 window.purchaseorderrownumber = "";
+
+                if (doc_upload == "success") {
+                    $("#EditPurhaseOrderDocument[data-id='" + id + "']").find(".redDotDoc").addClass("redDOtElement");
+                }
             }
 
             $("#newPurchaseOrderForm").attr("data-currentid", "");

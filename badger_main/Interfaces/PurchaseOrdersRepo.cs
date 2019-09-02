@@ -215,7 +215,7 @@ namespace badgerApi.Interfaces
             dynamic poPageList = new ExpandoObject();
             string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
                                 a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor,
-                                a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag, a.updated_at,
+                                a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
