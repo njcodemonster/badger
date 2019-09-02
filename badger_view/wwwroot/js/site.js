@@ -21,25 +21,26 @@ $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
 //    alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
 //})
 
-window.onerror = function (errMsg, url, line, column, error) {
-    var string = errMsg.toLowerCase();
-    var substring = "script error";
-    if (string.indexOf(substring) > -1) {
-        alert('Script Error: See Browser Console for Detail');
-    } else {
-        var message = [
-            'Message: ' + errMsg,
-            'URL: ' + url,
-            'Line: ' + line,
-            'Column: ' + column,
-            'Error object: ' + JSON.stringify(error)
-        ].join(' - ');
-        this.console.error(message);
-        // alert(message);
-    }
+//window.onerror = function (errMsg, url, line, column, error) {
+//    var string = errMsg.toLowerCase();
+//    var substring = "script error";
+//    if (string.indexOf(substring) > -1) {
+//        alert('Script Error: See Browser Console for Detail');
+//    } else {
+//        var message = [
+//            'Message: ' + errMsg,
+//            'URL: ' + url,
+//            'Line: ' + line,
+//            'Column: ' + column,
+//            'Error object: ' + JSON.stringify(error)
+//        ].join(' - ');
+//        this.console.error(message);
+//        // alert(message);
+//    }
 
-    return false;
-}
+//    return false;
+//}
+
 $(document).ready(function () {
     $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
