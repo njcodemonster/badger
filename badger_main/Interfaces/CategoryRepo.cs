@@ -31,7 +31,7 @@ namespace badgerApi.Interfaces
     public class CategoryRepo : ICategoryRepository
     {
         public List<Categories> allCategories { get; set; }
-        
+
         private readonly IConfiguration _config;
         private string TableName = "categories";
         private string TableProductAttributes = "product_attributes";
@@ -183,22 +183,22 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result=default;
-            foreach (var item in category_options)
-            {
-                using (IDbConnection conn = Connection)
+                long result = default;
+                foreach (var item in category_options)
                 {
-                     result = conn.Insert<CategoryOptions>(item);
-                   
+                    using (IDbConnection conn = Connection)
+                    {
+                        result = conn.Insert<CategoryOptions>(item);
+
+                    }
                 }
-            }
                 return true;
             }
             catch (Exception ex)
             {
                 return false;
             }
-            
+
 
         }
         /*
@@ -218,7 +218,7 @@ namespace badgerApi.Interfaces
                 {
                     using (IDbConnection conn = Connection)
                     {
-                        String DeleteQuery = "delete FROM category_options WHERE category_id= " + item.category_id + " and attribute_id= "+item.attribute_id;
+                        String DeleteQuery = "delete FROM category_options WHERE category_id= " + item.category_id + " and attribute_id= " + item.attribute_id;
                         var updateResult = await conn.QueryAsync<object>(DeleteQuery);
                         status = true;
                     }
@@ -241,13 +241,13 @@ namespace badgerApi.Interfaces
       */
         public List<Categories> GetAllCategories()
         {
-            IEnumerable<Categories> result = new List<Categories>();
+            IEnumerable<Categories> categories;
             using (IDbConnection conn = Connection)
             {
-                result = conn.GetAll<Categories>();
+                categories = conn.Query<Categories>("SELECT category_id ,category_type,category_name,category_parent_id FROM categories");
 
             }
-            return result.ToList();
+            return categories.ToList();
 
         }
         /*

@@ -498,7 +498,7 @@ $(document).on('click', "#AddItemButton", function () {
 
     $.ajax({
         url: '/vendor/products/' + CurrentVendorId,
-        
+        dataType:'json',
         type: 'GET',
         contentType: 'application/json',
         processData: true,
