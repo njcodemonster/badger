@@ -17,6 +17,7 @@ connection.on("PushClaim", function (claim) {
 });
 
 StartConnection();
+RestartConnection();
 function StartConnection() {
     connection.start().then(function () {
         ToggleClaim(false);
@@ -29,18 +30,19 @@ function StartConnection() {
 
 function RestartConnection() {
     try {
-        if (connection.receivedHandshakeResponse) {
-            connection.onclose(function () {
+        connection.onclose(function () {
+            if (connection.receivedHandshakeResponse) {
                 console.log("restarting connection....");
                 ToggleClaim(true);
                 setTimeout(function () {
                     StartConnection();
                 }, 5000); // Restart connection after 5 seconds.
-            });
-        }
-        else {
-            ToggleClaim(true);
-        }
+            }
+            else {
+                ToggleClaim(true);
+            }
+        });
+        
     } catch (e) {
         console.error(err);
         ToggleClaim(true);
