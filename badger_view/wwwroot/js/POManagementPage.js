@@ -22,7 +22,7 @@ function get_all_notes_by_ids() {
 
         $.ajax({
             url: '/purchaseorders/getitemnotes/' + itemids,
-            
+            dataType: 'json',
             type: 'Get',
             contentType: 'application/json',
         }).always(function (data) {
@@ -69,7 +69,7 @@ $(document).on('change', ".item_note", function () {
         console.log(data);
         if (data == "0") {
             $(this).val("");
-            alertInnerBox('message-' + po_id, 'red', 'Item note has error' + data.responseText);
+           // alertInnerBox('message-' + po_id, 'red', 'Item note has error' + data.responseText);
         } else {
             alertInnerBox('message-' + po_id, 'green', 'Item note has been updated successfully');
         }
@@ -93,7 +93,7 @@ $(document).on("click", "#AddDocument", function () {
     $("#document_form").attr("data-productid", productid);
     $.ajax({
         url: '/purchaseorders/getitemdocument/' + id,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -155,14 +155,13 @@ $(document).on("click", "#document_submit", function () {
             console.log(data);
             if (data == "0") {
                 console.log("Exception Error");
-                alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
+                //alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
             } else {
-                if (data.responseText.indexOf('File Already') > -1) {
-                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                if (data.indexOf('File Already') > -1) {
+                    //$(".poDocAlertMsg").css("color", "red").text(data.responseText);
                     $('.message-' + po_id).empty().html("");
                 } else {
                     alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
-                    console.log(data.responseText);
                     $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
                 }
@@ -209,7 +208,7 @@ $(document).on("change", ".item_status", function () {
                     processData: false
                 }).always(function (data) {
                     console.log(data);
-                    if (data.responseText == "Success") {
+                    if (data == "Success") {
                         result = true;
                     } else {
                         result = "error";
@@ -224,7 +223,7 @@ $(document).on("change", ".item_status", function () {
                 alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
                 clearInterval(checkInterval);
             } else if (result == "error") {
-                alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
+                //alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
                 clearInterval(checkInterval);
             }
         }, 1000);
@@ -249,10 +248,10 @@ $(document).on("change", ".item_status", function () {
             processData: false
         }).always(function (data) {
             console.log(data);
-            if (data.responseText == "Success") {
+            if (data == "Success") {
                 alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
             } else {
-                alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
+                //alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
             }
 
         });
@@ -297,7 +296,7 @@ $(document).on("change", ".sku_weight", function () {
                 processData: false
             }).always(function (data) {
                 console.log(data);
-                if (data.responseText == "Success") {
+                if (data == "Success") {
                     $(".sku_weight").each(function () {
                         if ($(this).attr('id') == sku_id) {
                             $(this).val(sku_weight);
@@ -308,7 +307,7 @@ $(document).on("change", ".sku_weight", function () {
                     alertInnerBox('message-' + po_id, 'green', 'SKU weight has been updated successfully');
 
                 } else {
-                    alertInnerBox('message-' + po_id, 'red', 'SKU weight has error' + data.responseText);
+                   // alertInnerBox('message-' + po_id, 'red', 'SKU weight has error' + data.responseText);
                 }
             });
         } else {
@@ -415,11 +414,11 @@ $(document).on("change", ".item_barcode", function (e) {
                                 processData: false
                             }).always(function (data) {
                                 console.log(data);
-                                if (data.responseText == "Success") {
+                                if (data == "Success") {
                                     _self.attr('data-barcode', barcode);
                                     alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
                                 } else {
-                                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                                    //alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
                                 }
 
                             });
@@ -466,11 +465,11 @@ $(document).on("change", ".item_barcode", function (e) {
                         processData: false
                     }).always(function (data) {
                         console.log(data);
-                        if (data.responseText == "Success") {
+                        if (data == "Success") {
                             _self.attr('data-barcode', barcode);
                             alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
                         } else {
-                            alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                           // alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
                         }
 
                     });
@@ -510,11 +509,11 @@ $(document).on("change", ".item_barcode", function (e) {
                     processData: false
                 }).always(function (data) {
                     console.log(data);
-                    if (data.responseText == "Success") {
+                    if (data == "Success") {
                         _self.attr('data-barcode', barcode);
                         alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
                     } else {
-                        alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                       // alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
                     }
 
                 });
@@ -581,7 +580,7 @@ $(document).on("click", ".item_row_remove", function () {
                 }).always(function (data) {
                     console.log(data);
 
-                    if (data.responseText == "Success") {
+                    if (data == "Success") {
                         $(".item_row_remove").each(function () {
                             if ($(this).attr('data-polineitem') == polineitem) {
                                 $(this).attr('data-quantity', quantity)
@@ -592,7 +591,7 @@ $(document).on("click", ".item_row_remove", function () {
                         getPurchaseOrdersItemdetails(poid);
                         alertInnerBox('message-' + product_id, 'green', 'Item has been removed successfully');
                     } else {
-                        alertInnerBox('message-' + product_id, 'red', 'Item has error' + data.responseText);
+                        //alertInnerBox('message-' + product_id, 'red', 'Item has error' + data.responseText);
                     }
 
 
@@ -678,7 +677,7 @@ $(document).on("change", ".item_sku", function () {
                     }).always(function (data) {
                         console.log(data);
 
-                        if (data.responseText == "Success") {
+                        if (data == "Success") {
 
                             $(".item_sku").each(function () {
                                 if ($(this).attr('id') == sku_id) {
@@ -704,10 +703,10 @@ $(document).on("change", ".item_sku", function () {
                                         processData: false
                                     }).always(function (data) {
                                         console.log(data);
-                                        if (data.responseText == "Success") {
+                                        if (data == "Success") {
                                             alertInnerBox('message-' + po_id, 'green', 'SKU has been updated successfully');
                                         } else {
-                                            alertInnerBox('message-' + po_id, 'red', 'SKU has error' + data.responseText);
+                                           // alertInnerBox('message-' + po_id, 'red', 'SKU has error' + data.responseText);
                                         }
 
                                     });
@@ -772,7 +771,7 @@ function getPOdetail(PO_id) {
     }).always(function (data) {
         //console.log(data);
         $("#collapse_" + PO_id).html("");
-        $("#collapse_" + PO_id).html(data.responseText);
+        $("#collapse_" + PO_id).html(data);
         get_all_notes_by_ids();
     });
 }
@@ -823,7 +822,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
     }).always(function (data) {
         //console.log(data);
         $("#collapse_" + PO_id).html("");
-        $("#collapse_" + PO_id).html(data.responseText);
+        $("#collapse_" + PO_id).html(data);
         get_all_notes_by_ids();
 
         $(".POListCheckIn .card .collapse").each(function () {
@@ -873,10 +872,10 @@ $(document).on("change", ".item_bagcode", function () {
         processData: false
     }).always(function (data) {
         console.log(data);
-        if (data.responseText == "Success") {
+        if (data == "Success") {
             alertInnerBox('message-' + po_id, 'green', 'Item bag code has been updated successfully');
         } else {
-            alertInnerBox('message-' + po_id, 'red', 'Item bag code has error' + data.responseText);
+            //alertInnerBox('message-' + po_id, 'red', 'Item bag code has error' + data.responseText);
         }
 
     });
@@ -911,10 +910,10 @@ $(document).on("change", ".item_ra_status", function () {
         processData: false
     }).always(function (data) {
         console.log(data);
-        if (data.responseText == "Success") {
+        if (data == "Success") {
             alertInnerBox('message-' + po_id, 'green', 'Ra status has been updated successfully');
         } else {
-            alertInnerBox('message-' + po_id, 'red', 'Ra status has error' + data.responseText);
+           // alertInnerBox('message-' + po_id, 'red', 'Ra status has error' + data.responseText);
         }
 
     });
@@ -988,7 +987,7 @@ $(document).on("click", "#weight_submit", function () {
         async: false,
     }).always(function (data) {
         console.log(data);
-        if (data.responseText == "Success") {
+        if (data == "Success") {
             result = true;
             for (i = 0; i < sku.skuData.length; i++) {
                     $(".table-data-" + productid + " tbody tr[data-skuid='"+sku.skuData[i].sku_id+"']").attr("data-weight", sku.skuData[i].weight);
@@ -999,9 +998,9 @@ $(document).on("click", "#weight_submit", function () {
    
         } else {
             result = "error";
-            error = data.responseText;
-            console.log(error);
-            alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
+            //error = data.responseText;
+            //console.log(error);
+            //alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
 
         }
     }); 
@@ -1035,10 +1034,10 @@ $(document).on("change", ".wash_type_status", function () {
                 processData: false
             }).always(function (data) {
                 console.log(data);
-                if (data.responseText == "Success") {
+                if (data == "Success") {
                     alertInnerBox('message-' + product_id, 'green', 'Product wash type has been updated successfully');
                 } else {
-                    alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error' + data.responseText);
+                   // alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error' + data.responseText);
                 }
 
             });
@@ -1077,7 +1076,7 @@ $(document).on('click', ".podeleteImage", function (e) {
         processData: false,
     }).always(function (data) {
         console.log(data);
-        if (data.responseText != '0')
+        if (data != '0')
             _this.parents('.documentsLink').remove();
 
         if ($('#modaladddocument .po_doc_section a').length == 0) {

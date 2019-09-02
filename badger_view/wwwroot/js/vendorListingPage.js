@@ -23,7 +23,7 @@
             if (request.term.length > 1) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
-                    
+                    dataType: 'json',
                     type: 'post',
                     data: JSON.stringify(jsonData),
                     contentType: 'application/json',
@@ -233,7 +233,7 @@ function getSetVendorData(id) {
     $.ajax({
 
         url: '/vendor/details/' + id,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -601,7 +601,7 @@ $(document).on('click', "#VendorNoteButton", function () {
     if (id != undefined) {
         $.ajax({
             url: '/vendor/getvendornoteanddoc/' + id,
-            
+            dataType: 'json',
             type: 'Get',
             contentType: 'application/json',
         }).always(function (data) {
