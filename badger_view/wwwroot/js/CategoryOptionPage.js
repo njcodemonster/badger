@@ -143,7 +143,7 @@ $(document).on("click", "#mainSaveButton", function () {
     $.ajax({
 
         url: '/categoryoption/updateattributes/',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(datatosend),
@@ -183,7 +183,7 @@ function GetTags(SelectedStyleType) {
     debugger;
     $.ajax({
         url: '/CategoryOption/GetTagsSubCategoryWise/' + SelectedStyleType,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -218,7 +218,7 @@ $(document).on('click', "#AddSubCat", function () {
     $.ajax({
        
         url: '/categoryoption/getParentCategory/',
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -271,7 +271,7 @@ $(document).on('click', ".SaveSubCategoryButton", function () {
     $.ajax({
 
         url: location.origin + '/Category/Create',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),

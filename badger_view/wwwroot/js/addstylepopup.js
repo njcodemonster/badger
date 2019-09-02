@@ -18,7 +18,7 @@ $(document).on('click', ".DeletefromPOButton", function () {
         $.ajax({
 
             url: location.origin + '/styles/deleteFromPO/' + selectedProject.data("product_id"),
-            dataType: 'json',
+            
             type: 'get',
             //contentType: 'application/json',
             data: JSON.stringify(jsonData),
@@ -104,7 +104,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     $.ajax({
 
         url: location.origin + '/styles/create',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -129,7 +129,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
                     url: location.origin + "/styles/newdoc",
                     type: 'POST',
                     data: formData,
-                    dataType: 'json',
+                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -170,7 +170,7 @@ Output: string of style doc
         url: location.origin + "/styles/newdoc",
         type: 'POST',
         data: formData,
-        dataType: 'json',
+        
         processData: false,
         contentType: false,
     }).always(function (data) {
@@ -326,7 +326,7 @@ $(document).on('change', '#modaladdstylec #ExistingProductSelect', function () {
     }
     $.ajax({
         url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -399,7 +399,7 @@ $(document).on('click', "#AddItemButton", function () {
 
     $.ajax({
         url: '/vendor/products/' + CurrentVendorId,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -698,7 +698,7 @@ $(document).on('change', '#modaleditstylec #ExistingProductSelect', function () 
     }
     $.ajax({
         url: '/purchaseorders/lineitems/' + SelectedProductID + '/' + SeletedPOID,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -751,7 +751,7 @@ $(document).on('click', "#EditItemButton", function () {
     $.ajax({
 
         url: '/vendor/products/' + CurrentVendorId,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,

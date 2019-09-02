@@ -19,7 +19,7 @@
             if (request.term.length > 2) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
-                    dataType: 'json',
+                    
                     type: 'post',
                     data: JSON.stringify(jsonData),
                     contentType: 'application/json',
@@ -72,7 +72,7 @@
             if (request.term.length > 3) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
-                    dataType: 'json',
+                    
                     type: 'post',
                     data: JSON.stringify(jsonData),
                     contentType: 'application/json',
@@ -222,7 +222,7 @@ $('#purchaseorderlists').on('page.dt', function () {
         $.ajax({
             url: "/purchaseorders/listpagination/" + start_total + "/30/true",
             type: 'GET',
-            dataType: 'json',
+            
             processData: false,
             contentType: false,
         }).always(function (data) {
@@ -287,7 +287,7 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
     var ponumber = $(this).val();
     $.ajax({
         url: "/purchaseorders/checkpoexist/vendor_po_number/"+ponumber,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -382,7 +382,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
     
     $.ajax({
         url: '/purchaseorders/newpurchaseorder',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -434,7 +434,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
                     data: formData,
-                    dataType: 'json',
+                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -514,7 +514,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
 
     $.ajax({
         url: '/purchaseorders/details/' + id,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -550,7 +550,7 @@ $(document).on("click", "#discount_submit", function () {
 
     $.ajax({
         url: '/purchaseorders/discountcreate',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -596,7 +596,7 @@ $(document).on("click", "#ledger_submit", function () {
 
     $.ajax({
         url: '/purchaseorders/ledgercreate',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -699,7 +699,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     $.ajax({
         url: '/purchaseorders/updatepurchaseorder/' + id,
-        dataType: 'json',
+       // 
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -759,7 +759,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
                     data: formData,
-                    dataType: 'json',
+                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -853,7 +853,7 @@ $(document).on('click', ".remove_tracking", function () {
 
         $.ajax({
             url: '/purchaseorders/trackingdelete/' + track_id,
-            dataType: 'json',
+            
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(jsonData),
@@ -884,7 +884,7 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#noteModalLongTitle").text("Notes ("+$(this).parents('tr').find('td:first-child').text()+")");
     $.ajax({
         url: '/purchaseorders/getnote/' + id,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -932,7 +932,7 @@ $(document).on("click", "#note_submit", function () {
     
     $.ajax({
         url: '/purchaseorders/notecreate',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -976,7 +976,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
 
     $.ajax({
         url: '/purchaseorders/getdocument/' + id,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -1033,7 +1033,7 @@ $(document).on("click", "#document_submit", function () {
             url: "/purchaseorders/purchaseorder_doc",
             type: 'POST',
             data: formData,
-            dataType: 'json',
+            
             processData: false,
             contentType: false,
         }).always(function (data) {
@@ -1078,7 +1078,7 @@ $(document).on('click', "#poDelete", function () {
         if (result == "yes") {
             $.ajax({
                 url: '/purchaseorders/delete/' + id,
-                dataType: 'json',
+                
                 type: 'POST',
                 contentType: 'application/json',
             }).always(function (data) {
@@ -1266,7 +1266,7 @@ function getSinglePurchaseOrder(id) {
     $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -1346,7 +1346,7 @@ $(document).on('click', ".podeleteImage", function (e) {
 
     $.ajax({
         url: "/purchaseorders/documentsdelete/" + docid,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),

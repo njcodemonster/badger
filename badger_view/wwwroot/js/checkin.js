@@ -28,7 +28,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     $('.loading').removeClass("d-none");
     $.ajax({
         url: '/purchaseorders/PurchaseOrderItemDetails/' + poid,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -133,7 +133,7 @@ $(document).on('click', ".submit-check-in", function () {
 
     $.ajax({
         url: '/purchaseorders/updatepurchaseordercheckin/' + po_id,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -165,7 +165,7 @@ $(document).on('click', ".submit-check-in", function () {
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
                     data: formData,
-                    dataType: 'json',
+                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -210,7 +210,7 @@ $(document).on('click', ".add-check-in", function () {
 
     $.ajax({
         url: '/purchaseorders/updatepurchaseordercheckin/' + po_id,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
