@@ -21,3 +21,9 @@ UPDATE `event_types` SET `event_type_description` = 'A purchase order line item 
 INSERT INTO `event_types` (`event_type_name`) VALUES ('purchase order line item specific updated'); 
 UPDATE `event_types` SET `event_type_description` = 'A purchase order line item is specific updated via API' WHERE `event_type_id` = '40'; 
 
+
+/*02-09-2019 by Sajid Khan*/
+UPDATE `document_type` SET `doc_type` = 'Original PO' WHERE `doc_type_id` = '4'; 
+INSERT INTO `document_type` (`doc_type`) VALUES ('Shipment Invoice'); 
+INSERT INTO `document_type` (`doc_type`) VALUES ('Main Shipment Invoice'); 
+INSERT INTO `document_type` (`doc_type`) VALUES ('Other'); 
