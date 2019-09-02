@@ -2021,9 +2021,6 @@ namespace badger_view.Controllers
         public async Task<IActionResult> LoadClaim(int poId)
         {
             SetBadgerHelper();
-            var userId = await _LoginHelper.GetLoginUserId();
-            string a = "aa";
-            int i = int.Parse(a);
             var response = await _BadgerApiHelper.GetAsync<PoClaim>("/PurchaseOrders/loadclaim/" + poId);
             return Ok(response);
         }

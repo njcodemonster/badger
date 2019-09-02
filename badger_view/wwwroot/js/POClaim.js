@@ -17,25 +17,35 @@ connection.on("PushClaim", function (claim) {
 });
 
 StartConnection();
-RestartConnection();
 function StartConnection() {
     connection.start().then(function () {
         ToggleClaim(false);
         // document.getElementById("btnClaim").disabled = false;
     }).catch(function (err) {
-        return console.error(err.toString());
+        console.error(err.toString())
         RestartConnection();
     });
 }
 
 function RestartConnection() {
-    connection.onclose(function () {
-        console.log("restarting connection....");
+    try {
+        if (connection.receivedHandshakeResponse) {
+            connection.onclose(function () {
+                console.log("restarting connection....");
+                ToggleClaim(true);
+                setTimeout(function () {
+                    StartConnection();
+                }, 5000); // Restart connection after 5 seconds.
+            });
+        }
+        else {
+            ToggleClaim(true);
+        }
+    } catch (e) {
+        console.error(err);
         ToggleClaim(true);
-        setTimeout(function () {
-            StartConnection();
-        }, 5000); // Restart connection after 5 seconds.
-    });
+    }
+
 }
 
 function BindInspectClaimHtml(claim) {
@@ -144,9 +154,11 @@ function LoadClaim() {
             console.log(response);
             BindInspectClaimHtml(response);
             BindPublishClaimHtml(response);
+            if (connection.connectionState != 1)
+                ToggleClaim(true);
         },
         error: function (ex) {
-            alert("error: loading claim");
+           // alert("error: loading claim");
             console.log(ex);
         }
     });
