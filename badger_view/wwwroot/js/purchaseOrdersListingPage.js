@@ -982,7 +982,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("<a href='uploads/"+i.url+"' target='_blank' class='documentsLink' data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -1168,7 +1168,7 @@ function purchaseOrderData(data) {
         if (docs.length > 0) {
 
             $(docs).each(function (e, i) {
-                $(".po_doc_section").append("<a href='uploads/" + i.url +"' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id +" data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url +" <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -1328,7 +1328,7 @@ $(document).on('click', ".podeleteImage", function (e) {
     var _this = $(this);
     var docid = _this.parents('.documentsLink').attr('data-docid');
     var url = _this.parents('.documentsLink').attr('data-val');
-    var poid = $('#document_form').attr("data-documentid");
+    var poid = $('.documentsLink').attr("data-documentid");
 
     var jsonData = {};
     jsonData["doc_id"] = docid;
