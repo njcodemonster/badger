@@ -705,7 +705,7 @@ $(document).on('blur', "#vendorCode", function (event) {
     jsonData["vendorcode"] = $(this).val();
     $.ajax({
         url: "/vendor/vendorcodeexist",
-        
+        dataType: 'json',
         type: 'POST',
         contentType: 'application/json',
         data:  JSON.stringify(jsonData) ,

@@ -218,7 +218,7 @@ namespace badgerApi.Interfaces
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
                                 LEFT JOIN users u ON poc.inspect_claimer = u.user_id
                                 LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
-                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag DESC, FIELD(a.po_status, 3, 6, 5) asc";
+                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
             if (limit > 0)
             {
                 sQuery += " limit "+ start + "," + limit + ";";
