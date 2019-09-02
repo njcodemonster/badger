@@ -1,19 +1,18 @@
 ﻿$(document).on('click', "#AddNewBarcodeButton", function () {
     debugger;
-
-
+    $('#AddBarcodeForm input').removeClass('errorFeild');
+    $('#AddBarcodeForm .errorMsg').remove();
     $('#modalAddBarcode').modal('show');
-    $('#BarcodeFrom').val("");
-    $('#barcodeid').val("");
-    $('#BarcodeTo').val("");
-    $('#Size').val("");
+    $('#BarcodeFrom,#barcodeid,#BarcodeTo,#Size').val("");
+   
 });
 
 $(document).on('click', "#EditBarcode", function () {
     debugger;
-
-
+    $('#AddBarcodeForm input').removeClass('errorFeild');
+    $('#AddBarcodeForm .errorMsg').remove();
     $('#modalAddBarcode').modal('show');
+
     var id = $(this).data("id");
     if (id == "") {
         id = -1;

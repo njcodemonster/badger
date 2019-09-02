@@ -58,8 +58,7 @@ namespace badgerApi
             services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
 
             //*              Singletons                                   *\\
-            services.AddSingleton<ICategoriesRepository, CategoriesRepo>();
-            services.AddTransient<ICategoryRepository, CategoryRepo>();
+            services.AddSingleton<ICategoryRepository, CategoryRepo>();
             services.AddSingleton<IEventRepo, EventsRepo>();
 
             services.Configure<ApiBehaviorOptions>(options =>
