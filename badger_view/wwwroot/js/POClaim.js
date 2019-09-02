@@ -90,7 +90,7 @@ function Claim(po_id, claimerType) {
     var poId = po_id < 1 ? $("#poId").val() : po_id;
     $.ajax({
         url: '/purchaseorders/claim/',
-        dataType: 'json',
+        
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ po_id: poId, claim_type: claimerType }),
@@ -115,7 +115,7 @@ function RemoveClaim(po_id, claimerType) {
     var poId = po_id < 1 ? $("#poId").val() : po_id;
     $.ajax({
         url: '/purchaseorders/removeclaim/',
-        dataType: 'json',
+        
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ po_id: poId, claim_type: claimerType }),
@@ -137,7 +137,7 @@ function LoadClaim() {
     var poId = $("#poId").val();
     $.ajax({
         url: '/purchaseorders/loadclaim/' + poId,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         success: function (response) {

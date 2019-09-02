@@ -22,7 +22,7 @@ function get_all_notes_by_ids() {
 
         $.ajax({
             url: '/purchaseorders/getitemnotes/' + itemids,
-            dataType: 'json',
+            
             type: 'Get',
             contentType: 'application/json',
         }).always(function (data) {
@@ -60,7 +60,7 @@ $(document).on('change', ".item_note", function () {
 
     $.ajax({
         url: '/purchaseorders/itemnotecreate',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -93,7 +93,7 @@ $(document).on("click", "#AddDocument", function () {
     $("#document_form").attr("data-productid", productid);
     $.ajax({
         url: '/purchaseorders/getitemdocument/' + id,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -148,7 +148,7 @@ $(document).on("click", "#document_submit", function () {
             url: "/purchaseorders/itemdocumentcreate",
             type: 'POST',
             data: formData,
-            dataType: 'json',
+            
             processData: false,
             contentType: false,
         }).always(function (data) {
@@ -202,7 +202,7 @@ $(document).on("change", ".item_status", function () {
 
                 $.ajax({
                     url: "/purchaseorders/itemupdate/" + item_id,
-                    dataType: 'json',
+                    
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(itemdata),
@@ -242,7 +242,7 @@ $(document).on("change", ".item_status", function () {
 
         $.ajax({
             url: "/purchaseorders/itemupdate/" + id,
-            dataType: 'json',
+            
             type: 'post',
             contentType: 'application/json',
             data: JSON.stringify(itemdata),
@@ -290,7 +290,7 @@ $(document).on("change", ".sku_weight", function () {
 
             $.ajax({
                 url: "/purchaseorders/skuweightupdate/" + sku_id,
-                dataType: 'json',
+                
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(jsonData),
@@ -388,7 +388,7 @@ $(document).on("change", ".item_barcode", function (e) {
                     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
                     $.ajax({
                         url: "/purchaseorders/checkbarcodeexist/" + barcode,
-                        dataType: 'json',
+                        
                         type: 'Get',
                         contentType: 'application/json',
                     }).always(function (data) {
@@ -408,7 +408,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
                             $.ajax({
                                 url: "/purchaseorders/itemupdate/" + id,
-                                dataType: 'json',
+                                
                                 type: 'post',
                                 contentType: 'application/json',
                                 data: JSON.stringify(itemdata),
@@ -439,7 +439,7 @@ $(document).on("change", ".item_barcode", function (e) {
             $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             $.ajax({
                 url: "/purchaseorders/checkbarcodeexist/" + barcode,
-                dataType: 'json',
+                
                 type: 'Get',
                 contentType: 'application/json',
             }).always(function (data) {
@@ -459,7 +459,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
                     $.ajax({
                         url: "/purchaseorders/itemupdate/" + id,
-                        dataType: 'json',
+                        
                         type: 'post',
                         contentType: 'application/json',
                         data: JSON.stringify(itemdata),
@@ -483,7 +483,7 @@ $(document).on("change", ".item_barcode", function (e) {
         $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
         $.ajax({
             url: "/purchaseorders/checkbarcodeexist/" + barcode,
-            dataType: 'json',
+            
             type: 'Get',
             contentType: 'application/json',
         }).always(function (data) {
@@ -503,7 +503,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
                 $.ajax({
                     url: "/purchaseorders/itemupdate/" + id,
-                    dataType: 'json',
+                    
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(itemdata),
@@ -558,7 +558,7 @@ $(document).on("click", ".item_row_remove", function () {
 
             $.ajax({
                 url: "/purchaseorders/itemupdate/" + id,
-                dataType: 'json',
+                
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(itemdata),
@@ -573,7 +573,7 @@ $(document).on("click", ".item_row_remove", function () {
 
                 $.ajax({
                     url: "/purchaseorders/polineitemupdate/" + polineitem,
-                    dataType: 'json',
+                    
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(jsonData),
@@ -644,7 +644,7 @@ $(document).on("change", ".item_sku", function () {
 
     $.ajax({
         url: "/purchaseorders/checkskuexist/" + sku,
-        dataType: 'json',
+        
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -670,7 +670,7 @@ $(document).on("change", ".item_sku", function () {
 
                     $.ajax({
                         url: "/purchaseorders/skuupdate/" + sku_id,
-                        dataType: 'json',
+                        
                         type: 'post',
                         contentType: 'application/json',
                         data: JSON.stringify(jsonData),
@@ -697,7 +697,7 @@ $(document).on("change", ".item_sku", function () {
 
                                     $.ajax({
                                         url: "/purchaseorders/itemupdate/" + id,
-                                        dataType: 'json',
+                                        
                                         type: 'post',
                                         contentType: 'application/json',
                                         data: JSON.stringify(itemdata),
@@ -765,7 +765,7 @@ function getPOdetail(PO_id) {
 
     $.ajax({
         url: "/PurchaseOrders/lineitemsdetails/" + PO_id,
-        dataType: 'json',
+        
         type: 'get',
         contentType: 'application/json',
         processData: false
@@ -816,7 +816,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
 
     $.ajax({
         url: "/PurchaseOrders/itemsdetails/" + PO_id,
-        dataType: 'json',
+        
         type: 'get',
         contentType: 'application/json',
         processData: false
@@ -866,7 +866,7 @@ $(document).on("change", ".item_bagcode", function () {
 
     $.ajax({
         url: "/purchaseorders/itemupdate/" + id,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(itemdata),
@@ -904,7 +904,7 @@ $(document).on("change", ".item_ra_status", function () {
 
     $.ajax({
         url: "/purchaseorders/itemupdate/" + id,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(itemdata),
@@ -980,7 +980,7 @@ $(document).on("click", "#weight_submit", function () {
 
     $.ajax({
         url: "/purchaseorders/MultipleskuWeightUpdate/",
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(sku),
@@ -1028,7 +1028,7 @@ $(document).on("change", ".wash_type_status", function () {
 
             $.ajax({
                 url: "/purchaseorders/productwashtypeupdate/" + product_id,
-                dataType: 'json',
+                
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(jsonData),
@@ -1070,7 +1070,7 @@ $(document).on('click', ".podeleteImage", function (e) {
 
     $.ajax({
         url: "/purchaseorders/documentsdelete/" + docid,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
