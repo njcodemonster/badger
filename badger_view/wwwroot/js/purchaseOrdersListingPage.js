@@ -16,7 +16,7 @@
             jsonData["search"] = request.term;
             console.log(jsonData);
 
-            if (request.term.length > 2) {
+            if (request.term.length > 1) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
                     dataType: 'json',
@@ -1138,8 +1138,14 @@ function purchaseOrderData(data) {
             
             var it = data.Items.LineItemDetails;
             if (it.length > 0) {
+                var quantityUnits = 0;
+                var subCost = 0;
+                var styles = 0;
                 jQuery.each(it, function (i, dataNew) {
-                    if (dataNew.Quantity >0) {
+                    if (dataNew.Quantity > 0) {
+                        quantityUnits += dataNew.Quantity;
+                        styles++;
+                        subCost += dataNew.Quantity * dataNew.product_cost;
                         $("#itemsTable").append("<tr>");
                         //$("#itemsTable").append("<td width = '60' > <img src=" + dataNew.product_vendor_image + " width='50' /></td>");
                         $("#itemsTable").append("<td width='60'><img src='/images/dress-clipart.jpg' width='50' /></td>");
@@ -1150,6 +1156,7 @@ function purchaseOrderData(data) {
                         $("#itemsTable").append("</tr>");
                     }
                 });
+                $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, total cost $" + subCost);
             }
             $("#newPurchaseOrderForm #po_status").val(podata.po_status);
             $("#newPurchaseOrderForm #photos").val(podata.photos);

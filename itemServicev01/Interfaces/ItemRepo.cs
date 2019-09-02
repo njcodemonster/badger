@@ -34,6 +34,7 @@ namespace itemService.Interfaces
         Task<List<Items>> GetAfterDate(string AfterDate, int Limit);
         Task<List<Items>> GetBeforeDate(string BeforeDate, int Limit);
         Task<List<Items>> GetByPOid(int PO_id);
+        Task<String> GetitemCountBySkuStatus(string po_id, string sku, string item_status_id);
         Task<String> Create(Items NewItem);
         Task<Boolean> Update(Items ItemToUpdate);
         Task UpdateSpeific(Dictionary<String, String> ValuePairs, String where);
@@ -43,6 +44,7 @@ namespace itemService.Interfaces
         Task<List<Items>> GetItemGroupByProductId(int PO_id);
         Task<Object> GetBarcode(int barcode);
         Task<bool> DeleteItemByProduct(string id);
+        Task<bool> DeleteBySku(Items NewItem, int qty);
     }
     public class ItemRepo : ItemRepository
     {
@@ -88,6 +90,25 @@ namespace itemService.Interfaces
                 return result.ToList();
             }
         }
+        /*
+        Developer: Sajid Khan
+        Date: 7-13-19 
+        Action: Get list of items from database
+        Input: int limit
+        output: List of items
+        */
+        public async Task<String> GetitemCountBySkuStatus(string po_id, string sku, string item_status_id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string query = "Select Count(item_id) from items where item_status_id=" + item_status_id + " and  po_id=" + po_id + " and sku='" + sku + "'";
+                var result = await conn.QueryAsync<string>(query);
+
+                return result.FirstOrDefault();
+
+            }
+        }
+
 
         /*
         Developer: Sajid Khan
@@ -100,30 +121,30 @@ namespace itemService.Interfaces
         {
             try
             {
-                    List<Items> ToRetrun = new List<Items>();
+                List<Items> ToRetrun = new List<Items>();
 
-                    int countComma = id.Count(c=> c== ',');
-                    string QueryWhereClause;
-                    if (countComma > 0)
+                int countComma = id.Count(c => c == ',');
+                string QueryWhereClause;
+                if (countComma > 0)
+                {
+                    QueryWhereClause = " where item_id IN (" + id + ") ";
+                    string Query = "SELECT * from items " + QueryWhereClause;
+                    using (IDbConnection conn = Connection)
                     {
-                        QueryWhereClause = " where item_id IN (" + id + ") ";
-                        string Query = "SELECT * from items " + QueryWhereClause;
-                        using (IDbConnection conn = Connection)
-                        {
-                            var result = conn.Query<Items>(Query);
-                            ToRetrun = result.ToList();
-                        }
+                        var result = conn.Query<Items>(Query);
+                        ToRetrun = result.ToList();
                     }
-                    else
+                }
+                else
+                {
+                    int itemId = Convert.ToInt32(id);
+                    using (IDbConnection conn = Connection)
                     {
-                        int itemId = Convert.ToInt32(id);
-                        using (IDbConnection conn = Connection)
-                        {
-                            var result = conn.Get<Items>(itemId);
-                            ToRetrun.Add(result);
-                        }
+                        var result = conn.Get<Items>(itemId);
+                        ToRetrun.Add(result);
                     }
-                    return ToRetrun;
+                }
+                return ToRetrun;
             }
             catch (Exception ex)
             {
@@ -167,7 +188,7 @@ namespace itemService.Interfaces
         {
             try
             {
-                string QueryWhereClause = "where item_status_id <> 5 AND PO_id=" + PO_id.ToString()+" GROUP BY product_id";
+                string QueryWhereClause = "where item_status_id <> 5 AND PO_id=" + PO_id.ToString() + " GROUP BY product_id";
                 using (IDbConnection conn = Connection)
                 {
                     string Query = "SELECT * from items " + QueryWhereClause;
@@ -204,8 +225,8 @@ namespace itemService.Interfaces
                 }
 
                 using (IDbConnection conn = Connection)
-                {   
-                    string Query = "SELECT * from items " + QueryWhereClause; 
+                {
+                    string Query = "SELECT * from items " + QueryWhereClause;
                     var result = conn.Query<Items>(Query);
                     return result.ToList();
                 }
@@ -240,7 +261,7 @@ namespace itemService.Interfaces
 
                 using (IDbConnection conn = Connection)
                 {
-                    string Query = "SELECT * from items " + QueryWhereClause; 
+                    string Query = "SELECT * from items " + QueryWhereClause;
                     var result = conn.Query<Items>(Query);
                     return result.ToList();
                 }
@@ -263,7 +284,7 @@ namespace itemService.Interfaces
             try
             {
                 string QueryWhereClause;
-                string LimitQuery = "" ;
+                string LimitQuery = "";
                 int countComma = SkuFamily.Count(c => c == ',');
                 if (countComma > 0)
                 {
@@ -273,17 +294,18 @@ namespace itemService.Interfaces
                 }
                 else
                 {
-                    QueryWhereClause = " where sku = \"" + SkuFamily+ "\"";
+                    QueryWhereClause = " where sku = \"" + SkuFamily + "\"";
                 }
 
-                if (Limit > 0 ) {
-                    LimitQuery = " Limit  "+Limit.ToString();
+                if (Limit > 0)
+                {
+                    LimitQuery = " Limit  " + Limit.ToString();
                 }
 
                 string Query = "SELECT * from items " + QueryWhereClause + LimitQuery;
 
                 using (IDbConnection conn = Connection)
-                { 
+                {
                     var result = conn.Query<Items>(Query);
                     return result.ToList();
                 }
@@ -291,7 +313,7 @@ namespace itemService.Interfaces
             catch (Exception ex)
             {
                 throw ex;
-            } 
+            }
 
         }
 
@@ -809,6 +831,34 @@ namespace itemService.Interfaces
             }
         }
 
+        /*Developer: Hamza Haq
+        Date:31-8-19
+        Action:get Item Model from controller with qty to Delete
+        Input: ItemToDelete Model 
+        output: boolean 
+        */
+        public async Task<bool> DeleteBySku(Items ItemToDelete, int qty)
+        {
+            bool IsSuccess = false;
+
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    string sQuery = "Delete from items where sku='" + ItemToDelete.sku + "' and po_id='" + ItemToDelete.PO_id + "' limit " + qty + ";";
+                    var result = await conn.QueryAsync<string>(sQuery);
+
+                    IsSuccess = true;
+                }
+            }
+            catch (Exception)
+            {
+
+                IsSuccess = false;
+            }
+
+            return IsSuccess;
+        }
         /*
          * (There is mistake in function,There is no product id used in function )
         Developer: Sajid Khan
@@ -868,7 +918,8 @@ namespace itemService.Interfaces
         Input: int skuId, int status
         output: string
         */
-        public async Task<String> SetProductItemForPhotoshoot(int skuId, int status) {
+        public async Task<String> SetProductItemForPhotoshoot(int skuId, int status)
+        {
 
             string ToReturn = "success";
 
@@ -880,7 +931,8 @@ namespace itemService.Interfaces
             {
                 itemSelectQuery = "SELECT * FROM items where items.sku_id= " + skuId.ToString() + " ORDER BY RAND() LIMIT 1;";
             }
-            else if (status == 0) {
+            else if (status == 0)
+            {
                 itemSelectQuery = "SELECT * FROM items where items.sku_id= " + skuId.ToString() + " AND item_status_id = 6;";
             }
 
@@ -893,7 +945,7 @@ namespace itemService.Interfaces
             {
                 if (status == 1)
                 {
-                    itemUpdateQuery = "update items set  item_status_id = 6, updated_at = "+_common.GetTimeStemp() +" where item_id = " + item.First().item_id.ToString() + "; ";
+                    itemUpdateQuery = "update items set  item_status_id = 6, updated_at = " + _common.GetTimeStemp() + " where item_id = " + item.First().item_id.ToString() + "; ";
                 }
                 else if (status == 0)
                 {
@@ -944,7 +996,7 @@ namespace itemService.Interfaces
         {
             dynamic barcodeDetails = new ExpandoObject();
 
-            string sQuery = "SELECT item_id as value,barcode as label,'barcode' as type FROM " + TableName + " WHERE barcode ="+barcode+";";
+            string sQuery = "SELECT item_id as value,barcode as label,'barcode' as type FROM " + TableName + " WHERE barcode =" + barcode + ";";
 
             using (IDbConnection conn = Connection)
             {
@@ -966,7 +1018,7 @@ namespace itemService.Interfaces
         {
             bool status = false;
             int product_id = int.Parse(id);
-            string sQuery = "delete FROM items WHERE product_id="+ product_id;
+            string sQuery = "delete FROM items WHERE product_id=" + product_id;
             try
             {
                 using (IDbConnection conn = Connection)
@@ -980,7 +1032,7 @@ namespace itemService.Interfaces
             {
                 status = false;
             }
-           
+
             return status;
         }
 
