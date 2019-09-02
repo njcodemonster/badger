@@ -151,10 +151,11 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = Int32.Parse(NewInsertionID),
+                    EntityId = newPurchaseOrder.po_id,
                     EventName = ledger_create,
-                    RefrenceId = newPurchaseOrder.po_id,
+                    RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = newPurchaseOrder.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -164,6 +165,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_create,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = newPurchaseOrder.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
 
@@ -199,10 +201,11 @@ namespace badgerApi.Controllers
                 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = id,
+                    EntityId = PurchaseOrdersToUpdate.po_id,
                     EventName = ledger_update,
-                    RefrenceId = PurchaseOrdersToUpdate.po_id,
+                    RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -212,6 +215,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_update,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -284,10 +288,11 @@ namespace badgerApi.Controllers
                 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = id,
+                    EntityId = PurchaseOrdersToUpdate.po_id,
                     EventName = ledger_specificupdate,
-                    RefrenceId = PurchaseOrdersToUpdate.po_id,
+                    RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -297,6 +302,7 @@ namespace badgerApi.Controllers
                     EventName = ledger_specificupdate,
                     RefrenceId = id,
                     UserId = PurchaseOrdersToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
