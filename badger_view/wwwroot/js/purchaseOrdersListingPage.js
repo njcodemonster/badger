@@ -19,7 +19,7 @@
             if (request.term.length > 2) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
-                    
+                    dataType: 'json',
                     type: 'post',
                     data: JSON.stringify(jsonData),
                     contentType: 'application/json',
@@ -72,7 +72,7 @@
             if (request.term.length > 3) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
-                    
+                    dataType: 'json',
                     type: 'post',
                     data: JSON.stringify(jsonData),
                     contentType: 'application/json',
@@ -434,7 +434,6 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
                     data: formData,
-                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -444,7 +443,6 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                         alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
                         $("#EditPurhaseOrderDocument[data-id='"+poid+"']").find(".redDotDoc").addClass("redDOtElement");
-                        console.log(data.responseText);
                     }
                 });
             }
@@ -514,7 +512,7 @@ $(document).on('click', "#EditPurhaseOrder", function () {
 
     $.ajax({
         url: '/purchaseorders/details/' + id,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -550,7 +548,7 @@ $(document).on("click", "#discount_submit", function () {
 
     $.ajax({
         url: '/purchaseorders/discountcreate',
-        
+        dataType: 'json',
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -596,7 +594,7 @@ $(document).on("click", "#ledger_submit", function () {
 
     $.ajax({
         url: '/purchaseorders/ledgercreate',
-        
+        dataType: 'json',
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -699,7 +697,6 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
     $.ajax({
         url: '/purchaseorders/updatepurchaseorder/' + id,
-       // 
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -708,7 +705,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
     }).always(function (data) {
         console.log(data);
 
-        if (data.responseText == "Success") {
+        if (data == "Success") {
             
             if (window.purchaseorderrownumber != "" && window.purchaseorderrownumber >= 0) {
 
@@ -759,7 +756,6 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
                     data: formData,
-                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -769,7 +765,6 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                         alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
                         $("#EditPurhaseOrderDocument[data-id='"+poid+"']").find(".redDotDoc").addClass("redDOtElement");
-                        console.log(data.responseText);
                     }
                 });
             }
@@ -782,7 +777,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                 $('#newPurchaseOrderForm')[0].reset();
             }
         } else {
-            alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
+           // alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
 
     })
@@ -884,7 +879,7 @@ $(document).on("click", "#EditPurhaseOrderNote", function () {
     $("#noteModalLongTitle").text("Notes ("+$(this).parents('tr').find('td:first-child').text()+")");
     $.ajax({
         url: '/purchaseorders/getnote/' + id,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -976,7 +971,7 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
 
     $.ajax({
         url: '/purchaseorders/getdocument/' + id,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -1033,7 +1028,6 @@ $(document).on("click", "#document_submit", function () {
             url: "/purchaseorders/purchaseorder_doc",
             type: 'POST',
             data: formData,
-            
             processData: false,
             contentType: false,
         }).always(function (data) {
@@ -1043,10 +1037,9 @@ $(document).on("click", "#document_submit", function () {
                 alertBox('poAlertMsg', 'red', 'Purchase order document not updated');
               console.log("Exception Error");
             } else {
-                console.log(data.responseText);
                 _self.attr("disabled", false);
-                if (data.responseText.indexOf('File Already') > -1) {
-                    $(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                if (data.indexOf('File Already') > -1) {
+                    //$(".poDocAlertMsg").css("color", "red").text(data.responseText);
                 } else {    
                     $("#EditPurhaseOrderDocument[data-id='" + poid + "']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
@@ -1078,12 +1071,11 @@ $(document).on('click', "#poDelete", function () {
         if (result == "yes") {
             $.ajax({
                 url: '/purchaseorders/delete/' + id,
-                
                 type: 'POST',
                 contentType: 'application/json',
             }).always(function (data) {
                 console.log(data);
-                if (data.responseText == "Success") {
+                if (data == "Success") {
                     var table = $('#purchaseorderlists').DataTable();
                     table.row(window.purchaseorderrownumber).remove().draw(false);
                     $("#modalPurchaseOrder").modal("hide");
@@ -1093,7 +1085,7 @@ $(document).on('click', "#poDelete", function () {
                         window.location = location.protocol + "//" + location.host;
                     }
                 } else {
-                    alertBox('poAlertMsg', 'red', 'Purchase order not deleted.');
+                   // alertBox('poAlertMsg', 'red', 'Purchase order not deleted.');
                 }
 
             });
@@ -1266,7 +1258,7 @@ function getSinglePurchaseOrder(id) {
     $("#newPurchaseOrderForm").attr('data-currentid',id)
     $.ajax({
         url: '/purchaseorders/details/' + id,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -1346,14 +1338,13 @@ $(document).on('click', ".podeleteImage", function (e) {
 
     $.ajax({
         url: "/purchaseorders/documentsdelete/" + docid,
-        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
         processData: false,
     }).always(function (data) {
         console.log(data);
-        if (data.responseText != '0')
+        if (data != '0')
             _this.parents('.documentsLink').remove();
 
         if ($('#modaladddocument .po_doc_section a').length == 0) {
