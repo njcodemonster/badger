@@ -150,7 +150,7 @@
     "EventDescription": "Vendor address updated by user =%%userId%% with address id= %%entityId%%"
   },
   {
-    "EventId":26,
+    "EventId": 26,
     "EventName": "create_vendor_repo",
     "EventDescription": "Vendor repo created by user =%%userId%% with repo id= %%entityId%%"
   },
@@ -188,5 +188,15 @@
     "EventId": 33,
     "EventName": "photoshoot_summmary_updated",
     "EventDescription": "Photoshoot summary update by user =%%userId%% with summary id = %%entityId%%"
+  },
+  {
+    "EventId": 35,
+    "EventName": "user_login",
+    "EventDescription": "User login with credentials"
+  },
+  {
+    "EventId": 36,
+    "EventName": "user_logout",
+    "EventDescription": "User logout from site"
   }
 ]
