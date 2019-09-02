@@ -11,5 +11,7 @@ namespace GenericModals.Models
         public string size { get; set; }
         public int barcode_from { get; set; }
         public int barcode_to { get; set; }
+
+        public double updated_at { get; set; }
     }
 }

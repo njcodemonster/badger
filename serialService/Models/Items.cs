@@ -12,7 +12,7 @@ namespace itemService_entity.Models
         public int ItemStatusId { get; set; }
         public int RaStatus { get; set; }
         public string Sku { get; set; }
-        public short SkuId { get; set; }
+        public int SkuId { get; set; }
         public int ProductId { get; set; }
         public int VendorId { get; set; }
         public string SkuFamily { get; set; }

@@ -252,13 +252,30 @@ Output: string of style
 */
 $(document).on('click', ".SaveSubCategoryButton", function () {
     var action = $(this).attr('data-action');
+    SaveSubCategory();
+});
+
+$("#AddCatForm #SubCat").on("keydown", function (event) {
+    debugger;
+    if (event.which == 13) {
+        SaveSubCategory();
+        return false;
+    }
+});
+
+function SaveSubCategory() {
+    var action = 'refreshValue';
+    var SubCat = $('#SubCat').val();
+    if (!SubCat.replace(/\s/g, '').length) {
+        $('#SubCat').val("");
+    }
     if (emptyFeildValidation('AddCatForm') == false) {
         return false;
     }
-  
+
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
-    var SubCat=$('#SubCat').val();
+
     var ParentCategorySelect = $('#ParentCategorySelect option:selected').val();
     jsonData["subCatTitle"] = SubCat;
     jsonData["ParentCatId"] = ParentCategorySelect;
@@ -291,4 +308,4 @@ $(document).on('click', ".SaveSubCategoryButton", function () {
         }
         $('.poAlertMsg').html('')
     });
-});
+}

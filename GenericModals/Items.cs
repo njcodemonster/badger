@@ -15,7 +15,7 @@ namespace GenericModals.Models
         public int item_status_id { get; set; }
         public int ra_status { get; set; }
         public string sku { get; set; }
-        public short sku_id { get; set; }
+        public int sku_id { get; set; }
         public int product_id { get; set; }
         public int vendor_id { get; set; }
         public string sku_family { get; set; }
