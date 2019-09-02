@@ -23,11 +23,15 @@ namespace badgerApi.Interfaces
         Task<bool> CreateCategoryOption(List<CategoryOptions> newCategory);
         Task<IEnumerable<Tags>> GetAllTagsTypeWise(string id);
 
+        List<Categories> allCategories { get; set; }
         Task<bool> DeleteCategoryOption(List<CategoryOptions> newCategory);
 
+        Task<Boolean> Update(Categories VendorToUpdate);
     }
     public class CategoryRepo : ICategoryRepository
     {
+        public List<Categories> allCategories { get; set; }
+
         private readonly IConfiguration _config;
         private string TableName = "categories";
         private string TableProductAttributes = "product_attributes";
@@ -37,6 +41,7 @@ namespace badgerApi.Interfaces
 
             _config = config;
             selectlimit = _config.GetValue<string>("configs:Default_select_Limit");
+            allCategories = GetAllCategories();
 
         }
         public IDbConnection Connection
@@ -178,22 +183,22 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result=default;
-            foreach (var item in category_options)
-            {
-                using (IDbConnection conn = Connection)
+                long result = default;
+                foreach (var item in category_options)
                 {
-                     result = conn.Insert<CategoryOptions>(item);
-                   
+                    using (IDbConnection conn = Connection)
+                    {
+                        result = conn.Insert<CategoryOptions>(item);
+
+                    }
                 }
-            }
                 return true;
             }
             catch (Exception ex)
             {
                 return false;
             }
-            
+
 
         }
         /*
@@ -213,7 +218,7 @@ namespace badgerApi.Interfaces
                 {
                     using (IDbConnection conn = Connection)
                     {
-                        String DeleteQuery = "delete FROM category_options WHERE category_id= " + item.category_id + " and attribute_id= "+item.attribute_id;
+                        String DeleteQuery = "delete FROM category_options WHERE category_id= " + item.category_id + " and attribute_id= " + item.attribute_id;
                         var updateResult = await conn.QueryAsync<object>(DeleteQuery);
                         status = true;
                     }
@@ -225,6 +230,41 @@ namespace badgerApi.Interfaces
                 return false;
             }
 
+
+        }
+        /*
+         Developer: Hamza Haq
+         Date: 8-23-19 
+         Action: get all categories
+         Input: none
+         output: result
+      */
+        public List<Categories> GetAllCategories()
+        {
+            IEnumerable<Categories> categories;
+            using (IDbConnection conn = Connection)
+            {
+                categories = conn.Query<Categories>("SELECT category_id ,category_type,category_name,category_parent_id FROM categories");
+
+            }
+            return categories.ToList();
+
+        }
+        /*
+          Developer: Hamza Haq
+          Date: 8-23-19 
+          Action: update category to database
+          Input: Categories Model
+          output: result
+       */
+        public async Task<Boolean> Update(Categories CategoryToUpdate)
+        {
+
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<Categories>(CategoryToUpdate);
+                return result;
+            }
 
         }
     }

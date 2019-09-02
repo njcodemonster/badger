@@ -73,7 +73,7 @@ function general_search() {
             if (request.term.length > 3) {
                 $.ajax({
                     url: "/search/autosuggest/",
-                    
+                    dataType: 'json',
                     type: 'post',
                     data: JSON.stringify(jsonData),
                     contentType: 'application/json',

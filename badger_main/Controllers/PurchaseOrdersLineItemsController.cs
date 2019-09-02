@@ -109,10 +109,11 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = Int32.Parse(NewInsertionID),
+                    EntityId = NewPoLineItem.po_id,
                     EventName = po_lineitem_created,
-                    RefrenceId = NewPoLineItem.po_id,
+                    RefrenceId = Int32.Parse(NewInsertionID),
                     UserId = NewPoLineItem.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -122,6 +123,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_created,
                     RefrenceId = Convert.ToInt32(NewInsertionID),
                     UserId = NewPoLineItem.created_by,
+                    EventNoteId = Convert.ToInt32(NewInsertionID)
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -156,10 +158,11 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = id,
+                    EntityId = PoLineItemToUpdate.po_id,
                     EventName = po_lineitem_update,
-                    RefrenceId = PoLineItemToUpdate.po_id,
+                    RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -169,6 +172,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_update,
                     RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }
@@ -259,10 +263,11 @@ namespace badgerApi.Controllers
 
                 var eventModel = new EventModel(tableName)
                 {
-                    EntityId = id,
+                    EntityId = PoLineItemToUpdate.po_id,
                     EventName = po_lineitem_specific_update,
-                    RefrenceId = PoLineItemToUpdate.po_id,
+                    RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(eventModel);
 
@@ -272,6 +277,7 @@ namespace badgerApi.Controllers
                     EventName = po_lineitem_specific_update,
                     RefrenceId = id,
                     UserId = PoLineItemToUpdate.updated_by,
+                    EventNoteId = id
                 };
                 await _eventRepo.AddEventAsync(userEvent);
             }

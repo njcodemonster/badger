@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\CategoriesRepo.cs" />
     <Compile Remove="Models\Categories.cs" />
     <Compile Remove="Models\CategoryOptionPage.cs" />
     <Compile Remove="Models\CategoryOptions.cs" />
