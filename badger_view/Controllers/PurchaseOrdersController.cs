@@ -983,6 +983,7 @@ namespace badger_view.Controllers
         Input: Null
         output: dynamic object of purchase orders management list
         */
+        [Authorize]
         public async Task<IActionResult> PurchaseOrdersCheckIn(int id)
         {
             SetBadgerHelper();

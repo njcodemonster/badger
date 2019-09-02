@@ -468,7 +468,7 @@ namespace badgerApi.Interfaces
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.ExecuteAsync(query);
-                poClaim.inspect_claimer_name = await GetUsernameByClaim(poId, ClaimerType.InspectClaimer);
+               // poClaim.inspect_claimer_name = await GetUsernameByClaim(poId, ClaimerType.InspectClaimer);
             }
             return await GetClaim(poId);
         }
@@ -487,7 +487,7 @@ namespace badgerApi.Interfaces
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.ExecuteAsync(query);
-                poClaim.publish_claimer_name = await GetUsernameByClaim(poId, ClaimerType.PublishClaimer);
+               // poClaim.publish_claimer_name = await GetUsernameByClaim(poId, ClaimerType.PublishClaimer);
             }
             return await GetClaim(poId);
         }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GenericModals.Models;
-using GenericModals.Models;
 
 namespace GenericModals.Models
 {
