@@ -673,7 +673,23 @@ label.error {
     border: 5px solid red;
     border-radius: 50%;
 }
+.docTypeSection {
+    position: absolute;
+    background: #28a745;
+    z-index: 9;
+    margin: 0 auto;
+    right: 0;
+    left: 0;
+    width: 200px;
+    top: 50%;
+    border: 2px solid #000;
+    text-align: left;
+    color:#000;
+}
 
+.docTypeSection div{
+    padding: 5px;
+}
 span.errorMsg {
     position: absolute;
     bottom: -18px;

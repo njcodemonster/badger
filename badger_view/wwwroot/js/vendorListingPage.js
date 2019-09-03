@@ -53,8 +53,8 @@
        Input: vendor id
        output: single vendor data
    */
-     if (window.location.href.indexOf('Vendor/single') > -1) {
-         var id = window.location.href.split('single/')[1];
+     if (window.location.href.indexOf('Vendor/Single') > -1) {
+         var id = window.location.href.split('Single/')[1];
 
          if (id != undefined && id != "") {
              getSetVendorData(id);

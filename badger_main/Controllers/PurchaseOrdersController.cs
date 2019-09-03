@@ -316,10 +316,11 @@ namespace badgerApi.Controllers
 
                 int ref_id = PurchaseOrdersToUpdate.ref_id;
                 string document_url = PurchaseOrdersToUpdate.url;
+                int doc_type = PurchaseOrdersToUpdate.doc_type;
                 int created_by = PurchaseOrdersToUpdate.created_by;
                 double created_at = _common.GetTimeStemp();
 
-                NewInsertionID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, note_type, document_url, "", created_by, created_at);
+                NewInsertionID = await _NotesAndDoc.GenericPostDoc<string>(ref_id, doc_type, document_url, "", created_by, created_at);
 
                 var eventModel = new EventModel(poEventTableName)
                 {

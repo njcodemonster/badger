@@ -25,6 +25,7 @@ namespace badger_view.Controllers
     {
         public List<IFormFile> purchaseOrderDocuments { get; set; }
         public string po_id { get; set; }
+        public string doc_type { get; set; }
     }
     public class PurchaseOrdersController : Controller
     {
@@ -511,6 +512,7 @@ namespace badger_view.Controllers
                                 JObject purchaseOrderDocuments = new JObject();
                                 purchaseOrderDocuments.Add("ref_id", purchaseorderfile.po_id);
                                 purchaseOrderDocuments.Add("url", formFile.FileName);
+                                purchaseOrderDocuments.Add("doc_type", purchaseorderfile.doc_type);
                                 purchaseOrderDocuments.Add("created_by", Int32.Parse(loginUserId));
                                 await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderDocuments.ToString(Formatting.None), "/purchaseorders/documentcreate");
 
