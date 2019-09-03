@@ -250,11 +250,11 @@ namespace badgerApi.Controllers
                 Product ProductToUpdate = JsonConvert.DeserializeObject<Product>(value);
                 ProductToUpdate.product_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                if (ProductToUpdate.product_name != "")
+                if (ProductToUpdate.product_name != null)
                 {
                     ValuesToUpdate.Add("product_name", ProductToUpdate.product_name.ToString());
                 }
-                if (ProductToUpdate.vendor_color_name != "")
+                if (ProductToUpdate.vendor_color_name != null)
                 {
                     ValuesToUpdate.Add("vendor_color_name", ProductToUpdate.vendor_color_name.ToString());
                 }
@@ -271,14 +271,21 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("product_vendor_image", ProductToUpdate.product_vendor_image.ToString());
                 }
-                if (ProductToUpdate.sku_family != string.Empty)
+                if (ProductToUpdate.sku_family != null)
                 {
                     ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
                 }
                 if (ProductToUpdate.wash_type_id != 0)
                 {
-
                     ValuesToUpdate.Add("wash_type_id", ProductToUpdate.wash_type_id.ToString());
+                }
+                if (ProductToUpdate.updated_by != 0)
+                {
+                    ValuesToUpdate.Add("updated_by", ProductToUpdate.updated_by.ToString());
+                }
+                if (ProductToUpdate.updated_at != 0)
+                {
+                    ValuesToUpdate.Add("updated_at", ProductToUpdate.updated_at.ToString());
                 }
                 await _ProductRepo.UpdateSpecific(ValuesToUpdate, "Product_id=" + id);
             }

@@ -673,3 +673,9 @@ label.error {
     border: 5px solid red;
     border-radius: 50%;
 }
+
+span.errorMsg {
+    position: absolute;
+    bottom: -18px;
+    left: 5px;
+}
