@@ -429,6 +429,7 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                 var formData = new FormData();
 
                 formData.append('po_id', data);
+                formData.append('doc_type',$("#poUploadImage").attr('data-categorie'));
 
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
@@ -499,8 +500,7 @@ function timeToDateConvert(timeinseconds) {
 
 $(document).on('click', "#EditPurhaseOrder", function () {
     $("#newPurchaseOrderForm input,textarea").val("").removeClass('errorFeild');
-    $('.errorMsg').remove();
-    $(".error").remove();
+    $('.errorMsg,.error,.docTypeSection').remove();
     $('.msg').html("");
     $('#view_adjustment,#view_discount, #wrapper_tracking,.po_doc_section').empty().html("");
     $('.poTracking, #poNotes').val("");
@@ -757,7 +757,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                 var formData = new FormData();
 
                 formData.append('po_id', id);
-
+                formData.append('doc_type',$("#poUploadImage").attr('data-categorie'));
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
                 }
@@ -806,8 +806,8 @@ output: form input fields
 */
 $(document).on('click', ".model_purchase_order", function () {
 
-    $("#newPurchaseOrderForm .error").remove();
-
+    $("#newPurchaseOrderForm .error,.docTypeSection").remove();
+    $('.modal-footer').find('button').attr('disabled', false)
     $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "NewPurchaseOrderButton");
     $("#model_purchase_order #purchaseOrderModalLongTitle").text("Add New Purchase Order");
     $("#newPurchaseOrderForm input, #newPurchaseOrderForm #poNotes").val("");
@@ -974,6 +974,8 @@ output:string of purchase order documents
 
 $(document).on("click", "#EditPurhaseOrderDocument", function () {
     $(".poDocAlertMsg").text("");
+    $('.docTypeSection').remove();
+    $('.modal-footer').find('button').attr('disabled', false)
     $('#document_form')[0].reset();
     $("#document_form #po_document").val("");
     $("#document_form").attr("data-documentid", "");
@@ -1031,7 +1033,7 @@ $(document).on("click", "#document_submit", function () {
         var poid = $('#document_form').attr("data-documentid");
         var formData = new FormData();
         formData.append('po_id', poid);
-
+        formData.append('doc_type',$("#poUploadImages").attr('data-categorie'));
         for (var i = 0; i != files.length; i++) {
             formData.append("purchaseOrderDocuments", files[i]);
         }
@@ -1371,3 +1373,15 @@ $(document).on('click', ".podeleteImage", function (e) {
         }
     });
 });
+
+$(document).on("change", "#poUploadImages,#poUploadImage", function () {
+    $('.docTypeSection').remove();
+    $(this).parents('.modal-body').append('<div class="docTypeSection"><div> <input data-value="4" class="docCategorie" checked type="radio" name="typeRadio"> Original PO</div><div> <input data-value="7" class="docCategorie" type="radio" name="typeRadio"> Shipment Invoice</div><div> <input class="docCategorie" data-value="8" type="radio" name="typeRadio"> Main Shipment Invoice</div><div> <input data-value="9" type="radio" class="docCategorie" name="typeRadio"> Other</div></div>')
+    $(this).attr('data-categorie', '4');
+    $('.modal-footer:visible').find('button').attr('disabled',true)
+})
+$(document).on("change", ".docCategorie", function () {
+    $('#poUploadImages').attr('data-categorie', $(this).attr('data-value'))
+    $('.modal-footer:visible').find('button').attr('disabled', false)
+    $('.docTypeSection').remove();
+})

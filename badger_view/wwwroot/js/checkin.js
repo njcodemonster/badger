@@ -9,7 +9,8 @@ Action: Checkin button click
 output: Checkin Model Show
 */
 $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
-
+    $('.docTypeSection').remove();
+    $('.modal-footer').find('button').attr('disabled', false)
     var producthtml = "";
     var po_number = $(this).parents("tr").children("td:first").text();
     var vendor = $(this).parents("tr").children("td:nth-child(3)").text();
@@ -156,7 +157,7 @@ $(document).on('click', ".submit-check-in", function () {
 
                 var formData = new FormData();
                 formData.append('po_id', po_id);
-
+                formData.append('doc_type', $("#poUploadImages").attr('data-categorie'));
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
                 }
