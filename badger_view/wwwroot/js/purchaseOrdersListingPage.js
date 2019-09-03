@@ -30,12 +30,14 @@
                         response(data);
                         $('#poVendor').removeClass("errorFeild");
                         $('.errorMsg').remove();
+                        $('#EditPurchaseOrderButton').attr('disabled', false);
                     } else {
                         $('#poVendor').removeClass("errorFeild");
                         $('.errorMsg').remove();
                         $('#poVendor').addClass('errorFeild');
                         $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
-                        $('.ui-autocomplete').empty().css("border","0");    
+                        $('.ui-autocomplete').empty().css("border", "0");
+                        $('#EditPurchaseOrderButton').attr('disabled', true);
                     }
                    
                 });
