@@ -23,11 +23,15 @@ namespace badgerApi.Interfaces
         Task<bool> CreateCategoryOption(List<CategoryOptions> newCategory);
         Task<IEnumerable<Tags>> GetAllTagsTypeWise(string id);
 
+        List<Categories> allCategories { get; set; }
         Task<bool> DeleteCategoryOption(List<CategoryOptions> newCategory);
 
+        Task<Boolean> Update(Categories VendorToUpdate);
     }
     public class CategoryRepo : ICategoryRepository
     {
+        public List<Categories> allCategories { get; set; }
+        
         private readonly IConfiguration _config;
         private string TableName = "categories";
         private string TableProductAttributes = "product_attributes";
@@ -37,6 +41,7 @@ namespace badgerApi.Interfaces
 
             _config = config;
             selectlimit = _config.GetValue<string>("configs:Default_select_Limit");
+            allCategories = GetAllCategories();
 
         }
         public IDbConnection Connection
@@ -225,6 +230,41 @@ namespace badgerApi.Interfaces
                 return false;
             }
 
+
+        }
+        /*
+         Developer: Hamza Haq
+         Date: 8-23-19 
+         Action: get all categories
+         Input: none
+         output: result
+      */
+        public List<Categories> GetAllCategories()
+        {
+            IEnumerable<Categories> result = new List<Categories>();
+            using (IDbConnection conn = Connection)
+            {
+                result = conn.GetAll<Categories>();
+
+            }
+            return result.ToList();
+
+        }
+        /*
+          Developer: Hamza Haq
+          Date: 8-23-19 
+          Action: update category to database
+          Input: Categories Model
+          output: result
+       */
+        public async Task<Boolean> Update(Categories CategoryToUpdate)
+        {
+
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.UpdateAsync<Categories>(CategoryToUpdate);
+                return result;
+            }
 
         }
     }
