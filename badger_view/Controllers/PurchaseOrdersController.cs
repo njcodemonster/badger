@@ -558,7 +558,7 @@ namespace badger_view.Controllers
             }
             else
             {
-                purchaseOrder.Add("vendor_po_number", 0);
+                purchaseOrder.Add("vendor_po_number", "");
             }
 
             if (json.Value<string>("vendor_invoice_number") != "")
@@ -567,7 +567,7 @@ namespace badger_view.Controllers
             }
             else
             {
-                purchaseOrder.Add("vendor_invoice_number", 0);
+                purchaseOrder.Add("vendor_invoice_number", "");
             }
 
             if (json.Value<string>("vendor_order_number") != "")
@@ -576,7 +576,7 @@ namespace badger_view.Controllers
             }
             else
             {
-                purchaseOrder.Add("vendor_order_number", 0);
+                purchaseOrder.Add("vendor_order_number", "");
             }
 
             if (json.Value<string>("total_styles") != "")

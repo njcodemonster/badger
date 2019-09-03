@@ -392,9 +392,9 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
     }).always(function (data) {
         console.log(data);
-
-        if (data != 0 && data > 0) {
-            console.log('New row created - ' + data);
+        var poid = data;
+        if (poid != 0 && poid > 0) {
+            console.log('New row created - ' + poid);
             var reddot = "";
             if (note != "") {
                 reddot = "redDOtElement" 
@@ -409,9 +409,9 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
             } 
             if (delieveryRange != "") {
-                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + data + "'><span class='postatus-" + data + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + data + '" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><div class="redDotNote '+reddot+'"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             } else {
-                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), order_date, vendorname, totalstyle, 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + data + "'><span class='postatus-" + data + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + data + '" data-shipping="' + shipping + '"  data-ID="' + data + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderNote"><div class="redDotNote '+ reddot+'"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + data + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), order_date, vendorname, totalstyle, 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             }
 
             table.page('last').draw('page');
@@ -442,9 +442,9 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     data: formData,
                     processData: false,
                     contentType: false,
-                }).always(function (data) {
-                    console.log(data);
-                    if (data == "0") {
+                }).always(function (docdata) {
+                    console.log(docdata);
+                    if (docdata == "0") {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
