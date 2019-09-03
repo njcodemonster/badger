@@ -633,6 +633,22 @@ output: string
 */
 $(document).on('click', "#EditPurchaseOrderButton", function () {
 
+    _self = $(this);
+    _self.attr('disabled', true);
+
+    if (emptyFeildValidation('newPurchaseOrderForm') == false) {
+        _self.attr('disabled', false);
+        return false;
+    }
+
+    if ($("#newPurchaseOrderForm #poNumber").val().trim().length == 0) {
+        $("#newPurchaseOrderForm #poNumber").addClass('errorFeild');
+        $("#newPurchaseOrderForm #poNumber").parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this field is required</span>')
+        _self.attr('disabled', false);
+        return false;
+    }
+
+
     var id = $("#newPurchaseOrderForm").data("currentid");
     var vendorname = $("#newPurchaseOrderForm #poVendor").val();
   
@@ -790,10 +806,11 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             if (window.purchaseorderrownumber != "" && window.purchaseorderrownumber >= 0) {
                 $('#newPurchaseOrderForm')[0].reset();
             }
+
         } else {
            // alertBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
-
+        _self.attr('disabled', false);
     })
 });
 
