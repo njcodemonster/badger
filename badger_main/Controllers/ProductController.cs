@@ -597,14 +597,15 @@ namespace badgerApi.Controllers
        output: status
        */
         // POST: api/product/delete
-        [HttpGet("delete/{product_id}")]
-        public async Task<bool> DelAsync(string product_id)
+        [HttpGet("delete/{product_id}/{po_id}")]
+        public async Task<bool> DelAsync(string product_id,string po_id)
         {
             bool isDeleted = false;
             try
             {
-                bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString());
-                isDeleted = await _ProductRepo.DeleteProduct(product_id);
+                bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString(),po_id);
+                if(isItemDeleted)
+                    isDeleted = await _ProductRepo.DeleteProduct(product_id,po_id);
                 isDeleted = isItemDeleted && isDeleted;
 
             }

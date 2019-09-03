@@ -882,13 +882,13 @@ namespace itemService.Controllers
      Input: string product id
      output: bool status
      */
-        [HttpDelete("deleteItemByProduct/{id}")]
-        public async Task<bool> DeleteItemByProduct(string id)
+        [HttpDelete("deleteItemByProduct/{id}/{po_id}")]
+        public async Task<bool> DeleteItemByProduct(string id,string po_id)
         {
             bool status = false;
             try
             {
-                status = await _ItemRepository.DeleteItemByProduct(id);
+                status = await _ItemRepository.DeleteItemByProduct(id,po_id);
 
             }
             catch (Exception ex)

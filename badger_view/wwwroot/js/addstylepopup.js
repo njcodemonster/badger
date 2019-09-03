@@ -7,7 +7,7 @@ Input: styles data
 Output: string of style
 */
 $(document).on('click', ".DeletefromPOButton", function () {
-    
+    debugger;
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
@@ -15,9 +15,11 @@ $(document).on('click', ".DeletefromPOButton", function () {
 
         jsonData["product_id"] = selectedProject.data("product_id");
         jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+        var po_id = $('#newAddStyleForm #po_id').val();
+        var product_id = selectedProject.data("product_id");
         $.ajax({
 
-            url: location.origin + '/styles/deleteFromPO/' + selectedProject.data("product_id"),
+            url: location.origin + '/styles/deleteFromPO/' + product_id + "/" + po_id,
             dataType: 'json',
             type: 'get',
             //contentType: 'application/json',

@@ -42,7 +42,7 @@ namespace itemService.Interfaces
         Task<String> SetProductItemForPhotoshoot(int skuId, int status);
         Task<List<Items>> GetItemGroupByProductId(int PO_id);
         Task<Object> GetBarcode(int barcode);
-        Task<bool> DeleteItemByProduct(string id);
+        Task<bool> DeleteItemByProduct(string id,string po_id);
     }
     public class ItemRepo : ItemRepository
     {
@@ -962,11 +962,14 @@ namespace itemService.Interfaces
         Input:  int product id
         output: bool status
         */
-        public async Task<bool> DeleteItemByProduct(string id)
+        public async Task<bool> DeleteItemByProduct(string id, string po_id)
         {
+            //SELECT (EXISTS(SELECT * FROM items WHERE item_status_id != 1 AND product_id = "+ product_id+ " AND po_id= "+po_id)) AS IsNotReceived
+            //SELECT (EXISTS(SELECT * FROM items WHERE item_status_id != 1 AND po_id= 601 AND product_id =10001)) AS IsNotReceived
             bool status = false;
             int product_id = int.Parse(id);
-            string sQuery = "delete FROM items WHERE product_id="+ product_id;
+            //IfExist then 
+            string sQuery = "delete FROM items WHERE product_id = "+ product_id+ "and po_id= "+po_id;
             try
             {
                 using (IDbConnection conn = Connection)
