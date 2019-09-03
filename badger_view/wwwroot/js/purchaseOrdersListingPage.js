@@ -745,7 +745,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     }
                 }
 
-                window.purchaseorderrownumber = "";
+               
             }
 
             //alertBox('poAlertMsg', 'green', 'Purchase order is updated');
@@ -775,8 +775,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                         alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
                         console.log("File uploaded.");
-                        setTimeout(function () { $("#EditPurhaseOrderDocument[data-id='" + poid + "']").find(".redDotDoc").addClass("redDOtElement"); }, 2000);
+                        table.cell(purchaseorderrownumber, 12).data('<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc redDOtElement"></div><i class="fa fa-upload h3"></i></a>').draw();
                     }
+                    window.purchaseorderrownumber = "";
                 });
             }
 
@@ -1365,7 +1366,7 @@ $(document).on('click', ".podeleteImage", function (e) {
         if (data != '0')
             _this.parents('.documentsLink').remove();
 
-        if ($('#modaladddocument .po_doc_section a').length == 0) {
+        if ($('#modaladddocument .po_doc_section a:visible').length == 0) {
             $("#EditPurhaseOrderDocument[data-id='" + poid + "']").find(".redDotDoc").removeClass("redDOtElement");
         }
     });
