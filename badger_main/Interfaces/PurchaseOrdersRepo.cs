@@ -91,7 +91,7 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + ";");
+                var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + " where po_status != 2 AND po_status != 4;");
                 return result.FirstOrDefault();
             }
         }
