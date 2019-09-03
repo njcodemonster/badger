@@ -202,6 +202,8 @@ var table = $('#purchaseorderlists').DataTable({
     "pageLength": 50
 });
 
+$('.total_purchase_order_count').text(table.rows().count());
+
 window.purchaseorderrownumber = "";
 $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
     window.purchaseorderrownumber = table.row(this)[0][0];
