@@ -488,7 +488,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("vendor_invoice_number", PurchaseOrdersToUpdate.vendor_invoice_number);
                 }
-                if (PurchaseOrdersToUpdate.vendor_order_number != 0)
+                if (PurchaseOrdersToUpdate.vendor_order_number != null)
                 {
                     ValuesToUpdate.Add("vendor_order_number", PurchaseOrdersToUpdate.vendor_order_number.ToString());
                 }

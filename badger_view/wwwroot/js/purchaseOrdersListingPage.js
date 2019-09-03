@@ -133,7 +133,7 @@
         Input:any keypress
         output: true/false
     */
-    $("#poTotalStyles,#poOrderNumber,.poTracking").on("keydown", function (event) {
+    $("#poTotalStyles,.poTracking").on("keydown", function (event) {
         return isNumber(event);
     });
 
@@ -148,7 +148,7 @@
         Input:any keypress
         output: true/false
     */
-    $("#poNumber,#poInvoiceNumber").on("keydown", function (event) {
+    $("#poNumber,#poInvoiceNumber,#poOrderNumber").on("keydown", function (event) {
         var ctrlDown = event.ctrlKey || event.metaKey // Mac support
         var inputValue = event.which;
         if (ctrlDown || inputValue == 189) {
