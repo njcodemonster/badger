@@ -173,5 +173,24 @@ namespace badger_view.Controllers
                 return "0";
             }
         }
+
+        /*
+        Developer: Hamza Haq
+        Date: 9-03-19
+        Request: GET
+        Action:Get vendor Products for autocomplete
+        URL: /product/autosuggest/{vendor_id}/{productname}
+        Input: Vendor ID and product name
+        output: productList
+        */
+        [Authorize]
+        [HttpGet("product/autosuggest/{vendor_id}/{productname}")]
+        public async Task<string> Autosuggest(int vendor_id, string productname)
+        {
+            SetBadgerHelper();
+
+            var  ProductList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getProductsbyVendor/" + vendor_id + "/" + productname);
+            return JsonConvert.SerializeObject(ProductList);
+        }
     }
 }

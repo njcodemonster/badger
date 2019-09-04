@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using badger_view.Helpers;
+using GenericModals.Models;
+using System.Dynamic;
+using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Authorization;
+
+namespace badger_view.Controllers
+{
+    public class AttributesController : Controller
+    {
+        private readonly IConfiguration _config;
+        private BadgerApiHelper _BadgerApiHelper;
+        public AttributesController(IConfiguration config, ILoginHelper LoginHelper)
+        {
+            _config = config;
+        }
+        private void SetBadgerHelper()
+        {
+            if (_BadgerApiHelper == null)
+            {
+                _BadgerApiHelper = new BadgerApiHelper(_config);
+            }
+        }
+        /*
+        Developer: Hamza Haq
+        Date:9-04-19 
+        Action: Get All sku sizes from database
+        URL: attributes/getskusizes
+        Input: None
+        output: Categories list
+        */
+        [Authorize]
+        [HttpGet("attributes/getskusizes")]
+        public async Task<object> GetSkuSizes()
+        {
+            SetBadgerHelper();
+            var skuSizesList = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            return skuSizesList;
+        }
+    }
+}

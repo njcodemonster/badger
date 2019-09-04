@@ -215,12 +215,12 @@ namespace badgerApi.Controllers
          output: old item id
         */
         [HttpGet("getitems/{po_id}/{sku}")]
-        public async Task<string> getitemsAsync( int po_id,string sku)
+        public async Task<string> getitemsAsync(int po_id, string sku)
         {
             string itemQuantity = "0";
             try
             {
-                itemQuantity= await _ItemsHelper.GenericGetsAsync("/item/GetitemCountBySkuStatus/" + po_id.ToString()+"/"+ sku+"/1");
+                itemQuantity = await _ItemsHelper.GenericGetsAsync("/item/GetitemCountBySkuStatus/" + po_id.ToString() + "/" + sku + "/1");
             }
             catch (Exception ex)
             {
@@ -666,6 +666,22 @@ namespace badgerApi.Controllers
             return isDeleted;
         }
 
+        /*
+       Developer: Hamza Haq
+       Date: 9-03-19
+       Request: GET
+       Action:Get vendor Products for autocomplete
+       URL: /product/getProductsbyVendor/{vendor_id}/{productname}
+       Input: Vendor ID and product name
+       output: productList
+       */
+
+        [HttpGet("getProductsbyVendor/{vendor_id}/{productname}")]
+        public async Task<string> getProductsbyVendor(int vendor_id, string productname)
+        {
+            var ProductList = await _ProductRepo.GetProductsbyVendorAutoSuggest(vendor_id, productname);
+            return JsonConvert.SerializeObject(ProductList);
+        }
 
     }
 }

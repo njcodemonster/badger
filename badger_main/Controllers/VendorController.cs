@@ -84,14 +84,14 @@ namespace badgerApi.Controllers
            output: vendor products
        */
         // GET: api/list/products/id
-        [HttpGet("list/products/{id}")]
-        public async Task<List<Product>> ListVendorProducts(string id)
+        [HttpGet("list/products/{id}/{product_id}")]
+        public async Task<List<Product>> ListVendorProducts(string id,int product_id)
         {
 
             List<Product> ToReturn = new List<Product>();
             try
             {
-                ToReturn = await _productRepository.GetProductsByVendorId(id);
+                ToReturn = await _productRepository.GetProductsByVendorId(id, product_id);
             }
             catch (Exception ex)
             {
