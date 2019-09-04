@@ -1,5 +1,4 @@
 ﻿$(document).on('click', "#AddNewBarcodeButton", function () {
-    debugger;
     $('#AddBarcodeForm input').removeClass('errorFeild');
     $('#AddBarcodeForm .errorMsg').remove();
     $('#modalAddBarcode').modal('show');
@@ -8,7 +7,6 @@
 });
 
 $(document).on('click', "#EditBarcode", function () {
-    debugger;
     $('#AddBarcodeForm input').removeClass('errorFeild');
     $('#AddBarcodeForm .errorMsg').remove();
     $('#modalAddBarcode').modal('show');
@@ -18,19 +16,16 @@ $(document).on('click', "#EditBarcode", function () {
         id = -1;
     }
     $('#barcodeid').val(id);
-    
     $('#BarcodeFrom').val($(this).data("from"));
     $('#BarcodeTo').val($(this).data("to"));
     $('#Size').val($(this).data("size"));
 });
 
 $(document).on('click', ".SaveBarcodeButton", function () {
-    debugger;
     AddBarcode();
 });
 
 $("#AddBarcodeForm #BarcodeFrom").on("keydown", function (event) {
-    debugger;
     if (event.which == 13) {
         AddBarcode();
         return false;
@@ -38,7 +33,6 @@ $("#AddBarcodeForm #BarcodeFrom").on("keydown", function (event) {
     return isNumber(event);
 });
 $("#AddBarcodeForm #BarcodeTo").on("keydown", function (event) {
-    debugger;
     if (event.which == 13) {
         AddBarcode();
         return false;
@@ -47,7 +41,6 @@ $("#AddBarcodeForm #BarcodeTo").on("keydown", function (event) {
 });
 
 $("#AddBarcodeForm #Size").on("keydown", function (event) {
-    debugger;
     if (event.which == 13) {
         AddBarcode();
         return false;

@@ -689,7 +689,6 @@ $(document).on("change", ".item_sku", function () {
                                     var itemdata = JSON.parse(jsondata);
                                     var id = itemdata.item_id
                                     itemdata.sku = sku;
-                                    itemdata.sku_family = sku;
                                     $("input#" + item_id).val(JSON.stringify(itemdata));
 
                                     console.log($("input#" + item_id).val());

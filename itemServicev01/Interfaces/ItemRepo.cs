@@ -43,8 +43,8 @@ namespace itemService.Interfaces
         Task<String> SetProductItemForPhotoshoot(int skuId, int status);
         Task<List<Items>> GetItemGroupByProductId(int PO_id);
         Task<Object> GetBarcode(int barcode);
-        Task<bool> DeleteItemByProduct(string id);
         Task<bool> DeleteBySku(Items NewItem, int qty);
+        Task<bool> DeleteItemByProduct(string id,string po_id);
     }
     public class ItemRepo : ItemRepository
     {
@@ -1014,16 +1014,37 @@ namespace itemService.Interfaces
         Input:  int product id
         output: bool status
         */
-        public async Task<bool> DeleteItemByProduct(string id)
+        public async Task<bool> DeleteItemByProduct(string id, string po_id)
         {
             bool status = false;
             int product_id = int.Parse(id);
-            string sQuery = "delete FROM items WHERE product_id=" + product_id;
+            //Check Existence 
+            string sQuery = "SELECT (EXISTS(SELECT * FROM items WHERE item_status_id != 1 AND product_id = " + product_id + " AND po_id= " + po_id +" )) AS IsNotReceived";
             try
             {
                 using (IDbConnection conn = Connection)
                 {
-                    var a = await conn.QueryAsync<string>(sQuery);
+                    var Exist = await conn.QueryAsync<string>(sQuery);
+                    if (Exist != null)
+                    {
+                        //check if it exist or not
+                        if (Exist.FirstOrDefault()=="0") 
+                        {
+                            //The Item is not recieved in any row
+                            sQuery = "delete FROM items WHERE product_id = " + product_id + " and po_id= " + po_id;
+                             var res = await conn.QueryAsync<string>(sQuery);
+                            return true;
+                        }
+                        else 
+                        {
+                            //False return no item can be deleted because it has some record other then not received
+                            status = false;
+                        }
+                    }
+                    else
+                    {
+                        status = false;
+                    }
                     status = true;
 
                 }

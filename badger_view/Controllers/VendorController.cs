@@ -114,9 +114,6 @@ namespace badger_view.Controllers
         }
 
 
-
-
-
         /*
             Developer: Azeem Hassan
             Date: 7-3-19 
@@ -446,16 +443,19 @@ namespace badger_view.Controllers
             Input: vendor id
             output: vendor products and sku
         */
-        [Authorize]
-        [HttpGet("vendor/products/{id}")]
-        public async Task<Object> GetVendorProducts(Int32 id)
+        //[Authorize]
+        [HttpGet("vendor/products/{id}/{product_id}/{po_id}")]
+        public async Task<Object> GetVendorProducts(Int32 id,int product_id,int po_id)
         {
             SetBadgerHelper();
             dynamic vendorProductsandSku = new ExpandoObject();
-            vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString());
+
+            vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString()+"/"+product_id);
+            vendorProductsandSku.productLineItemList = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/lineitems/" + product_id.ToString() + "/" + po_id.ToString());
+
             vendorProductsandSku.vendor = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/" + id.ToString());
-            vendorProductsandSku.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
-            vendorProductsandSku.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
+            //vendorProductsandSku.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            //vendorProductsandSku.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
 
             return JsonConvert.SerializeObject(vendorProductsandSku);
         }

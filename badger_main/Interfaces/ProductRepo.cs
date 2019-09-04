@@ -28,7 +28,7 @@ namespace badgerApi.Interfaces
         Task AttributeUpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task<String> CreateProductAttribute(ProductAttributes NewProductAttribute);
         Task<String> CreateAttributeValues(ProductAttributeValues NewProductAttributeValues);
-        Task<List<Product>> GetProductsByVendorId(String Vendor_id);
+        Task<List<Product>> GetProductsByVendorId(String Vendor_id, int product_id);
         Task<IEnumerable<ProductProperties>> GetProductProperties(string id);
         Task<string> CreatePOLineitems(PurchaseOrderLineItems NewLineitem);
         Task<string> UpdatePoLineItems(PurchaseOrderLineItems NewLineitem);
@@ -45,7 +45,8 @@ namespace badgerApi.Interfaces
         Task<Object> GetProduct(string product_name);
         Task<Object> GetProductIdsByPurchaseOrder();
         Task<Object> GetPublishedProductIds(string poids);
-        Task<bool> DeleteProduct(string product_id);
+        Task<bool> DeleteProduct(string product_id,string po_id);
+        Task<Object> GetProductsbyVendorAutoSuggest(int vendor_id, string productName);
     }
     public class ProductRepo : IProductRepository
     {
@@ -172,7 +173,7 @@ namespace badgerApi.Interfaces
         Input:string vendor id
         output: List of products by vendor id
         */
-        public async Task<List<Product>> GetProductsByVendorId(String Vendor_id)
+        public async Task<List<Product>> GetProductsByVendorId(String Vendor_id,int product_id)
         {
             IEnumerable<Product> toReturn;
             //List<Product> toReturn = new List<Product>();
@@ -210,6 +211,7 @@ namespace badgerApi.Interfaces
                     " INNER JOIN attribute_values av ON pa.value_id=av.value_id" +
                     " where product.product_id = vendor_products.product_id and ISNULL(pa.sku)=0 and pa.sku <> '' " +
                     " and product.vendor_id=" + Vendor_id + " " +
+                    " and product.product_id=" + product_id + " " +
                     " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +
                     ",product.product_discount  ,product.product_cost ,product.product_retail " +
                     ",product.published_status  ,product.is_on_site_status ,product.created_by  ,product.updated_by ,product.updated_at  ,product.created_at ,vendor_products.vendor_color_code ,vendor_products.vendor_product_code ";
@@ -612,25 +614,29 @@ namespace badgerApi.Interfaces
         Input: int product_id
         output: boolean
       */
-        public async Task<bool> DeleteProduct(string product_id)
+        public async Task<bool> DeleteProduct(string product_id,string po_id)
         {
             bool res = false;
             try
             {
                 using (IDbConnection conn = Connection)
                 {
-                    String DeleteQuery = "delete FROM purchase_order_line_items WHERE product_id= " + product_id;
+                    String DeleteQuery ="delete FROM purchase_order_line_items WHERE product_id= " + product_id+ " AND po_id = "+po_id;
                     var updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+
+                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id + " AND po_id = " + po_id;
                     updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+
+
+                    // DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
+
+                    // DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
+                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    //  DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
+                    //   updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    //  DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
+                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
                     res = true;
                 }
             }
@@ -641,6 +647,24 @@ namespace badgerApi.Interfaces
             return res;
         }
 
+        /*
+        Developer: Hamza Haq
+        Date: 9-3-19 
+        Action: Get All products by vendor and product name
+        Input: vendor id and product name
+        output: list of product list
+        */
+        public async Task<Object> GetProductsbyVendorAutoSuggest(int vendor_id, string productName)
+        {
+            dynamic vendorDetails = new ExpandoObject();
+            string sQuery = "SELECT product_id as value, product_name as label FROM product WHERE vendor_id=" + vendor_id + " and product_name LIKE '%" + productName + "%';";
+            using (IDbConnection conn = Connection)
+            {
+                vendorDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return vendorDetails;
+        }
     }
 }
 

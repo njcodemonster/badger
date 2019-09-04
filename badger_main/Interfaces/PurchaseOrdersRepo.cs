@@ -202,7 +202,7 @@ namespace badgerApi.Interfaces
         {
 
             dynamic OpenPoLineItemDetails = new ExpandoObject();
-            string sQuery = "SELECT A.*  FROM( SELECT purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
+            string sQuery = "SELECT A.*  FROM( SELECT purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.product_cost,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
 
             if (Limit > 0)
             {
@@ -230,6 +230,8 @@ namespace badgerApi.Interfaces
             string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
                                 a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
+                                (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
+                                b.vendor_code ,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id

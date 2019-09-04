@@ -189,7 +189,9 @@ function GetTags(SelectedStyleType) {
         processData: true,
 
     }).always(function (data) {
-        $("#productDetailPage").html(data.responseText);
+        debugger;
+       
+        $("#productDetailPage").html(data);
         var arr = JSON.parse( $('#tagsinDB').val());
         tag_added_inDB = new Array();
         for (var i = 0; i < arr.length; i++) {
@@ -229,7 +231,7 @@ $(document).on('click', "#AddSubCat", function () {
 
         $('#modalAddSubCategory #ParentCategorySelect option').remove();
         $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value=''>Choose...</option>");
-
+       data= JSON.parse(data);
         data = data.vendorProducts;
         if (data.length) {
             for (i = 0; i < data.length; i++) {

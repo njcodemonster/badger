@@ -130,7 +130,7 @@ namespace badger_view.Controllers
             cat.Add("category_name", category_name);
             cat.Add("category_parent_id", category_parent_id);
             ParentCategoryID = await _BadgerApiHelper.GenericPostAsyncString<String>(cat.ToString(Formatting.None), "/CategoryOption/createParentCategory");
-          
+
             return ParentCategoryID;
         }
 
@@ -149,21 +149,21 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             int category_id = json.Value<Int32>("category_id");
-            JArray added= json.Value<JArray>("tag_added");
+            JArray added = json.Value<JArray>("tag_added");
             JArray newAdded = new JArray();
             List<CategoryOptions> categories = new List<CategoryOptions>();
             foreach (var item in added)
             {
                 JObject cat = new JObject();
-                cat.Add("attribute_id" , Convert.ToInt32(item.Value<Int32>()));
+                cat.Add("attribute_id", Convert.ToInt32(item.Value<Int32>()));
                 cat.Add("category_id", category_id);
-                cat.Add("created_at",_common.GetTimeStemp());
+                cat.Add("created_at", _common.GetTimeStemp());
                 newAdded.Add(cat);
             }
             string insert_status = "True";
             if (added.Count > 0)
             {
-                 insert_status = await _BadgerApiHelper.GenericPostAsyncString<string>(newAdded.ToString(Formatting.None), "/CategoryOption/createCategoryOption");
+                insert_status = await _BadgerApiHelper.GenericPostAsyncString<string>(newAdded.ToString(Formatting.None), "/CategoryOption/createCategoryOption");
             }
             JArray removed = json.Value<JArray>("tag_removed");
             JArray newRemoved = new JArray();
@@ -175,15 +175,31 @@ namespace badger_view.Controllers
                 newRemoved.Add(cat);
             }
             string delete_status = "True";
-            if (newRemoved.Count>0)
+            if (newRemoved.Count > 0)
             {
                 delete_status = await _BadgerApiHelper.GenericPostAsyncString<string>(newRemoved.ToString(Formatting.None), "/CategoryOption/deleteCategoryOption");
             }
-            if(insert_status.ToLower() == "true" && delete_status.ToLower() == "true")
-                 return "true";
+            if (insert_status.ToLower() == "true" && delete_status.ToLower() == "true")
+                return "true";
             else
                 return "false";
         }
 
+        /*
+        Developer: Hamza Haq
+        Date:9-03-19 
+        Action: Get All categories from database
+        URL: categoryoption/GetCategories
+        Input: None
+        output: Categories list
+        */
+        [Authorize]
+        [HttpGet("categoryoption/GetCategories")]
+        public async Task<List<Categories>> GetAllCategories()
+        {
+            SetBadgerHelper();
+            var CategoryList = await _BadgerApiHelper.GenericGetAsync<List<Categories>>("/categories/list");
+            return CategoryList;
+        }
     }
 }

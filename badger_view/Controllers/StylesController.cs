@@ -452,12 +452,13 @@ namespace badger_view.Controllers
         Input: HTML form with the data of product
         output: status of deletion
         */
-        [HttpGet("/styles/deleteFromPO/{product_id}")]
-        public async Task<bool> DeleteStyle(int product_id)
-        {
-            SetBadgerHelper();
-            var response = await _BadgerApiHelper.GenericGetAsync<bool>("/product/delete/" + product_id.ToString());
-            return response;
-        }
-    }
+		[HttpGet("/styles/deleteFromPO/{product_id}/{po_id}")]
+		public async Task<bool> DeleteStyle(int product_id,int po_id)
+		{
+			SetBadgerHelper();
+			var response = await _BadgerApiHelper.GenericGetAsync<bool>("/product/delete/" + product_id.ToString()+"/"+po_id.ToString());
+            string a = po_id.ToString();
+			return response;
+		}
+	}
 }

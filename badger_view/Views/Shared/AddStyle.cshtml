@@ -18,12 +18,10 @@
                 <div class="container">
                     <form id="newAddStyleForm">
                         <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-6" id="div_styleSuggest">
                                 <label>Link to existing product</label>
-                                <select id="ExistingProductSelect" class="form-control">
-                                    <option selected data-name="" value="">Choose...</option>
-                                    <option>...</option>
-                                </select>
+                                <input type="text" class="form-control d-inline-block autocomplete" id="tb_StyleNameSuggest">
+                                
                             </div>
                         </div>
                         <div class="form-row">
@@ -92,7 +90,7 @@
                             </div>
                             <div class="form-group col-md-4 text-center">
                                 <button type="button" id="AddNewStyleButton" data-action="refreshValue" class="btn btn-success btn-sm AddNewStyleButton">Add another style</button><br />
-                                <button type="button" id="AddStyleButton" data-action="closepop" class="btn btn-primary btn-sm mt-2 AddNewStyleButton">Add and view P.O.</button><br />
+                                <button type="button" id="AddStyleButton" class="btn btn-primary btn-sm mt-2 AddNewStyleButton">Add and view P.O.</button><br />
                                 <button type="button" class="btn btn-light btn-sm mt-2">Add and check-in</button>
                             </div>
                         </div>
