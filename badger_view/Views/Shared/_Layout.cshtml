@@ -7,20 +7,14 @@
     <link rel="icon" href="~/images/favicon.png" sizes="32x32">
     <title>@ViewData["Title"] - Badger</title>
 
-    @* <environment include="Development">
-            <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-            <link rel="stylesheet" href="~/css/site.css" />
-            <!-- Data Table -->
-            <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css" />
-            <!-- Font Awesome -->
-            <link rel="stylesheet" href="~/lib/fontawesome/css/all.css">
-            <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
-        </environment>
-
-        <enviroment exclude="Development">
-            <link rel="stylesheet" href="~/css/cssBundle.min.css" />
-        </enviroment>*@
-    <link rel="stylesheet" href="~/css/cssBundle.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <!-- Data Table -->
+    <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" />
 
     @RenderSection("Head_Scripts", required: false)
 </head>
@@ -121,11 +115,12 @@
         <script src="~/js/jquery-ui.js"></script>*@
 
     <!-- Multiselect css last location -->
+    <script src="~/lib/bootstrap/dist/js/popper.js"></script>
     <script src="~/js/jsBundle.min.js"></script>
-    
+
     <environment include="Development">
         <script src="~/js/site.js"></script>
-        <script src="~/js/addstylepopup.js" ></script>
+        <script src="~/js/addstylepopup.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="~/js/sitejs.min.js" asp-append-version="true"></script>
