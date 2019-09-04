@@ -1031,7 +1031,7 @@ namespace itemService.Interfaces
                         if (Exist.FirstOrDefault()=="0") 
                         {
                             //The Item is not recieved in any row
-                            sQuery = "delete FROM items WHERE product_id = " + product_id + "and po_id= " + po_id;
+                            sQuery = "delete FROM items WHERE product_id = " + product_id + " and po_id= " + po_id;
                              var res = await conn.QueryAsync<string>(sQuery);
                             return true;
                         }

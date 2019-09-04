@@ -619,10 +619,10 @@ namespace badgerApi.Interfaces
             {
                 using (IDbConnection conn = Connection)
                 {
-                    String DeleteQuery ="delete FROM purchase_order_line_items WHERE product_id= " + product_id+ "AND po_id = "+po_id;
+                    String DeleteQuery ="delete FROM purchase_order_line_items WHERE product_id= " + product_id+ " AND po_id = "+po_id;
                     var updateResult = await conn.QueryAsync<object>(DeleteQuery);
 
-                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id + "AND po_id = " + po_id;
+                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id + " AND po_id = " + po_id;
                     updateResult = await conn.QueryAsync<object>(DeleteQuery);
 
 
