@@ -142,6 +142,22 @@ namespace badgerApi.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
+        Action: Count of purchase orders "api/purchaseorders/count"
+        URL: api/purchaseorders/count
+        Request: Get
+        Input: /count
+        output: Count of Purchase Orders
+        */
+        [HttpGet("documentcount/{poid}")]
+        public async Task<string> DocumentCountAsync(int poid)
+        {
+            return await _PurchaseOrdersRepo.DocumentCount(poid);
+
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
         Action: Get purchase order list page view limit and count "api/purchaseorders/listpageview/10/boolean"
         URL: api/purchaseorders/listpageview/10/boolean
         Request: Get
@@ -394,6 +410,34 @@ namespace badgerApi.Controllers
             try
             {
                 documents = await _NotesAndDoc.GenericGetDocAsync<Documents>(ref_id, note_type, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get documents with message" + ex.Message);
+
+            }
+
+            return documents;
+
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order document by doc id and limit  "api/purchaseorders/getdocument/ref_id/limit"
+        URL: api/purchaseorders/getdocument/doctype/ref_id/limit
+        Request: Get
+        Input: int ref_id, int limit 
+        output: List of Purchase Orders document
+        */
+        [HttpGet("getdocument/{ref_id}/{doctype}/{limit}")]
+        public async Task<List<Documents>> GetDocumentViewAsync(int ref_id, int doctype, int limit)
+        {
+            List<Documents> documents = new List<Documents>();
+            try
+            {
+                documents = await _NotesAndDoc.GenericGetDocAsync<Documents>(ref_id, doctype, limit);
             }
             catch (Exception ex)
             {

@@ -41,6 +41,11 @@ namespace badger_view.Controllers
 
         ILoggerFactory _loggerFactory;
 
+        private int original_po = 4;
+        private int shipment_invoice = 7;
+        private int main_shipment_invoice = 8;
+        private int other = 9;
+
         public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory)
         {
             _LoginHelper = LoginHelper;
@@ -284,7 +289,12 @@ namespace badger_view.Controllers
 
             dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
 
-            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+            //dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+
+            dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + original_po + "/0");
+            dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + shipment_invoice + "/0");
+            dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + main_shipment_invoice + "/0");
+            dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + other + "/0");
 
             dynamic purchaseOrderTracking = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorderstracking/gettracking/" + id.ToString());
 
@@ -297,7 +307,11 @@ namespace badger_view.Controllers
             purchaseOrdersData.purchase_order = purchaseOrder;
             purchaseOrdersData.vendor = vendorData;
             purchaseOrdersData.notes = purchaseOrderNote;
-            purchaseOrdersData.documents = purchaseOrderDocs;
+            //purchaseOrdersData.documents = purchaseOrderDocs;
+            purchaseOrdersData.originalpo = originalpo;
+            purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+            purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+            purchaseOrdersData.others = others;
             purchaseOrdersData.tracking = purchaseOrderTracking;
             purchaseOrdersData.ledger = getLedger;
             purchaseOrdersData.discount = getDiscount;
@@ -1185,8 +1199,15 @@ namespace badger_view.Controllers
 
             dynamic purchaseOrdersData = new ExpandoObject();
 
-            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
-            purchaseOrdersData.documents = purchaseOrderDocs;
+            dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + original_po + "/0");
+            dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + shipment_invoice + "/0");
+            dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + main_shipment_invoice + "/0");
+            dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + other + "/0");
+
+            purchaseOrdersData.originalpo = originalpo;
+            purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+            purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+            purchaseOrdersData.others = others;
 
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
@@ -1651,8 +1672,8 @@ namespace badger_view.Controllers
                 }
                 else
                 {
-                    dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + json.Value<string>("po_id") + "/0");
-                    if (purchaseOrderDocs.Count == 0)
+                    dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/documentcount/" + json.Value<string>("po_id"));
+                    if (purchaseOrderDocs == 0)
                     {
                         JObject purchaseOrderStatusDoc = new JObject();
                         purchaseOrderStatusDoc.Add("has_doc", 2);
@@ -1804,7 +1825,11 @@ namespace badger_view.Controllers
             dynamic purchaseOrdersData = new ExpandoObject();
 
             dynamic purchaseOrderTracking = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorderstracking/gettracking/" + poid.ToString());
-            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + poid.ToString() + "/0");
+            //dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + poid.ToString() + "/0");
+            dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + original_po + "/0");
+            dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + shipment_invoice + "/0");
+            dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + main_shipment_invoice + "/0");
+            dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + other + "/0");
 
             dynamic ItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetItemsGroupByProductId/" + poid.ToString());
 
@@ -1885,7 +1910,11 @@ namespace badger_view.Controllers
             
 
             purchaseOrdersData.itemsList = newItemsList;
-            purchaseOrdersData.documents = purchaseOrderDocs;
+            //purchaseOrdersData.documents = purchaseOrderDocs;
+            purchaseOrdersData.originalpo = originalpo;
+            purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+            purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+            purchaseOrdersData.others = others;
             purchaseOrdersData.tracking = purchaseOrderTracking;
 
             return JsonConvert.SerializeObject(purchaseOrdersData);

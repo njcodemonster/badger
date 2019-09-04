@@ -44,7 +44,49 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
             }
 
             $(".po_doc_section").empty();
-            if (data.documents.length > 0) {
+            $(".po_doc_section").addClass('d-none');
+            if (data.originalpo.length > 0) {
+
+                $(data.originalpo).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
+
+            if (data.shipmentinvoice.length > 0) {
+
+                $(data.shipmentinvoice).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
+
+            if (data.mainshipmentinvoice.length > 0) {
+
+                $(data.mainshipmentinvoice).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
+
+            if (data.others.length > 0) {
+
+                $(data.others).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
+
+
+            /*if (data.documents.length > 0) {
 
                 $(data.documents).each(function (e, i) {
                     $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
@@ -54,7 +96,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
             } else {
                 $(".po_doc_section").addClass('d-none');
-            }
+            }*/
 
 
             $(".poTracking").val("");
@@ -165,17 +207,18 @@ $(document).on('click', ".submit-check-in", function () {
                 $.ajax({
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
-                    data: formData,
-                    
+                    data: formData,                   
                     processData: false,
                     contentType: false,
-                }).always(function (data) {
-                    console.log(data);
-                    if (data == "0") {
+                }).always(function (docdata) {
+                    console.log(docdata);
+                    if (docdata.indexOf('File Already') > -1) {
+                        alertBox('poAlertMsg', 'red', docdata);
+                    } else if (docdata == "0") {
                         console.log("Exception Error");
-                       // alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
+                        alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
-                       // console.log(data.responseText);
+                        $("#EditPurhaseOrderDocument[data-id='" + po_id + "']").find(".redDotDoc").addClass("redDOtElement");
                     }
                 });
             }

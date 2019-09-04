@@ -406,23 +406,17 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                 totalstyle = 0;
             }
 
-            if (order_date == undefined) {
-                order_date = "";
+            if (orderdate == undefined) {
+                orderdate = "";
 
             } 
             if (delieveryRange != "") {
                 $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             } else {
-                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), order_date, vendorname, totalstyle, 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             }
 
             table.page('last').draw('page');
-
-            $('#modalPurchaseOrder').modal('hide');
-
-           
-
-
 
             //alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             var fileLength = $("#poUploadImage")[0].files.length;
@@ -447,7 +441,9 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     contentType: false,
                 }).always(function (docdata) {
                     console.log(docdata);
-                    if (docdata == "0") {
+                    if (docdata.indexOf('File Already') > -1) {
+                        alertBox('poAlertMsg', 'red', docdata);
+                    } else if (docdata == "0") {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
@@ -455,7 +451,10 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
                     }
                 });
             }
-            
+
+
+            $('#modalPurchaseOrder').modal('hide');
+
             alertBox('poAlertMsg', 'green', 'Purchase order inserted successfully.');
             
             $('#newPurchaseOrderForm')[0].reset();
@@ -788,9 +787,11 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                     data: formData,
                     processData: false,
                     contentType: false,
-                }).always(function (data) {
-                    console.log(data);
-                    if (data == "0") {
+                }).always(function (docdata) {
+                    console.log(docdata);
+                    if (docdata.indexOf('File Already') > -1) {
+                        alertBox('poAlertMsg', 'red', docdata);
+                    } else if (docdata == "0") {
                         console.log("Exception Error");
                         alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
@@ -1011,20 +1012,55 @@ $(document).on("click", "#EditPurhaseOrderDocument", function () {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
+        //var docs = data['documents'];
 
-        var docs = data['documents'];
+        var originalpo = data['originalpo'];
+        var shipmentinvoice = data['shipmentinvoice'];
+        var mainshipmentinvoice = data['mainshipmentinvoice'];
+        var others = data['others'];
+        
         $(".po_doc_section").empty();
-        if (docs.length > 0) {
+        $(".po_doc_section").addClass('d-none');
+        if (originalpo.length > 0) {
 
-            $(docs).each(function (e, i) {
+            $(originalpo).each(function (e, i) {
                 $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
             });
 
             $(".po_doc_section").removeClass('d-none');
 
-        } else {
-            $(".po_doc_section").addClass('d-none');
+        } 
+
+        if (shipmentinvoice.length > 0) {
+
+            $(shipmentinvoice).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        } 
+
+        if (mainshipmentinvoice.length > 0) {
+
+            $(mainshipmentinvoice).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        } 
+
+        if (others.length > 0) {
+
+            $(others).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
         }
+
         $(".poDocAlertMsg").empty();
         $("#modaladddocument").modal("show");        
     });
@@ -1074,7 +1110,7 @@ $(document).on("click", "#document_submit", function () {
             } else {
                 _self.attr("disabled", false);
                 if (data.indexOf('File Already') > -1) {
-                    //$(".poDocAlertMsg").css("color", "red").text(data.responseText);
+                    $(".poDocAlertMsg").css("color", "red").text(data);
                 } else {    
                     $("#EditPurhaseOrderDocument[data-id='" + poid + "']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
@@ -1205,7 +1241,55 @@ function purchaseOrderData(data) {
             $("#newPurchaseOrderForm #poNotes").val(note);
         }
 
-        var docs = data['documents'];
+        var originalpo = data['originalpo'];
+        var shipmentinvoice = data['shipmentinvoice'];
+        var mainshipmentinvoice = data['mainshipmentinvoice'];
+        var others = data['others'];
+
+        $(".po_doc_section").empty();
+        $(".po_doc_section").addClass('d-none');
+        if (originalpo.length > 0) {
+
+            $(originalpo).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        }
+
+        if (shipmentinvoice.length > 0) {
+
+            $(shipmentinvoice).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        }
+
+        if (mainshipmentinvoice.length > 0) {
+
+            $(mainshipmentinvoice).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        }
+
+        if (others.length > 0) {
+
+            $(others).each(function (e, i) {
+                $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+            });
+
+            $(".po_doc_section").removeClass('d-none');
+
+        }
+
+
+        /*var docs = data['documents'];
         $(".po_doc_section").empty();
         if (docs.length > 0) {
 
@@ -1217,7 +1301,7 @@ function purchaseOrderData(data) {
             
         } else {
             $(".po_doc_section").addClass('d-none');
-        }
+        }*/
 
         $(".poTracking").removeAttr("id");
         $(".poTracking").val("");
@@ -1401,7 +1485,7 @@ $(document).on("change", "#poUploadImages,#poUploadImage", function () {
     $('.modal-footer:visible').find('button').attr('disabled',true)
 })
 $(document).on("click", ".docCategorieSubmit", function () {
-    $('#poUploadImages').attr('data-categorie', $('.docCategorie:checked').attr('data-value'))
+    $('#poUploadImages,#poUploadImage').attr('data-categorie', $('.docCategorie:checked').attr('data-value'))
     $('.modal-footer:visible').find('button').attr('disabled', false)
     $('.docTypeSection').remove();
 })

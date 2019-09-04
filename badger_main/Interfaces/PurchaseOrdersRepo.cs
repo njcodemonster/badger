@@ -41,6 +41,7 @@ namespace badgerApi.Interfaces
         Task<PoClaim> GetClaim(int poId);
         Task<Object> GetPOList(string search);
         Task<List<PurchaseOrders>> CheckPOExist(string colname, string colvalue);
+        Task<string> DocumentCount(int poid);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -92,6 +93,22 @@ namespace badgerApi.Interfaces
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + ";");
+                return result.FirstOrDefault();
+            }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Total document count of purchase order data from database
+        Input: int poid
+        output: string of PurchaseOrders document count
+        */
+        public async Task<string> DocumentCount(int poid)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync<String>("select count(doc_id) from documents where ref_id ="+poid+";");
                 return result.FirstOrDefault();
             }
         }
