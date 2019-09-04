@@ -730,7 +730,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
 
         if (data == "Success") {
             
-            if (window.purchaseorderrownumber != "" && window.purchaseorderrownumber >= 0) {
+            if (window.purchaseorderrownumber >= 0) {
                 var reddot = "";
                 if (note != "") {
                     reddot = "redDOtElement";
@@ -806,7 +806,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             $("#newPurchaseOrderForm").attr("data-currentid", "");
             $('#modalPurchaseOrder').modal('hide');
             alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
-            if (window.purchaseorderrownumber != "" && window.purchaseorderrownumber >= 0) {
+            if (window.purchaseorderrownumber >= 0) {
                 $('#newPurchaseOrderForm')[0].reset();
             }
 
