@@ -143,7 +143,7 @@ $(document).on("click", "#mainSaveButton", function () {
     $.ajax({
 
         url: '/categoryoption/updateattributes/',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(datatosend),
@@ -183,13 +183,15 @@ function GetTags(SelectedStyleType) {
     debugger;
     $.ajax({
         url: '/CategoryOption/GetTagsSubCategoryWise/' + SelectedStyleType,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
 
     }).always(function (data) {
-        $("#productDetailPage").html(data.responseText);
+        debugger;
+       
+        $("#productDetailPage").html(data);
         var arr = JSON.parse( $('#tagsinDB').val());
         tag_added_inDB = new Array();
         for (var i = 0; i < arr.length; i++) {
@@ -218,7 +220,7 @@ $(document).on('click', "#AddSubCat", function () {
     $.ajax({
        
         url: '/categoryoption/getParentCategory/',
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -229,7 +231,7 @@ $(document).on('click', "#AddSubCat", function () {
 
         $('#modalAddSubCategory #ParentCategorySelect option').remove();
         $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value=''>Choose...</option>");
-
+       data= JSON.parse(data);
         data = data.vendorProducts;
         if (data.length) {
             for (i = 0; i < data.length; i++) {
@@ -288,7 +290,7 @@ function SaveSubCategory() {
     $.ajax({
 
         url: location.origin + '/Category/Create',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),

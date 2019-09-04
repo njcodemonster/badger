@@ -9,7 +9,7 @@ namespace GenericModals.Event
         public EventModel(string tableName)
         {
             Table = tableName;
-          //  CreatedAt = CommonHelper.CommonHelper.GetTimeStamp();
+            CreatedAt = CommonHelper.CommonHelper.GetTimeStamp();
         }
         public int EventId { get; set; }
         public int EntityId { get; set; }
@@ -19,6 +19,7 @@ namespace GenericModals.Event
         public int UserId { get; set; }
         public double CreatedAt { get; set; }
         public string Table { get; set; }
+        public int EventNoteId { get; set; }
 
     }
 }

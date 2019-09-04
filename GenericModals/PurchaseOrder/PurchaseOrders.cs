@@ -11,7 +11,7 @@ namespace GenericModals.PurchaseOrder
         public int po_id { get; set; }
         public string vendor_po_number { get; set; }
         public string vendor_invoice_number { get; set; }
-        public int? vendor_order_number { get; set; }
+        public string vendor_order_number { get; set; }
         public int vendor_id { get; set; }
         public int? defected { get; set; }
         public int? good_condition { get; set; }

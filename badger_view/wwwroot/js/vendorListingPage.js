@@ -124,7 +124,7 @@ $(document).on('click', "#NewVendorButton", function () {
     $.ajax({
 
         url: '/vendor/newvendor',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -149,7 +149,7 @@ $(document).on('click', "#NewVendorButton", function () {
                     url: "/vendor/newvendor_logo",
                     type: 'POST',
                     data: formData,
-                    dataType: 'json',
+                    
                     processData: false,
                     contentType: false,
                 }).always(function (data) {
@@ -357,7 +357,7 @@ $(document).on('click', "#EditVendorButton", function () {
     $.ajax({
 
         url: '/vendor/updatevendor/'+id,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -382,7 +382,7 @@ $(document).on('click', "#EditVendorButton", function () {
                         url: "/vendor/newvendor_logo",
                         type: 'POST',
                         data: formData,
-                        dataType: 'json',
+                        
                         processData: false,
                         contentType: false,
                     }).always(function (data) {
@@ -629,7 +629,7 @@ $(document).on('click', "#addVendorNote", function () {
         jsonData["vendor_notes"] = $('#vendorNote').val();
          $.ajax({
             url: '/vendor/insertvendornote/' + id,
-            dataType: 'json',
+            
             type: 'post',
             contentType: 'application/json',
             data: JSON.stringify(jsonData),
@@ -672,7 +672,7 @@ $(document).on('click', ".deleteImage", function (event) {
     jsonData["Vendor_id"] =  $("#newVendorForm").data("currentID");
     $.ajax({
         url: "/vendor/deletevendor_logo",
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data:  JSON.stringify(jsonData) ,
@@ -738,7 +738,7 @@ $('#vendorListingArea').on('page.dt', function () {
         $.ajax({
             url: "/vendor/listpagination/" + start_total + "/30",
             type: 'GET',
-            dataType: 'json',
+            
             processData: false,
             contentType: false,
         }).always(function (data) {

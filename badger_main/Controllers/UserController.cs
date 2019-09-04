@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using badgerApi.Helper;
 using GenericModals.Models;
 using Newtonsoft.Json;
+using GenericModals.Event;
 
 namespace badgerApi.Controllers
 {
@@ -24,6 +25,10 @@ namespace badgerApi.Controllers
         private INotesAndDocHelper _NotesAndDoc;
         private int note_type = 5;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+
+        string user_login = "user_login";
+        string user_logout = "user_logout";
+
         public UserController(ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IUserRepo UserRepo,IEventRepo eventRepo)
         {
             _eventRepo = eventRepo;
@@ -51,8 +56,16 @@ namespace badgerApi.Controllers
             {
                 LogiDetails logiDetails = JsonConvert.DeserializeObject<LogiDetails>(value);
                 _user = await _UserRepo.AuthenticateUser(logiDetails);
-                _eventRepo.AddEventAsync(35, _user.user_id, _user.user_id, "User login with credentials", _common.GetTimeStemp(), "user_events");
 
+                var userEvent = new EventModel("user_events")
+                {
+                    EventName = user_login,
+                    EntityId = _user.user_id,
+                    RefrenceId = _user.user_id,
+                    UserId = _user.user_id,
+                    EventNoteId = _user.user_id
+                };
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -78,7 +91,17 @@ namespace badgerApi.Controllers
             {
                 dynamic LogiDetails = JsonConvert.DeserializeObject<Object>(value);
                 int user_id = LogiDetails.user_id;
-                _eventRepo.AddEventAsync(36,user_id,user_id, "User logout from site", _common.GetTimeStemp(), "user_events");
+
+                var userEvent = new EventModel("user_events")
+                {
+                    EventName = user_logout,
+                    EntityId = user_id,
+                    RefrenceId = user_id,
+                    UserId =user_id,
+                    EventNoteId = user_id
+                };
+                await _eventRepo.AddEventAsync(userEvent);
+
                 result = "1";
             }
             catch (Exception ex)

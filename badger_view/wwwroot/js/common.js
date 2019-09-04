@@ -139,7 +139,7 @@ function allLetterAllow(event) {
     /***** Copy past ctrl+C ctrl+V ctrl+A ctrl+X **************/
     var ctrlDown = event.ctrlKey || event.metaKey // Mac support
 
-    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88) || charCode == 9) {
+    if (ctrlDown && (inputValue == 65 || inputValue == 17 || inputValue == 86 || inputValue == 67 || inputValue == 88) || inputValue == 9) {
         return true;
     }
 

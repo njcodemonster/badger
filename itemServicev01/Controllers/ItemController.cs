@@ -22,7 +22,7 @@ namespace itemService.Controllers
         public ItemController(ItemRepository _ItemReposit, ILoggerFactory loggerFactory)
         {
             _ItemRepository = _ItemReposit;
-            _loggerFactory  = loggerFactory;
+            _loggerFactory = loggerFactory;
         }
 
         /*
@@ -61,7 +61,7 @@ namespace itemService.Controllers
         */
         [HttpGet("list/id/{ItemId}")]
         public async Task<List<Items>> id(string ItemId)
-        {   
+        {
             List<Items> ToRetrunItems = new List<Items>();
             try
             {
@@ -71,7 +71,7 @@ namespace itemService.Controllers
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for get Item with message" + ex.Message); 
+                logger.LogInformation("Problem happened in selecting the data for get Item with message" + ex.Message);
                 return ToRetrunItems;
             }
         }
@@ -87,7 +87,7 @@ namespace itemService.Controllers
         */
         [HttpGet("list/barcode/{Barcode}")]
         public async Task<List<Items>> barcode(string Barcode)
-        {  
+        {
             List<Items> ToRetrun = new List<Items>();
             try
             {
@@ -118,7 +118,7 @@ namespace itemService.Controllers
             List<Items> ToRetrun = new List<Items>();
             try
             {
-                 ToRetrun = await _ItemRepository.GetItemByBagNumber(BagNumber);
+                ToRetrun = await _ItemRepository.GetItemByBagNumber(BagNumber);
                 return ToRetrun;
             }
             catch (Exception ex)
@@ -139,7 +139,7 @@ namespace itemService.Controllers
         output: List of Items
         */
         [HttpGet("list/skuFamily/{skuFamily}/{Limit}")]
-        public async Task<List<Items>> skuFamily(string skuFamily, int Limit )
+        public async Task<List<Items>> skuFamily(string skuFamily, int Limit)
         {
             List<Items> ToRetrun = new List<Items>();
             try
@@ -297,7 +297,7 @@ namespace itemService.Controllers
             }
         }
 
-        
+
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
@@ -524,7 +524,7 @@ namespace itemService.Controllers
         output: New item id
         */
         [HttpPost("create/{qty}")]
-        public async Task<string> PostAsync([FromBody]   string value,int qty = 0)
+        public async Task<string> PostAsync([FromBody]   string value, int qty = 0)
         {
             string NewInsertionID = "0";
             try
@@ -534,6 +534,46 @@ namespace itemService.Controllers
                 {
                     NewInsertionID = await _ItemRepository.Create(newItems);
                 }
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Item with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+        /*Developer: Hamza Haq
+        Date:30-8-19
+        Action:get HTML Form(uodate items Data) from badger api and pass the data to items Repo
+        URL: /item/update/{quantity}
+        Input: HTML form Body Json with the data of new item(s)
+        output: New item id
+        */
+        [HttpPost("update/{qty}")]
+        public async Task<string> updatePostAsync([FromBody]   string value, int qty = 0)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                Items newItems = JsonConvert.DeserializeObject<Items>(value);
+                if (qty > newItems.original_qty)
+                {
+                    qty -= newItems.original_qty;
+
+                    for (int loop = 0; loop < qty; loop++)
+                    {
+                        NewInsertionID = await _ItemRepository.Create(newItems);
+                    }
+                }
+                else
+                {
+                    int qtytoDelete = 0;
+                    qtytoDelete = newItems.original_qty - qty;
+                    await _ItemRepository.DeleteBySku(newItems, qtytoDelete);
+
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -556,16 +596,17 @@ namespace itemService.Controllers
         [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
         public async Task<string> UpdateProductItemForPhotoshoot([FromBody]   string value, int status)
         {
-            string toReturn= "success";
+            string toReturn = "success";
             string response = "";
             try
             {
-                dynamic ProductSkuList  = JsonConvert.DeserializeObject(value);
+                dynamic ProductSkuList = JsonConvert.DeserializeObject(value);
                 foreach (var ExpendJson in ProductSkuList)
                 {
                     string SkuListString = ExpendJson.ToString();
                     int splidIds = SkuListString.Count(c => c == ':');
-                    if (splidIds > 0) {
+                    if (splidIds > 0)
+                    {
                         string ids = SkuListString.Split(":").Last();
                         ids = ids.Replace("\"", "");
                         var idsList = ids.Split(",");
@@ -573,7 +614,8 @@ namespace itemService.Controllers
                         {
                             int skuIdValue = Int32.Parse(skuid.ToString().Trim());
                             response = await _ItemRepository.SetProductItemForPhotoshoot(skuIdValue, status);
-                            if (response == "success") {
+                            if (response == "success")
+                            {
                                 break;
                             }
                         }
@@ -603,7 +645,7 @@ namespace itemService.Controllers
         */
         [HttpPut("update/{id}")]
         public async Task<string> Update(int id, [FromBody] string value)
-        { 
+        {
             string UpdateResult = "Success";
             bool UpdateProcessOutput = false;
             try
@@ -759,7 +801,7 @@ namespace itemService.Controllers
                 if (ItemToUpdate.sku_id != 0)
                 {
                     ValuesToUpdate.Add("sku_id", ItemToUpdate.sku_id.ToString());
-                } 
+                }
                 if (ItemToUpdate.product_id != 0)
                 {
                     ValuesToUpdate.Add("product_id", ItemToUpdate.product_id.ToString());
@@ -801,7 +843,7 @@ namespace itemService.Controllers
                     ValuesToUpdate.Add("updated_at", ItemToUpdate.updated_at.ToString());
                 }
 
-                 await _ItemRepository.UpdateSpeific(ValuesToUpdate, "item_id=" + id);
+                await _ItemRepository.UpdateSpeific(ValuesToUpdate, "item_id=" + id);
             }
             catch (Exception ex)
             {
@@ -901,5 +943,36 @@ namespace itemService.Controllers
 
             return status;
         }
+
+        /*
+        Developer: Hamza Haq
+        Date: 31-08-19 
+        Action: Get items count by sku and status ID
+        URL: api/item/GetitemCountBySkuStatus/{po_id}/{sku}/{item_status_id}
+        Request: Get
+        Input: string po_id , sku , item status id
+        output:  ItemQty
+        */
+        [HttpGet("GetitemCountBySkuStatus/{po_id}/{sku}/{item_status_id}")]
+        public async Task<String> GetitemCountBySkuStatus(string po_id, string sku, string item_status_id)
+        {
+            String ItemQty = "0";
+            try
+            {
+                ItemQty = await _ItemRepository.GetitemCountBySkuStatus(po_id, sku, item_status_id);
+
+            }
+            catch (Exception ex)
+            {
+             
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get barcode with message" + ex.Message);
+
+            }
+
+            return ItemQty;
+        }
+
+        
     }
 }

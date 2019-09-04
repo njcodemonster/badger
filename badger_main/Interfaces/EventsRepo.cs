@@ -110,7 +110,7 @@ namespace badgerApi.Interfaces
                 var eventTypeModel = GetEventTypeByName(eventModel.EventName);
                 var eventNote = eventTypeModel.EventDescription
                     .Replace("%%userId%%", eventModel.UserId.ToString())
-                    .Replace("%%entityId%%", eventModel.EntityId.ToString());
+                    .Replace("%%entityId%%", eventModel.EventNoteId > 0 ? eventModel.EventNoteId.ToString() : eventModel.EntityId.ToString());
                 eventModel.EventNotes = eventNote;
                 eventModel.EventId = eventTypeModel.EventId;
                 using (IDbConnection conn = Connection)

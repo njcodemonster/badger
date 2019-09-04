@@ -56,9 +56,9 @@ namespace badgerApi.Interfaces
             {
                 IEnumerable<Barcode> result = new List<Barcode>();
                 if (limit > 0)
-                    result = await conn.QueryAsync<Barcode>("Select * from " + TableName + " limit " + start + "," + limit + ";");
+                    result = await conn.QueryAsync<Barcode>("Select * from " + TableName + " ORDER BY size DESC limit " + start + "," + limit + ";");
                 else
-                    result = await conn.QueryAsync<Barcode>("Select * from " + TableName + ";");
+                    result = await conn.QueryAsync<Barcode>("Select * from " + TableName + " ORDER BY size DESC ;");
                 return result.ToList();
             }
         }
