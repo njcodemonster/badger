@@ -309,7 +309,7 @@ label.error {
 
 .ui-widget.ui-widget-content, .ui-front{
     z-index: 9999 !important;
-    position:absolute !important;
+    /*position:absolute !important;*/
 }
 .loading-box-light {
     display: none;
