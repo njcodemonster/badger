@@ -15,13 +15,15 @@ $(document).on('click', ".DeletefromPOButton", function () {
 
         jsonData["product_id"] = selectedProject.data("product_id");
         jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+        var po_id = parseInt($('#newAddStyleForm #po_id').val());
+        var product_id = selectedProject.data("product_id");
         $.ajax({
 
-            url: location.origin + '/styles/deleteFromPO/' + selectedProject.data("product_id"),
-            
+            url: location.origin + '/styles/deleteFromPO/' + product_id + '/' + po_id,
+            dataType: 'json',
             type: 'get',
             //contentType: 'application/json',
-            data: JSON.stringify(jsonData),
+            //data: JSON.stringify(jsonData),
             processData: false,
 
         }).always(function (data) {

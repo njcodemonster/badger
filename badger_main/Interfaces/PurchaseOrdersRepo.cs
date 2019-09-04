@@ -185,7 +185,7 @@ namespace badgerApi.Interfaces
         {
 
             dynamic OpenPoLineItemDetails = new ExpandoObject();
-            string sQuery = "SELECT A.*  FROM( SELECT purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
+            string sQuery = "SELECT A.*  FROM( SELECT purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.product_cost,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
 
             if (Limit > 0)
             {
@@ -218,7 +218,7 @@ namespace badgerApi.Interfaces
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
                                 LEFT JOIN users u ON poc.inspect_claimer = u.user_id
                                 LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
-                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
+                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
             if (limit > 0)
             {
                 sQuery += " limit "+ start + "," + limit + ";";

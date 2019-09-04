@@ -9,7 +9,8 @@ Action: Checkin button click
 output: Checkin Model Show
 */
 $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
-
+    $('.docTypeSection').remove();
+    $('.modal-footer').find('button').attr('disabled', false)
     var producthtml = "";
     var po_number = $(this).parents("tr").children("td:first").text();
     var vendor = $(this).parents("tr").children("td:nth-child(3)").text();
@@ -28,7 +29,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     $('.loading').removeClass("d-none");
     $.ajax({
         url: '/purchaseorders/PurchaseOrderItemDetails/' + poid,
-        
+        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -142,7 +143,7 @@ $(document).on('click', ".submit-check-in", function () {
     }).always(function (data) {
         console.log(data);
 
-        if (data.responseText == "Success") {
+        if (data == "Success") {
 
             $('.postatus-' + po_id).text('Recieved');
             $('.checked-' + po_id).removeClass('btn-warning').addClass('btn-success').removeAttr('id').text('Checked-In');
@@ -156,7 +157,7 @@ $(document).on('click', ".submit-check-in", function () {
 
                 var formData = new FormData();
                 formData.append('po_id', po_id);
-
+                formData.append('doc_type', $("#poUploadImages").attr('data-categorie'));
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
                 }
@@ -172,9 +173,9 @@ $(document).on('click', ".submit-check-in", function () {
                     console.log(data);
                     if (data == "0") {
                         console.log("Exception Error");
-                        alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
+                       // alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
-                        console.log(data.responseText);
+                       // console.log(data.responseText);
                     }
                 });
             }
@@ -219,10 +220,10 @@ $(document).on('click', ".add-check-in", function () {
     }).always(function (data) {
         console.log(data);
 
-        if (data.responseText == "Success") {
+        if (data == "Success") {
             alertInnerBox('poAlertMsg', 'green', 'Purchase order updated successfully');
         } else {
-            alertInnerBox('poAlertMsg', 'red', 'Purchase order is not updated');
+           // alertInnerBox('poAlertMsg', 'red', 'Purchase order is not updated');
         }
         $('.poAlertMsg .alert').css({ 'width': '100%', 'margin-top': '-15px' })
 

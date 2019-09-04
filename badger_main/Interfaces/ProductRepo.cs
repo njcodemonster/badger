@@ -45,7 +45,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetProduct(string product_name);
         Task<Object> GetProductIdsByPurchaseOrder();
         Task<Object> GetPublishedProductIds(string poids);
-        Task<bool> DeleteProduct(string product_id);
+        Task<bool> DeleteProduct(string product_id,string po_id);
     }
     public class ProductRepo : IProductRepository
     {
@@ -612,25 +612,29 @@ namespace badgerApi.Interfaces
         Input: int product_id
         output: boolean
       */
-        public async Task<bool> DeleteProduct(string product_id)
+        public async Task<bool> DeleteProduct(string product_id,string po_id)
         {
             bool res = false;
             try
             {
                 using (IDbConnection conn = Connection)
                 {
-                    String DeleteQuery = "delete FROM purchase_order_line_items WHERE product_id= " + product_id;
+                    String DeleteQuery ="delete FROM purchase_order_line_items WHERE product_id= " + product_id+ " AND po_id = "+po_id;
                     var updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+
+                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id + " AND po_id = " + po_id;
                     updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
-                    updateResult = await conn.QueryAsync<object>(DeleteQuery);
+
+
+                    // DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
+                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
+
+                    // DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
+                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    //  DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
+                    //   updateResult = await conn.QueryAsync<object>(DeleteQuery);
+                    //  DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
+                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
                     res = true;
                 }
             }
