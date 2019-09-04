@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    if (window.location.href.indexOf('PurchaseOrdersCheckIn/') > -1) {
+    if (window.location.href.indexOf('PurchaseOrdersCheckIn/Single/') > -1) {
         $('.collapsButton').click()
     }
 });

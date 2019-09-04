@@ -15,7 +15,7 @@
 <div class="loading d-none"></div>
 <div class="row">
     <div class="col-md-3 col-sm-12">
-        <h4 class="text-info">Open Purchase Orders (<span class="total_purchase_order_count"></span>)</h4>
+        <h4 class="text-info">Open Purchase Orders (<span class="total_purchase_order_count">@Model.PurchaseOrdersCount</span>)</h4>
     </div>
     <div class="col-md-9">
         <button type="button" class="btn btn-success btn-sm model_purchase_order" data-toggle="modal" data-target="#modalPurchaseOrder">
@@ -77,7 +77,7 @@
                             }
                         </td>
                         <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
-                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><a class="text-danger font-weight-bold" target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id"><span class="postatus-@purchaseOrders.po_id">Not Recieved</span></a></td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><a class="text-danger font-weight-bold" target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/Single/@purchaseOrders.po_id"><span class="postatus-@purchaseOrders.po_id">Not Recieved</span></a></td>
                     }
                     else
                     {
@@ -89,7 +89,7 @@
                         </td>
                         <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
                         <td>
-                            <a target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id">
+                            <a target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/Single/@purchaseOrders.po_id">
                                 @if (@purchaseOrders.po_status == 1)
                                 {
                                     <span class="postatus-@purchaseOrders.po_id">Open</span>

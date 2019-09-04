@@ -92,7 +92,15 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + ";");
+                //var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + ";");
+
+                string sQuery = @"SELECT count(a.po_id) FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
+                                LEFT JOIN po_claim poc ON a.po_id = poc.po_id
+                                LEFT JOIN users u ON poc.inspect_claimer = u.user_id
+                                LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
+                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
+                var result = await conn.QueryAsync<String>(sQuery);
+
                 return result.FirstOrDefault();
             }
         }
