@@ -41,6 +41,8 @@
 
   <ItemGroup>
    
+    <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
+   
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.1" />
    
     <PackageReference Include="Microsoft.AspNetCore.App">
