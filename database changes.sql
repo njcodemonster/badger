@@ -27,3 +27,5 @@ UPDATE `document_type` SET `doc_type` = 'Original PO' WHERE `doc_type_id` = '4';
 INSERT INTO `document_type` (`doc_type`) VALUES ('Shipment Invoice'); 
 INSERT INTO `document_type` (`doc_type`) VALUES ('Main Shipment Invoice'); 
 INSERT INTO `document_type` (`doc_type`) VALUES ('Other'); 
+
+ALTER TABLE `purchase_orders` CHANGE `vendor_order_number` `vendor_order_number` VARCHAR(150) NOT NULL; 
