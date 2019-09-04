@@ -1005,7 +1005,7 @@ namespace badger_view.Controllers
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
             if (id == 0)
             {
-                 purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+                 purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/200/false");
 
             }
             else
@@ -1024,12 +1024,15 @@ namespace badger_view.Controllers
             //PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
-            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges); 
+            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges);
+
+            ViewBag.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            ViewBag.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
             return View("PurchaseOrdersCheckIn", PageModal);
         }
 
         //purchaseorders/lineitemsdetails/poid
-        [Authorize]
+        //[Authorize]
         [HttpGet("PurchaseOrders/itemsdetails/{po_id}")]
         public async Task<IActionResult> GetItemsDetailsByPOID(int po_id)
         {
