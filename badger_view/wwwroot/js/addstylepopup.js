@@ -326,8 +326,14 @@ $(document).ready(function () {
                     }
 
                 });
+            } else {
+                $('#tb_StyleNameSuggest').removeClass("errorFeild");
+                $('.errorMsg').remove();
             }
+       
             if (request.term.length == 0) {
+                $('#tb_StyleNameSuggest').removeClass("errorFeild");
+                $('.errorMsg').remove();
                 $('#tb_StyleNameSuggest').val(""); // display the selected text
                 $('#tb_StyleNameSuggest').attr("data-val", "");
                 $('button[data-poid="' + selectedPurchaseOrderID + '"]').trigger("click");
