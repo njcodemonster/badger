@@ -509,10 +509,7 @@ function GetProductDetails(vendor_id, product_id, po_id) {
 
             }
 
-
-            var vendorCode = last_sku_family.substring(0, 2);
-            var sku_number = parseInt(last_sku_family.substr(2));
-            new_sku = vendorCode + sku_number;
+            new_sku = last_sku_family
 
         } else {
             if (data_vendor[0].latest_sku) {
