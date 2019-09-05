@@ -45,7 +45,7 @@ namespace badgerApi.Interfaces
         Task<Object> GetProduct(string product_name);
         Task<Object> GetProductIdsByPurchaseOrder();
         Task<Object> GetPublishedProductIds(string poids);
-        Task<bool> DeleteProduct(string product_id,string po_id);
+        Task<bool> DeleteProduct(string product_id, string po_id);
         Task<Object> GetProductsbyVendorAutoSuggest(int vendor_id, string productName);
     }
     public class ProductRepo : IProductRepository
@@ -173,49 +173,33 @@ namespace badgerApi.Interfaces
         Input:string vendor id
         output: List of products by vendor id
         */
-        public async Task<List<Product>> GetProductsByVendorId(String Vendor_id,int product_id)
+        public async Task<List<Product>> GetProductsByVendorId(String Vendor_id, int product_id)
         {
             IEnumerable<Product> toReturn;
             //List<Product> toReturn = new List<Product>();
             using (IDbConnection conn = Connection)
             {
 
-
-                string querytoRun = "SELECT product.product_id ,product.product_type_id" +
-                    ",product.vendor_id              " +
-                    ",product.product_availability   " +
-                    ",product.published_at           " +
-                    ",product.product_vendor_image   " +
-                    ",product.product_name           " +
-                    ",product.product_url_handle     " +
-                    ",product.product_description    " +
-                    ",product.vendor_color_name      " +
-                    ",product.sku_family             " +
-                    ",product.size_and_fit_id        " +
-                    ",product.wash_type_id           " +
-                    ",product.product_discount       " +
-                    ",product.product_cost           " +
-                    ",product.product_retail         " +
-                    ",product.published_status       " +
-                    ",product.is_on_site_status      " +
-                    ",product.created_by             " +
-                    ",product.updated_by             " +
-                    ",product.updated_at             " +
-                    ",product.created_at             " +
-                    ",vendor_products.vendor_color_code" +
-                    ",vendor_products.vendor_product_code " +
-                    ",(SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories" +
-                    ",CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('attribute_id', pa.attribute_id ,'sku', pa.sku,'vendor_size',av.value)),']') AS JSON) AS skulist " +
-                    " from product INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id " +
-                    " INNER JOIN product_attributes pa ON product.product_id = pa.product_id" +
-                    " INNER JOIN attribute_values av ON pa.value_id=av.value_id" +
-                    " where product.product_id = vendor_products.product_id and ISNULL(pa.sku)=0 and pa.sku <> '' " +
-                    " and product.vendor_id=" + Vendor_id + " " +
-                    " and product.product_id=" + product_id + " " +
-                    " group by product.product_id,product.product_type_id ,product.vendor_id ,product.published_at ,product.product_name ,product.product_url_handle ,product.product_description ,product.vendor_color_name ,product.size_and_fit_id ,product.wash_type_id " +
-                    ",product.product_discount  ,product.product_cost ,product.product_retail " +
-                    ",product.published_status  ,product.is_on_site_status ,product.created_by  ,product.updated_by ,product.updated_at  ,product.created_at ,vendor_products.vendor_color_code ,vendor_products.vendor_product_code ";
-
+                string querytoRun = @"SELECT product.product_id ,product.product_type_id,product.vendor_id ,product.product_availability ,product.published_at ,product.product_vendor_image,product.product_name ,product.product_url_handle     
+                                      ,product.product_description ,product.vendor_color_name ,product.sku_family ,product.size_and_fit_id  ,product.wash_type_id  ,product.product_discount ,product.product_cost  ,product.product_retail ,product.published_status ,product.is_on_site_status  ,product.created_by          
+                                      ,product.updated_by ,product.updated_at  ,product.created_at   ,vendor_products.vendor_color_code,vendor_products.vendor_product_code ,
+                                      (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories
+                                      ,CASE WHEN pa.product_attribute_id IS NOT NULL THEN CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('attribute_id', pa.attribute_id ,'sku', pa.sku,'vendor_size',av.value)),']') AS JSON) ELSE '[]' END AS skulist  
+                                      FROM product 
+                                      INNER JOIN vendor_products ON  product.vendor_id = vendor_products.vendor_id  
+                                      LEFT JOIN product_attributes pa ON product.product_id = pa.product_id  AND ISNULL(pa.sku)=0 AND pa.sku <> '' 
+                                      LEFT JOIN attribute_values av ON pa.value_id=av.value_id
+                                      WHERE product.product_id = vendor_products.product_id 
+                                      AND product.vendor_id=" + Vendor_id + " and product.product_id=" + product_id;
+                querytoRun += @" GROUP BY 
+                 product.product_id ,product.product_type_id,product.vendor_id  ,product.product_availability   ,
+                 product.published_at           ,product.product_vendor_image   ,product.product_name           ,
+                 product.product_url_handle     ,product.product_description    ,product.vendor_color_name      ,
+                 product.sku_family             ,product.size_and_fit_id        ,product.wash_type_id           ,
+                 product.product_discount       ,product.product_cost           ,product.product_retail         ,
+                 product.published_status       ,product.is_on_site_status      ,product.created_by             ,
+                 product.updated_by             ,product.updated_at             ,product.created_at             ,
+                 vendor_products.vendor_color_code,vendor_products.vendor_product_code";
 
                 toReturn = await conn.QueryAsync<Product>(querytoRun);
             }
@@ -614,14 +598,14 @@ namespace badgerApi.Interfaces
         Input: int product_id
         output: boolean
       */
-        public async Task<bool> DeleteProduct(string product_id,string po_id)
+        public async Task<bool> DeleteProduct(string product_id, string po_id)
         {
             bool res = false;
             try
             {
                 using (IDbConnection conn = Connection)
                 {
-                    String DeleteQuery ="delete FROM purchase_order_line_items WHERE product_id= " + product_id+ " AND po_id = "+po_id;
+                    String DeleteQuery = "delete FROM purchase_order_line_items WHERE product_id= " + product_id + " AND po_id = " + po_id;
                     var updateResult = await conn.QueryAsync<object>(DeleteQuery);
 
                     DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id + " AND po_id = " + po_id;
