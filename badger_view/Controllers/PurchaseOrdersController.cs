@@ -1057,7 +1057,7 @@ namespace badger_view.Controllers
 
             if (num > 0)
             {
-                int start = (num * default_pagination);
+                int start = ((num-1)*default_pagination);
 
                 purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/"+start+ "/"+ default_pagination + "/true");
             }

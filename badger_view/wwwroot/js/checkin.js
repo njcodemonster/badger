@@ -274,3 +274,72 @@ $(document).on('click', ".add-check-in", function () {
 
 
 });
+
+
+
+function pagination(length, currentPage, itemsPerPage) {
+    return {
+        total: length,
+        per_page: itemsPerPage,
+        current_page: currentPage,
+        last_page: Math.ceil(length / itemsPerPage),
+        from: ((currentPage - 1) * itemsPerPage) + 1,
+        to: currentPage * itemsPerPage
+    };
+};
+
+//console.log(pagination(100,1,50))
+
+
+function pageNumbers(total, current, itemsPerPage) {
+    var count = Math.ceil(total / itemsPerPage);
+    var shownPages = 5;
+    var result = [];
+    if (current > count - shownPages) {
+        result.push(count - 2, count - 1, count);
+    } else {
+        result.push(current, current + 1, current + 2, '...', count);
+    }
+    return result;
+}
+
+var total = $('.total_purchase_order_count').text();
+
+var currentPage = window.location.href+"/";
+var currentPageNumber = 1;
+
+if (window.location.href.indexOf('PurchaseOrdersCheckIn/Page') > -1) {
+    currentPage = window.location.href.split('Page/')[0];
+    currentPageNumber = window.location.href.split('Page/')[1];
+}
+
+var pagenumberData = pageNumbers(total, currentPageNumber , 50); 
+
+var textData = "";
+
+if (currentPageNumber < 2) {
+    textData += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>Previous</a></li>";
+} else {
+    textData += "<li class='page-item'><a class='page-link' href=" + currentPage + "Page/" + (parseInt(currentPageNumber)-1) + ">Previous</a></li>";
+}
+
+for (i = 0; i < pagenumberData.length; i++) {
+
+    if (pagenumberData[i] == currentPageNumber) {
+        textData += "<li class='page-item active'><a class='page-link' href='javascript:void(0)'>" + pagenumberData[i] + "</a></li>"; 
+    }
+    else if (pagenumberData[i] == '...') {
+        textData += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>...</a></li>";
+    }else {
+        textData += "<li class='page-item'><a class='page-link' href=" + currentPage + "Page/"+pagenumberData[i] + ">" + pagenumberData[i] + "</a></li>"; 
+    }
+}
+
+
+if (currentPageNumber == pagenumberData[pagenumberData.length-1]) {
+    textData += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>Next</a></li>";
+} else {
+    textData += "<li class='page-item'><a class='page-link' href=" + currentPage + "Page/" + (parseInt(currentPageNumber)+1)+">Next</a></li>";
+}
+$('.custom_pagination .pagination').append(textData);
+//console.log(pageNumbers(7,1));

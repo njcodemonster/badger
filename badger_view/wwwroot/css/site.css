@@ -824,3 +824,9 @@ span.errorMsg {
     bottom: -18px;
     left: 5px;
 }
+
+.custom_pagination .pagination {
+    margin: 2px 0;
+    white-space: nowrap;
+    justify-content: flex-end;
+}
