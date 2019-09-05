@@ -178,7 +178,7 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result=default;
+                long result; //=default;
             foreach (var item in category_options)
             {
                 using (IDbConnection conn = Connection)
@@ -208,7 +208,7 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result = default;
+                long result; // = default;
                 foreach (var item in category_options)
                 {
                     using (IDbConnection conn = Connection)
