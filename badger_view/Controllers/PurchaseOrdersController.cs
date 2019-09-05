@@ -1115,6 +1115,9 @@ namespace badger_view.Controllers
 
             ViewBag.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
             ViewBag.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
+
+            PageModal.PurchaseOrdersCount = 1;
+
             return View("PurchaseOrdersCheckIn", PageModal);
         }
 
