@@ -74,7 +74,7 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result = default;
+                long result; // = default;
 
                 using (IDbConnection conn = Connection)
                 {

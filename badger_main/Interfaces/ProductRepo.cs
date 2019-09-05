@@ -884,8 +884,6 @@ namespace badgerApi.Interfaces
             return toReturn;
         }
 
-    }
-
         /*
         Developer: Hamza Haq
         Date: 9-3-19 
