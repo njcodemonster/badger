@@ -108,7 +108,7 @@ function AddToShootSingle(shootProductId, statusId) {
     if (statusId == 1) {
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
-            dataType: 'json',
+            
             type: 'GET',
             contentType: 'application/json',
             processData: false,
@@ -273,7 +273,7 @@ function moveSelectedToPhotoshoot() {
         $("#AddToPhotoshootProductId").val(productAddToShoot.join(","));
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
-            dataType: 'json',
+            
             type: 'GET',
             contentType: 'application/json',
             processData: false,
@@ -605,7 +605,7 @@ $(document).ready(function () {
         photoshootids = photoshootids.join(",");
         $.ajax({
             url: '/photoshoots/getphotoshootnotes/' + photoshootids,
-            dataType: 'json',
+            
             type: 'Get',
             contentType: 'application/json',
         }).always(function (data) {

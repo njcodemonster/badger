@@ -10,7 +10,7 @@ namespace GenericModals.PurchaseOrder
         public int po_id { get; set; }
         public string vendor_po_number { get; set; }
         public string vendor_invoice_number { get; set; }
-        public int vendor_order_number { get; set; }
+        public string vendor_order_number { get; set; }
         public int vendor_id { get; set; }
         public int total_styles { get; set; }
         public decimal shipping { get; set; }
@@ -30,6 +30,10 @@ namespace GenericModals.PurchaseOrder
         public int photos { get; set; }
         public int remaining { get; set; }
         public PoClaim Claim { get; set; }
+        public string latest_sku { get; set; }
+        public string vendor_code { get; set; }
+        
+
 
     }
 

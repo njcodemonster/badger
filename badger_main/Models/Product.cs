@@ -36,6 +36,9 @@ namespace GenericModals.Models
         public string vendor_product_code { get; set; }
         [Write(false)]
         public string productCategories { get; set; }
+        [Write(false)]
+        public string skulist { get; set; }
+        
     }
 
 

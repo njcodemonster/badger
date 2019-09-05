@@ -234,7 +234,17 @@ $(document).on("click", "#mainSaveButton", function () {
     $("select.form-control.dirty").each(function (item) {
         datatosend[$(this).attr("id")] = $(this).val();
     });
-    
+    $.ajax({
+
+        url: '/product/UpdateAttributes',
+        
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(datatosend),
+        processData: false,
+
+    }).always(function (data) { });
+    console.log(datatosend);
 });
 $(document).on("click", ".addMorePoints", function () {
     $(this).removeClass('fa-plus addMorePoints').addClass('fa-minus removeMorePoints');
@@ -263,7 +273,7 @@ function readURLAndUploadImg(event) {
         url: "/product/InsertattributeImages",
         type: 'POST',
         data: formData,
-        dataType: 'json',
+        
         processData: false,
         contentType: false,
     }).always(function (imageData) {
@@ -340,7 +350,7 @@ function drop(ev) {
         jsonData["dataImage"].push({ product_img_id: ev.target.attributes["data-imageid"].value, is_primary: "1" });
         $.ajax({
             url: "/product/UpdateProductImagePrimary",
-            dataType: 'json',
+            
             type: 'post',
             contentType: 'application/json',
             data: JSON.stringify(jsonData),

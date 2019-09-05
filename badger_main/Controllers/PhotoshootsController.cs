@@ -29,9 +29,10 @@ namespace badgerApi.Controllers
         ILoggerFactory _loggerFactory;
         private IEventRepo _eventRepo;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        string table_name = "product_events";
+        string product_event_table_name = "product_events";
         string user_event_table_name = "user_events";
 
+        string photoshoot_created = "photoshoot_created";
         string product_photoshoot_created = "product_photoshoot_created";
         string photoshoot_started = "photoshoot_started";
         string photoshoot_not_started = "photoshoot_not_started";
@@ -299,12 +300,11 @@ namespace badgerApi.Controllers
                 if (countComma > 0)
                 {
                     var ids = productId.Split(",");
-                    var photoshoot_created = "photoshoot_created";
                     foreach (var product_id in ids)
                     {
                         int prodId = Int32.Parse(product_id);
-                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
-                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId, EventNoteId = prodId });
                     }
                 }
             }
@@ -350,18 +350,18 @@ namespace badgerApi.Controllers
                         int ProductId = Int32.Parse(product_id);
                         if (PhotoshootStatus == "1")
                         {
-                            await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = ProductId, RefrenceId = 0, UserId = userId });
-                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = ProductId, RefrenceId = 0, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_started, EntityId = userId, RefrenceId = ProductId, UserId = userId, EventNoteId = ProductId });
                         }
                         else if (PhotoshootStatus == "2")
                         {
-                            await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_sent_to_editor, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
-                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = userId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = userId, RefrenceId = ProductId, UserId = userId, EventNoteId = ProductId });
                         }
                         else if (PhotoshootStatus == "0")
                         {
-                            await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_not_started, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
-                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_not_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_not_started, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                            await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_not_started, EntityId = userId, RefrenceId = ProductId, UserId = userId, EventNoteId = ProductId });
                         }
                     }
                 }
@@ -372,18 +372,18 @@ namespace badgerApi.Controllers
                     int ProductId = Int32.Parse(productId);
                     if (PhotoshootStatus == "1")
                     {
-                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = ProductId, RefrenceId = 0, UserId = userId });
-                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = ProductId, RefrenceId = 0, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_started, EntityId = userId, RefrenceId = ProductId, UserId = userId, EventNoteId = ProductId });
                     }
                     else if (PhotoshootStatus == "2")
                     {
-                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_sent_to_editor, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
-                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = userId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_sent_to_editor, EntityId = userId, RefrenceId = ProductId, UserId = userId, EventNoteId = ProductId });
                     }
                     else if (PhotoshootStatus == "0")
                     {
-                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_not_started, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
-                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_not_started, EntityId = userId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_not_started, EntityId = ProductId, RefrenceId = ProductId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_not_started, EntityId = userId, RefrenceId = ProductId, UserId = userId, EventNoteId = ProductId });
                     }
                 }
 
@@ -559,12 +559,12 @@ namespace badgerApi.Controllers
                     foreach (var product_id in ids)
                     {
                         int prodId = Int32.Parse(product_id);
-                        await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = prodId, RefrenceId = photoshootId, UserId = userId });
+                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = prodId, RefrenceId = photoshootId, UserId = userId });
                     }
                 }
                 else
                 {
-                    await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_started, EntityId = int.Parse(productId), RefrenceId = photoshootId, UserId = userId });
+                    await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = int.Parse(productId), RefrenceId = photoshootId, UserId = userId });
                 }
 
 
@@ -607,8 +607,8 @@ namespace badgerApi.Controllers
                 int userId = PhotoshootToUpdate.Value<int>("updated_by");
                 await _PhotoshootRepo.UpdatePhotoshootForSummary(ValuesToUpdate, " photoshoot_id = " + photoshootId.ToString());
 
-                await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_summmary_updated, EntityId = photoshootId, RefrenceId = photoshootId, UserId = userId });
-                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_summmary_updated, EntityId = userId, RefrenceId = photoshootId, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_summmary_updated, EntityId = photoshootId, RefrenceId = photoshootId, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_summmary_updated, EntityId = userId, RefrenceId = photoshootId, UserId = userId,EventNoteId = photoshootId });
             }
             catch (Exception ex)
             {
@@ -645,8 +645,8 @@ namespace badgerApi.Controllers
                 newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
 
                 int userId = photoshootNote.created_by;
-                await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = photoshoot_note_created, EntityId = ref_id, RefrenceId = ref_id, UserId = userId });
-                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_note_created, EntityId = userId, RefrenceId = ref_id, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_note_created, EntityId = ref_id, RefrenceId = ref_id, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_note_created, EntityId = userId, RefrenceId = ref_id, UserId = userId, EventNoteId = ref_id });
             }
             catch (Exception ex)
             {
@@ -730,8 +730,8 @@ namespace badgerApi.Controllers
                 int userId = newPhotoshoots.created_by;
                 int productId = newPhotoshoots.product_id;
 
-                await _eventRepo.AddEventAsync(new EventModel(table_name) { EventName = product_photoshoot_created, EntityId = productId, RefrenceId = 0, UserId = userId });
-                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = product_photoshoot_created, EntityId = userId, RefrenceId = productId, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = product_photoshoot_created, EntityId = productId, RefrenceId = 0, UserId = userId });
+                await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = product_photoshoot_created, EntityId = userId, RefrenceId = productId, UserId = userId, EventNoteId = productId });
             }
             catch (Exception ex)
             {

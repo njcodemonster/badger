@@ -382,6 +382,54 @@ namespace badgerApi.Controllers
         }
 
         /*
+        Developer: Hamza Haq
+        Date:30-8-19
+        Action:get HTML Form (Update Styles Data) from VIEW and pass the data to items API
+        URL: /product/updateitems/{quantity}
+        Input: HTML form Body Json with the data of new product
+        output: old item id
+       */
+        [HttpPost("updateitems/{qty}")]
+        public async Task<string> updateItemsAsync([FromBody]  string value, int qty)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+
+                NewInsertionID = await _ItemsHelper.GenericPostAsync<String>(value.ToString(), "/item/update/" + qty.ToString());
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+        /*
+         Developer: Hamza Haq
+         Date:31-8-19
+         Action:get Item Count by status - (not received)
+         URL: /product/getitems/{po_id}/{sku}
+         Input: Po ID and Sku
+         output: old item id
+        */
+        [HttpGet("getitems/{po_id}/{sku}")]
+        public async Task<string> getitemsAsync(int po_id, string sku)
+        {
+            string itemQuantity = "0";
+            try
+            {
+                itemQuantity = await _ItemsHelper.GenericGetsAsync("/item/GetitemCountBySkuStatus/" + po_id.ToString() + "/" + sku + "/1");
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new product with message" + ex.Message);
+            }
+            return itemQuantity;
+        }
+
+        /*
         Developer: Azeem Hassan
         Date:7-8-19
         Action: Update specific product by id
@@ -401,11 +449,11 @@ namespace badgerApi.Controllers
                 Product ProductToUpdate = JsonConvert.DeserializeObject<Product>(value);
                 ProductToUpdate.product_id = id;
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                if (ProductToUpdate.product_name != "")
+                if (ProductToUpdate.product_name != null)
                 {
                     ValuesToUpdate.Add("product_name", ProductToUpdate.product_name.ToString());
                 }
-                if (ProductToUpdate.vendor_color_name != "")
+                if (ProductToUpdate.vendor_color_name != null)
                 {
                     ValuesToUpdate.Add("vendor_color_name", ProductToUpdate.vendor_color_name.ToString());
                 }
@@ -422,14 +470,21 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("product_vendor_image", ProductToUpdate.product_vendor_image.ToString());
                 }
-                if (ProductToUpdate.sku_family != string.Empty)
+                if (ProductToUpdate.sku_family != null)
                 {
                     ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
                 }
                 if (ProductToUpdate.wash_type_id != 0)
                 {
-
                     ValuesToUpdate.Add("wash_type_id", ProductToUpdate.wash_type_id.ToString());
+                }
+                if (ProductToUpdate.updated_by != 0)
+                {
+                    ValuesToUpdate.Add("updated_by", ProductToUpdate.updated_by.ToString());
+                }
+                if (ProductToUpdate.updated_at != 0)
+                {
+                    ValuesToUpdate.Add("updated_at", ProductToUpdate.updated_at.ToString());
                 }
                 await _ProductRepo.UpdateSpecific(ValuesToUpdate, "Product_id=" + id);
             }
@@ -536,32 +591,6 @@ namespace badgerApi.Controllers
         /*
         Developer: ubaid
         Date:5-7-19
-        Action:get HTML Form (New Styles SKU Data) from VIEW and pass the data to API product Repo 
-        URL: /product/createSku
-        Input: HTML form Body Json with the data of new SKU values and product_id
-        output: New SKU id
-       */
-        // POST: api/product/create
-        [HttpPost("createSku")]
-        public async Task<string> PostAsyncSku([FromBody]   string value)
-        {
-            string NewInsertionID = "0";
-            try
-            {
-                Sku newSku = JsonConvert.DeserializeObject<Sku>(value);
-                NewInsertionID = await _ProductRepo.CreateSku(newSku);
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new Sku with message" + ex.Message);
-            }
-            return NewInsertionID;
-        }
-
-        /*
-        Developer: ubaid
-        Date:5-7-19
         Action:get HTML Form (New Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
         URL: /product/createLineitems
         Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
@@ -584,6 +613,33 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+        /*
+        Developer: Hamza Haq
+        Date:5-7-19
+        Action:get HTML Form (update Styles LINE ITEMS Data) from VIEW and pass the data to API product Repo 
+        URL: /product/updateLineitems
+        Input: HTML form Body Json with the data of new LINE ITEMS values and product_id
+        output:current LINE ITEM id
+        */
+        // POST: api/product/create   // purchase order line items
+        [HttpPost("updateLineitems")]
+        public async Task<string> UpdateLineitemsAsync([FromBody]   string value)
+        {
+            string NewInsertionID = "0";
+            try
+            {
+                PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
+                NewInsertionID = await _ProductRepo.UpdatePoLineItems(newPOlineitems);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
+            }
+            return NewInsertionID;
+        }
+
         /*
         Developer: ubaid
         Date:13-7-19
@@ -822,7 +878,7 @@ namespace badgerApi.Controllers
 
         }
 
-        
+
 
         /*
        Developer: Rizvan Ali
@@ -833,14 +889,15 @@ namespace badgerApi.Controllers
        output: status
        */
         // POST: api/product/delete
-        [HttpGet("delete/{product_id}")]
-        public async Task<bool> DelAsync(string product_id)
+        [HttpGet("delete/{product_id}/{po_id}")]
+        public async Task<bool> DelAsync(string product_id,string po_id)
         {
             bool isDeleted = false;
             try
             {
-                bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString());
-                isDeleted = await _ProductRepo.DeleteProduct(product_id);
+                bool isItemDeleted = await _ItemsHelper.DeleteItemByProduct(product_id.ToString(), po_id);
+                if (isItemDeleted)
+                    isDeleted = await _ProductRepo.DeleteProduct(product_id, po_id);
                 isDeleted = isItemDeleted && isDeleted;
 
             }
@@ -853,6 +910,22 @@ namespace badgerApi.Controllers
             return isDeleted;
         }
 
+        /*
+       Developer: Hamza Haq
+       Date: 9-03-19
+       Request: GET
+       Action:Get vendor Products for autocomplete
+       URL: /product/getProductsbyVendor/{vendor_id}/{productname}
+       Input: Vendor ID and product name
+       output: productList
+       */
+
+        [HttpGet("getProductsbyVendor/{vendor_id}/{productname}")]
+        public async Task<string> getProductsbyVendor(int vendor_id, string productname)
+        {
+            var ProductList = await _ProductRepo.GetProductsbyVendorAutoSuggest(vendor_id, productname);
+            return JsonConvert.SerializeObject(ProductList);
+        }
 
     }
 }

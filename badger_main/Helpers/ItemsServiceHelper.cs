@@ -10,7 +10,7 @@ using GenericModals.Models;
 namespace badgerApi.Helper
 {
 
-   
+
     public interface IItemServiceHelper
     {
         Task<List<Items>> GetItemsByOrder(int PO_id);
@@ -23,10 +23,12 @@ namespace badgerApi.Helper
         Task<List<Items>> GetItemsGroupByProductId(int PO_id);
         Task<string> ItemSpecificUpdateById(int id, string json);
         Task<object> GetBarcode(int barcode);
+        Task<string> GenericGetsAsync(String _call);
+        Task<T> GenericGetAsync<T>(String _call);
 
-        Task<bool> DeleteItemByProduct(string product_id);
+        Task<bool> DeleteItemByProduct(string product_id,string po_id);
     }
-        public class ItemsServiceHelper:IItemServiceHelper
+    public class ItemsServiceHelper : IItemServiceHelper
     {
         private String ItemApiUrl = "";
 
@@ -38,8 +40,49 @@ namespace badgerApi.Helper
             ItemApiUrl = _config.GetValue<string>("Services:ItemsService");
 
         }
+        /*
+        Developer: Hamza haq
+        Date: 31-8-19 
+        Action: data sends to item api
+        Request: Get 
+        Input: Any Type and URL
+        output: string
+        */
+        public async Task<string> GenericGetsAsync(String _call)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.GetAsync(ItemApiUrl + _call, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
 
+        }
 
+        /*
+        Developer: Hamza Haq
+        Date: 31-8-19 
+        Action: data sends to item api
+        Request: Get 
+        Input: Any Type and URL
+        output: json object 
+        */
+
+        public async Task<T> GenericGetAsync<T>(String _call)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.GetAsync(ItemApiUrl + _call, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(data, settings);
+
+        }
         /*
         Developer: Sajid Khan
         Date: 7-7-19 
@@ -52,7 +95,7 @@ namespace badgerApi.Helper
         public async Task<List<Items>> GetItemsByOrder(int PO_id)
         {
             var client = new HttpClient();
-            var response = await client.GetAsync(ItemApiUrl + "/item/list/listforPO/"+PO_id.ToString(), HttpCompletionOption.ResponseHeadersRead);
+            var response = await client.GetAsync(ItemApiUrl + "/item/list/listforPO/" + PO_id.ToString(), HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             var settings = new JsonSerializerSettings
@@ -118,7 +161,7 @@ namespace badgerApi.Helper
         public async Task<string> ItemUpdateById(int id, string json)
         {
             var client = new HttpClient();
-            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/update/"+id.ToString(), json);
+            var response = await client.PutAsJsonAsync(ItemApiUrl + "/item/update/" + id.ToString(), json);
             response.EnsureSuccessStatusCode();
 
             var data = await response.Content.ReadAsStringAsync();
@@ -183,7 +226,7 @@ namespace badgerApi.Helper
         public async Task<object> GetProductItemsSmallSku(string product_id)
         {
             var client = new HttpClient();
-            var response = await client.GetAsync(ItemApiUrl + "/item/GetProductItemsSmallSku/"+ product_id, HttpCompletionOption.ResponseHeadersRead);
+            var response = await client.GetAsync(ItemApiUrl + "/item/GetProductItemsSmallSku/" + product_id, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
@@ -198,10 +241,10 @@ namespace badgerApi.Helper
         Input:  string json , string status
         output: string of items product data of small sku
         */
-        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json , int status)
+        public async Task<string> SetProductItemStatusForPhotoshootAsync(string json, int status)
         {
             var client = new HttpClient();
-            var response = await client.PostAsJsonAsync(ItemApiUrl + "/item/UpdateProductItemForPhotoshoot/"+ status, json );
+            var response = await client.PostAsJsonAsync(ItemApiUrl + "/item/UpdateProductItemForPhotoshoot/" + status, json);
             response.EnsureSuccessStatusCode();
 
             var data = await response.Content.ReadAsStringAsync();
@@ -220,7 +263,7 @@ namespace badgerApi.Helper
         {
             Boolean result = false;
             var client = new HttpClient();
-            var response = await client.GetAsync(ItemApiUrl + "/item/checkbarcodeexist/"+barcode.ToString(), HttpCompletionOption.ResponseHeadersRead);
+            var response = await client.GetAsync(ItemApiUrl + "/item/checkbarcodeexist/" + barcode.ToString(), HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             if (data == "true")
@@ -262,7 +305,7 @@ namespace badgerApi.Helper
         public async Task<object> GetBarcode(int barcode)
         {
             var client = new HttpClient();
-            var response = await client.GetAsync(ItemApiUrl + "/item/getbarcode/"+barcode, HttpCompletionOption.ResponseHeadersRead);
+            var response = await client.GetAsync(ItemApiUrl + "/item/getbarcode/" + barcode, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
@@ -277,15 +320,17 @@ namespace badgerApi.Helper
         Input:  string product_id
         output: dynamic object of items product data of small sku
         */
-        public async Task<bool> DeleteItemByProduct(string id)
+        public async Task<bool> DeleteItemByProduct(string id,string po_id)
         {
             var client = new HttpClient();
-            var response = await client.DeleteAsync(ItemApiUrl + "/item/deleteItemByProduct/" + id.ToString());
+            var response = await client.DeleteAsync(ItemApiUrl + "/item/deleteItemByProduct/" + id.ToString()+"/"+po_id);
             response.EnsureSuccessStatusCode();
 
             var data = await response.Content.ReadAsStringAsync();
 
             return Convert.ToBoolean(data);
         }
+
+       
     }
 }

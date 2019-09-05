@@ -143,7 +143,7 @@ $(document).on("click", "#mainSaveButton", function () {
     $.ajax({
 
         url: '/categoryoption/updateattributes/',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(datatosend),
@@ -183,13 +183,15 @@ function GetTags(SelectedStyleType) {
     debugger;
     $.ajax({
         url: '/CategoryOption/GetTagsSubCategoryWise/' + SelectedStyleType,
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
 
     }).always(function (data) {
-        $("#productDetailPage").html(data.responseText);
+        debugger;
+       
+        $("#productDetailPage").html(data);
         var arr = JSON.parse( $('#tagsinDB').val());
         tag_added_inDB = new Array();
         for (var i = 0; i < arr.length; i++) {
@@ -218,7 +220,7 @@ $(document).on('click', "#AddSubCat", function () {
     $.ajax({
        
         url: '/categoryoption/getParentCategory/',
-        dataType: 'json',
+        
         type: 'GET',
         contentType: 'application/json',
         processData: true,
@@ -229,7 +231,7 @@ $(document).on('click', "#AddSubCat", function () {
 
         $('#modalAddSubCategory #ParentCategorySelect option').remove();
         $('#modalAddSubCategory #ParentCategorySelect').append("<option id='' value=''>Choose...</option>");
-
+       data= JSON.parse(data);
         data = data.vendorProducts;
         if (data.length) {
             for (i = 0; i < data.length; i++) {
@@ -252,13 +254,30 @@ Output: string of style
 */
 $(document).on('click', ".SaveSubCategoryButton", function () {
     var action = $(this).attr('data-action');
+    SaveSubCategory();
+});
+
+$("#AddCatForm #SubCat").on("keydown", function (event) {
+    debugger;
+    if (event.which == 13) {
+        SaveSubCategory();
+        return false;
+    }
+});
+
+function SaveSubCategory() {
+    var action = 'refreshValue';
+    var SubCat = $('#SubCat').val();
+    if (!SubCat.replace(/\s/g, '').length) {
+        $('#SubCat').val("");
+    }
     if (emptyFeildValidation('AddCatForm') == false) {
         return false;
     }
-  
+
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
-    var SubCat=$('#SubCat').val();
+
     var ParentCategorySelect = $('#ParentCategorySelect option:selected').val();
     jsonData["subCatTitle"] = SubCat;
     jsonData["ParentCatId"] = ParentCategorySelect;
@@ -271,7 +290,7 @@ $(document).on('click', ".SaveSubCategoryButton", function () {
     $.ajax({
 
         url: location.origin + '/Category/Create',
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -291,4 +310,4 @@ $(document).on('click', ".SaveSubCategoryButton", function () {
         }
         $('.poAlertMsg').html('')
     });
-});
+}

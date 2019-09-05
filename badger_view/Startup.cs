@@ -66,11 +66,11 @@ namespace badger_view
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            
+
             if (env.IsDevelopment())
             {
-                 app.UseDeveloperExceptionPage();
-               // LogGloblaErrors(app);
+                app.UseDeveloperExceptionPage();
+                // LogGloblaErrors(app);
             }
             else
             {
@@ -79,15 +79,18 @@ namespace badger_view
 
             //app.UseHsts();
 
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<ClaimtHub>("/claimHub");
-            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
             app.UseAuthentication();
+            WebSocketOptions webSocketOptions = GetAllowedOrigins();
+            app.UseWebSockets(webSocketOptions);
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ClaimtHub>("/claimHub");
+            });
 
             app.UseMvc(routes =>
             {
@@ -95,6 +98,18 @@ namespace badger_view
                     name: "default",
                     template: "{controller=PurchaseOrders}/{action=Index}/{id?}");
             });
+        }
+
+        private WebSocketOptions GetAllowedOrigins()
+        {
+            var webSocketOptions = new WebSocketOptions();
+            var allowedOrigins = Configuration.GetSection("AllowedOrigins").AsEnumerable().Where(x => x.Value != null);
+            foreach (var origin in allowedOrigins)
+            {
+                webSocketOptions.AllowedOrigins.Add(origin.Value);
+            }
+
+            return webSocketOptions;
         }
 
         private void LogGloblaErrors(IApplicationBuilder app)

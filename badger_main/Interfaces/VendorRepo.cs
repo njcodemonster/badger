@@ -33,6 +33,7 @@ namespace badgerApi.Interfaces
         Task<Object> CheckVendorCodeExist(string vendorcode);
         Task<Object> GetVendor(string vendor);
         Task<Object> GetStyleNumber(string stylenumber);
+       
     }
     public class VendorRepo : IVendorRepository
     {

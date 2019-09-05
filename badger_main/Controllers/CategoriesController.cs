@@ -15,10 +15,10 @@ namespace badgerApi.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoriesRepository _CategoriesRepo;
+        private readonly ICategoryRepository _CategoriesRepo;
         ILoggerFactory _loggerFactory;
 
-        public CategoriesController(ICategoriesRepository CategoriesRepo, ILoggerFactory loggerFactory)
+        public CategoriesController(ICategoryRepository CategoriesRepo, ILoggerFactory loggerFactory)
         {
             _CategoriesRepo = CategoriesRepo;
             _loggerFactory = loggerFactory;
