@@ -152,7 +152,7 @@ function general_search() {
                     });
                 } else {
                     img.attr({
-                        src: 'uploads/' + item.image,
+                        src: window.location.origin+'/uploads/' + item.image,
                         //alt: item.label
                     });
                 }
