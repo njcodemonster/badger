@@ -387,7 +387,7 @@ $(document).on('click', "#EditVendorButton", function () {
                         contentType: false,
                     }).always(function (data) {
                         console.log(data);
-                        if (data.responseText.indexOf('File Already') > -1) {
+                        if (data.indexOf('File Already') > -1) {
                             alertBox('vendorAlertMsg', 'red', 'logo already exist');
                         }
                     });
@@ -679,7 +679,7 @@ $(document).on('click', ".deleteImage", function (event) {
         processData: false,
     }).always(function (data) {
         console.log(data);
-        if(data.responseText != '0')
+        if(data != '0')
         _this.parents('.documentsLink').remove()
     });
 });
