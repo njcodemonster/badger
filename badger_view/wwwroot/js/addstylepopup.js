@@ -70,7 +70,13 @@ $(document).on('click', ".AddNewStyleButton", function () {
     var action = $(this).attr('data-action');
     var IsUpdate = false;
     var newVendorForm = $("#newAddStyleForm input");
+
+    if ($('.errorFeild').length>0) {
+        $('.loading').hide();
+        return false;
+    }
     if (emptyFeildValidation('newAddStyleForm') == false) {
+        $('.loading').hide();
         return false;
     }
 
