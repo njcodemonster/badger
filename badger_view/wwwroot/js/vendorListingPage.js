@@ -764,3 +764,8 @@ $(document).on('keydown', '#vendorNote,#vendorDec,#vendorNotes', function (e) {
         return false;
     }
 });
+$(document).on('keydown', '#vendorCode', function (e) {
+    if (e.which === 32) {
+        return false;
+    }
+});
