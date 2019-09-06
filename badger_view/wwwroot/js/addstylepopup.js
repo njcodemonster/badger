@@ -477,7 +477,7 @@ function GetProductDetails(vendor_id, product_id, po_id) {
                 var productImage = data[i].product_vendor_image;
                 if (productImage != null) {
 
-                    $(".style_doc_section").append("<img src='" + productImage + "' width='50' />  <br>");
+                    $(".style_doc_section").append("<img src="+window.location.origin+'/uploads/'+ productImage +" width='50' />  <br>");
                     $(".style_doc_section").removeClass('d-none');
 
                 } else {

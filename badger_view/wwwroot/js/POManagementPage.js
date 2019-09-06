@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     if (window.location.href.indexOf('PurchaseOrdersCheckIn/Single/') > -1) {
-        $('.collapsButton').click()
+        $('.collapsButton').click();
+        $('.total_po_count,.custom_pagination').hide();
     }
 });
 /*
@@ -1008,6 +1009,10 @@ $(document).on("click", "#weight_submit", function () {
                 if (sku.skuData[i].weight == 0) {
                     checkweightzero = true;
                 }                
+            }
+
+            if (checkweightzero == true) {
+                $('#sku_weight').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
             }
 
             if (checkweightzero == false){
