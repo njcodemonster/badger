@@ -22,6 +22,10 @@ namespace GenericModals
         public int Quantity { get; set; }
         public decimal weight { get; set; }
         public int? product_attribute_id { get; set; }
+        public string sku_family { get; set; }
+        public string vendor_color_code { get; set; }
+        public string vendor_product_name { get; set; }
+        public string vendor_product_code { get; set; }
         public List<Items> EndItems { get; set; }
 
     }

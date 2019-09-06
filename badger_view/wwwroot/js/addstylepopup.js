@@ -193,9 +193,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
                 if (IsUpdate == false) {
                     var thenum = new_sku.match(/[a-z]+|[^a-z]+/gi);
                     var finalSkuFamily = thenum[0] + (parseInt(thenum[1]) + 1);
-                    $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').attr("data-skufamily", finalSkuFamily);
+                    $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("skufamily", new_sku);
                     $('.poSkuFamily').text(finalSkuFamily);
-;                   new_sku = finalSkuFamily;
+                    new_sku = finalSkuFamily;
                 }
 
 
