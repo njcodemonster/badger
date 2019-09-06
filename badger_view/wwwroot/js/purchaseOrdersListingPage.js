@@ -1171,7 +1171,7 @@ function purchaseOrderData(data) {
             }            
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
             
-            var it = data.Items.LineItemDetails;
+            var it = data.Items;
             if (it.length > 0) {
                 var quantityUnits = 0;
                 var subCost = 0;
