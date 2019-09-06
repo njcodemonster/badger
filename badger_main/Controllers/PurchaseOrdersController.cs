@@ -1158,6 +1158,33 @@ namespace badgerApi.Controllers
             var response = await _PurchaseOrdersRepo.GetClaim(poId);
             return ResponseHelper.GetResponse(response);
         }
+
+        /*
+        Developer: Rizvan Ali
+        Date: 7-5-19 
+        Action: get and Verify Total Styles available in po as well as in list of items  
+        URL: /purchaseorders/verifyStylesQuantity/id
+        Request: Get
+        Input: int id
+        output: bool
+        */
+        [HttpGet("verifyStylesQuantity/{po_id}")]
+        public async Task<bool> VerifyTotalStyle(int po_id)
+        {
+            bool result = false;
+            try
+            {
+                result = await _PurchaseOrdersRepo.VerifyStyleQuantity(po_id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in verifyng total Style in PO" + ex.Message);
+            }
+
+            return result;
+
+        }
     }
     
 }

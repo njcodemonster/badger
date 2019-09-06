@@ -41,6 +41,7 @@ namespace badgerApi.Interfaces
         Task<PoClaim> GetClaim(int poId);
         Task<Object> GetPOList(string search);
         Task<List<PurchaseOrders>> CheckPOExist(string colname, string colvalue);
+        Task<bool> VerifyStyleQuantity(int poId);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -561,6 +562,39 @@ namespace badgerApi.Interfaces
                 var result = await conn.ExecuteAsync($"UPDATE po_claim set publish_claimer=NULL,publish_claimed_at='{poClaim.publish_claimed_at}'" +
                                                 $" where po_id={poId}");
                 return await GetClaim(poId);
+            }
+        }
+        /*
+        Developer: Sajid Khan
+        Date: 08-09-19 
+        Action: Get seach po by numbers from database 
+        Input: string search
+        output: dynamic list of po data
+        */
+        public async Task<bool> VerifyStyleQuantity(int poid)
+        {
+            string sQuery = "SELECT DISTINCT Output.total_styles FROM (SELECT COUNT(*) AS total_styles  FROM(SELECT purchase_order_line_items.line_item_ordered_quantity Quantity FROM purchase_order_line_items, product, product_attributes, attributes, sku WHERE(purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = "+poid+" AND product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  AND sku.sku = purchase_order_line_items.sku)) AS A WHERE A.Quantity > 0 UNION ALL SELECT total_styles FROM purchase_orders WHERE po_id = "+poid+") AS Output";
+
+            using (IDbConnection conn = Connection)
+            {
+                try
+                {
+                    var res = await conn.QueryAsync<object>(sQuery);
+                    if (res.Count() > 1)
+                    {
+                        //the count is greter than 1 it means that the count of styles are not same on both level 
+                        return false;
+                    }
+                    else
+                    {
+                        //the count of styles are same on both level
+                        return true;
+                    }
+                }
+                catch(Exception ex) {
+                    return false;
+
+                }
             }
         }
     }
