@@ -262,6 +262,13 @@ $(".sku_weight").on("keydown", function (event) {
     return isNumber(event);
 });
 
+$(document).on("keydown", ".sku_weight_field input", function (event) {
+    if ($(this).val().indexOf('.') > -1 && event.which == 190) {
+        return false;
+    }
+    return onlyNumbersWithDot(event);
+});
+
 /*
 Developer: Sajid Khan
 Date: 7-5-19
@@ -834,6 +841,13 @@ function getPurchaseOrdersItemdetails(PO_id) {
             })
             $(".size" + product_id).text(appendData);
         });
+
+        $('.po_tble_list tbody tr').each(function () {
+            if ($(this).attr('data-weight') == 0) {
+                $('#sku_weight').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
+            }
+        });
+
     });
 }
 
@@ -988,10 +1002,18 @@ $(document).on("click", "#weight_submit", function () {
         console.log(data);
         if (data == "Success") {
             result = true;
+            var checkweightzero = false;
             for (i = 0; i < sku.skuData.length; i++) {
-                    $(".table-data-" + productid + " tbody tr[data-skuid='"+sku.skuData[i].sku_id+"']").attr("data-weight", sku.skuData[i].weight);
-                
+                $(".table-data-" + productid + " tbody tr[data-skuid='" + sku.skuData[i].sku_id + "']").attr("data-weight", sku.skuData[i].weight);
+                if (sku.skuData[i].weight == 0) {
+                    checkweightzero = true;
+                }                
             }
+
+            if (checkweightzero == false){
+                $('#sku_weight').addClass('btn-primary').removeClass("btn-success").text("EDIT WEIGHT");
+            }
+
             $('#modaladdweight').modal('hide');
             alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
    

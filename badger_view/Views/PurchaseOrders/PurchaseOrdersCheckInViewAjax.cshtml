@@ -60,7 +60,7 @@
                                 <td>
                                     @if (LineItem.weight > 0)
                                     {
-                                        <button type="button" class="btn btn-primary" id="sku_weight" data-sku="@LineItem.sku" data-productid="@LineItem.product_id">Edit WEIGHT</button>
+                                        <button type="button" class="btn btn-primary" id="sku_weight" data-sku="@LineItem.sku" data-productid="@LineItem.product_id">EDIT WEIGHT</button>
                                     }
                                     else
                                     {
@@ -73,6 +73,8 @@
                                 </td>
                                 <td>
                                     <select class="form-control wash_type_status" data-productid="@LineItem.product_id">
+                                        <option value="0"> ---Wash Type--- </option>
+
                                         @foreach (dynamic _washtypestatus in Model.AllWashTypes)
                                         {
                                             if (@_washtypestatus.wash_type_id == @LineItem.wash_type_id)

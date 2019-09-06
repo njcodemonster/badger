@@ -29,3 +29,6 @@ INSERT INTO `document_type` (`doc_type`) VALUES ('Main Shipment Invoice');
 INSERT INTO `document_type` (`doc_type`) VALUES ('Other'); 
 
 ALTER TABLE `purchase_orders` CHANGE `vendor_order_number` `vendor_order_number` VARCHAR(150) NOT NULL; 
+
+/*06-09-2019 by Sajid Khan*/
+ALTER TABLE `sku` CHANGE `weight` `weight` DECIMAL(10,2) NOT NULL; 

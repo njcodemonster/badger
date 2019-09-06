@@ -275,7 +275,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
                 }
-                if (ProductToUpdate.wash_type_id != 0)
+                if (ProductToUpdate.wash_type_id == 0 || ProductToUpdate.wash_type_id > 0) 
                 {
                     ValuesToUpdate.Add("wash_type_id", ProductToUpdate.wash_type_id.ToString());
                 }
