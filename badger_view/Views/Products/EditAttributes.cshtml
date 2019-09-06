@@ -86,7 +86,7 @@
                                     <tr>
                                         <td class="form-group">
                                             <label>Model</label>
-                                            <select class="form-control d-inline-block required">
+                                            <select class="form-control d-inline-block">
                                                 <option selected value="">Choose...</option>
                                                 @foreach (dynamic photoshootModels in Model.shootModels)
                                                 {
@@ -279,28 +279,32 @@
                 <div class="col-md-6">
                     <table class="table borderless">
                         <tr>
-                            <td class="form-group">
-                                <label>Type</label>
-                                @{
-                                    Dictionary<int, string> productTypes = new Dictionary<int, string>();
-                                    productTypes.Add(1, "Clothing");
-                                    productTypes.Add(2, "Accessories");
-                                }
-                                <select class="form-control w-50 required" disabled>
-
-                                    @foreach (KeyValuePair<int, string> productType in productTypes)
-                                    {
-                                        if (productType.Key == Model.Product.product_type_id)
-                                        {
-                                            <option value="@productType.Key" selected>@productType.Value</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@productType.Key">@productType.Value</option>
-                                        }
+                            <td>
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    @{
+                                        Dictionary<int, string> productTypes = new Dictionary<int, string>();
+                                        productTypes.Add(1, "Clothing");
+                                        productTypes.Add(2, "Accessories");
                                     }
-                                </select>
+                                    <select class="form-control w-50 required" disabled>
 
+                                        @foreach (KeyValuePair<int, string> productType in productTypes)
+                                        {
+                                            if (productType.Key == Model.Product.product_type_id)
+                                            {
+                                                <option value="@productType.Key" selected>@productType.Value</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@productType.Key">@productType.Value</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    </div>
 
 
                             </td>
