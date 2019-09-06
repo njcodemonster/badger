@@ -12,6 +12,7 @@ using MySql.Data.MySqlClient;
 using CommonHelper;
 using System.Dynamic;
 using GenericModals.PurchaseOrder;
+using GenericModals;
 
 namespace badgerApi.Interfaces
 {
@@ -25,7 +26,7 @@ namespace badgerApi.Interfaces
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int start, int limit);
         Task<object> GetPurchaseOrdersPageData(int id);
-        Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
+        Task<List<POLineItems>> GetOpenPOLineItemDetails(int PO_id, int Limit);
         Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id);
         Task<List<RaStatus>> GetAllRaStatus();
         Task<List<ProductWashTypes>> GetAllWashTypes();
@@ -181,21 +182,21 @@ namespace badgerApi.Interfaces
         Input: int purhcase order id,int limit
         output: Dynamic object of purchase order line item
         */
-        public async Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit)
+        public async Task<List<POLineItems>> GetOpenPOLineItemDetails(int PO_id, int Limit)
         {
 
-            dynamic OpenPoLineItemDetails = new ExpandoObject();
+            List<POLineItems> OpenPoLineItemDetails = new List<POLineItems>();
             string sQuery = "SELECT A.*  FROM( SELECT purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.product_cost,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
 
             if (Limit > 0)
             {
                 sQuery += " Limit " + Limit + ";";
             }
-            
+
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<object> purchaseOrdersInfo = await conn.QueryAsync<object>(sQuery);
-                OpenPoLineItemDetails.LineItemDetails = purchaseOrdersInfo;
+                IEnumerable<POLineItems> purchaseOrdersInfo = await conn.QueryAsync<POLineItems>(sQuery);
+                OpenPoLineItemDetails = purchaseOrdersInfo.ToList();
             }
             return OpenPoLineItemDetails;
         }
@@ -223,7 +224,7 @@ namespace badgerApi.Interfaces
                                 where a.po_status != 2 AND a.po_status != 4 order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
             if (limit > 0)
             {
-                sQuery += " limit "+ start + "," + limit + ";";
+                sQuery += " limit " + start + "," + limit + ";";
             }
 
             using (IDbConnection conn = Connection)
@@ -250,9 +251,9 @@ namespace badgerApi.Interfaces
 
             dynamic poPageList = new ExpandoObject();
             string sQuery = "";
-           
-                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 AND a.po_status != 4 AND a.po_id = "+id+";";
-            
+
+            sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 AND a.po_status != 4 AND a.po_id = " + id + ";";
+
 
             using (IDbConnection conn = Connection)
             {
@@ -262,7 +263,7 @@ namespace badgerApi.Interfaces
             return poPageList;
 
         }
-        
+
 
         /*
         Developer: Sajid Khan
@@ -523,7 +524,7 @@ namespace badgerApi.Interfaces
             {
                 IEnumerable<PurchaseOrders> result = new List<PurchaseOrders>();
 
-                string squery = "Select * from " + TableName + " WHERE "+ colname + " = '" + colvalue + "';";
+                string squery = "Select * from " + TableName + " WHERE " + colname + " = '" + colvalue + "';";
 
                 result = await conn.QueryAsync<PurchaseOrders>(squery);
 

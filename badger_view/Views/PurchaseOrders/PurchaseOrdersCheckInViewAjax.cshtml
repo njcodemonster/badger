@@ -1,4 +1,6 @@
-﻿@{
+﻿
+
+@{
     Layout = null;
 }
 @{ int First = 0;}
@@ -10,7 +12,7 @@
     String Current_product = "";
     <div class="card-body table-responsive">
         <div class="accordion panel-group" id="accordionpoinnercheck">
-            @foreach (dynamic LineItem in Model.FirstPOInfor.LineItemDetails)
+            @foreach (GenericModals.POLineItems LineItem in Model.FirstPOInfor)
             {
                 @if (Current_product != (String)LineItem.product_id)
                 {
@@ -30,7 +32,7 @@
                 First = 2;
             }
 
-             @:<div class="card">
+            @:<div class="card">
                 <div class="card-header" id="headinginner@(LineItem.product_id)">
                     <div class="float-left table-responsive">
                         <table class="table table-borderless m-0">
@@ -54,8 +56,8 @@
                                     <button type="button" class="btn btn-outline-success">Edit Fabric</button>
                                 </td>
                                 <td>
-                                        <div class="item-sizes size-@LineItem.product_id"></div>
-                                        <!--XS (<span class="xs_quantity"></span>) &nbsp; S (<span class="s_quantity"></span>) &nbsp; M (<span class="m_quantity"></span>) &nbsp; L (<span class="l_quantity"></span>)-->
+                                    <div class="item-sizes size-@LineItem.product_id"></div>
+                                    <!--XS (<span class="xs_quantity"></span>) &nbsp; S (<span class="s_quantity"></span>) &nbsp; M (<span class="m_quantity"></span>) &nbsp; L (<span class="l_quantity"></span>)-->
                                 </td>
                                 <td>
                                     @if (LineItem.weight > 0)
@@ -93,26 +95,26 @@
                     <div class="message-@LineItem.product_id"></div>
                 </div>
 
-    @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne@(LineItem.product_id)" data-parent="#accordionpoinnercheck">
-        @:<div class="table-responsive">
-            @:<table class="table text-center po_tble_list borderless table-data-@LineItem.product_id">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Size</th>
-                        <th>Status</th>
-                        <th>RA Status</th>
-                        <th>Notes</th>
-                        <th>Image</th>
-                        <th>SKU</th>
-                        <th>Barcode</th>
-                        <th>Bag Code</th>
-                        <th>Save</th>
-                        <th>Go live</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                @:<tbody>
+                @:<div id="collapseOne@(LineItem.product_id)" class="collapse show" aria-labelledby="headingOne@(LineItem.product_id)" data-parent="#accordionpoinnercheck">
+                    @:<div class="table-responsive">
+                        @:<table class="table text-center po_tble_list borderless table-data-@LineItem.product_id">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Size</th>
+                                    <th>Status</th>
+                                    <th>RA Status</th>
+                                    <th>Notes</th>
+                                    <th>Image</th>
+                                    <th>SKU</th>
+                                    <th>Barcode</th>
+                                    <th>Bag Code</th>
+                                    <th>Save</th>
+                                    <th>Go live</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            @:<tbody>
 }
                 int i = 0;
                 int DisplayTimes = 0;
@@ -121,116 +123,123 @@
                 string currentPOProductSkuQantity = currentPOPRoductQuantityid + "-" + @LineItem.sku;
                 <p style=" display:none" class="item_sizes" id="@currentPOProductSkuQantity" data-orderProduct="@currentPOPRoductQuantityid" data-size="@LineItem.Size">@DisplayTimes</p>
 
-                @while (i < DisplayTimes)
+
+
+                foreach (GenericModals.Models.Items item in LineItem.EndItems)
                 {
                     i++;
                     string displaycheck = "";
                     string target_id = "";
-                   @if(i != 1 && DisplayTimes > 1)
-                   {
-                       target_id = "collapsesize-"+LineItem.product_id+"-"+LineItem.Size+"-"+LineItem.sku;
-                       displaycheck = "collapse hide";
-                   }
-                                                  <tr class="remove-@LineItem.EndItems[i-1].item_id @displaycheck" id="@target_id" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@LineItem.EndItems[i-1].sku_id">
-                                                      <td>
-                                                          @if (i == 1 && DisplayTimes != 1)
-                                                          {
-                                                              <button type="button" style="padding:0px;" aria-expanded="true" aria-controls="collapseOne"  class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
-                                                          }
-                                                          </td>
-                                                      <td>
-                                                          @LineItem.Size<input type="hidden" id="@LineItem.EndItems[i-1].item_id" value="@LineItem.EndItems[i - 1]" />
-                                                      </td>
-                                                      <td>
-                                                          <input type="checkbox" class="checkitemstatus" style="float:left;width:10%;transform: scale(1.5);margin-top: 13px;" data-status="@LineItem.Size-@LineItem.product_id">
-                                                          <select class="form-control item_status" data-itemid="@LineItem.EndItems[i-1].item_id"  style="float:right;width: 150px; font-size:13px;" data-status="@LineItem.Size-@LineItem.product_id">
-                                                              @foreach (dynamic _status in Model.AllItemStatus)
-                                                              {
-                                                                  if (@_status.item_status_id == @LineItem.EndItems[i - 1].item_status_id)
-                                                                  {
-                                                                      <option value="@_status.item_status_id" selected>@_status.description</option>
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                      if (_status.item_status_id != 5)
-                                                                      {
-                                                                          <option value="@_status.item_status_id">@_status.description</option>
-                                                                      }
-                                                                  }
+                    @if (i != 1 && DisplayTimes > 1)
+                    {
+                        target_id = "collapsesize-" + LineItem.product_id + "-" + LineItem.Size + "-" + LineItem.sku;
+                        displaycheck = "collapse hide";
+                    }
+                    <tr class="remove-@item.item_id @displaycheck" id="@target_id" data-productid="@LineItem.product_id" data-sku="@LineItem.sku" data-weight="@LineItem.weight" data-size="@LineItem.Size" data-skuid="@item.sku_id">
+                        <td>
+                            @if (i == 1 && DisplayTimes != 1)
+                            {
+                                <button type="button" style="padding:0px;" aria-expanded="true" aria-controls="collapseOne" class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapsesize-@LineItem.product_id-@LineItem.Size-@LineItem.sku"><i class="fa fa-plus"></i></button>
+                            }
+                        </td>
+                        <td>
+                            @LineItem.Size<input type="hidden" id="@item.item_id" value="@item" />
+                        </td>
+                        <td>
+                            <input type="checkbox" class="checkitemstatus" style="float:left;width:10%;transform: scale(1.5);margin-top: 13px;" data-status="@LineItem.Size-@LineItem.product_id">
+                            <select class="form-control item_status" data-itemid="@item.item_id" style="float:right;width: 150px; font-size:13px;" data-status="@LineItem.Size-@LineItem.product_id">
+                                @foreach (dynamic _status in Model.AllItemStatus)
+                                {
+                                    if (@_status.item_status_id == @item.item_status_id)
+                                    {
+                                        <option value="@_status.item_status_id" selected>@_status.description</option>
+                                    }
+                                    else
+                                    {
+                                        if (_status.item_status_id != 5)
+                                        {
+                                            <option value="@_status.item_status_id">@_status.description</option>
+                                        }
+                                    }
 
-                                                              }
-                                                          </select>
-                                                      </td>
-                                                      <td>
-                                                          @if (@LineItem.EndItems[i - 1].ra_status == 0)
-                                                          {
-                                                              <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            @if (@LineItem.EndItems[i - 1].ra_status == 0)
+                            {
+                                <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
 
-                                                              <select class="form-control item_ra_status d-none" data-itemid="@LineItem.EndItems[i-1].item_id" style="width:150px;margin:0 auto;font-size:13px;">
-                                                                  <option value="0"> Default RA </option>
-                                                                  @foreach (dynamic _rastatus in Model.AllRaStatus)
-                                                                  {
-                                                                      <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
-                                                                  }
-                                                              </select>
-                                                          }
-                                                          else
-                                                          {
-                                                      <select class="form-control item_ra_status" data-itemid="@LineItem.EndItems[i-1].item_id" style="width: 150px;margin:0 auto;font-size:13px;">
-                                                          <option value="0"> Default RA </option>
-                                                          @foreach (dynamic _rastatus in Model.AllRaStatus)
-                                                          {                                                                
-                                                              if (@_rastatus.ra_status_id == @LineItem.EndItems[i - 1].ra_status)
-                                                              {
-                                                                  <option value="@_rastatus.ra_status_id" selected>@_rastatus.ra_status_name</option>
-                                                              }
-                                                              else
-                                                              {
-                                                                  <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
-                                                              }
+                                <select class="form-control item_ra_status d-none" data-itemid="@item.item_id" style="width:150px;margin:0 auto;font-size:13px;">
+                                    <option value="0"> Default RA </option>
+                                    @foreach (dynamic _rastatus in Model.AllRaStatus)
+                                    {
+                                        <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <select class="form-control item_ra_status" data-itemid="@item.item_id" style="width: 150px;margin:0 auto;font-size:13px;">
+                                    <option value="0"> Default RA </option>
+                                    @foreach (dynamic _rastatus in Model.AllRaStatus)
+                                    {
+                                        if (@_rastatus.ra_status_id == @item.ra_status)
+                                        {
+                                            <option value="@_rastatus.ra_status_id" selected>@_rastatus.ra_status_name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
+                                        }
 
-                                                          }
-                                                      </select>
-                                                          }
+                                    }
+                                </select>
+                            }
 
-                                                      </td>
-                                                      <td>
-                                                          <textarea class="form-control item_note" data-itemid="@LineItem.EndItems[i-1].item_id" cols="20"></textarea>
-                                                      </td>
-                                                      <td>
-                                                          <a href="javscript:void(0)" style="position:absolute;" id="AddDocument" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id">@if(@LineItem.EndItems[i-1].has_doc == 1){<div class="redDotDoc redDOtElement"></div>}else{ <div class="redDotDoc"></div>}<i class="fa fa-upload h3"></i></a>
-                                                      </td>
-                                                      <td>
-                                                          <input type="text" data-quantity="@DisplayTimes" data-sku="@LineItem.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@LineItem.EndItems[i-1].item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@LineItem.EndItems[i-1].sku_id" class="form-control item_sku" maxlength="7" />
-                                                      </td>
-                                                      <td>
-                                                          <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_barcode" data-barcode="@LineItem.EndItems[i-1].barcode" value="@LineItem.EndItems[i-1].barcode" maxlength="8" />
-                                                      </td>
-                                                      <td>
-                                                          <input type="text" data-itemid="@LineItem.EndItems[i-1].item_id" class="form-control item_bagcode" value="@LineItem.EndItems[i-1].bag_code" />
-                                                      </td>
-                                                      <td>
-                                                          <button type="button" class="btn btn-success btn-sm">Save</button>
-                                                      </td>
-                                                      <td>
-                                                          <button type="button" class="btn btn-success btn-sm">Go Live</button>
-                                                      </td>
-                                                      <td>
-                                                          <button type="button" data-itemid="@LineItem.EndItems[i-1].item_id" data-polineitem="@LineItem.line_item_id" data-quantity="@DisplayTimes" data-productid="@LineItem.product_id" data-poid="@LineItem.EndItems[i-1].pO_id" class="btn btn-danger btn-sm item_row_remove">Remove</button>
-                                                      </td>
-                                                  </tr>
-
-
+                        </td>
+                        <td>
+                            <textarea class="form-control item_note" data-itemid="@item.item_id" cols="20"></textarea>
+                        </td>
+                        <td>
+                            <a href="javscript:void(0)" style="position:absolute;" id="AddDocument" data-itemid="@item.item_id" data-productid="@LineItem.product_id">
+                                @if (@item.has_doc == 1)
+                                {<div class="redDotDoc redDOtElement"></div>}
+                                else
+                                { <div class="redDotDoc"></div>}<i class="fa fa-upload h3"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <input type="text" data-quantity="@DisplayTimes" data-sku="@LineItem.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@LineItem.sku" id="@item.sku_id" class="form-control item_sku" maxlength="7" />
+                        </td>
+                        <td>
+                            <input type="text" data-itemid="@item.item_id" class="form-control item_barcode" data-barcode="@item].barcode" value="@item.barcode" maxlength="8" />
+                        </td>
+                        <td>
+                            <input type="text" data-itemid="@item.item_id" class="form-control item_bagcode" value="@item.bag_code" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-success btn-sm">Save</button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-success btn-sm">Go Live</button>
+                        </td>
+                        <td>
+                            <button type="button" data-itemid="@item.item_id" data-polineitem="@LineItem.line_item_id" data-quantity="@DisplayTimes" data-productid="@LineItem.product_id" data-poid="@item.PO_id" class="btn btn-danger btn-sm item_row_remove">Remove</button>
+                        </td>
+                    </tr>
                 }
+
+               
             }
             @if (outputEnd)
             {
-                @:</tbody>
-                @:</table>
-                @:</div>
-                @:</div>
-                @:</div>             
-            }
-      </div>
-    </div>
- }
+            @:</tbody>
+        @:</table>
+    @:</div>
+@:</div>
+@:</div>
+}
+            </div>
+            </div>
+        }
