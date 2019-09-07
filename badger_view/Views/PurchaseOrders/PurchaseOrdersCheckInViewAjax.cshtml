@@ -73,17 +73,22 @@
                                 </td>
                                 <td>
                                     <select class="form-control wash_type_status" data-productid="@LineItem.product_id">
-                                        <option value="0"> ---Wash Type--- </option>
+                                        @if (LineItem.wash_type_id == 0)
+                                        {
+                                            <option value="0" selected>-- Wash Type -- </option>
+                                        }else{
+                                            <option value="0">-- Wash Type -- </option>
+                                        }
 
                                         @foreach (dynamic _washtypestatus in Model.AllWashTypes)
                                         {
                                             if (@_washtypestatus.wash_type_id == @LineItem.wash_type_id)
                                             {
-                                                <option value="@_washtypestatus.wash_type_id" selected>@_washtypestatus.wash_type</option>
+                                        <option value="@_washtypestatus.wash_type_id" selected>@_washtypestatus.wash_type</option>
                                             }
                                             else
                                             {
-                                                <option value="@_washtypestatus.wash_type_id">@_washtypestatus.wash_type</option>
+                                        <option value="@_washtypestatus.wash_type_id">@_washtypestatus.wash_type</option>
                                             }
 
                                         }

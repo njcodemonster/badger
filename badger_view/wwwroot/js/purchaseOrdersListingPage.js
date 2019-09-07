@@ -1219,7 +1219,10 @@ function purchaseOrderData(data) {
                         subCost += dataNew.Quantity * dataNew.product_cost;
                         $("#itemsTable").append("<tr>");
                         //$("#itemsTable").append("<td width = '60' > <img src=" + dataNew.product_vendor_image + " width='50' /></td>");
-                        $("#itemsTable").append("<td width='60'><img src=" + window.location.origin+'/uploads/'+dataNew.product_vendor_image+" width='50' /></td>");
+                        var productImage = dataNew.product_vendor_image;
+                        if (productImage != null) {
+                            $("#itemsTable").append("<td width='60'><img src=" + window.location.origin + '/uploads/' + productImage + " width='50' /></td>");
+                        }                       
                         $("#itemsTable").append("<td class='h6'>" + dataNew.product_name + " (DP007) in " + dataNew.vendor_color_name + " - " + dataNew.sku + "</td>");
                         $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='AddItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber=" + data["purchase_order"][0].vendor_po_number + " data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
                         $("#itemsTable").append("<td><a href='/Product/EditAttributes/" + dataNew.product_id +"'"+ " class='h6 text-primary'>Edit Attributes</a></td>");
