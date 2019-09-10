@@ -820,6 +820,8 @@ function CreateSKU(element, Isaccessory) {
 
         $(element).parent().parent().find('#styleSku').val(newSkuToAssign);
         $(element).parent().parent().find('#styleSku').removeClass('errorFeild');
+        $(element).parent().parent().find('.errorMsg').remove();
+     
         $(element).parent().parent().data('skunum', newSkuNum);
         if (isSkuDuplicate(newSkuToAssign)) {
             var newSkuToAssign = new_sku + '-' + (newSkuNum + 1);
