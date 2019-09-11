@@ -916,6 +916,34 @@ namespace itemService.Controllers
         }
 
         /*
+        Developer: Sajid Khan
+        Date: 11-09-19 
+        Action: get item data by poid 
+        URL: api/item/getitemids/12345678
+        Request: Get
+        Input: int barcode
+        output: boolean
+        */
+        [HttpGet("getitemids/{poid}")]
+        public async Task<object> GetItemIds(int poid)
+        {
+            dynamic itemDetails = new object();
+            try
+            {
+                itemDetails = await _ItemRepository.GetItemsIdsByPoId(poid);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for get item ids with message" + ex.Message);
+
+            }
+
+            return itemDetails;
+        }
+
+        /*
      Developer: Rizwan ali
      Date: 08-09-19 
      Action: delete item by product

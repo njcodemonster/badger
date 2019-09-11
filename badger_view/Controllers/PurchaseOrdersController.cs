@@ -1252,12 +1252,12 @@ namespace badger_view.Controllers
         output: string of purchase orders item notes
         */
         [Authorize]
-        [HttpGet("purchaseorders/getitemnotes/{ids}")]
-        public async Task<String> GetItemNotes(string ids)
+        [HttpGet("purchaseorders/getitemnotes/{poid}")]
+        public async Task<String> GetItemNotes(int poid)
         {
             SetBadgerHelper();
 
-            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemnotes/" + ids.ToString());
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemnotes/" + poid.ToString());
 
             return JsonConvert.SerializeObject(purchaseOrderNote);
         }

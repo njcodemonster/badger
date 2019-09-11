@@ -11,7 +11,7 @@ Action: it will show item note
 Input: items note ids comma seperate
 Output: item note data show by item note id
 */
-function get_all_notes_by_ids() {
+function get_all_notes_by_ids(poid) {
     var itemids = "";
     $(".item_note").each(function () {
         itemids += $(this).attr('data-itemid') + ",";
@@ -22,7 +22,7 @@ function get_all_notes_by_ids() {
         console.log(itemids);
 
         $.ajax({
-            url: '/purchaseorders/getitemnotes/' + itemids,
+            url: '/purchaseorders/getitemnotes/'+poid,
             dataType: 'json',
             type: 'Get',
             contentType: 'application/json',
@@ -779,7 +779,7 @@ function getPOdetail(PO_id) {
         //console.log(data);
         $("#collapse_" + PO_id).html("");
         $("#collapse_" + PO_id).html(data);
-        get_all_notes_by_ids();
+        get_all_notes_by_ids(PO_id);
     });
 }
 
@@ -830,7 +830,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
         //console.log(data);
         $("#collapse_" + PO_id).html("");
         $("#collapse_" + PO_id).html(data);
-        get_all_notes_by_ids();
+        get_all_notes_by_ids(PO_id);
 
         $(".POListCheckIn .card .collapse").each(function () {
             var product_id = $(this).attr("id").replace("collapseOne", "-");

@@ -209,13 +209,21 @@ namespace badgerApi.Controllers
         Input: string ids
         output: string of purchase orders note id 
         */
-        [HttpGet("getitemnotes/{ref_ids}")]
-        public async Task<List<Notes>> GetItemNotesViewAsync(string ref_ids)
+        [HttpGet("getitemnotes/{poid}")]
+        public async Task<List<Notes>> GetItemNotesViewAsync(int poid)
         {
+            string ref_ids = "";
             List<Notes> notes = new List<Notes>();
             try
             {
-                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids, note_type);
+                dynamic getItemIds = await _ItemsHelper.GetItemIds(poid);
+
+                foreach (dynamic item in getItemIds)
+                {
+                    ref_ids += item.item_id+",";
+                }
+
+                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids.TrimEnd(','), note_type);
             }
             catch (Exception ex)
             {
