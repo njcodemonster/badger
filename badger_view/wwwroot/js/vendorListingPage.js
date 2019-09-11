@@ -12,7 +12,9 @@
    Input: string
    output: list of vendors like matched
 */
-﻿$(document).ready(function () {
+$(document).ready(function () {
+    $('.loading').hide();
+
     $(".autocomplete").autocomplete({
        source: function (request, response) {
            var jsonData = {};
