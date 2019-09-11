@@ -1209,7 +1209,7 @@ namespace badger_view.Controllers
 
             String newItemID = "0";
 
-            if (json.Value<string>("item_note") != "")
+            if (json.Value<string>("item_note") != null)
             {
                 JObject ItemNotes = new JObject();
                 ItemNotes.Add("ref_id", json.Value<string>("item_id"));

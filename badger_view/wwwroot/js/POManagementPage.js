@@ -62,7 +62,7 @@ $(document).on('change', ".item_note", function () {
         console.log(data);
         if (data == "0") {
             $(this).val("");
-           // alertInnerBox('message-' + po_id, 'red', 'Item note has error' + data.responseText);
+            alertInnerBox('message-' + po_id, 'red', 'Item note has error' + data.responseText);
         } else {
             alertInnerBox('message-' + po_id, 'green', 'Item note has been updated successfully');
         }
