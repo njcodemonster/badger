@@ -626,17 +626,6 @@ namespace badgerApi.Interfaces
 
                     DeleteQuery = "delete FROM product_used_in WHERE product_id= " + product_id + " AND po_id = " + po_id;
                     updateResult = await conn.QueryAsync<object>(DeleteQuery);
-
-
-                    // DeleteQuery = "delete FROM sku WHERE product_id= " + product_id;
-                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
-
-                    // DeleteQuery = "delete FROM product_attributes WHERE product_id= " + product_id;
-                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    //  DeleteQuery = "delete FROM product_photoshoots WHERE product_id= " + product_id;
-                    //   updateResult = await conn.QueryAsync<object>(DeleteQuery);
-                    //  DeleteQuery = "delete FROM product WHERE product_id= " + product_id;
-                    // updateResult = await conn.QueryAsync<object>(DeleteQuery);
                     res = true;
                 }
             }

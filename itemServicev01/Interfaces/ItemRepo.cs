@@ -1059,14 +1059,13 @@ namespace itemService.Interfaces
                         else 
                         {
                             //False return no item can be deleted because it has some record other then not received
-                            status = false;
+                            return false;
                         }
                     }
                     else
                     {
-                        status = false;
+                        return false;
                     }
-                    status = true;
 
                 }
             }

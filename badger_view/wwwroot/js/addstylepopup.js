@@ -10,13 +10,10 @@ $(document).on('click', ".DeletefromPOButton", function () {
 
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
-    selectedProject = $('#ExistingProductSelect option:selected');
-    if (selectedProject.data("product_id") > 0) {
-
-        jsonData["product_id"] = selectedProject.data("product_id");
-        jsonData["po_id"] = $('#newAddStyleForm #po_id').val();
+    
+    if (SelectedProductID !=null) {
         var po_id = parseInt($('#newAddStyleForm #po_id').val());
-        var product_id = selectedProject.data("product_id");
+        var product_id = SelectedProductID;
         $.ajax({
 
             url: location.origin + '/styles/deleteFromPO/' + product_id + '/' + po_id,

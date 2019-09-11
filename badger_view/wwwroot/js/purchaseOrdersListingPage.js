@@ -1406,6 +1406,8 @@ function getSinglePurchaseOrder(id) {
             $('#EditItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id);
 
             purchaseOrderData(data);
+            debugger;
+            verifyStylesCount(po.po_id);
             $('#newPurchaseOrderForm input,#newPurchaseOrderForm button,#AddItemButton').removeAttr("disabled");
 
             if (po.po_status == 5) {
@@ -1421,6 +1423,24 @@ function getSinglePurchaseOrder(id) {
 
     })
 
+}
+
+function verifyStylesCount(poid) {
+
+    $.ajax({
+        url: '/purchaseorders/verifyStylesQuantity/' + poid,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+    }).always(function (data) {
+        console.log(data);
+        debugger;
+        if (data == false)
+        {
+            alertBox('poAlertMsg', 'red', 'Purchase order Total Styles should be same');
+            console.log("Exception Error");
+        }
+    });
 }
 
 /*
