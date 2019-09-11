@@ -938,7 +938,7 @@ $(document).on("click", "#sku_weight", function () {
     $("#weight_form .weight_image").attr("src", img_src);
     $("#weight_form .weight_sku").text(sku);
     var html = '<div class="form-group col-md-3 pl-5"></div>';
-    $(".table-data-" + productid + " tbody tr:visible").each(function () {
+    $(".table-data-" + productid + " tbody tr").not(".collapse").each(function () {
         var weight = $(this).attr("data-weight");
         var size = $(this).attr("data-size").toLowerCase();
         var skuid = $(this).attr("data-skuid");
