@@ -541,27 +541,27 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("vendor_id", PurchaseOrdersToUpdate.vendor_id.ToString());
                 }
-                if (PurchaseOrdersToUpdate.defected != 0)
+                if (PurchaseOrdersToUpdate.defected != 0 && PurchaseOrdersToUpdate.defected != null)
                 {
                     ValuesToUpdate.Add("defected", PurchaseOrdersToUpdate.defected.ToString());
                 }
-                if (PurchaseOrdersToUpdate.good_condition != 0)
+                if (PurchaseOrdersToUpdate.good_condition != 0 && PurchaseOrdersToUpdate.good_condition != null)
                 {
                     ValuesToUpdate.Add("good_condition", PurchaseOrdersToUpdate.good_condition.ToString());
                 }
-                if (PurchaseOrdersToUpdate.total_styles != 0)
+                if (PurchaseOrdersToUpdate.total_styles != 0 && PurchaseOrdersToUpdate.total_styles != null)
                 {
                     ValuesToUpdate.Add("total_styles", PurchaseOrdersToUpdate.total_styles.ToString());
                 }
-                if (PurchaseOrdersToUpdate.total_quantity != 0)
+                if (PurchaseOrdersToUpdate.total_quantity != 0 && PurchaseOrdersToUpdate.total_quantity != null)
                 {
                     ValuesToUpdate.Add("total_quantity", PurchaseOrdersToUpdate.total_quantity.ToString());
                 }
-                if (PurchaseOrdersToUpdate.subtotal != 0)
+                if (PurchaseOrdersToUpdate.subtotal != 0 && PurchaseOrdersToUpdate.subtotal != null)
                 {
                     ValuesToUpdate.Add("subtotal", PurchaseOrdersToUpdate.subtotal.ToString());
                 }
-                if (PurchaseOrdersToUpdate.shipping != 0)
+                if (PurchaseOrdersToUpdate.shipping != 0 && PurchaseOrdersToUpdate.shipping != null)
                 {
                     ValuesToUpdate.Add("shipping", PurchaseOrdersToUpdate.shipping.ToString());
                 }
