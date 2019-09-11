@@ -12,17 +12,9 @@ Input: items note ids comma seperate
 Output: item note data show by item note id
 */
 function get_all_notes_by_ids(poid) {
-    var itemids = "";
-    $(".item_note").each(function () {
-        itemids += $(this).attr('data-itemid') + ",";
-    })
-
-    if (itemids != "") {
-        itemids = itemids.substring(0, itemids.length - 1);
-        console.log(itemids);
-
+    if (poid != "") {
         $.ajax({
-            url: '/purchaseorders/getitemnotes/'+poid,
+            url: '/purchaseorders/getitemnotes/' + poid,
             dataType: 'json',
             type: 'Get',
             contentType: 'application/json',
