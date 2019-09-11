@@ -85,20 +85,6 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
             }
 
-
-            /*if (data.documents.length > 0) {
-
-                $(data.documents).each(function (e, i) {
-                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
-                });
-
-                $(".po_doc_section").removeClass('d-none');
-
-            } else {
-                $(".po_doc_section").addClass('d-none');
-            }*/
-
-
             $(".poTracking").val("");
             $("#wrapper_checkin_tracking").empty().html("");
             if (data.tracking.length > 0) {

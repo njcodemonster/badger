@@ -205,54 +205,11 @@ var table = $('#purchaseorderlists').DataTable({
     "pageLength": 50
 });
 
-//$('.total_purchase_order_count').text(table.rows().count());
-
 window.purchaseorderrownumber = "";
 $('#purchaseorderlists tbody').on('click', 'tr', function (e) {
     window.purchaseorderrownumber = table.row(this)[0][0];
 });
 
-window.checkpaginationload = true;
-$('#purchaseorderlists').on('page.dt', function () {
-
-    var info = table.page.info();
-
-    console.log('Showing page: ' + (info.page + 1) + ' of ' + info.pages);
-
-    /*if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
-        console.log("Load more...");
-        $('.loading').removeClass("d-none");
-        var start_total = info.recordsTotal; //table4.column(0).data().length;
-        console.log(start_total);
-        $.ajax({
-            url: "/purchaseorders/listpagination/" + start_total + "/30/true",
-            type: 'GET',
-            
-            processData: false,
-            contentType: false,
-        }).always(function (data) {
-            console.log(data);
-            if (data.PurchaseOrdersLists.length == 0) {
-                window.checkpaginationload = false;
-                $('.loading').addClass("d-none");
-            }
-            if (data.PurchaseOrdersLists.length > 0) {
-                for (var i = 0; i < data.PurchaseOrdersLists.length; i++) {
-                    var data2 = data.PurchaseOrdersLists[i];
-                    var statusButton = '';
-                    if (data2.po_status == '5') {
-                        statusButton = '<button type="button" class="btn btn-warning btn-sm" data-shipping="' + data2.shipping + '" data-id="' + data2.po_id + '" id="EditPurhaseOrderCheckedIn">Checkin</button>'
-                    } else {
-                        statusButton = "<button type='button' class='btn btn-success btn-sm'>Checked-In</button>";                        
-                    }
-                    var status = getPoStatusById(data2.po_status);
-                    $('#purchaseorderlists').DataTable().row.add([data2.vendor_po_number, data2.custom_order_date, data2.vendor, data2.total_styles, "1", "2", data2.custom_delivery_window_start_end, data2.num_of_days, status, statusButton, "<button type='button' id='EditPurhaseOrder' data-id='" + data2.po_id +"' class='btn btn-light btn-sm'>Edit</button>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderNote'><div class='redDotNote'></div><i class='fa fa-edit h3'></i></a>", "<a href='javascript: void (0)' data-id='" + data2.po_id +"' id='EditPurhaseOrderDocument'><div class='redDotDoc'></div><i class='fa fa-upload h3'></i></a>", "<a href='javascript: void (0)'>Claim</a>", "<a href='javascript: void (0)'>Claim</a>"]).draw(false);
-                }
-                $('.loading').addClass("d-none");
-            }
-        });
-    }*/
-});
 function getPoStatusById(po_status, poid) {
     if (po_status == 1) {
         return '<span class="postatus-' + poid + '">Open</span>';
@@ -285,43 +242,14 @@ $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e
     }
 });
 
-
-/*$(document).on('blur', "#poNumber", function () {
-    $('.errorMsg').remove();
-    console.log($(this).val());
-    var ponumber = $(this).val();
-    $.ajax({
-        url: "/purchaseorders/checkpoexist/vendor_po_number/"+ponumber,
-        
-        type: 'Get',
-        contentType: 'application/json',
-    }).always(function (data) {
-        console.log(data);
-        $('#poNumber').removeClass("errorFeild");
-        $('.errorMsg').remove();
-        if (data == true) {
-            $('#poNumber').addClass('errorFeild');
-            $('#poNumber').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">PO # is already exists</span>')
-            return false;
-        } else {
-
-        }
-    });
-});*/
-
-
-
-
-
-
 /*
-    Developer: Azeem Hassan
-    Date: 7-6-19 
-    Action: this function is getting data from purchase order form and parsing to variable and sends to controller
-    URL:/purchaseorders/newpurchaseorder
-    Request: POST
-    Input: new purchase order form data
-    output: new purchase id
+Developer: Azeem Hassan
+Date: 7-6-19 
+Action: this function is getting data from purchase order form and parsing to variable and sends to controller
+URL:/purchaseorders/newpurchaseorder
+Request: POST
+Input: new purchase order form data
+output: new purchase id
 */
 $(document).on('click', "#NewPurchaseOrderButton", function () {
     _self = $(this);
@@ -1300,21 +1228,6 @@ function purchaseOrderData(data) {
             $(".po_doc_section").removeClass('d-none');
 
         }
-
-
-        /*var docs = data['documents'];
-        $(".po_doc_section").empty();
-        if (docs.length > 0) {
-
-        $(docs).each(function (e, i) {
-            $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
-        });
-
-            $(".po_doc_section").removeClass('d-none');
-            
-        } else {
-            $(".po_doc_section").addClass('d-none');
-        }*/
 
     $(".poTracking").removeAttr("id");
     $(".poTracking").val("");

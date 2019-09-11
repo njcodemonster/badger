@@ -133,11 +133,6 @@ $(document).on('click', "#NewVendorButton", function () {
             if (data > "0") {
                 var id = data;
                 $('#newPurchaseOrderForm #poVendor').attr("data-val", data).val(vendor_name);
-                /*$('#newPurchaseOrderForm #poVendor').append($("<option></option>").attr("value", data).text($('#newVendorForm #vendorName').val()));
-                window.vendor_options = '';
-                window.vendor_options = $("#newPurchaseOrderForm #poVendor > option").clone();
-                $('#newPurchaseOrderForm #poVendor').empty().append(window.vendor_options);*/
-
                 console.log("New Vender Added");
                 var formData = new FormData();
                 formData.append('Vendor_id', data);
@@ -171,12 +166,7 @@ $(document).on('click', "#NewVendorButton", function () {
             }
         }
     });
-    //}).always(function (data) {
-    //    console.log(data);
-    //        alertBox('vendorAlertMsg', 'red', 'Vendor is not inserted');
-    //     $('#NewVendorButton').attr('disabled', false);
-       
-    //});
+  
 });
 
 /*
@@ -723,41 +713,6 @@ $(document).on('blur', "#vendorCode", function (event) {
 
 });
 
-window.checkpaginationload = true;
-$('#vendorListingArea').on('page.dt', function () {
-    var table = $('#vendorListingArea').DataTable();
-    var info = table.page.info();
-
-    console.log('Showing page: ' + (info.page + 1) + ' of ' + info.pages);
-
-    /*if (window.checkpaginationload == true && info.pages == (info.page + 1)) {
-        console.log("Load more...");
-        $('.loading').removeClass("d-none");
-        var start_total = info.recordsTotal; //table4.column(0).data().length;
-        console.log(start_total);
-        $.ajax({
-            url: "/vendor/listpagination/" + start_total + "/30",
-            type: 'GET',
-            
-            processData: false,
-            contentType: false,
-        }).always(function (data) {
-            console.log(data);
-            if (data.VendorLists.length == 0) {
-                $('.loading').addClass("d-none");
-                window.checkpaginationload = false;
-            }
-            if (data.VendorLists.length > 0) {
-                for (var i = 0; i < data.VendorLists.length; i++) {
-                    var data2 = data.VendorLists[i];
-                    $('#vendorListingArea').DataTable().row.add([data2.vendor_name, data2.vendor_code, data2.order_count, data2.last_order, "<button type='button' id='EditVendor' data-id='233' class='btn btn-light btn-sm'>Edit</button>", "<a href='#' data-toggle='modal' data-id='233' id='VendorNoteButton' data-target='#modaladdnote'><i class='fa fa-edit h3'></i></a>"]).draw(false);
-                }
-
-                $('.loading').addClass("d-none");
-            }
-        });
-    }*/
-});
 $(document).on('keydown', '#vendorNote,#vendorDec,#vendorNotes', function (e) {
     console.log(this.value);
     if (e.which === 32 && e.target.selectionStart === 0) {

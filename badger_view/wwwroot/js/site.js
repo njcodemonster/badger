@@ -17,30 +17,6 @@ $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
         alertBox('vendorAlertMsg', 'red', jqxhr.responseText, 50000);
 });
 
-//$(document).ajaxSuccess(function () {
-//    alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
-//})
-
-//window.onerror = function (errMsg, url, line, column, error) {
-//    var string = errMsg.toLowerCase();
-//    var substring = "script error";
-//    if (string.indexOf(substring) > -1) {
-//        alert('Script Error: See Browser Console for Detail');
-//    } else {
-//        var message = [
-//            'Message: ' + errMsg,
-//            'URL: ' + url,
-//            'Line: ' + line,
-//            'Column: ' + column,
-//            'Error object: ' + JSON.stringify(error)
-//        ].join(' - ');
-//        this.console.error(message);
-//        // alert(message);
-//    }
-
-//    return false;
-//}
-
 $(document).ready(function () {
     $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
@@ -195,24 +171,7 @@ function general_search() {
 
 }
 
-// Accordian PO Mgmt
-
-$(document).ready(function () {
-    // Add minus icon for collapse element which is open by default
-    /*$(".collapse.show").each(function () {
-        $(this).prev(".card-header").find(".fa").addClass("fa-minus").removeClass("fa-plus");
-    });
-
-    // Toggle plus minus icon on show hide of collapse element
-    $(".collapse").on('show.bs.collapse', function () {
-        $(this).prev(".card-header").find(".fa").removeClass("fa-plus").addClass("fa-minus");
-    }).on('hide.bs.collapse', function () {
-        $(this).prev(".card-header").find(".fa").removeClass("fa-minus").addClass("fa-plus");
-    });*/
-});
-
 // Edit Label and Field
-
 $(document).ready(function () {
 
     $('.edit').click(function () {
