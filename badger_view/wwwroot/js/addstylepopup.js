@@ -147,6 +147,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
         if (data == "-3") {
             alertBox('poAlertMsg', 'red', 'Cannot reduce quantity of sku.');
+            $('.loading').hide();
             return;
         }
         else
@@ -185,9 +186,8 @@ $(document).on('click', ".AddNewStyleButton", function () {
                 if (action == 'refreshValue') {
                     $('#newAddStyleForm #po_id').val(CurrentPOID);
                     $('#newAddStyleForm #vendor_id').val(CurrentVendorId);
-
                     SelectedProductID = null;
-                    $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
+                    $("#modaladdstylec input,#modaladdstylec textarea, #modaladdstylec select").val("").removeClass('errorFeild');
                 } else {
                     SelectedProductID = null;
                     $("#collapse_" + CurrentPOID).html("");
@@ -390,6 +390,8 @@ Output: string of vendor products
 
 $(document).on('click', "#AddItemButton", function () {
 
+
+
     if (data_Categories == null || data_Categories.length == 0) {
         GetCategories();
     }
@@ -404,7 +406,9 @@ $(document).on('click', "#AddItemButton", function () {
 
     CurrentPOID = $(this).data("poid");
     $('.errorMsg').remove();
-    $("#modaladdstylec input,textarea,select").val("").removeClass('errorFeild');
+    $("#modaladdstylec input,#modaladdstylec textarea, #modaladdstylec select").val("").removeClass('errorFeild');
+
+
     CurrentVendorId = $(this).data("vendorid");
     var CurrentProductId = $(this).data("proid");
     var productImage = $(this).data("product_vendor_image");
@@ -816,7 +820,8 @@ function CreateSKU(element, Isaccessory) {
 
         } else {
             newSkuToAssign += '-' + newSkuNum;
-        }
+        } 123
+
 
         $(element).parent().parent().find('#styleSku').val(newSkuToAssign);
         $(element).parent().parent().find('#styleSku').removeClass('errorFeild');
