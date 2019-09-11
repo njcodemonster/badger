@@ -62,7 +62,7 @@ $(document).on('change', ".item_note", function () {
         console.log(data);
         if (data == "0") {
             $(this).val("");
-            alertInnerBox('message-' + po_id, 'red', 'Item note has error' + data.responseText);
+            alertInnerBox('message-' + po_id, 'red', 'Item note has error - ' + data);
         } else {
             alertInnerBox('message-' + po_id, 'green', 'Item note has been updated successfully');
         }
@@ -148,7 +148,7 @@ $(document).on("click", "#document_submit", function () {
             console.log(data);
             if (data == "0") {
                 console.log("Exception Error");
-                //alertInnerBox('message-' + po_id, 'red', 'Item document has error' + data.responseText);
+                alertInnerBox('message-' + po_id, 'red', 'Item document has error - ' + data);
             } else {
                 if (data.indexOf('File Already') > -1) {
                     //$(".poDocAlertMsg").css("color", "red").text(data.responseText);
@@ -216,7 +216,7 @@ $(document).on("change", ".item_status", function () {
                 alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
                 clearInterval(checkInterval);
             } else if (result == "error") {
-                //alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
+                alertInnerBox('message-' + po_id, 'red', 'Item status has error - ' + data);
                 clearInterval(checkInterval);
             }
         }, 1000);
@@ -244,7 +244,7 @@ $(document).on("change", ".item_status", function () {
             if (data == "Success") {
                 alertInnerBox('message-' + po_id, 'green', 'Item status has been updated successfully');
             } else {
-                //alertInnerBox('message-' + po_id, 'red', 'Item status has error' + data.responseText);
+                alertInnerBox('message-' + po_id, 'red', 'Item status has error - ' + data);
             }
 
         });
@@ -307,7 +307,7 @@ $(document).on("change", ".sku_weight", function () {
                     alertInnerBox('message-' + po_id, 'green', 'SKU weight has been updated successfully');
 
                 } else {
-                   // alertInnerBox('message-' + po_id, 'red', 'SKU weight has error' + data.responseText);
+                    alertInnerBox('message-' + po_id, 'red', 'SKU weight has error - ' + data);
                 }
             });
         } else {
@@ -418,7 +418,7 @@ $(document).on("change", ".item_barcode", function (e) {
                                     _self.attr('data-barcode', barcode);
                                     alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
                                 } else {
-                                    //alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                                    alertInnerBox('message-' + po_id, 'red', 'Item barcode has error - ' + data);
                                 }
 
                             });
@@ -469,7 +469,7 @@ $(document).on("change", ".item_barcode", function (e) {
                             _self.attr('data-barcode', barcode);
                             alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
                         } else {
-                           // alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                            alertInnerBox('message-' + po_id, 'red', 'Item barcode has error - ' + data);
                         }
 
                     });
@@ -513,7 +513,7 @@ $(document).on("change", ".item_barcode", function (e) {
                         _self.attr('data-barcode', barcode);
                         alertInnerBox('message-' + po_id, 'green', 'Item barcode has been updated successfully');
                     } else {
-                       // alertInnerBox('message-' + po_id, 'red', 'Item barcode has error' + data.responseText);
+                        alertInnerBox('message-' + po_id, 'red', 'Item barcode has error - ' + data);
                     }
 
                 });
@@ -591,7 +591,7 @@ $(document).on("click", ".item_row_remove", function () {
                         getPurchaseOrdersItemdetails(poid);
                         alertInnerBox('message-' + product_id, 'green', 'Item has been removed successfully');
                     } else {
-                        //alertInnerBox('message-' + product_id, 'red', 'Item has error' + data.responseText);
+                        alertInnerBox('message-' + product_id, 'red', 'Item has error - ' + data);
                     }
 
 
@@ -705,7 +705,7 @@ $(document).on("change", ".item_sku", function () {
                                         if (data == "Success") {
                                             alertInnerBox('message-' + po_id, 'green', 'SKU has been updated successfully');
                                         } else {
-                                           // alertInnerBox('message-' + po_id, 'red', 'SKU has error' + data.responseText);
+                                            alertInnerBox('message-' + po_id, 'red', 'SKU has error - ' + data);
                                         }
 
                                     });
@@ -881,7 +881,7 @@ $(document).on("change", ".item_bagcode", function () {
         if (data == "Success") {
             alertInnerBox('message-' + po_id, 'green', 'Item bag code has been updated successfully');
         } else {
-            //alertInnerBox('message-' + po_id, 'red', 'Item bag code has error' + data.responseText);
+            alertInnerBox('message-' + po_id, 'red', 'Item bag code has error - ' + data);
         }
 
     });
@@ -919,7 +919,7 @@ $(document).on("change", ".item_ra_status", function () {
         if (data == "Success") {
             alertInnerBox('message-' + po_id, 'green', 'Ra status has been updated successfully');
         } else {
-           // alertInnerBox('message-' + po_id, 'red', 'Ra status has error' + data.responseText);
+            alertInnerBox('message-' + po_id, 'red', 'Ra status has error - ' + data);
         }
 
     });
@@ -1018,7 +1018,7 @@ $(document).on("click", "#weight_submit", function () {
             result = "error";
             //error = data.responseText;
             //console.log(error);
-            //alertInnerBox('message-' + productid, 'red', 'SKU weight has error' + error);
+            alertInnerBox('message-' + productid, 'red', 'SKU weight has error - ' + error);
 
         }
     }); 
@@ -1055,7 +1055,7 @@ $(document).on("change", ".wash_type_status", function () {
                 if (data == "Success") {
                     alertInnerBox('message-' + product_id, 'green', 'Product wash type has been updated successfully');
                 } else {
-                   // alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error' + data.responseText);
+                    alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error - ' + data);
                 }
 
             });
