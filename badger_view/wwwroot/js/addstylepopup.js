@@ -247,7 +247,7 @@ Output: input fields show dynamic
 */
 var dropdownlist;
 $(document).ready(function () {
-    $('.loading').hide();
+   // $('.loading').hide();
     var max_fields = 10; //maximum input boxes allowed
     var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
     var add_button = $(".add_field_button"); //Add button ID

@@ -111,7 +111,7 @@ namespace badgerApi.Controllers
             List<PurchaseOrders> ToReturn = new List<PurchaseOrders>();
             try
             {
-                PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id);
+                PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id, true);
                 ToReturn.Add(Res);
             }
             catch (Exception ex)

@@ -229,7 +229,7 @@ $(document).on('click', "#EditVendor", function () {
 });
 
 function getSetVendorData(id) {
-    $('.loading').removeClass("d-none");
+    $('.loading').show();
     $.ajax({
 
         url: '/vendor/details/' + id,
@@ -279,7 +279,7 @@ function getSetVendorData(id) {
             $('.venderRepoBox').remove();
             repsHtml(reps);
         }
-        $('.loading').addClass("d-none");
+        $('.loading').hide();
 
     });
 }

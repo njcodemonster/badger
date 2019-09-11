@@ -26,7 +26,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     var poid = $(this).attr("data-ID");
     var shipping = $(this).attr("data-shipping");
     $("#checkin_form #poShipping").val(shipping);
-    $('.loading').removeClass("d-none");
+    $('.loading').show();
     $.ajax({
         url: '/purchaseorders/PurchaseOrderItemDetails/' + poid,
         dataType: 'json',
@@ -114,7 +114,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
         }
 
-        $('.loading').addClass("d-none");
+        $('.loading').hide();
         $(".wrapper_product").empty().html(producthtml);
         $("#checkin_form").attr("data-poid", poid);
         $("#modalcheckin").modal("show");

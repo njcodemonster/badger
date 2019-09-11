@@ -18,7 +18,7 @@ namespace badgerApi.Interfaces
 {
     public interface IPurchaseOrdersRepository
     {
-        Task<PurchaseOrders> GetById(int id);
+        Task<PurchaseOrders> GetById(int id, bool skufamily = false);
         Task<List<PurchaseOrders>> GetAll(Int32 Limit);
         Task<String> Create(PurchaseOrders NewPurchaseOrder);
         Task<Boolean> Update(PurchaseOrders PurchaseOrdersToUpdate);
@@ -137,7 +137,7 @@ namespace badgerApi.Interfaces
                 IEnumerable<PurchaseOrders> result = new List<PurchaseOrders>();
                 if (Limit > 0)
                 {
-                    result = await conn.QueryAsync<PurchaseOrders>("Select * from " + TableName + " Limit " + Limit.ToString() + ";");
+                    result = await conn.QueryAsync<PurchaseOrders>("Select *, from " + TableName + " Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
@@ -154,13 +154,18 @@ namespace badgerApi.Interfaces
         Input: int id
         output: list of PurchaseOrders
         */
-        public async Task<PurchaseOrders> GetById(int id)
+        public async Task<PurchaseOrders> GetById(int id, bool skufamily=false)
         {
+            string query = "";
             using (IDbConnection conn = Connection)
             {
 
-                var result = await conn.GetAsync<PurchaseOrders>(id);
-                return result;
+                if (skufamily == true) {
+                    query = ",(SELECT a.sku_family FROM product a WHERE po.vendor_id=a.vendor_id ORDER BY a.sku_family DESC LIMIT 1) AS latest_sku ";
+                }
+               var result = await conn.QueryAsync<PurchaseOrders>("Select po.* "+ query + " from purchase_orders po WHERE po.po_id = " + id.ToString() + ";");
+                //var result = await conn.GetAsync<PurchaseOrders>(id);
+                return result.FirstOrDefault();
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    $('.loading').hide();
     if (window.location.href.indexOf('PurchaseOrdersCheckIn/Single/') > -1) {
         $('.collapsButton').click();
         $('.total_po_count,.custom_pagination').hide();
