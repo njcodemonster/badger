@@ -956,11 +956,11 @@ namespace badger_view.Controllers
         Input:int poid, int limit
         output: dynamic object of purchase orders line item
         */
-        public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
+        public async Task<List<POLineItems>> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
 
-            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
+            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<List<POLineItems>>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
             return LineItemsDetails;
         }
@@ -1130,7 +1130,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            dynamic PageModal = new ExpandoObject();
+            POLineItemsView PageModal = new POLineItemsView();
 
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
@@ -2134,8 +2134,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
             var userId = await _LoginHelper.GetLoginUserId();
-            string a = "aa";
-            int i = int.Parse(a);
+            
             var response = await _BadgerApiHelper.GetAsync<PoClaim>("/PurchaseOrders/loadclaim/" + poId);
             return Ok(response);
         }

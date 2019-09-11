@@ -846,7 +846,7 @@ namespace itemService.Interfaces
             {
                 using (IDbConnection conn = Connection)
                 {
-                    string sQuery = "Delete from items where sku='" + ItemToDelete.sku + "' and po_id='" + ItemToDelete.PO_id + "' limit " + qty + ";";
+                    string sQuery = "Delete from items where item_status_id=1  and sku='" + ItemToDelete.sku + "' and po_id='" + ItemToDelete.PO_id + "' limit " + qty + ";";
                     var result = await conn.QueryAsync<string>(sQuery);
 
                     IsSuccess = true;
