@@ -1317,6 +1317,10 @@ function getSinglePurchaseOrder(id) {
         console.log(data);
         var vendorCode = data.vendor[0].vendor_code;
         var po = data.purchase_order[0];
+        var latestsku = po.latest_sku;
+        if (latestsku == null) {
+            latestsku = "";
+        }
         if (po.po_status == 4) {
 
             alert("This P.O does not exist.");
@@ -1326,7 +1330,7 @@ function getSinglePurchaseOrder(id) {
         } else {
             $("#poId").val(po.po_id);
             $('.orderNumber').text(po.vendor_po_number);
-            $('#AddItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id).attr("data-vendorcode", vendorCode).attr("data-skufamily", po.latest_sku);
+            $('#AddItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id).attr("data-vendorcode", vendorCode).attr("data-skufamily", latestsku);
             $('#EditItemButton').attr("data-poid", po.po_id).attr("data-ponumber", po.vendor_po_number).attr("data-vendorid", po.vendor_id);
 
             purchaseOrderData(data);
