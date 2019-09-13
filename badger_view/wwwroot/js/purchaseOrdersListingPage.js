@@ -1434,11 +1434,24 @@ $(document).on('click', ".podeleteImage", function (e) {
 
 $(document).on("change", "#poUploadImages,#poUploadImage", function () {
     $('.docTypeSection').remove();
-    $(this).parents('.modal-body').append('<div class="docTypeSection"><div> <input data-value="4" class="docCategorie" checked type="radio" name="typeRadio"> Original PO</div><div> <input data-value="7" class="docCategorie" type="radio" name="typeRadio"> Shipment Invoice</div><div> <input class="docCategorie" data-value="8" type="radio" name="typeRadio"> Main Shipment Invoice</div><div> <input data-value="9" type="radio" class="docCategorie" name="typeRadio"> Other</div><div><button class="docCategorieSubmit">submit</button></div> </div>')
-    $('.modal-footer:visible').find('button').attr('disabled', true)
+
+    if (window.location.href.indexOf('PurchaseOrders/Single') != -1) {
+        $(this).parents('#newPurchaseOrderForm').append('<div class="docTypeSection"><div><strong>Select Document Category</strong></div> <div> <input data-value="4" class="docCategorie" checked type="radio" name="typeRadio"> Original PO</div><div> <input data-value="7" class="docCategorie" type="radio" name="typeRadio"> Shipment Invoice</div><div> <input class="docCategorie" data-value="8" type="radio" name="typeRadio"> Main Shipment Invoice</div><div> <input data-value="9" type="radio" class="docCategorie" name="typeRadio"> Other</div><div style="text-align:right"><button class="docCategorieSubmit btn btn-success">Submit</button></div> </div>')
+        $('#EditPurchaseOrderButton:visible').find('button').attr('disabled', true)
+    } else {
+        $(this).parents('.modal-body').append('<div class="docTypeSection"><div><strong>Select Document Category</strong></div> <div> <input data-value="4" class="docCategorie" checked type="radio" name="typeRadio"> Original PO</div><div> <input data-value="7" class="docCategorie" type="radio" name="typeRadio"> Shipment Invoice</div><div> <input class="docCategorie" data-value="8" type="radio" name="typeRadio"> Main Shipment Invoice</div><div> <input data-value="9" type="radio" class="docCategorie" name="typeRadio"> Other</div><div style="text-align:right"><button class="docCategorieSubmit btn btn-success">Submit</button></div> </div>')
+        $('.modal-footer:visible').find('button').attr('disabled', true)
+    }
+
+    
 })
 $(document).on("click", ".docCategorieSubmit", function () {
-    $('#poUploadImages,#poUploadImage').attr('data-categorie', $('.docCategorie:checked').attr('data-value'))
-    $('.modal-footer:visible').find('button').attr('disabled', false)
+    if (window.location.href.indexOf('PurchaseOrders/Single') != -1) {
+        $('#poUploadImages,#poUploadImage').attr('data-categorie', $('.docCategorie:checked').attr('data-value'));
+        $('#EditPurchaseOrderButton:visible').find('button').attr('disabled', false);
+    } else {
+        $('#poUploadImages,#poUploadImage').attr('data-categorie', $('.docCategorie:checked').attr('data-value'));
+        $('.modal-footer:visible').find('button').attr('disabled', false);
+    }    
     $('.docTypeSection').remove();
 })

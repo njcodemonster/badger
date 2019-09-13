@@ -804,16 +804,18 @@ label.error {
 
 .docTypeSection {
     position: absolute;
-    background: #28a745;
+    background: #7da6ff;
     z-index: 9;
     margin: 0 auto;
     right: 0;
     left: 0;
-    width: 200px;
+    width: 235px;
     top: 50%;
     border: 2px solid #000;
     text-align: left;
-    color:#000;
+    color: #000;
+    padding: 10px;
+    border-radius: 5%;
 }
 
 .docTypeSection div{
