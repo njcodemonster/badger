@@ -734,7 +734,9 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
                         alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
                     } else {
                         console.log("File uploaded.");
-                        table.cell(purchaseorderrownumber, 12).data('<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc redDOtElement"></div><i class="fa fa-upload h3"></i></a>').draw();
+                        if (window.location.href.indexOf('PurchaseOrders/Single') == -1) {
+                            table.cell(purchaseorderrownumber, 12).data('<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc redDOtElement"></div><i class="fa fa-upload h3"></i></a>').draw();
+                        }
                     }
                     window.purchaseorderrownumber = "";
                 });
@@ -744,7 +746,7 @@ $(document).on('click', "#EditPurchaseOrderButton", function () {
             $("#newPurchaseOrderForm").attr("data-currentid", "");
             $('#modalPurchaseOrder').modal('hide');
             alertBox('poAlertMsg', 'green', 'Purchase order updated successfully');
-            if (window.purchaseorderrownumber >= 0) {
+            if (window.purchaseorderrownumber >= 0 && window.location.href.indexOf('PurchaseOrders/Single') == -1) {
                 $('#newPurchaseOrderForm')[0].reset();
             }
 

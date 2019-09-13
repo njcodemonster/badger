@@ -290,14 +290,35 @@ namespace badger_view.Controllers
 
             dynamic vendorData = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/list/" + vendor_id);
 
-            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+            if (purchaseOrder[0].has_note == 1)
+            {
+                dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+                purchaseOrdersData.notes = purchaseOrderNote;
+            }
+            else
+            {
+                purchaseOrdersData.notes = "";
+            }
 
             //dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
-
-            dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + original_po + "/0");
-            dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + shipment_invoice + "/0");
-            dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + main_shipment_invoice + "/0");
-            dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + other + "/0");
+            if (purchaseOrder[0].has_doc == 1)
+            {
+                dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + original_po + "/0");
+                dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + shipment_invoice + "/0");
+                dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + main_shipment_invoice + "/0");
+                dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + other + "/0");
+                purchaseOrdersData.originalpo = originalpo;
+                purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+                purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+                purchaseOrdersData.others = others;
+            }
+            else
+            {
+                purchaseOrdersData.originalpo = "";
+                purchaseOrdersData.shipmentinvoice = "";
+                purchaseOrdersData.mainshipmentinvoice = "";
+                purchaseOrdersData.others = "";
+            }
 
             dynamic purchaseOrderTracking = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorderstracking/gettracking/" + id.ToString());
 
@@ -309,12 +330,9 @@ namespace badger_view.Controllers
 
             purchaseOrdersData.purchase_order = purchaseOrder;
             purchaseOrdersData.vendor = vendorData;
-            purchaseOrdersData.notes = purchaseOrderNote;
+            
             //purchaseOrdersData.documents = purchaseOrderDocs;
-            purchaseOrdersData.originalpo = originalpo;
-            purchaseOrdersData.shipmentinvoice = shipmentinvoice;
-            purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
-            purchaseOrdersData.others = others;
+            
             purchaseOrdersData.tracking = purchaseOrderTracking;
             purchaseOrdersData.ledger = getLedger;
             purchaseOrdersData.discount = getDiscount;
