@@ -180,7 +180,7 @@
                 <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
 
                 <select class="form-control item_ra_status d-none" data-itemid="@item.item_id" style="width:150px;margin:0 auto;font-size:13px;">
-                    <option value="0"> Default RA </option>
+                    <option value="0" selected> -- RA Status -- </option>
                     @foreach (dynamic _rastatus in Model.AllRaStatus)
                                     {
                     <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
@@ -190,7 +190,7 @@
                             else
                             {
                 <select class="form-control item_ra_status" data-itemid="@item.item_id" style="width: 150px;margin:0 auto;font-size:13px;">
-                    <option value="0"> Default RA </option>
+                    <option value="0"> -- RA Status -- </option>
                     @foreach (dynamic _rastatus in Model.AllRaStatus)
                                     {
                                         if (@_rastatus.ra_status_id == @item.ra_status)
