@@ -11,32 +11,7 @@
 
 
 }
-<style>
-    .autocomplete-suggestions {
-        border: 1px solid #999;
-        background: #fff;
-        cursor: default;
-        overflow: auto;
-        left:60px !important;
-        margin-top:1px;
-    }
 
-    .autocomplete-suggestion {
-        padding: 10px 10px;
-        font-size: 13px;
-        white-space: nowrap;
-        overflow: hidden;
-    }
-
-    .autocomplete-selected {
-        background: #f0f0f0;
-    }
-
-    .autocomplete-suggestions strong {
-        font-weight: normal;
-        color: #3399ff;
-    }
-</style>
 <div class="loaderBox"><div class="spinner-border text-info"></div></div>
 <div class="text-right w-100">
     <input type="checkbox" /><label class="pl-1">Hide from customers</label>
@@ -280,31 +255,34 @@
                     <table class="table borderless">
                         <tr>
                             <td>
-                                <div class="form-group">
-                                    <label>Type</label>
-                                    @{
-                                        Dictionary<int, string> productTypes = new Dictionary<int, string>();
-                                        productTypes.Add(1, "Clothing");
-                                        productTypes.Add(2, "Accessories");
-                                    }
-                                    <select class="form-control w-50 required" disabled>
-
-                                        @foreach (KeyValuePair<int, string> productType in productTypes)
-                                        {
-                                            if (productType.Key == Model.Product.product_type_id)
-                                            {
-                                                <option value="@productType.Key" selected>@productType.Value</option>
-                                            }
-                                            else
-                                            {
-                                                <option value="@productType.Key">@productType.Value</option>
-                                            }
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label>Type</label>
+                                        @{
+                                            Dictionary<int, string> productTypes = new Dictionary<int, string>();
+                                            productTypes.Add(1, "Clothing");
+                                            productTypes.Add(2, "Accessories");
                                         }
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Type</label>
+                                        <select class="form-control w-50 required" disabled>
+
+                                            @foreach (KeyValuePair<int, string> productType in productTypes)
+                                            {
+                                                if (productType.Key == Model.Product.product_type_id)
+                                                {
+                                                    <option value="@productType.Key" selected>@productType.Value</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@productType.Key">@productType.Value</option>
+                                                }
+                                            }
+                                        </select>
                                     </div>
+
+                                    <div class="form-group col-sm-6">
+                                        <label>Sub Type</label>
+                                    </div>
+                                </div>
 
 
                             </td>
