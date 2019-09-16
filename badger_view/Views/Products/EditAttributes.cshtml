@@ -3,13 +3,15 @@
 }
 @model GenericModals.Models.ProductDetailsPageData ;
 @section Scripts {
-    <script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>
+    <!--<script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>-->
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/productDetails.js" asp-append-version="true"></script>
+    <script src="~/js/editAttributePairsWithAutocomplete.js" asp-append-version="true"></script>
     <link rel="stylesheet" type="text/css" href="~/lib/bootstrap/dist/css/bootstrap-tagsinput.css" />
 
 
 }
+
 <div class="loaderBox"><div class="spinner-border text-info"></div></div>
 <div class="text-right w-100">
     <input type="checkbox" /><label class="pl-1">Hide from customers</label>
@@ -59,9 +61,21 @@
                                     <tr>
                                         <td class="form-group">
                                             <label>Model</label>
-                                            <select class="form-control d-inline-block required">
+                                            <select class="form-control d-inline-block">
                                                 <option selected value="">Choose...</option>
-                                                <option>...</option>
+                                                @foreach (dynamic photoshootModels in Model.shootModels)
+                                                {
+                                                    @if (photoshootModels.model_id == Model.productPhotoshootModel)
+                                                    {
+                                                        <option value="@photoshootModels.model_id" selected>@photoshootModels.model_name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@photoshootModels.model_id">@photoshootModels.model_name</option>
+                                                    }
+
+                                                }
+                                                <option value="VendorStockPhoto">Vendor Stock Photo</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -74,8 +88,8 @@
                                 </table>
                             </td>
                             <td>
-                                <img src="~/uploads/@Model.Product.product_vendor_image" height="100" />
-                                @Model.Product.sku_family
+                                <img src="~/images/@Model.Product.product_vendor_image" height="100" />
+                                <span class="productSku">@Model.Product.sku_family</span>
                             </td>
                         </tr>
                         <tr>
@@ -105,23 +119,23 @@
                         <tr>
                             <td class="form-group">
                                 <label>Product details</label>
-                                <textarea class="form-control required" id="main_page_paragraph" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==1 ).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()</textarea>
+                                <textarea class="form-control required" id="main_page_paragraph" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()">@Model.ProductDetails.Where(x=>x.product_detail_type==1).Select(X=>X.product_detail_value).DefaultIfEmpty("").First()</textarea>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <input type="text" id="main_page_bulit1" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                                <input type="text" id="main_page_bulit1" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==2).Select(X=>X.product_detail_value).DefaultIfEmpty("").First()" class="form-control" />
                             </td>
 
                         </tr>
                         <tr>
                             <td>
-                                <input type="text" id="main_page_bulit2" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                                <input type="text" id="main_page_bulit2" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==3).Select(X=>X.product_detail_value).DefaultIfEmpty("").First()" class="form-control" />
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <input type="text" id="main_page_bulit3" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" class="form-control" />
+                                <input type="text" id="main_page_bulit3" data-RealValue="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("None").First()" value="@Model.ProductDetails.Where(x=>x.product_detail_type==4).Select(X=>X.product_detail_value).DefaultIfEmpty("").First()" class="form-control" />
                             </td>
                             <td><!-- <i class="fa fa-plus addMorePoints" aria-hidden="true"></i>--></td>
                         </tr>
@@ -144,9 +158,12 @@
                                         string productPrimaryImage = Model.product_Images.Where(x => x.isprimary == 1).Select(X => X.product_image_url).DefaultIfEmpty("None").First();
                                         int product_image_id = Model.product_Images.Where(x => x.isprimary == 1).Select(X => X.product_image_id).DefaultIfEmpty(0).First();
                                     }
-                                    @if(productPrimaryImage != "None"){
-                                        <img src="https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/@productPrimaryImage" class="productImage"  data-imageid="@product_image_id" data-filename="@productPrimaryImage" height="300" width="230" />
-                                    }else{
+                                    @if (productPrimaryImage != "None")
+                                    {
+                                        <img src="https://fashionpass.s3.us-west-1.amazonaws.com/badger_images/@productPrimaryImage" class="productImage" data-imageid="@product_image_id" data-filename="@productPrimaryImage" height="300" width="230" />
+                                    }
+                                    else
+                                    {
                                         <img src="~/images/defaultimage.png" data-filename="defaultimage" data-imageid="0" class="dummyImage" height="300" width="230" />
                                     }
                                 </span>
@@ -166,8 +183,8 @@
                                 }
                                 else
                                 {
-                                   // <span id="div_1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                        //<img src="~/images/defaultimage.png" id="drag_1" draggable="true" ondragstart="drag(event)" width="130" height="200">
+                                    // <span id="div_1" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    //<img src="~/images/defaultimage.png" id="drag_1" draggable="true" ondragstart="drag(event)" width="130" height="200">
                                     //</span>
                                 }
                             </td>
@@ -237,36 +254,72 @@
                 <div class="col-md-6">
                     <table class="table borderless">
                         <tr>
-                            <td class="form-group">
-                                <label>Type</label>
-                                <select class="form-control w-50 required">
-                                    <option selected>Clothing</option>
-                                    <option>Accessories</option>
-                                </select>
+                            <td>
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label>Type</label>
+                                        @{
+                                            Dictionary<int, string> productTypes = new Dictionary<int, string>();
+                                            productTypes.Add(1, "Clothing");
+                                            productTypes.Add(2, "Accessories");
+                                        }
+                                        <select class="form-control w-50 required" disabled>
+
+                                            @foreach (KeyValuePair<int, string> productType in productTypes)
+                                            {
+                                                if (productType.Key == Model.Product.product_type_id)
+                                                {
+                                                    <option value="@productType.Key" selected>@productType.Value</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@productType.Key">@productType.Value</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-sm-6">
+                                        <label>Sub Type</label>
+                                    </div>
+                                </div>
+
+
                             </td>
                         </tr>
                         <tr>
-                            <td class="form-group">
+                            <td class="form-group productAutoCompleteList" id="PairWithRow">
                                 <label>Pair with</label>
+                                <input type="text" class="" value="" id="writtentags" data-role="tagsinput">
+
                                 @{ string pairvalues = ""; Boolean first = true;}
                                 @foreach (GenericModals.Models.Productpairwith productpairwith in Model.productpairwiths)
                                 {
                                     if (first)
                                     {
-                                        pairvalues = productpairwith.paired_product_id;
+                                        pairvalues = productpairwith.paired_product_id + ":" + productpairwith.product_name;
                                         first = false;
+                                        <label>
+                                            <input type="checkbox" class="selectedPairWithProduct" value="@productpairwith.paired_product_id" checked />
+                                            @productpairwith.product_name
+                                        </label>
                                     }
                                     else
                                     {
-                                        pairvalues = "," + productpairwith.paired_product_id;
+                                        pairvalues = "," + productpairwith.paired_product_id + ":" + productpairwith.product_name;
+                                        <label>
+                                            <input type="checkbox" class="selectedPairWithProduct" value="@productpairwith.paired_product_id" checked/>
+                                            @productpairwith.product_name
+                                        </label>
                                     }
                                 }
-                                <input type="text" value="@pairvalues" id="Pairwith" data-RealValue="@pairvalues" class="form-control required" />
+                                <!-- <input type="text" value="@pairvalues" id="Pairwith" data-RealValue="@pairvalues" class="form-control required" /> -->
                             </td>
                         </tr>
                         <tr>
-                            <td class="form-group">
+                            <td class="form-group productAutoCompleteList" id="OtherColorsRow">
                                 <label>Other colors available</label>
+                                <input type="text" value="" id="writtentagscolor" data-role="tagsinput" class="form-control" />
                                 @{ string colorValues = ""; first = true;}
                                 @foreach (GenericModals.Models.Productcolorwith productcolorwith in Model.productcolorwiths)
                                 {
@@ -274,19 +327,26 @@
                                     {
                                         colorValues = productcolorwith.same_color_product_id;
                                         first = false;
+                                        <label>
+                                            <input type="checkbox" class="selectedOtherColorProduct" value="@productcolorwith.same_color_product_id" checked />
+                                            @productcolorwith.product_name
+                                        </label>
                                     }
                                     else
                                     {
                                         colorValues = "," + productcolorwith.same_color_product_id;
+                                        <label>
+                                            <input type="checkbox" class="selectedOtherColorProduct" value="@productcolorwith.same_color_product_id" checked />
+                                            @productcolorwith.product_name
+                                        </label>
                                     }
                                 }
-                                <input type="text" value="@colorValues" id="colorwith" data-RealValue="@colorValues" class="form-control required" />
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="" id="tagSearchRow" >
                                 <label>Search tags</label>
-                                <input type="text" class="form-control w-50" />
+                                <input type="text" data-role="tagsinput" id="writtentagsmatch" class="form-control w-50" />
                             </td>
                         </tr>
                     </table>
@@ -300,9 +360,6 @@
         <div class="col-md-12 table-responsive">
             <table class="table vborder">
                 <tr>
-                    <th>
-                        Product type
-                    </th>
                     @{ string currentHeading = ""; }
                     @foreach (GenericModals.Models.AllTags allTags in Model.AllTags)
                     {
@@ -320,11 +377,6 @@
 
                 </tr>
                 <tr>
-                    <td>
-                        <input type="checkbox" /> <label>Cloting</label>
-                        <br />
-                        <input type="checkbox" /> <label>Accessories</label>
-                    </td>
                     @{ currentHeading = ""; }
                     @foreach (GenericModals.Models.AllTags allTags in Model.AllTags)
                     {
@@ -342,11 +394,11 @@
                                 currentHeading = allTags.sub_heading;
                                 if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
                                 {
-                                    @:<input type="checkbox" class="tagsData" data-current="1" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
+                                    @:<input type="checkbox" class="tagsData" data-current="1" id="tagsDataId-@allTags.attribute_id" data-attributeid="@allTags.attribute_id"  data-attributeValue="@allTags.attribute_display_name" checked /> <label>@allTags.attribute_display_name</label>
                                 }
                                 else
                                 {
-                                    @:<input type="checkbox" class="tagsData" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                    @:<input type="checkbox" class="tagsData" id="tagsDataId-@allTags.attribute_id" data-attributeid="@allTags.attribute_id" data-attributeValue="@allTags.attribute_display_name" /> <label>@allTags.attribute_display_name</label>
                                 }
                             }
                             else
@@ -354,11 +406,11 @@
                                 @:<br />
                                 if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
                                 {
-                                    @:<input type="checkbox" class="tagsData" data-current="1" data-attributeid="@allTags.attribute_id" checked /> <label>@allTags.attribute_display_name</label>
+                                    @:<input type="checkbox" class="tagsData" data-current="1" id="tagsDataId-@allTags.attribute_id" data-attributeid="@allTags.attribute_id" checked data-attributeValue="@allTags.attribute_display_name" /> <label>@allTags.attribute_display_name</label>
                                 }
                                 else
                                 {
-                                    @:<input type="checkbox" class="tagsData" data-attributeid="@allTags.attribute_id" /> <label>@allTags.attribute_display_name</label>
+                                    @:<input type="checkbox" class="tagsData" id="tagsDataId-@allTags.attribute_id" data-attributeid="@allTags.attribute_id" data-attributeValue="@allTags.attribute_display_name" /> <label>@allTags.attribute_display_name</label>
                                 }
                             }
                         }
@@ -400,3 +452,4 @@
     </div>
 </div>
 </div>
+<div class="loading d-none"></div>

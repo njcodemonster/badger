@@ -1,7 +1,14 @@
 ﻿
+using badgerApi.Models;
+using CommonHelper;
+using Dapper;
+using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -22,6 +29,7 @@ namespace badgerApi.Interfaces
     {
         Task<Product> GetByIdAsync(int id);
         Task<List<Product>> GetAll(Int32 Limit);
+        Task<object> GetProductsPairWithSearch(string ProdcutId);
         Task<String> Create(Product NewProduct);
         Task<bool> UpdateAsync(Product ProductToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
@@ -38,11 +46,18 @@ namespace badgerApi.Interfaces
         Task<IEnumerable<ProductDetails>> GetProductDetails(string id);
         Task<IEnumerable<AllColors>> GetAllProductColors();
         Task<IEnumerable<AllTags>> GetAllProductTags();
+        Task<IEnumerable<PhotoshootModels>> GetPhotoshootModels();
         Task<Int32> GetProductShootStatus(string id);
+        Task<Int32> GetProductPhotoshootModel(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
         Task<string> CreateProductImages(Productimages NewProductImages);
+        Task<string> AddEditProductPageDetails(string product_id, string product_detail_type, string value, string userid, string dateTime);
         Task<bool> UpadateImagePrimary(int product_image_id, int is_primary);
         Task<Object> GetProduct(string product_name);
+        Task<string> AddPairWithProduct(string product_id, string pair_product_id, string userid, string dateTime);
+        Task<string> RemovePairWithProduct(string product_id, string pair_product_id);
+        Task<string> AddOtherColorProducts(string product_id, string pair_product_id, string userid, string dateTime);
+        Task<string> RemoveOtherColorProducts(string product_id, string same_color_product_id);
         Task<Object> GetProductIdsByPurchaseOrder();
         Task<Object> GetPublishedProductIds(string poids);
         Task<bool> DeleteProduct(string product_id, string po_id);
@@ -165,6 +180,25 @@ namespace badgerApi.Interfaces
 
         }
 
+        /*
+        Developer: Mohi
+        Date: 9-7-19 
+        Action: Update data with specific fields by id 
+        Input: Dictionary<String , String> ValuePairs, String where condition, tablename
+        output: Boolean
+        */
+        public async Task UpdateSpecificData(Dictionary<String, String> ValuePairs, String where, String table_name)
+        {
+            QueryHelper qHellper = new QueryHelper();
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, table_name, where);
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync(UpdateQuery);
+
+            }
+
+        }
+
 
         /*
         Developer: Sajid Khan
@@ -248,7 +282,7 @@ namespace badgerApi.Interfaces
             IEnumerable<Productpairwith> productProperties;
             using (IDbConnection conn = Connection)
             {
-                productProperties = await conn.QueryAsync<Productpairwith>("select pairing_product_id,paired_product_id from product_pair_with where pairing_product_id= '" + id + "'");
+                productProperties = await conn.QueryAsync<Productpairwith>("select product_pair_with.pairing_product_id,product_pair_with.paired_product_id, product.product_name from product,product_pair_with    where product.product_id = product_pair_with.paired_product_id  AND pairing_product_id= '" + id + "'");
             }
             return productProperties;
         }
@@ -265,7 +299,7 @@ namespace badgerApi.Interfaces
             IEnumerable<Productcolorwith> productProperties;
             using (IDbConnection conn = Connection)
             {
-                productProperties = await conn.QueryAsync<Productcolorwith>("select product_id,same_color_product_id from product_color_with where product_id= '" + id + "'");
+                productProperties = await conn.QueryAsync<Productcolorwith>(" SELECT product_color_with.same_color_product_id, product_color_with.product_id, product.product_name  FROM product, product_color_with  WHERE product.product_id = product_color_with.same_color_product_id AND product_color_with.product_id  = '" + id + "'");
             }
             return productProperties;
         }
@@ -339,12 +373,43 @@ namespace badgerApi.Interfaces
             Int32 shootstatus = 0;
             using (IDbConnection conn = Connection)
             {
-                shootstatus = conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= '" + id + "'").Result.First();
-
+                try{ 
+                    shootstatus = conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= " + id).Result.First();
+                }
+                catch (Exception ex) {
+                    return shootstatus;
+                }
             }
             return shootstatus;
 
         }
+
+
+        /*
+        Developer: Mohi
+        Date: 8-20-19 
+        Action: Get Product photoshoot model from database
+        Input: string id 
+        output: Product photoshoot model ID
+        */
+        public async Task<Int32> GetProductPhotoshootModel(string id)
+        {
+            Int32 photoshootModel = 0;
+            using (IDbConnection conn = Connection)
+            {
+                try
+                {
+                    photoshootModel  = conn.QueryAsync<Int32>("SELECT photoshoots.model_id FROM `photoshoots`, `product_photoshoots` WHERE  `product_photoshoots`.photoshoot_id = `photoshoots`.photoshoot_id    AND  `product_photoshoots`.`product_id` =  " + id).Result.First();
+                }
+                catch (Exception ex)
+                {
+                    return photoshootModel;
+                }
+            }
+            return photoshootModel;
+
+        }
+
 
         /*
         Developer: Sajid Khan
@@ -383,6 +448,25 @@ namespace badgerApi.Interfaces
             return productProperties;
 
         }
+
+        /*
+        Developer: Mohi
+        Date: 8-8-19 
+        Action: Get all Photoshoot models from database
+        Input: 
+        output: list of photoshoot models
+        */
+        public async Task<IEnumerable<PhotoshootModels>> GetPhotoshootModels()
+        {
+            IEnumerable<PhotoshootModels> productPhotoshootModels;
+            using (IDbConnection conn = Connection)
+            {
+                productPhotoshootModels = await conn.QueryAsync<PhotoshootModels>("select * from photoshoot_models where active_status = 1 ");
+
+            }
+            return productPhotoshootModels;
+        }
+
         /*Developer: ubaid
         Date:5-7-19
         Action:get AttributeValues Model from controller and insert the AttributeValues
@@ -528,6 +612,24 @@ namespace badgerApi.Interfaces
         }
 
         /*
+        Developer: Mohi
+        Date: 08-21-19 
+        Action: get product with vendor for pair with search
+        Input: Prodcut Id
+        output: List of products with vendor
+        */
+        public async Task<object> GetProductsPairWithSearch(string ProdcutId)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "SELECT product.sku_family as value, product.product_id, product.product_name as title, vendor.`vendor_name` as vendor FROM `product`, vendor WHERE `product`.`vendor_id` = vendor.`vendor_id` and `product`.`product_id` <> " + ProdcutId + " GROUP BY(product.`sku_family`)";
+            using (IDbConnection conn = Connection)
+            {
+                productDetails = await conn.QueryAsync<object>(sQuery);
+            }
+            return productDetails;
+        }
+
+        /*
         Developer: Sajid Khan
         Date: 08-09-19 
         Action: update product image as primary in database
@@ -618,6 +720,141 @@ namespace badgerApi.Interfaces
                 res = false;
             }
             return res;
+        }
+
+        /*
+       Developer: Mohi
+       Date: 8-16-19 
+       Action: check product details if itis already added then it update and otherwise insert it
+       Input: product id, product detail
+       output: string 
+       */
+
+        public async Task<string> AddEditProductPageDetails(string product_id, string product_detail_type, string value, string userid, string dateTime)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "";
+            string toReturn = "success";
+            sQuery = "SELECT * FROM product_page_details where product_id = " + product_id + " And product_detail_type =  " + product_detail_type;
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> productPageDetail = await conn.QueryAsync<object>(sQuery);
+                int checkData = productPageDetail.Count();
+                if (checkData > 0)
+                {
+                    String InsertQuery = "update product_page_details set `product_detail_value` = \"" + value + "\", `updated_by` = "+ userid +", updated_at = "+dateTime+"  where `product_id` = " + product_id + " and `product_detail_type`  = " + product_detail_type;
+                    await conn.QueryAsync<object>(InsertQuery);
+                }
+                else
+                {
+                    String InsertQuery = "insert into product_page_details (`product_id`, `product_detail_type`, `product_detail_value`, `created_by`, `created_at`) " +
+                        "values (" + product_id + "," + product_detail_type + ", \"" + value + "\", " + userid + " , " + dateTime+")";
+                    var result = await conn.QueryAsync<object>(InsertQuery);
+                }
+
+            }
+            return toReturn;
+        }
+
+        /*
+       Developer: Mohi
+       Date: 8-16-19 
+       Action: check product details if it is already added then leave it and otherwise insert it
+       Input: product id, pair product id 
+       output: string 
+       */
+
+        public async Task<string> AddPairWithProduct(string product_id, string pair_product_id, string userid, string dateTime)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "";
+            string toReturn = "success";
+            sQuery = "SELECT * FROM product_pair_with where pairing_product_id = " + product_id + " And paired_product_id =  " + pair_product_id;
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> productPairWith = await conn.QueryAsync<object>(sQuery);
+                int checkData = productPairWith.Count();
+                if (checkData > 0)
+                { 
+                }
+                else
+                {
+                    String InsertQuery = "insert into product_pair_with (`pairing_product_id`, `paired_product_id`, `created_by`, `created_at`) " +
+                        "values (" + product_id + "," + pair_product_id + ", " + userid + " , " + dateTime + ")";
+                    var result = await conn.QueryAsync<object>(InsertQuery);
+                }
+
+            }
+            return toReturn;
+        }
+
+        
+        /*
+       Developer: Mohi
+       Date: 8-16-19 
+       Action: check product details if it is already added then leave it and otherwise insert it
+       Input: product id, pair product id 
+       output: string 
+       */
+
+        public async Task<string> AddOtherColorProducts(string product_id, string same_color_product_id, string userid, string dateTime)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "";
+            string toReturn = "success";
+            sQuery = "SELECT * FROM product_color_with where same_color_product_id = " + same_color_product_id + " And product_id =  " + product_id;
+
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<object> productPairWith = await conn.QueryAsync<object>(sQuery);
+                int checkData = productPairWith.Count();
+                if (checkData > 0)
+                {
+                }
+                else
+                {
+                    String InsertQuery = "insert into product_color_with (`product_id`, `same_color_product_id`, `created_by`, `created_at`) " +
+                        "values (" + product_id + "," + same_color_product_id + ", " + userid + " , " + dateTime + ")";
+                    var result = await conn.QueryAsync<object>(InsertQuery);
+                }
+
+            }
+            return toReturn;
+        }
+
+        
+        /*
+        Developer: Mohi
+        Date: 8-16-19 
+        Action: remove pair with product
+        Input: product id, pair product id 
+        output: string 
+        */
+        public async Task<string> RemovePairWithProduct(string product_id, string pair_product_id)
+        {
+            string toReturn = "success";
+            string sQuery = "Delete FROM product_pair_with where pairing_product_id = " + product_id + " And paired_product_id =  " + pair_product_id;
+
+            using (IDbConnection conn = Connection)
+            {
+                await conn.QueryAsync<object>(sQuery);
+            }
+            return toReturn;
+        }
+
+        public async Task<string> RemoveOtherColorProducts(string product_id, string same_color_product_id)
+        {
+            dynamic productDetails = new ExpandoObject();
+            string sQuery = "";
+            string toReturn = "success";
+            sQuery = "Delete FROM product_color_with where same_color_product_id = " + same_color_product_id + " And product_id =  " + product_id;
+            using (IDbConnection conn = Connection)
+            {
+                await conn.QueryAsync<object>(sQuery);
+            }
+            return toReturn;
         }
 
         /*

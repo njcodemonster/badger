@@ -101,12 +101,130 @@ $(document).on("change", ".tagsData", function () {
     }
 
 });
+window.RemovePairWithProduct = [];
+$('input[type="checkbox"].selectedPairWithProduct').click(function () {
+    if ($(this).prop("checked") == true) {
+        window.RemovePairWithProduct.splice($.inArray($(this).val(), window.RemovePairWithProduct), 1);
+    }
+    else if ($(this).prop("checked") == false) {
+        window.RemovePairWithProduct.push($(this).val());
+    } 
+});
+
+
+window.RemoveOtherColorProduct= [];
+$('input[type="checkbox"].selectedOtherColorProduct').click(function () {
+    if ($(this).prop("checked") == true) {
+        window.RemoveOtherColorProduct.splice($.inArray($(this).val(), window.RemoveOtherColorProduct), 1);
+    }
+    else if ($(this).prop("checked") == false) {
+        window.RemoveOtherColorProduct.push($(this).val());
+    } 
+});
+
+
 
 $(document).on("click", "#mainSaveButton", function () {
     if (emptyFeildValidation('productDetailPage') == false) {
         return false;
     }
+    $(".loading").removeClass("d-none");
     datatosend = {};
+    datatosend["product_name"] = $("#product_name").val();
+    datatosend["size_fit"] = $("#Product_sizeandfit").val();
+    datatosend["product_cost"] = $("#product_cost").val();
+    datatosend["product_retail"] = $("#product_retail").val();
+    datatosend["product_discount"] = $("#product_discount").val();
+
+    datatosend["product_detail_1"] = $("#main_page_paragraph").val();
+    datatosend["product_detail_2"] = $("#main_page_bulit1").val();
+    datatosend["product_detail_3"] = $("#main_page_bulit2").val();
+    datatosend["product_detail_4"] = $("#main_page_bulit3").val();
+
+    datatosend["internalNotes"] = $("#internalNotes").val();
+    datatosend["oldInternalNotes"] = $('#internalNotes').attr('data-realvalue'); 
+
+    datatosend["photoshootStatus"] = $("#product_shoot_status").val();
+    datatosend["photoshootStatusOld"] = $('#product_shoot_status').attr('data-realvalue'); 
+
+    var productID = $('#product_name').attr('data-id'); 
+
+    var pairProducts = [];
+    $('#PairWithRow .bootstrap-tagsinput span.label-info').each(function () {
+        var selectedPairProduct= $(this).attr('product_id');
+        if (typeof selectedPairProduct !== typeof undefined && selectedPairProduct !== false && selectedPairProduct!= "undefined") {
+            pairProducts.push(selectedPairProduct);
+        }
+    });
+
+    if (tag_removed.length > 0) {
+        var tagRemovedIds = tag_removed.join(",");
+        datatosend["tagRemovedIds"] = tagRemovedIds;
+    } else {
+        datatosend["tagRemovedIds"] = "";
+    }
+
+    if (tag_added.length > 0) {
+        var tagAddedIds = tag_added.join(",");
+        datatosend["tagAddedIds"] = tagAddedIds;
+    } else {
+        datatosend["tagAddedIds"] = "";
+    }
+
+    if (pairProducts.length > 0) {
+        var pairProductIds = pairProducts.join(",");
+        datatosend["pairProductIds"] = pairProductIds;
+    } else {
+        datatosend["pairProductIds"] = "";
+    }
+ 
+    if (window.RemovePairWithProduct.length > 0) {
+        var RemovePairWithProductIds = window.RemovePairWithProduct.join(",");
+        datatosend["RemovePairWithProductIds"] = RemovePairWithProductIds;
+    } else {
+        datatosend["RemovePairWithProductIds"] = "";
+    }
+
+    if (window.RemoveOtherColorProduct.length > 0) {
+        var RemoveOtherColorProductIds = window.RemoveOtherColorProduct.join(",");
+        datatosend["RemoveOtherColorProductIds"] = RemoveOtherColorProductIds;
+    } else {
+        datatosend["RemoveOtherColorProductIds"] = "";
+    }
+
+    var otherColorsProducts = [];
+    $('#OtherColorsRow .bootstrap-tagsinput span.label-info').each(function () {
+        var selectedPairProduct = $(this).attr('product_id');
+        if (typeof selectedPairProduct !== typeof undefined && selectedPairProduct !== false && selectedPairProduct != "undefined") {
+            otherColorsProducts.push(selectedPairProduct);
+        }
+    });
+
+    if (otherColorsProducts.length > 0) {
+        var otherColorsProductIds = otherColorsProducts.join(",");
+        datatosend["otherColorsProductIds"] = otherColorsProductIds;
+    } else {
+        datatosend["otherColorsProductIds"] = "";
+    }
+
+    $.ajax({
+
+        url: '/product/UpdateAttributes/' + productID,
+        dataType: 'json',
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(datatosend),
+        processData: false,
+
+    }).always(function (data) {
+            console.log(data);
+        console.log(datatosend);
+        $(".loading").addClass("d-none");
+    });
+
+    
+
+    return false;
     datatosend["tag_added"] = tag_added;
     datatosend["tag_removed"] = tag_removed;
     datatosend["color_added"] = color_added;

@@ -9,6 +9,7 @@ namespace GenericModals.Models
     {
         public string pairing_product_id { get; set; }
         public string paired_product_id { get; set; }
+        public string product_name { get; set; }
     }
     public partial class AllColors
     {
@@ -26,6 +27,7 @@ namespace GenericModals.Models
     {
         public string product_id { get; set; }
         public string same_color_product_id { get; set; }
+        public string product_name { get; set; }
     }
     public partial class ProductProperties
     {
@@ -71,5 +73,7 @@ namespace GenericModals.Models
         public IEnumerable<Productpairwith> productpairwiths { get; set; }
         public IEnumerable<Productcolorwith> productcolorwiths { get; set; }
         public IEnumerable<ProductProperties> productProperties { get; set; }
+        public IEnumerable<PhotoshootModels> shootModels { get; set; }
+        public Int32 productPhotoshootModel { get; set; }
     }
 }
