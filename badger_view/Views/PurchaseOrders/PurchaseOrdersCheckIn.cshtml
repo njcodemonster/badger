@@ -222,7 +222,7 @@
                             <a class="btn btn-light btn-sm" href="/PurchaseOrders/Single/@purchaseOrder.po_id" target="_blank">
                                 Edit Original PO
                             </a>
-                            <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" data-skufamily="@purchaseOrder.latest_sku" data-vendorcode="@purchaseOrder.vendor_code" data-total_styles='@purchaseOrder.total_styles' data-total_quantity='@purchaseOrder.total_quantity' data-calculationValues="@purchaseOrder.calculation_Values" class="btn btn-light btn-sm">Add an item</button>
+                            <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorstyle="@purchaseOrder.vendor_type" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" data-skufamily="@purchaseOrder.latest_sku" data-vendorcode="@purchaseOrder.vendor_code" data-total_styles='@purchaseOrder.total_styles' data-total_quantity='@purchaseOrder.total_quantity' data-calculationValues="@purchaseOrder.calculation_Values" class="btn btn-light btn-sm">Add an item</button>
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12" style="white-space: nowrap">
                             <span class="text-center d-inline-block" id="inspect-claim-@purchaseOrder.po_id">
