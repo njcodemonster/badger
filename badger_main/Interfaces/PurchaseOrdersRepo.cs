@@ -44,6 +44,7 @@ namespace badgerApi.Interfaces
         Task<List<PurchaseOrders>> CheckPOExist(string colname, string colvalue);
         Task<bool> VerifyStyleQuantity(int poId);
         Task<string> DocumentCount(int poid);
+        Task<object> GetDebitCreditForPO(int PO_id);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
     {
@@ -638,6 +639,29 @@ namespace badgerApi.Interfaces
 
                 }
             }
+        }
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Get purchase order list data by search (purchase order and invoice) from database
+        Input: string search
+        output: Dynamic object of purchase order and invoice
+        */
+        public async Task<object> GetDebitCreditForPO(int PO_id)
+        {
+
+            dynamic poPageList = new ExpandoObject();
+            string sQuery = "";
+
+            sQuery = "SELECT SUM(debit) AS debit,SUM(credit) AS credit FROM purchase_order_ledger WHERE po_id = " + PO_id;
+
+            using (IDbConnection conn = Connection)
+            {
+                poPageList = await conn.QueryAsync<object>(sQuery);
+                //poPageList.purchaseOrdersInfo = purchaseOrdersInfo;
+            }
+            return poPageList;
+
         }
     }
 }

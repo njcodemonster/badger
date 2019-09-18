@@ -1145,7 +1145,14 @@ function purchaseOrderData(data) {
                 $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             }            
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
-            var it = data.Items;
+        var it = data.Items;
+        var debCred = data.DebitCredit;
+        var Credit = 0;
+        var Debit = 0;
+        if (debCred.length > 0) {
+             Credit = debCred[0]["credit"];
+             Debit = debCred[0]["debit"];
+        }
             if (it.length > 0) {
                 var quantityUnits = 0;
                 var subCost = 0;
@@ -1170,6 +1177,8 @@ function purchaseOrderData(data) {
                         $("#itemsTable").append("</tr>");
                     }
                 });
+                debugger;
+                subCost = subCost - Debit + Credit;
                 $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, total cost $" + subCost);
             }
             $("#newPurchaseOrderForm #po_status").val(podata.po_status);

@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     debugger;
     $(".current_tags").tagsinput('items');
+    $(".loading").hide();
 })
 var color_added = new Array();
 var color_removed = new Array();
