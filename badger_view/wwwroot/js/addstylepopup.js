@@ -207,6 +207,11 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
     }).always(function (data) {
 
+        if (data == "0") {
+            alertBox('poAlertMsg', 'red', 'Seomething went wrong.');
+            $('.loading').hide();
+            return;
+        }
         if (data == "-4") {
             alertBox('poAlertMsg', 'red', 'SKU already exists, please try to bump it by 1.');
             $('.loading').hide();
