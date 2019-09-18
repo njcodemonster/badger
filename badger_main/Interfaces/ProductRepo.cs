@@ -46,7 +46,8 @@ namespace badgerApi.Interfaces
         Task<IEnumerable<ProductDetails>> GetProductDetails(string id);
         Task<IEnumerable<AllColors>> GetAllProductColors();
         Task<IEnumerable<AllTags>> GetAllProductTags();
-        Task<IEnumerable<PhotoshootModels>> GetPhotoshootModels();
+        Task<List<PhotoshootModels>> GetPhotoshootModels();
+        Task<List<ProductCategories>> GetProductCategories(string productID);
         Task<Int32> GetProductShootStatus(string id);
         Task<Int32> GetProductPhotoshootModel(string id);
         Task<string> CreateProductUsedIn(ProductUsedIn NewUsedIn);
@@ -456,7 +457,7 @@ namespace badgerApi.Interfaces
         Input: 
         output: list of photoshoot models
         */
-        public async Task<IEnumerable<PhotoshootModels>> GetPhotoshootModels()
+        public async Task<List<PhotoshootModels>> GetPhotoshootModels()
         {
             IEnumerable<PhotoshootModels> productPhotoshootModels;
             using (IDbConnection conn = Connection)
@@ -464,9 +465,27 @@ namespace badgerApi.Interfaces
                 productPhotoshootModels = await conn.QueryAsync<PhotoshootModels>("select * from photoshoot_models where active_status = 1 ");
 
             }
-            return productPhotoshootModels;
+            return productPhotoshootModels.ToList();
         }
 
+
+        /*
+        Developer: Hamza
+        Date: 16-9-19 
+        Action: Get categories rm database
+        Input: 
+        output: list of photoshoot models
+        */
+        public async Task<List<ProductCategories>> GetProductCategories(string productID)
+        {
+            IEnumerable<ProductCategories> _productCategories;
+            using (IDbConnection conn = Connection)
+            {
+                _productCategories = await conn.QueryAsync<ProductCategories>("SELECT pc.product_category_id ,pc.category_id FROM product_categories pc WHERE pc.product_id ="+ productID);
+
+            }
+            return _productCategories.ToList();
+        }
         /*Developer: ubaid
         Date:5-7-19
         Action:get AttributeValues Model from controller and insert the AttributeValues

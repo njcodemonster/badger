@@ -56,6 +56,8 @@ namespace badgerApi
             services.AddTransient<IVendorProductRepository, VendorProductRepo>();
             services.AddTransient<iBarcodeRangeRepo, BarcodeRangeRepo>();
             services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
+            services.AddTransient<ICalculationsRepository, CalculationsRepo>();
+            services.AddTransient<ICalculationValuesRepository, CalculationValuesRepo>();
 
             //*              Singletons                                   *\\
             services.AddSingleton<ICategoryRepository, CategoryRepo>();

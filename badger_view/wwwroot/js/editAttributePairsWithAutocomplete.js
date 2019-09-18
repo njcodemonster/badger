@@ -4,10 +4,14 @@ var tagSearch = 0;
 var product_id;
 var product_text;
 var myself;
-
+var productSubCategoriesAction = [];
 var attribute_id;
-
+var data_CategoriesAjax;
 $(document).ready(function () {
+    if (data_CategoriesAjax == null || data_CategoriesAjax.length == 0) {
+        GetCategoriesAjax();
+    }
+
     window.AllTagsList = [];
     $('.tagsData').each(function () {
         var ProductTagValue = $(this).attr('data-attributevalue');
@@ -17,10 +21,10 @@ $(document).ready(function () {
             window.AllTagsList.push(obj);
         }
     });
-    
+
     console.log(window.AllTagsList);
 
-    var this_product_id = $('#product_name').attr('data-id'); 
+    var this_product_id = $('#product_name').attr('data-id');
     skuforsearch = [];
     var tagsforsearch = [];
     $.ajax({
@@ -50,6 +54,46 @@ $(document).ready(function () {
             }
         }
     });
+
+    $('#StyleSubType').multiselect({
+        nonSelectedText: 'Select sub type',
+        enableFiltering: true,
+        templates: {
+            li: '<li><a href="javascript:void(0);"><label class="pl-2"></label></a></li>',
+            filter: '<li class="multiselect-item filter"><div class="input-group m-0 mb-1"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<div class="input-group-append"><button class="btn btn btn-primary multiselect-clear-filter" type="button"><i class="fa fa-times"></i></button></div>'
+        },
+        selectedClass: 'bg-light',
+        onInitialized: function (select, container) {
+            // hide checkboxes
+            container.find('input[type=checkbox]').addClass('d-none');
+        },
+        onChange: function (option, checked) {
+            var actionType = checked ? "insert" : "delete";
+            productSubCategoriesAction = productSubCategoriesAction.filter(function (category) {
+                return category.product_category_id != $(option).val();
+            });
+            var categoryAction = { category_id: $(option).val(), action: actionType };
+            productSubCategoriesAction.push(categoryAction)
+
+            if (productSubCategoriesAction.length > 0) {
+
+                $('#StyleSubType').removeClass('errorFeild');
+                $('#StyleSubType').parents('.form-group').find('span.errorMsg').remove()
+            }
+
+        }
+    });
+
+    if (selectedProductCategories != null || selectedProductCategories != "") {
+        var selectProductCategories = JSON.parse(selectedProductCategories);
+        var categoryIds = [];
+        for (var i = 0; i < selectProductCategories.length; i++) {
+            var Category = selectProductCategories[i];
+            categoryIds.push(Category.category_id);
+        }
+        $('#StyleSubType').multiselect('select', categoryIds);
+    }
 
     function inputcheckedvalue(productsdata) {
         $(".checkedvalue").each(function (i, val) {
@@ -83,7 +127,7 @@ $(document).ready(function () {
         product_id = $(this).attr('product_id');
         product_text = $(this).text();
         myself.add(product_text);
-        
+
         $('#PairWithRow .bootstrap-tagsinput input').val('');
 
     })
@@ -103,10 +147,10 @@ $(document).ready(function () {
         myself.add(product_text);
         $('#tagSearchRow .bootstrap-tagsinput input').val('');
         if ($("#tagsDataId-" + attribute_id).prop("checked") == false) {
-            $(".autocomplete-suggestions").css("display","none");
+            $(".autocomplete-suggestions").css("display", "none");
             //$("#tagsDataId-" + attribute_id).prop("checked", true);
             $("#tagsDataId-" + attribute_id).click();
-        } 
+        }
     })
 
 
@@ -144,6 +188,7 @@ $(document).ready(function () {
         $('.updateTagsToShopify').css('display', 'block');
         $('#savedsuccessfully').css('display', 'none');
     })
+
     $(document).on("change", ".checkedvalue", function () {
         $('.updateTagsToShopify').css('display', 'block');
         $('#savedsuccessfully').css('display', 'none');
@@ -182,7 +227,7 @@ $(document).ready(function () {
 
     });
 
-     
+
 
 
 
@@ -190,7 +235,52 @@ $(document).ready(function () {
 });
 
 
+function GetCategoriesAjax() {
 
+    $.ajax({
+        url: '/categoryoption/GetCategories',
+        type: 'GET',
+        contentType: 'application/json',
+        processData: true,
+
+    }).always(function (data) {
+
+        data_CategoriesAjax = data;
+
+
+
+
+        $('#StyleSubType option').remove();
+        $('#StyleSubType').multiselect('rebuild');
+        var DDL_ProductType = $('#DDL_ProductType').val();
+
+        if (DDL_ProductType != 0) {
+
+            var subCategories = data_CategoriesAjax.filter(function (category) {
+                return category.category_parent_id == DDL_ProductType;
+            });
+
+            if (subCategories.length) {
+                for (var i = 0; i < subCategories.length; i++) {
+                    $('#StyleSubType').append("<option value='" + subCategories[i].category_id + "'>" + subCategories[i].category_name + "</option >")
+                }
+                $('#StyleSubType').multiselect('rebuild');
+
+            }
+
+            if (selectedProductCategories != null || selectedProductCategories != "") {
+                var selectProductCategories = JSON.parse(selectedProductCategories);
+                var categoryIds = [];
+                for (var i = 0; i < selectProductCategories.length; i++) {
+                    var Category = selectProductCategories[i];
+                    categoryIds.push(Category.category_id);
+                }
+                $('#StyleSubType').multiselect('select', categoryIds);
+            }
+        }
+    });
+
+}
 
 
 
@@ -737,7 +827,7 @@ $(document).ready(function () {
             self.itemsArray.push(item);
 
             // add a tag element
-            if (typeof product_id !== typeof undefined && product_id !== false && product_id != "undefined" && product_id != "" ) {
+            if (typeof product_id !== typeof undefined && product_id !== false && product_id != "undefined" && product_id != "") {
                 var $tag = $('<span class="tag pairwithallproductsid ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '" product_id="' + product_id + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
 
                 $tag.data('item', item);
@@ -747,8 +837,8 @@ $(document).ready(function () {
             else {
                 var $tag = "";/*  $('<span class="tag selectedProductTags ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '" attribute_id="' + attribute_id + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>'); */
             }
-            
-           
+
+
 
             // Check to see if the tag exists in its raw or uri-encoded form
             var optionExists = (
@@ -1173,7 +1263,7 @@ $(document).ready(function () {
      */
     $.fn.tagsinput = function (arg1, arg2, arg3) {
         var results = [];
-       
+
         this.each(function () {
             var tagsinput = $(this).data('tagsinput');
             // Initialize a new tags input

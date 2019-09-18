@@ -1,8 +1,15 @@
-﻿@{
+﻿@using System.Web;
+
+@{
     ViewData["Title"] = "Edit Attributes";
 }
 @model GenericModals.Models.ProductDetailsPageData ;
+
 @section Scripts {
+    <script type="text/javascript">
+        var selectedProductCategories =  '@Html.Raw(Json.Serialize(Model.productCategories))' ;
+   
+    </script>
     <!--<script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>-->
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/productDetails.js" asp-append-version="true"></script>
@@ -63,7 +70,7 @@
                                             <label>Model</label>
                                             <select class="form-control d-inline-block">
                                                 <option selected value="">Choose...</option>
-                                                @foreach (dynamic photoshootModels in Model.shootModels)
+                                                @foreach (PhotoshootModels photoshootModels in Model.shootModels)
                                                 {
                                                     @if (photoshootModels.model_id == Model.productPhotoshootModel)
                                                     {
@@ -196,7 +203,7 @@
 
                                 @{
                                     Dictionary<int, string> shoteStatus = new Dictionary<int, string>();
-                                    shoteStatus.Add(0, "Shoot Not Statted");
+                                    shoteStatus.Add(0, "Shoot Not Started");
                                     shoteStatus.Add(1, "In Progress");
                                     shoteStatus.Add(2, "Sent to Editor");
                                     shoteStatus.Add(3, "Complete");
@@ -263,7 +270,7 @@
                                             productTypes.Add(1, "Clothing");
                                             productTypes.Add(2, "Accessories");
                                         }
-                                        <select class="form-control w-50 required" disabled>
+                                        <select class="form-control w-50 required" disabled id="DDL_ProductType">
 
                                             @foreach (KeyValuePair<int, string> productType in productTypes)
                                             {
@@ -281,6 +288,8 @@
 
                                     <div class="form-group col-sm-6">
                                         <label>Sub Type</label>
+                                        <select id="StyleSubType" name="StyleSubType" class="form-control w-50 required" multiple>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -308,7 +317,7 @@
                                     {
                                         pairvalues = "," + productpairwith.paired_product_id + ":" + productpairwith.product_name;
                                         <label>
-                                            <input type="checkbox" class="selectedPairWithProduct" value="@productpairwith.paired_product_id" checked/>
+                                            <input type="checkbox" class="selectedPairWithProduct" value="@productpairwith.paired_product_id" checked />
                                             @productpairwith.product_name
                                         </label>
                                     }
@@ -344,7 +353,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="" id="tagSearchRow" >
+                            <td class="" id="tagSearchRow">
                                 <label>Search tags</label>
                                 <input type="text" data-role="tagsinput" id="writtentagsmatch" class="form-control w-50" />
                             </td>
@@ -394,7 +403,7 @@
                                 currentHeading = allTags.sub_heading;
                                 if (Model.productProperties.Any(X => X.attribute_id == allTags.attribute_id))
                                 {
-                                    @:<input type="checkbox" class="tagsData" data-current="1" id="tagsDataId-@allTags.attribute_id" data-attributeid="@allTags.attribute_id"  data-attributeValue="@allTags.attribute_display_name" checked /> <label>@allTags.attribute_display_name</label>
+                                    @:<input type="checkbox" class="tagsData" data-current="1" id="tagsDataId-@allTags.attribute_id" data-attributeid="@allTags.attribute_id" data-attributeValue="@allTags.attribute_display_name" checked /> <label>@allTags.attribute_display_name</label>
                                 }
                                 else
                                 {

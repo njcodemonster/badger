@@ -82,6 +82,7 @@ namespace badger_view.Controllers
         public async Task<string> UpdateAttributes([FromBody]   JObject json, int productId)
         {
             SetBadgerHelper();
+            JArray product_subtype_ids = new JArray();
             string user_id = await _LoginHelper.GetLoginUserId();
 
             JObject product = new JObject();
@@ -109,6 +110,25 @@ namespace badger_view.Controllers
             
             string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(product.ToString(Formatting.None), "/Product/UpdateAttributes/" + productId.ToString());
 
+            if (json["product_subtype_ids"] != null)
+            {
+                product_subtype_ids = (JArray)json["product_subtype_ids"];
+            }
+            for (int i = 0; i < product_subtype_ids.Count(); i++)
+            {
+                string category_id = product_subtype_ids[i].Value<string>("category_id");
+                string action = product_subtype_ids[i].Value<string>("action");
+
+                JObject productCategories = new JObject();
+                productCategories.Add("product_id", productId);
+                productCategories.Add("category_id", category_id);
+                productCategories.Add("action", action);
+                productCategories.Add("created_by", user_id);
+                productCategories.Add("created_at", _common.GetTimeStemp());
+
+                var temp_product_category_id = await _BadgerApiHelper.GenericPostAsyncString<String>(productCategories.ToString(Formatting.None), "/product/UpdateProductCategory");
+
+            }
             string sku = "";
             string tagAddedIds = json.Value<string>("tagAddedIds");
 

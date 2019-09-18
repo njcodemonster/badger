@@ -128,7 +128,7 @@ $(document).on("click", "#mainSaveButton", function () {
     if (emptyFeildValidation('productDetailPage') == false) {
         return false;
     }
-    $(".loading").removeClass("d-none");
+    $(".loading").show();
     datatosend = {};
     datatosend["product_name"] = $("#product_name").val();
     datatosend["size_fit"] = $("#Product_sizeandfit").val();
@@ -140,8 +140,8 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["product_detail_2"] = $("#main_page_bulit1").val();
     datatosend["product_detail_3"] = $("#main_page_bulit2").val();
     datatosend["product_detail_4"] = $("#main_page_bulit3").val();
-
-    datatosend["internalNotes"] = $("#internalNotes").val();
+    datatosend["product_subtype_ids"] = productSubCategoriesAction;
+    datatosend["productSubCategories"] = $("#internalNotes").val();
     datatosend["oldInternalNotes"] = $('#internalNotes').attr('data-realvalue'); 
 
     datatosend["photoshootStatus"] = $("#product_shoot_status").val();
@@ -210,16 +210,20 @@ $(document).on("click", "#mainSaveButton", function () {
     $.ajax({
 
         url: '/product/UpdateAttributes/' + productID,
-        dataType: 'json',
+        
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(datatosend),
         processData: false,
 
     }).always(function (data) {
-            console.log(data);
-        console.log(datatosend);
-        $(".loading").addClass("d-none");
+        if (data ="success") {
+            alertBox('poAlertMsg', 'green', 'Product updated successfully.');
+        } else {
+            alertBox('poAlertMsg', 'red', 'Product updation failed.');
+        }
+            
+        $(".loading").hide();
     });
 
     

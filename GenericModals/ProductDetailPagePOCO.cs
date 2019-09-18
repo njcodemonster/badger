@@ -75,5 +75,6 @@ namespace GenericModals.Models
         public IEnumerable<ProductProperties> productProperties { get; set; }
         public IEnumerable<PhotoshootModels> shootModels { get; set; }
         public Int32 productPhotoshootModel { get; set; }
+        public List<ProductCategories> productCategories { get; set; }
     }
 }

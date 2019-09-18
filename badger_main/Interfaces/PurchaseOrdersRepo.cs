@@ -243,10 +243,11 @@ namespace badgerApi.Interfaces
         {
             dynamic poPageList = new ExpandoObject();
             string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
-                                a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor,
+                                a.vendor_id, a.total_styles,a.total_quantity, a.shipping, a.order_date,b.vendor_name as vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
                                 (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
                                 b.vendor_code ,
+                                (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =a.po_id) calculation_Values,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
@@ -281,16 +282,19 @@ namespace badgerApi.Interfaces
         {
             dynamic poPageList = new ExpandoObject();
             string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
-                                a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor,
+                                a.vendor_id, a.total_styles,a.total_quantity, a.shipping, a.order_date,b.vendor_name as vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
                                 (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
                                 b.vendor_code ,
+                                (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =@poID) calculation_Values,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
                                 LEFT JOIN users u ON poc.inspect_claimer = u.user_id
                                 LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
-                                where a.po_status != 2 AND a.po_status != 4 AND a.po_id ="+id+" order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
+                                where a.po_status != 2 AND a.po_status != 4 AND a.po_id =@poID order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
+
+            sQuery = sQuery.Replace("@poID",id.ToString());
            
             using (IDbConnection conn = Connection)
             {

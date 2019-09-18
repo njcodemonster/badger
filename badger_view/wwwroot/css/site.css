@@ -827,7 +827,7 @@ span.errorMsg {
     left: 5px;
 }
 
-#productDetailPage .autocomplete-suggestions {
+.autocomplete-suggestions {
     border: 1px solid #999;
     background: #fff;
     cursor: default;
@@ -836,18 +836,18 @@ span.errorMsg {
     margin-top: 1px;
 }
 
-#productDetailPage .autocomplete-suggestion {
+.autocomplete-suggestion {
     padding: 10px 10px;
     font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
 }
 
-#productDetailPage .autocomplete-selected {
+.autocomplete-selected {
     background: #f0f0f0;
 }
 
-#productDetailPage .autocomplete-suggestions strong {
+.autocomplete-suggestions strong {
     font-weight: normal;
     color: #3399ff;
 }
