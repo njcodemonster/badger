@@ -83,6 +83,13 @@ $(document).on('click', "#NewVendorButton", function () {
         $(this).attr('disabled', false);
         return false;
     }
+    if ($('#vendorZip').val().length < 5) {
+        $('#vendorZip').addClass('errorFeild');
+        if ($('#vendorZip').parents('.form-group').find('.errorMsg').length == 0)
+                $('#vendorZip').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid zip code</span>')
+        $(this).attr('disabled', false);
+        return false
+    }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
@@ -288,6 +295,13 @@ $(document).on('click', "#EditVendorButton", function () {
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
         return false;
+    }
+    if ($('#vendorZip').val().length < 5) {
+        $('#vendorZip').addClass('errorFeild');
+        if ($('#vendorZip').parents('.form-group').find('.errorMsg').length == 0)
+            $('#vendorZip').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid zip code</span>')
+        $(this).attr('disabled', false);
+        return false
     }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
