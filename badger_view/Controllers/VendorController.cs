@@ -355,24 +355,26 @@ namespace badger_view.Controllers
                     }
                 }
                 string vendor_notes = json.Value<string>("vendor_notes");
-                
+                if (vendor_notes != "sameNote")
+                {
                     JObject vendorNotes = new JObject();
                     vendorNotes.Add("ref_id", id);
                     vendorNotes.Add("note", vendor_notes);
                     vendorNotes.Add("created_by", Int32.Parse(loginUserId));
                     String newNoteID = await _BadgerApiHelper.GenericPostAsyncString<String>(vendorNotes.ToString(Formatting.None), "/vendor/note/create");
                     JObject vendorOrderStatusNote = new JObject();
-                    
+
                     if (vendor_notes == "")
                     {
                         vendorOrderStatusNote.Add("has_note", 0);
-                    }else
+                    }
+                    else
                     {
                         vendorOrderStatusNote.Add("has_note", 1);
 
                     }
                     await _BadgerApiHelper.GenericPutAsyncString<String>(vendorOrderStatusNote.ToString(Formatting.None), "/vendor/updatespecific/" + id);
-
+                }
                 
 
             }

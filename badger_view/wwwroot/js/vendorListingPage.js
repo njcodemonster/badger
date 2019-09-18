@@ -212,7 +212,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
 $(document).on('click', "#EditVendor", function () {
     $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
-    $('.errorMsg,.documentsLink').remove();
+    $('.errorMsg,.documentsLink,.vendorAlertMsg').remove();
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
@@ -313,7 +313,9 @@ $(document).on('click', "#EditVendorButton", function () {
      if($('#vendorNotes').val() != $('#vendorNotes').attr('data-value')) {
          jsonData["vendor_notes"] = $('#vendorNotes').val();
          $('#vendorNotes').attr('data-value',$('#vendorNotes').val())
-       } else {
+     } else if ($('#vendorNotes').val() == $('#vendorNotes').attr('data-value')) {
+         jsonData["vendor_notes"] = 'sameNote';
+    } else {
          jsonData["vendor_notes"] = '';
 
        }
@@ -664,7 +666,6 @@ $(document).on('click', ".deleteImage", function (event) {
     jsonData["Vendor_id"] =  $("#newVendorForm").data("currentID");
     $.ajax({
         url: "/vendor/deletevendor_logo",
-        
         type: 'post',
         contentType: 'application/json',
         data:  JSON.stringify(jsonData) ,
