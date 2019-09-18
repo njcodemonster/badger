@@ -206,7 +206,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     }).always(function (data) {
 
         if (data == "-4") {
-            alertBox('poAlertMsg', 'red', 'Sku already exists.');
+            alertBox('poAlertMsg', 'red', 'SKU already exists, please try to bump it by 1.');
             $('.loading').hide();
             return;
         }
@@ -764,7 +764,7 @@ function CreateProductLineItems(data, skulist) {
                         selected = "selected";
                     options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
                 }
-                var skunum = data[x].sku.split('-')[1];
+                var skunum = skulist[y].sku.split('-')[1];
                 $(wrapper).append('<div class="pb-2 vendorSkuBox form-row" data-skunum="' + skunum + '"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize"  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;" disabled name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline"  placeholder="Qty" min="1"  id="styleSkuQty"   />  '); // add input boxes.
 
                 Temp_Sku = skulist[y].sku.split('-')[0];
