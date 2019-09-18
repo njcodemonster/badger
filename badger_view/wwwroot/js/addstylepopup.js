@@ -158,7 +158,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
         });
 
         if ((_TotalStyles[0].value+1) > totalStyles) {
-            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total style in Purchase Order to proceed.');
             $('.loading').hide();
             return;
         }
