@@ -1,4 +1,8 @@
-﻿$(document).on('click', "#AddNewBarcodeButton", function () {
+﻿$(document).ready(function () {
+    $(".loading").hide();
+});
+
+$(document).on('click', "#AddNewBarcodeButton", function () {
     $('#AddBarcodeForm input').removeClass('errorFeild');
     $('#AddBarcodeForm .errorMsg').remove();
     $('#modalAddBarcode').modal('show');

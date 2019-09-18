@@ -400,7 +400,32 @@ namespace badgerApi.Controllers
 
         }
 
+        /*
+        Developer: Rizwan Ali
+        Date: 9-16-19
+        Action: Get Debit and credit amount for PO 
+        URL: /api/purchaseordermanagement/GetDebCred/poid
+        Request: Get
+        Input: int poid
+        output: dynamic object of Debit/Credit
+        */
+        [HttpGet("GetDebCred/{PO_id}")]
+        public async Task<object> GetDebitCreditForPO(int PO_id)
+        {
+            object DebCred = new Object();
+            try
+            {
+                DebCred = await _PurchaseOrdersRepo.GetDebitCreditForPO(PO_id);
+              
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetLineItemsDetails for PO : " + PO_id.ToString() + " with message" + ex.Message);
+            }
 
+            return DebCred;
+        }
 
 
     }

@@ -328,6 +328,8 @@ namespace badger_view.Controllers
 
             dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + id.ToString() + "/" + "0");
 
+            dynamic CostDebCred = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetDebCred/" + id.ToString());
+
             purchaseOrdersData.purchase_order = purchaseOrder;
             purchaseOrdersData.vendor = vendorData;
             
@@ -337,6 +339,7 @@ namespace badger_view.Controllers
             purchaseOrdersData.ledger = getLedger;
             purchaseOrdersData.discount = getDiscount;
             purchaseOrdersData.Items = LineItemsDetails;
+            purchaseOrdersData.DebitCredit = CostDebCred;
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
 
