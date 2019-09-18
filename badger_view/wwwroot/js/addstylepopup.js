@@ -10,8 +10,8 @@ $(document).on('click', ".DeletefromPOButton", function () {
 
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
-    
-    if (SelectedProductID !=null) {
+
+    if (SelectedProductID != null) {
         var po_id = parseInt($('#newAddStyleForm #po_id').val());
         var product_id = SelectedProductID;
         $.ajax({
@@ -67,6 +67,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     var action = $(this).attr('data-action');
     var IsUpdate = false;
     var newVendorForm = $("#newAddStyleForm input");
+
 
     if ($('.errorFeild').length > 0) {
         $('.loading').hide();
@@ -129,6 +130,69 @@ $(document).on('click', ".AddNewStyleButton", function () {
         }
     });
 
+    var calulationValuesJson = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues");
+    var totalQty = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("total_quantity");
+    var totalStyles = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("total_styles");
+    if (calulationValuesJson == "" || calulationValuesJson == null) {
+
+        var Qty = 0;
+        var style_sku = jsonData["vendor_style_sku"];
+        $.each(style_sku, function (index, value) {
+            var styleQty = parseInt(value.style_qty);
+            Qty = Qty + styleQty;
+
+
+        })
+        if (Qty > totalQty) {
+            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.');
+            $('.loading').hide();
+            return;
+        }
+    } else {
+
+        var TotalQty = calulationValuesJson.filter(function (el) {
+            return el.calculation_id == 5;
+        });
+        var _TotalStyles = calulationValuesJson.filter(function (el) {
+            return el.calculation_id == 6;
+        });
+
+        if ((_TotalStyles[0].value+1) > totalStyles) {
+            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total quantity in Purchase Order to proceed.');
+            $('.loading').hide();
+            return;
+        }
+       
+        var Qty = TotalQty[0].value;
+        var style_sku = jsonData["vendor_style_sku"];
+        $.each(style_sku, function (index, value) {
+            var originalQty = parseInt(value.original_qty);
+            var styleQty = parseInt(value.style_qty);
+            if (originalQty != styleQty) {
+
+                var _value = originalQty - styleQty;
+              
+                if (originalQty > styleQty) {
+                    var _value = originalQty - styleQty;
+                    Qty = Qty - _value;
+                } else {
+                    var _value = styleQty - originalQty ;
+                    Qty = Qty + _value;
+                }
+            }
+
+        })
+
+        if (Qty > totalQty) {
+            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.');
+            $('.loading').hide();
+            return;
+        }
+
+
+    }
+
+
 
     $.ajax({
 
@@ -141,7 +205,11 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
     }).always(function (data) {
 
-
+        if (data == "-4") {
+            alertBox('poAlertMsg', 'red', 'Sku already exists.');
+            $('.loading').hide();
+            return;
+        }
         if (data == "-3") {
             alertBox('poAlertMsg', 'red', 'Cannot reduce quantity of sku.');
             $('.loading').hide();
@@ -196,9 +264,58 @@ $(document).on('click', ".AddNewStyleButton", function () {
                 if (IsUpdate == false) {
                     var thenum = new_sku.match(/[a-z]+|[^a-z]+/gi);
                     var finalSkuFamily = thenum[0] + (parseInt(thenum[1]) + 1);
+
                     $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("skufamily", new_sku);
                     $('.poSkuFamily').text(finalSkuFamily);
                     new_sku = finalSkuFamily;
+
+                }
+
+                var calulationValuesJson = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues");
+                if (calulationValuesJson == "" || calulationValuesJson == null) {
+
+                    var Qty = 0;
+                    var style_sku = jsonData["vendor_style_sku"];
+                    $.each(style_sku, function (index, value) {
+                        var styleQty = parseInt(value.style_qty);
+                        Qty = Qty + styleQty;
+
+
+                    })
+                    var calulationValuesJson = [{ "value": 1, "calculation_id": 6 }, { "value": Qty, "calculation_id": 5 }];
+                    $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues", calulationValuesJson);
+                } else {
+
+                    var TotalQty = calulationValuesJson.filter(function (el) {
+                        return el.calculation_id == 5;
+                    });
+                    var TotalStyleCount = calulationValuesJson.filter(function (el) {
+                        return el.calculation_id == 6;
+                    });
+
+                    var Qty = TotalQty[0].value;
+                    var style_sku = jsonData["vendor_style_sku"];
+                    $.each(style_sku, function (index, value) {
+                        var originalQty = parseInt(value.original_qty);
+                        var styleQty = parseInt(value.style_qty);
+                        if (originalQty != styleQty) {
+
+                            if (originalQty > styleQty) {
+                                var _value = originalQty - styleQty;
+                                Qty = Qty - _value;
+                            } else {
+                                var _value = styleQty - originalQty;
+                                Qty = Qty + _value;
+                            }
+                        }
+
+                    })
+                    TotalQty[0].value = Qty;
+                    TotalStyleCount[0].value += 1;
+                    var finalJson = [TotalQty[0], TotalStyleCount[0]];
+                    $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues", finalJson);
+
+
                 }
 
 
@@ -247,7 +364,7 @@ Output: input fields show dynamic
 */
 var dropdownlist;
 $(document).ready(function () {
-   // $('.loading').hide();
+    // $('.loading').hide();
     var max_fields = 10; //maximum input boxes allowed
     var wrapper = $("#po_input_fields_wrap"); //Fields wrapper
     var add_button = $(".add_field_button"); //Add button ID
@@ -396,6 +513,28 @@ $(document).on('click', "#AddItemButton", function () {
         GetSkuSizes();
     }
 
+    var CalculatedValuesArray = $(this).data("calculationvalues");
+    if (CalculatedValuesArray != "" && CalculatedValuesArray != null) {
+
+        var PoTotalQty = $(this).data("total_quantity");
+        var PoTotalStyleCount = $(this).data("total_styles");
+        var TotalQty = CalculatedValuesArray.filter(function (el) {
+            return el.calculation_id == 5;
+        });
+        var TotalStyleCount = CalculatedValuesArray.filter(function (el) {
+            return el.calculation_id == 6;
+        });
+
+        if (PoTotalStyleCount <= TotalStyleCount[0].value) {
+            alertBox('poAlertMsg', 'red', ' Total Style Count reached, Please increase total count in Purchase Order to proceed.');
+            return;
+        }
+        if (PoTotalQty <= TotalQty[0].value) {
+            alertBox('poAlertMsg', 'red', ' Total Quantity reached, Please increase total quantity in Purchase Order to proceed.');
+            return;
+        }
+    }
+
     $('#modaladdstylec #ExistingProductSelect').removeAttr('disabled');
     $('#modaladdstylec #StyleType').removeAttr('disabled');
     $('#StyleSubType option').remove();
@@ -416,7 +555,14 @@ $(document).on('click', "#AddItemButton", function () {
             this.remove();
         }
     });
-    $('#modaladdstylec').modal('show');
+
+    if (CurrentProductId == null) {
+        $('#modaladdstylec').modal({ backdrop: 'static', keyboard: false });
+    } else {
+        $('#modaladdstylec').modal('show');
+    }
+
+
     $('.poVendor').text($(this).data("vendorcode"))
 
     if (CurrentProductId == null) {
@@ -503,7 +649,7 @@ function GetProductDetails(vendor_id, product_id, po_id) {
                 var productImage = data[i].product_vendor_image;
                 if (productImage != null) {
 
-                    $(".style_doc_section").append("<img src="+window.location.origin+'/uploads/'+ productImage +" width='50' />  <br>");
+                    $(".style_doc_section").append("<img src=" + window.location.origin + '/uploads/' + productImage + " width='50' />  <br>");
                     $(".style_doc_section").removeClass('d-none');
 
                 } else {
@@ -597,9 +743,9 @@ function CreateProductLineItems(data, skulist) {
             Temp_Sku = data[x].sku.split('-')[0];
             var skunum = data[x].sku.split('-')[1];
             LineItemsskuList.push({ sku: data[x].sku, attribute_id: data[x].attribute_id, });
-            $(wrapper).append('<div class="pb-2 vendorSkuBox form-row" data-skunum="' + skunum+'"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline" name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline"  name="styleSize" id="styleSize" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" id="styleSku" name="styleSku" value="' + data[x].sku + '"  style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required " name="cqty[' + x + ']" placeholder="Qty" data-originalQuantity="' + data[x].line_item_ordered_quantity + '" min="1" id="styleSkuQty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
+            $(wrapper).append('<div class="pb-2 vendorSkuBox form-row" data-skunum="' + skunum + '"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline" name="csize[' + x + ']" value = "' + data[x].vendor_size + '" placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline"  name="styleSize" id="styleSize" value = ""  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="size[' + x + ']" placeholder="Size" id="styleSku" name="styleSku" value="' + data[x].sku + '"  style="text-transform: uppercase;"  disabled /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline required " name="cqty[' + x + ']" placeholder="Qty" data-originalQuantity="' + data[x].line_item_ordered_quantity + '" min="1" id="styleSkuQty" value="' + data[x].line_item_ordered_quantity + '"  />  '); // add input boxes.
 
-          
+
         }
 
         if (window.sku_sizes) {
@@ -619,7 +765,7 @@ function CreateProductLineItems(data, skulist) {
                     options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
                 }
                 var skunum = data[x].sku.split('-')[1];
-                $(wrapper).append('<div class="pb-2 vendorSkuBox form-row" data-skunum="' + skunum +'"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize"  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;" disabled name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline"  placeholder="Qty" min="1"  id="styleSkuQty"   />  '); // add input boxes.
+                $(wrapper).append('<div class="pb-2 vendorSkuBox form-row" data-skunum="' + skunum + '"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required " name="csize[' + x + ']" value="' + skulist[y].vendor_size + '"  placeholder="Vendor Size" id="styleVendorSize" disabled  /></div><div class="form-group col-md-3"><select class="form-control d-inline" name="styleSize" id="styleSize"  disabled>' + options + '</select></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline "  placeholder="Size" value="' + skulist[y].sku + '" style="text-transform: uppercase;" disabled name="styleSku" id="styleSku" /></div> <div class="form-group col-md-3"> <input type="text" class="form-control d-inline"  placeholder="Qty" min="1"  id="styleSkuQty"   />  '); // add input boxes.
 
                 Temp_Sku = skulist[y].sku.split('-')[0];
             }
@@ -792,7 +938,7 @@ function CreateSKU(element, Isaccessory) {
         if (skunum == null) {
             newSkuNum = 0;
         } else {
-            newSkuNum = parseInt(skunum)+1;
+            newSkuNum = parseInt(skunum) + 1;
         }
     }
 
@@ -823,7 +969,7 @@ function CreateSKU(element, Isaccessory) {
         $(element).parent().parent().find('#styleSku').val(newSkuToAssign);
         $(element).parent().parent().find('#styleSku').removeClass('errorFeild');
         $(element).parent().parent().find('.errorMsg').remove();
-     
+
         $(element).parent().parent().data('skunum', newSkuNum);
         if (isSkuDuplicate(newSkuToAssign)) {
             var newSkuToAssign = new_sku + '-' + (newSkuNum + 1);
@@ -868,7 +1014,7 @@ $(document).on('focusout', '#po_input_fields_wrap .vendorSkuBox #styleSku', func
 
     var _TempSKU = $(this).val();
     if (_TempSKU != '') {
-        
+
         if (isSkuDuplicate(_TempSKU)) {
 
             $(this).addClass('errorFeild');

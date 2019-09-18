@@ -313,6 +313,24 @@ namespace badger_view.Controllers
 
                 }
             }
+            else
+            {
+                var newSkus = vendor_style_sku_data.Where(x => x.Value<bool>("IsNewSku") == true).ToList();
+                for (int i = 0; i < newSkus.Count; i++)
+                {
+                    string sku = newSkus[i].Value<string>("style_sku");
+                    
+                    bool SkuFound = await _BadgerApiHelper.GenericGetAsync<Boolean>("/Sku/checkskuexist/" + sku);
+                   
+                    if (SkuFound)
+                    {
+                        // -4 for indicating error in javascript : sku already exists.
+                        return "-4";
+                    }
+
+
+                }
+            }
 
 
             for (int i = 0; i < vendor_style_sku_data.Count; i++)
@@ -380,7 +398,9 @@ namespace badger_view.Controllers
                 lineitem_obj.Add("line_item_retail", product_retail);
                 lineitem_obj.Add("line_item_type_id", product_type_id);
                 lineitem_obj.Add("line_item_ordered_quantity", style_qty);
-
+                lineitem_obj.Add("IsQtyIncreased", int.Parse(style_qty) < original_qty ? false : true);
+                lineitem_obj.Add("originalQty", original_qty);
+                
                 JObject items = new JObject();
                 items.Add("barcode", barcode); // 0
                 items.Add("slot_number", slot_number); // 0
@@ -408,8 +428,6 @@ namespace badger_view.Controllers
                     int _style_qty = int.Parse(style_qty);
                     if (original_qty != _style_qty)
                     {
-
-
                         //Adding new items in existing Line items
                         String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/updateitems/" + style_qty);
                         String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/updateLineitems");

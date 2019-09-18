@@ -27,9 +27,13 @@ namespace GenericModals.PurchaseOrder
         public string vendor_size { get; set; }
         [Write(false)]
         public int attribute_id { get; set; }
-       
+        [Write(false)]
+        public bool IsQtyIncreased { get; set; }
+        [Write(false)]
+        public int originalQty { get; set; }
 
-     
+
+
 
     }
 }
