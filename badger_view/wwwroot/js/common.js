@@ -306,3 +306,7 @@ $(document).on('keydown', '.required', function (e) {
 }).on('hidden.bs.collapse', function () {
     $(this).find(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
 });*/
+
+function checkClothingSkuPattern(){
+    return new RegExp('^[a-zA-Z]+[0-9]{3}-{1}[0-9]+$');
+}

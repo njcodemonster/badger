@@ -620,14 +620,18 @@ $(document).on("change", ".item_sku", function () {
     var product_attribute_id = $(this).attr('data-productattributeid');
     var quantity = $(this).attr('data-quantity');
     var product_id = $(this).attr('data-productid');
-
+    if ($(this).val().split('-')[0] != $(this).parents('.card').find('.skufamilyArea').attr('data-skufamily')) {
+        $(this).addClass('errorFeild');
+        alertInnerBox('message-' + po_id, 'red', 'SKU-family is not match');
+        return false;
+    }
     $(this).removeClass('errorFeild');
     if (sku == "") {
         $(this).addClass('errorFeild');
         return false;
     }
 
-    var patt = new RegExp('^[a-zA-Z]+[0-9]{3}-{1}[0-9]+$');
+    var patt = checkClothingSkuPattern()
     var value = sku.toUpperCase();
     if (patt.test(value) == false) {
         $(this).addClass('errorFeild');
