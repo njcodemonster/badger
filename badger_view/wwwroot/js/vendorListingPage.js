@@ -247,7 +247,7 @@ function getSetVendorData(id) {
         var documents = vendor.logo
         $("#newVendorForm").data("currentID", vendor.vendor_id);
         $("#vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name + ")");
-        if (notes.length > 0)
+        if (notes && notes.length > 0)
             $('#vendorNotes').val(notes[notes.length - 1].note).attr('data-value', notes[notes.length - 1].note);
         $('#vendorName').val(vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);

@@ -247,7 +247,7 @@ namespace badgerApi.Interfaces
                                 a.vendor_id, a.total_styles,a.total_quantity, a.shipping, a.order_date,b.vendor_name as vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
                                 (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
-                                b.vendor_code ,
+                                b.vendor_code ,b.vendor_type,
                                 (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =a.po_id) calculation_Values,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
@@ -286,7 +286,7 @@ namespace badgerApi.Interfaces
                                 a.vendor_id, a.total_styles,a.total_quantity, a.shipping, a.order_date,b.vendor_name as vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
                                 (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
-                                b.vendor_code ,
+                                b.vendor_code ,b.vendor_type,
                                 (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =@poID) calculation_Values,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
@@ -344,7 +344,7 @@ namespace badgerApi.Interfaces
                                     ",av.value as vendor_size                 " +
                                     ",av.attribute_id" +
                                     " from purchase_order_line_items pol , product_attributes pa ,attribute_values av " +
-                                    " where pol.sku=pa.sku  and av.attribute_id=pa.attribute_id and av.value_id=pa.value_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " order by pol.sku ;";
+                                    " where pol.sku=pa.sku  and av.product_id=pa.product_id  and av.value_id=pa.value_id  and pol.product_id = pa.product_id and pol.product_id=" + product_id + " and pol.po_id=" + PO_id + " order by pol.sku ;";
 
 
                 result = await conn.QueryAsync<PurchaseOrderLineItems>(querytoRun);

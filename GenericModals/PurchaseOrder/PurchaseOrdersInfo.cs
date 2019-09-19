@@ -35,6 +35,7 @@ namespace GenericModals.PurchaseOrder
         public string latest_sku { get; set; }
         public string vendor_code { get; set; }
         public string calculation_Values { get; set; }
+        public int vendor_type { get; set; }
 
 
 
