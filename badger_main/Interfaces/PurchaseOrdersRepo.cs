@@ -244,17 +244,18 @@ namespace badgerApi.Interfaces
         {
             dynamic poPageList = new ExpandoObject();
             string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
-                                a.vendor_id, a.total_styles,a.total_quantity, a.shipping, a.order_date,b.vendor_name as vendor,
+                                a.vendor_id, a.total_styles,a.total_quantity, a.shipping, a.order_date,b.vendor_name AS vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
                                 (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
                                 b.vendor_code ,b.vendor_type,
-                                (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =a.po_id) calculation_Values,
-                                a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
+                                (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id IN (5,6) AND  cv.reffrence_id =a.po_id) calculation_Values,
+                                a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name AS inspect_claimer_name, u1.name AS publish_claimer_name,
+                                u.claim_color AS inspect_claim_color, u1.claim_color AS publish_claim_color
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
                                 LEFT JOIN users u ON poc.inspect_claimer = u.user_id
                                 LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
-                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
+                                WHERE a.po_status != 2 AND a.po_status != 4 ORDER BY ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) ASC, a.po_id ASC";
             if (limit > 0)
             {
                 sQuery += " limit " + start + "," + limit + ";";
@@ -288,7 +289,8 @@ namespace badgerApi.Interfaces
                                 (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
                                 b.vendor_code ,b.vendor_type,
                                 (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =@poID) calculation_Values,
-                                a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
+                                a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name,
+                                u.claim_color AS inspect_claim_color, u1.claim_color AS publish_claim_color
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
                                 LEFT JOIN users u ON poc.inspect_claimer = u.user_id
@@ -489,7 +491,8 @@ namespace badgerApi.Interfaces
         public async Task<PoClaim> GetClaim(int poId)
         {
             var query = string.Format(@" SELECT po_id,inspect_claimer, inspect_claimed_at, publish_claimer,
-                        publish_claimed_at,u.name as inspect_claimer_name, u1.name as publish_claimer_name 
+                        publish_claimed_at,u.name as inspect_claimer_name, u1.name as publish_claimer_name,
+                        u.claim_color AS inspect_claim_color, u1.claim_color AS publish_claim_color
                         FROM po_claim pc LEFT JOIN users u ON pc.inspect_claimer = u.user_id
                         LEFT JOIN users u1 ON pc.publish_claimer = u1.user_id
                         WHERE po_id={0} LIMIT 1", poId);
@@ -620,7 +623,8 @@ namespace badgerApi.Interfaces
         */
         public async Task<bool> VerifyStyleQuantity(int poid)
         {
-            string sQuery = "SELECT DISTINCT Output.total_styles FROM (SELECT COUNT(*) AS total_styles  FROM(SELECT purchase_order_line_items.line_item_ordered_quantity Quantity FROM purchase_order_line_items, product, product_attributes, attributes, sku WHERE(purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = "+poid+" AND product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  AND sku.sku = purchase_order_line_items.sku)) AS A WHERE A.Quantity > 0 UNION ALL SELECT total_styles FROM purchase_orders WHERE po_id = "+poid+") AS Output";
+            string sQuery = $"SELECT DISTINCT Output.total_styles FROM (SELECT COUNT(*) AS total_styles  FROM(SELECT purchase_order_line_items.line_item_ordered_quantity Quantity FROM purchase_order_line_items, product, " +
+                $"product_attributes, attributes, sku WHERE(purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id ={poid} AND product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  AND sku.sku = purchase_order_line_items.sku)) AS A WHERE A.Quantity > 0 UNION ALL SELECT total_styles FROM purchase_orders WHERE po_id = "+poid+") AS Output";
 
             using (IDbConnection conn = Connection)
             {
