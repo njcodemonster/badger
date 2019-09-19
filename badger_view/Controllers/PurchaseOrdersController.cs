@@ -1504,7 +1504,7 @@ namespace badger_view.Controllers
                 if (updateItemID == "Success")
                 {
 
-                    int po_id = json.Value<int>("pO_id");
+                    int po_id = json.Value<int>("PO_id");
                     int ra_status = json.Value<int>("ra_status");
 
                     dynamic result = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/" + po_id);
