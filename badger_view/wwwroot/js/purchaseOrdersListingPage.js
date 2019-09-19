@@ -41,6 +41,7 @@
                         $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
                         $('.ui-autocomplete').empty().css("border", "0");
                         $('#NewPurchaseOrderButton, #EditPurchaseOrderButton').attr('disabled', true);
+                        $('.auto_loader').hide();
                     }
 
                 });
