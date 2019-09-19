@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\HooksController.cs" />
     <Compile Remove="Models\Barcode.cs" />
     <Compile Remove="Models\Categories.cs" />
     <Compile Remove="Models\CategoryOptionPage.cs" />

@@ -59,6 +59,13 @@
                             Purchase Orders Inventory - Reporting Page
                         </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <!-- <a class="nav-link " href="#" id="navbarDropdown"  aria-haspopup="true" aria-expanded="false"> Dropdown </a> -->
+                        <a class="nav-link text-dark dropdown-toggle" role="button" data-toggle="dropdown">Reports</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="POCountByUser">Purchase Order By User</a>
+                        </div>
+                    </li>
                 </ul>
                 <div class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="text" name="search" id="general_search" placeholder="Search anything" aria-label="Search">
@@ -104,7 +111,7 @@
         @RenderSection("page_popup_area", required: false)
     </div>
 
-    @*<script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/popper.js" type="text/javascript"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/jquery.dataTables.min.js" asp-append-version="true"></script>
@@ -112,11 +119,11 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap-multiselect.min.js" asp-append-version="true"></script>
 
         <script src="~/js/moment.min.js" asp-append-version="true"></script>
-        <script src="~/js/jquery-ui.js"></script>*@
+        <script src="~/js/jquery-ui.js"></script>
 
     <!-- Multiselect css last location -->
-    <script src="~/lib/bootstrap/dist/js/popper.js"></script>
-    <script src="~/js/jsBundle.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/popper.js"></script>
+    <script src="~/js/jsBundle.min.js"></script>*@
 
     <environment include="Development">
         <script src="~/js/site.js"></script>

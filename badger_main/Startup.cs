@@ -55,16 +55,17 @@ namespace badgerApi
             services.AddTransient<IPurchaseOrdersLineItemsRepo, PurchaseOrdersLineItemsRepo>();
             services.AddTransient<IVendorProductRepository, VendorProductRepo>();
             services.AddTransient<iBarcodeRangeRepo, BarcodeRangeRepo>();
-            services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
+            services.AddTransient<IReportRepository, ReportsRepo>();
 
             //*              Singletons                                   *\\
+            services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
             services.AddSingleton<ICategoryRepository, CategoryRepo>();
             services.AddSingleton<IEventRepo, EventsRepo>();
 
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
-            });
+            //services.Configure<ApiBehaviorOptions>(options =>
+            //{
+            //    options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
+            //});
         }
 
 
@@ -74,8 +75,8 @@ namespace badgerApi
             loggerFactory.AddFile("Logs/BadgerAPIFunctional-{Date}.txt");
             if (env.IsDevelopment())
             {
-                 app.UseDeveloperExceptionPage();
-               // LogGloblaErrors(app, loggerFactory);
+               //  app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
             }
             else
             {
