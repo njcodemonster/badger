@@ -155,16 +155,20 @@ $(document).on('click', ".AddNewStyleButton", function () {
         var TotalQty = calulationValuesJson.filter(function (el) {
             return el.calculation_id == 5;
         });
-        var _TotalStyles = calulationValuesJson.filter(function (el) {
-            return el.calculation_id == 6;
-        });
 
-        if ((_TotalStyles[0].value + 1) > totalStyles) {
-            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total style in Purchase Order to proceed.');
-            $('.loading').hide();
-            return;
+        if (IsUpdate == false) {
+            var _TotalStyles = calulationValuesJson.filter(function (el) {
+                return el.calculation_id == 6;
+            });
+
+            if ((_TotalStyles[0].value + 1) > totalStyles) {
+                alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total style in Purchase Order to proceed.');
+                $('.loading').hide();
+                return;
+            }
+
         }
-
+       
         var Qty = TotalQty[0].value;
         var style_sku = jsonData["vendor_style_sku"];
         $.each(style_sku, function (index, value) {

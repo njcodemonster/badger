@@ -12,6 +12,7 @@ namespace GenericModals.Models
         public int product_id { get; set; }
         public int attribute_id { get; set; }
         public string sku { get; set; }
+        public string value_id { get; set; }
         public double created_at { get; set; }
         public double? updated_at { get; set; }
         public int? updated_by { get; set; }
