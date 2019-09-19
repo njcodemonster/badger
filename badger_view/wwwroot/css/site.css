@@ -858,3 +858,10 @@ span.errorMsg {
     white-space: nowrap;
     justify-content: flex-end;
 }
+
+.auto_loader {
+    width: 45px;
+    position: absolute;
+    right: 40px;
+    top: 50%;
+}

@@ -38,13 +38,13 @@
             <table class="table table-borderless m-0">
                 <tr>
                     <td>
-                        <img src="~/uploads/@LineItem.product_vendor_image" style="height: 100px;" class="img-@LineItem.product_id" />
+                        <img src="~/uploads/@LineItem.product_vendor_image" style="height: 100px;" class="img-@LineItem.product_id" alt="" title="" />
                     </td>
                     <td>
                         <button type="button" class="btn btn-link mt-0 pt-0 collapsButton" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)" aria-expanded="true"><i class="fa fa-minus"></i></button>
                     </td>
                     <td>
-                        <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_product_code) in @LineItem.vendor_color_name (@LineItem.vendor_color_code) - @LineItem.sku_family</span>
+                        <span class="text-dark font-weight-bold h5 skufamilyArea" data-skufamily="@LineItem.sku_family">@LineItem.product_name (@LineItem.vendor_product_code) in @LineItem.vendor_color_name (@LineItem.vendor_color_code) - @LineItem.sku_family</span>
                     </td>
                     <td>
                         <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
@@ -180,7 +180,7 @@
                 <input type="checkbox" class="checkrastatus" style="transform: scale(1.5);margin-top: 13px;">
 
                 <select class="form-control item_ra_status d-none" data-itemid="@item.item_id" style="width:150px;margin:0 auto;font-size:13px;">
-                    <option value="0"> Default RA </option>
+                    <option value="0" selected> -- RA Status -- </option>
                     @foreach (dynamic _rastatus in Model.AllRaStatus)
                                     {
                     <option value="@_rastatus.ra_status_id">@_rastatus.ra_status_name</option>
@@ -190,7 +190,7 @@
                             else
                             {
                 <select class="form-control item_ra_status" data-itemid="@item.item_id" style="width: 150px;margin:0 auto;font-size:13px;">
-                    <option value="0"> Default RA </option>
+                    <option value="0"> -- RA Status -- </option>
                     @foreach (dynamic _rastatus in Model.AllRaStatus)
                                     {
                                         if (@_rastatus.ra_status_id == @item.ra_status)
@@ -219,7 +219,7 @@
                 </a>
             </td>
             <td>
-                <input type="text" data-quantity="@DisplayTimes" data-sku="@item.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@item.sku" id="@item.sku_id" class="form-control item_sku" maxlength="7" />
+                <input type="text" data-quantity="@DisplayTimes" data-sku="@item.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@item.sku" id="@item.sku_id" class="form-control item_sku" maxlength="50" />
             </td>
             <td>
                 <input type="text" data-itemid="@item.item_id" class="form-control item_barcode" data-barcode="@item].barcode" value="@((int)@item.barcode)" maxlength="8" />

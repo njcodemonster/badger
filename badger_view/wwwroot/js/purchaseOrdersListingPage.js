@@ -18,6 +18,7 @@
             console.log(jsonData);
 
             if (request.term.length > 1) {
+                $('.auto_loader').show();
                 $.ajax({
                     url: "/vendor/autosuggest/",
                     dataType: 'json',
@@ -32,6 +33,7 @@
                         $('#poVendor').removeClass("errorFeild");
                         $('.errorMsg').remove();
                         $('#NewPurchaseOrderButton, #EditPurchaseOrderButton').attr('disabled', false);
+                        $('.auto_loader').hide();
                     } else {
                         $('#poVendor').removeClass("errorFeild");
                         $('.errorMsg').remove();
@@ -231,6 +233,11 @@ $('#poDelieveryRange').daterangepicker({
     }
 });
 
+$(document).on('click', ".daterangepicker .cancelBtn", function (e) {
+    $('#poDelieveryRange').val('');
+});
+
+
 $(document).on('change keydown blur', "#newPurchaseOrderForm input", function (e) {
     var poorderdate = $(this).attr('id');
     if (poorderdate == "poOrderDate") {
@@ -321,9 +328,9 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
         data: JSON.stringify(jsonData),
         processData: false,
 
-    }).always(function (data) {
-        console.log(data);
-        var poid = data;
+    }).always(function (response) {
+        console.log(response);
+        var poid = response;
         if (poid != 0 && poid > 0) {
             console.log('New row created - ' + poid);
             var reddot = "";
@@ -340,9 +347,9 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
             }
             if (delieveryRange != "") {
-                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/Single/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, delivery_window, 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/Single/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + poid + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             } else {
-                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/Single/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + ' id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + data + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
+                $('#purchaseorderlists').DataTable().row.add([$("#newPurchaseOrderForm #poNumber").val(), orderdate, vendorname, totalstyle, 0, 0, " ", 0 + " Day", "<a target='_blank' href='/PurchaseOrders/PurchaseOrdersCheckIn/Single/" + poid + "'><span class='postatus-" + poid + "'>Not Received</span></a>", '<button type="button" class="btn btn-warning btn-sm  checked-' + poid + '" data-shipping="' + shipping + '"  data-ID="' + poid + '" id="EditPurhaseOrderCheckedIn">Checkin</button>', '<button type="button" id="EditPurhaseOrder" data-id="' + poid + '" class="btn btn-light btn-sm">Edit</button>', '<a href="javascript:void(0)" data-ID="' + poid + '" id="EditPurhaseOrderNote"><div class="redDotNote ' + reddot + '"></div ><i class="fa fa-edit h3"></i></a>', '<a href="javascript:void(0)" data-ID="'+poid+'" id="EditPurhaseOrderDocument"><div class="redDotDoc"></div><i class="fa fa-upload h3"></i></a>', '<a href="javascript:void(0)">Claim</a>', '<a href="javascript:void(0)">Claim</a>']).draw();
             }
 
             table.page('last').draw('page');
@@ -361,13 +368,13 @@ $(document).on('click', "#NewPurchaseOrderButton", function () {
 
                 var formData = new FormData();
 
-                formData.append('po_id', data);
+                formData.append('po_id', poid);
                 formData.append('doc_type', $("#poUploadImage").attr('data-categorie'));
 
                 for (var i = 0; i != files.length; i++) {
                     formData.append("purchaseOrderDocuments", files[i]);
                 }
-                var poid = data;
+
                 $.ajax({
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
@@ -1145,7 +1152,14 @@ function purchaseOrderData(data) {
                 $("#newPurchaseOrderForm #poOrderDate").val(timeToDateConvert(podata.order_date));
             }            
             $("#newPurchaseOrderForm #poShipping").val(podata.shipping);
-            var it = data.Items;
+        var it = data.Items;
+        var debCred = data.DebitCredit;
+        var Credit = 0;
+        var Debit = 0;
+        if (debCred.length > 0) {
+             Credit = debCred[0]["credit"];
+             Debit = debCred[0]["debit"];
+        }
             if (it.length > 0) {
                 var quantityUnits = 0;
                 var subCost = 0;
@@ -1164,12 +1178,14 @@ function purchaseOrderData(data) {
                             $("#itemsTable").append("<td width='60'> </td>");
                         }                       
                         $("#itemsTable").append("<td class='h6'>" + dataNew.product_name + " (DP007) in " + dataNew.vendor_color_name + " - " + dataNew.sku + "</td>");
-                        $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='AddItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber=" + data["purchase_order"][0].vendor_po_number + " data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
+                        $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='AddItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber='" + data["purchase_order"][0].vendor_po_number + "' data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
                         $("#itemsTable").append("<td><a href='/Product/EditAttributes/" + dataNew.product_id +"'"+ " class='h6 text-primary'>Edit Attributes</a></td>");
                         $("#itemsTable").append("<td><a href='#' class='h6 text-danger'>Remove</a></td>");
                         $("#itemsTable").append("</tr>");
                     }
                 });
+                debugger;
+                subCost = subCost - Debit + Credit;
                 $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, total cost $" + subCost);
             }
             $("#newPurchaseOrderForm #po_status").val(podata.po_status);

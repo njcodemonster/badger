@@ -83,6 +83,13 @@ $(document).on('click', "#NewVendorButton", function () {
         $(this).attr('disabled', false);
         return false;
     }
+    if ($('#vendorZip').val().length < 5) {
+        $('#vendorZip').addClass('errorFeild');
+        if ($('#vendorZip').parents('.form-group').find('.errorMsg').length == 0)
+                $('#vendorZip').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid zip code</span>')
+        $(this).attr('disabled', false);
+        return false
+    }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var newVendorForm = $("#newVendorForm input");
     var jsonData = {};
@@ -212,7 +219,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
 $(document).on('click', "#EditVendor", function () {
     $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
-    $('.errorMsg,.documentsLink').remove();
+    $('.errorMsg,.documentsLink,.vendorAlertMsg').remove();
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
@@ -289,6 +296,13 @@ $(document).on('click', "#EditVendorButton", function () {
         $(this).attr('disabled', false);
         return false;
     }
+    if ($('#vendorZip').val().length < 5) {
+        $('#vendorZip').addClass('errorFeild');
+        if ($('#vendorZip').parents('.form-group').find('.errorMsg').length == 0)
+            $('#vendorZip').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid zip code</span>')
+        $(this).attr('disabled', false);
+        return false
+    }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
     var id = $("#newVendorForm").data("currentID");
@@ -313,7 +327,9 @@ $(document).on('click', "#EditVendorButton", function () {
      if($('#vendorNotes').val() != $('#vendorNotes').attr('data-value')) {
          jsonData["vendor_notes"] = $('#vendorNotes').val();
          $('#vendorNotes').attr('data-value',$('#vendorNotes').val())
-       } else {
+     } else if ($('#vendorNotes').val() == $('#vendorNotes').attr('data-value')) {
+         jsonData["vendor_notes"] = 'sameNote';
+    } else {
          jsonData["vendor_notes"] = '';
 
        }
@@ -664,7 +680,6 @@ $(document).on('click', ".deleteImage", function (event) {
     jsonData["Vendor_id"] =  $("#newVendorForm").data("currentID");
     $.ajax({
         url: "/vendor/deletevendor_logo",
-        
         type: 'post',
         contentType: 'application/json',
         data:  JSON.stringify(jsonData) ,
