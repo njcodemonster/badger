@@ -219,7 +219,7 @@
                 </a>
             </td>
             <td>
-                <input type="text" data-quantity="@DisplayTimes" data-sku="@item.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@item.sku" id="@item.sku_id" class="form-control item_sku" />
+                <input type="text" data-quantity="@DisplayTimes" data-sku="@item.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@item.sku" id="@item.sku_id" class="form-control item_sku" maxlength="50" />
             </td>
             <td>
                 <input type="text" data-itemid="@item.item_id" class="form-control item_barcode" data-barcode="@item].barcode" value="@((int)@item.barcode)" maxlength="8" />
