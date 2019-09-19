@@ -337,7 +337,7 @@ namespace badger_view.Controllers
 
                 String product_attribute_value_id = await _productHelper.createProductAttributesValuesAsync(Int32.Parse(product_id), attribute_id, int.Parse(attr_value_id));
 
-                String product_attribute_id = await _productHelper.createProductAttributesAsync(Int32.Parse(product_id), color_attribute_id, sku, attr_value_id);
+                String product_attribute_id = await _productHelper.createProductAttributesAsync(Int32.Parse(product_id), attribute_id, sku, attr_value_id);
 
 
                 //// size attribute ends here
