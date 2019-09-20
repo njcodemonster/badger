@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GenericModals.Reports
 {
-    public class DataTableAjaxModel
+    public class DataTableAjaxModel : AdditionalFilters
     {
         // properties are not capital due to json mapping
         public int draw { get; set; }

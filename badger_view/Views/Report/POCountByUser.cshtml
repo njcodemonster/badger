@@ -1,69 +1,39 @@
 ﻿
 @{
-    ViewData["Title"] = "POCountByUser";
+    ViewData["Title"] = "Po Report By Users";
 }
+@model GenericModals.Reports.DataTableAjaxModel
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<h1>Po Report By Users</h1>
 
-<h1>POCountByUser</h1>
-<table id="poCountReport" class="table table-bordered dataTable">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>UserName</th>
-            <th>Total PO</th>
+    <div class="form-row">
+        <div class="col-md-6">
+            <div id="reportrange" class="form-control" 
+                 style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="fa fa-calendar"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down"></i>
+                <input type="hidden" id="reportrange-value" />
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="Search()">Filter</button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="poCountReport" class="table table-bordered dataTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>UserName</th>
+                        <th>Total PO</th>
 
-        </tr>
-    </thead>
-</table>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            LoadPoCountReport();
-        });
-
-        function LoadPoCountReport() {
-            $('#poCountReport').DataTable({
-                "proccessing": true,
-                "serverSide": true,
-                "initComplete": function (settings, json) {
-                    $(".po-report").tooltip({ html: true });
-                },
-                "ajax": {
-                    url: "/report/GetPOCountByUser",
-                    type: 'POST'
-                },
-                language: {
-                    "search": "",
-                    "searchPlaceholder": "Search..."
-                },
-                columns: [
-                    { "data": "created_at", name: "created_at" },
-                    { "data": "username", name: "username" },
-                    { "data": "po_count", name: "po_count", render: getStyles }
-
-                ]
-            });
-        }
-
-        function getStyles(cellvalue, options, rowObject) {
-            //var aref = "(";
-            //var arefEnd = ")";
-            //var html = '';
-            //var styles = JSON.parse(rowObject.styles);
-            //$.each(styles, function (index, value) {
-            //      html += aref + value.vendor_po_number + " = " + value.product_count + arefEnd + "</br>";
-            //});
-            //return '<button type="button" class="btn btn-secondary po-report" data-toggle="tooltip" data-placement="right" title="' + $.parseHTML(html) + '">' + cellvalue + '</button>';
-            var uniqueId = rowObject.username + rowObject.created_at.replace(/-/g, "");
-            return '<p>' +
-                ' <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#' + uniqueId + '" aria-expanded="false" aria-controls="collapseExample">' +
-  '  Button with data-target'+
- ' </button>'+
-                '</p>' +
-                '<div class="collapse" id="' + uniqueId + '">' +
-  '<div class="card card-body">'+
-   ' Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.'+
- ' </div>'+
-            '</div>';
-        }
-    </script>
-    }
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="~/js/daterangepicker.min.js"></script>
+    <script src="~/js/Reports/POCountByUsersReport.js"></script>
+}

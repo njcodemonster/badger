@@ -59,8 +59,9 @@ namespace badgerApi.Interfaces
         {
             string orderBy = dataTable.columns[dataTable.order[0].column].name;
             string sortBy = dataTable.order[0].dir;
-            string whereClause = dataTable.search.value == null ? string.Empty
-                : " WHERE po_count LIKE '%" + dataTable.search.value + "%' OR username LIKE '%" + dataTable.search.value + "%'";
+            string whereClause = $"WHERE created_at BETWEEN '{dataTable.from_date}' AND '{dataTable.to_date}'";
+            whereClause += dataTable.search.value == null ? string.Empty
+                : " AND po_count LIKE '%" + dataTable.search.value + "%' OR username LIKE '%" + dataTable.search.value + "%'";
 
             string query = @"SELECT SQL_CALC_FOUND_ROWS * FROM po_count_by_users_report " +
                             whereClause +
@@ -68,13 +69,13 @@ namespace badgerApi.Interfaces
                             " LIMIT " + dataTable.length + " OFFSET " + dataTable.start + ";" +
                             " SELECT FOUND_ROWS();";
 
-            var reportData = await _db.GetByMultiQuery<PoCountByUser, Int64>(query);
+            (IEnumerable<PoCountByUser> list, long count) reportData = await _db.GetByMultiQuery<PoCountByUser, long>(query);
 
             var jqGridResponse = new JQDataTableResponse
             {
-                data = reportData.Item1,
+                data = reportData.list,
                 draw = dataTable.draw,
-                recordsFiltered = reportData.Item2,
+                recordsFiltered = reportData.count,
                 recordsTotal = reportData.Item2,
                 status = "Success"
             };

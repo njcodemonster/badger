@@ -29,7 +29,7 @@ namespace badgerApi.Helpers
             }
         }
 
-        public async Task<(IEnumerable<T1>,T2)> GetByMultiQuery<T1,T2>(string query)
+        public async Task<(IEnumerable<T1> list,T2 count)> GetByMultiQuery<T1,T2>(string query)
         {
             using (IDbConnection conn = Connection)
             {
