@@ -11,27 +11,40 @@ $(document).on('click', ".DeletefromPOButton", function () {
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     
-    if (SelectedProductID !=null) {
-        var po_id = parseInt($('#newAddStyleForm #po_id').val());
-        var product_id = SelectedProductID;
-        $.ajax({
+    if (SelectedProductID != null) {
+        confirmationAlertInnerBox("Delete from PO", "Are you sure that you want to delete this record?", function (result) {
+            var po_id = parseInt($('#newAddStyleForm #po_id').val());
+            if (result == "yes") {
 
-            url: location.origin + '/styles/deleteFromPO/' + product_id + '/' + po_id,
-            dataType: 'json',
-            type: 'get',
-            processData: false,
 
-        }).always(function (data) {
-            console.log(data);
-            if (data == true) {
-                $('#modaladdstylec').modal('hide');
-                alertBox('poAlertMsg', 'green', 'Product deleted successfully');
+               
+                var product_id = SelectedProductID;
+                $.ajax({
+
+                    url: location.origin + '/styles/deleteFromPO/' + product_id + '/' + po_id,
+                    dataType: 'json',
+                    type: 'get',
+                    processData: false,
+
+                }).always(function (data) {
+                    console.log(data);
+                    if (data == true) {
+                        $('#modaladdstylec').modal('hide');
+                        alertBox('poAlertMsg', 'green', 'Product deleted successfully');
+                        $("#collapse_" + po_id).hide();
+                        $("#collapse_" + po_id).html('');
+                    }
+                    else {
+                        alertBox('poAlertMsg', 'red', 'Product delete failed because some product are already recieved');
+                    }
+                });
             }
             else {
-                alertBox('poAlertMsg', 'red', 'Product delete failed');
+                $('.text-info').hide();
             }
-        });
-    }
+        }) 
+        }
+                
     else {
         //error for selecting a product first to delete 
         alertBox('poAlertMsg', 'red', 'Please select a product');

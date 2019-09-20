@@ -623,8 +623,19 @@ namespace badgerApi.Interfaces
                 try
                 {
                     var res = await conn.QueryAsync<object>(sQuery);
+
                     if (res.Count() > 1)
                     {
+                        foreach (var rows in res)
+                        {
+                            var fields = rows as IDictionary<string, object>;
+                            var sum = fields["total_styles"];
+                            if(sum.ToString() == "0")
+                            {
+                                return true;
+                            }
+                            // ...
+                        }
                         //the count is greter than 1 it means that the count of styles are not same on both level 
                         return false;
                     }
