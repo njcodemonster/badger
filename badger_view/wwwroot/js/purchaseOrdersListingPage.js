@@ -779,7 +779,7 @@ $(document).on('click', ".model_purchase_order", function () {
     $("#newPurchaseOrderForm .error,.docTypeSection").remove();
     $('.modal-footer').find('button').attr('disabled', false)
     $("#NewPurchaseOrderButton,#EditPurchaseOrderButton").attr("id", "NewPurchaseOrderButton");
-    $("#model_purchase_order #purchaseOrderModalLongTitle").text("Add New Purchase Order");
+    $("#modalPurchaseOrder #purchaseOrderModalLongTitle").text("Add New Purchase Order");
     $("#newPurchaseOrderForm input, #newPurchaseOrderForm #poNotes").val("");
     $(".po_doc_section").empty().html();
     $("#newPurchaseOrderForm").attr("data-currentid", "");
