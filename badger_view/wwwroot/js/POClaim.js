@@ -39,10 +39,12 @@ function RestartConnection() {
 }
 
 function BindInspectClaimHtml(claim) {
-    var title = "<b>Inspect</b><br />";
-    var claimButton = title + '<button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(undefined,' + claimerType.InspectClaimer + ')">Claim</button>';
+    var title = claim.generate_label == false ? "" : "<b>Inspect</b><br />";
+    var inspectClaimColor = 'style="background-color:' + claim.inspect_claim_color + ';color:#fff;border-color:gray"';
+    var claimButton = title + '<button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(undefined,' + claimerType.InspectClaimer + ',' + claim.generate_label+')">Claim</button>';
     if (claim.inspect_claimer > 0) {
-        claimButton = title + '<button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(undefined,' + claimerType.InspectClaimer + ')" id="remove-claim-inspect-btn">' +
+        claimButton = title + '<button type="button" class="btn btn-sm remove-claim" ' + inspectClaimColor +
+            ' onclick="RemoveClaim(undefined,' + claimerType.InspectClaimer + ',' + claim.generate_label +')" id="remove-claim-inspect-btn">' +
             ' <span style = "padding:inherit">' + claim.inspect_claimer_name + '</span>' +
             ' <span class="fa fa-times"></span></button >';
         $("#inspect-claim").remove("#claim-inspect-btn");
@@ -54,14 +56,15 @@ function BindInspectClaimHtml(claim) {
     } catch (e) {
         document.getElementById('inspect-claim').innerHTML = claimButton;
     }
-    
 }
 
 function BindPublishClaimHtml(claim) {
-    var title = "<b>Go Live</b><br />";
-    var claimButton = title + '<button type="button" class="btn btn-link btn-sm claim" id="claim-publsih-btn" onclick="Claim(undefined,' + claimerType.PublishClaimer + ')">Claim</button>';
+    var title = claim.generate_label == false ? "" : "<b>Go Live</b><br />";
+    var publishClaimColor = 'style="background-color:' + claim.publish_claim_color + ';color:#fff;border-color:gray"';
+    var claimButton = title + '<button type="button" class="btn btn-link btn-sm claim" id="claim-publsih-btn" onclick="Claim(undefined,' + claimerType.PublishClaimer + ',' + claim.generate_label +')">Claim</button>';
     if (claim.publish_claimer > 0) {
-        claimButton = title + '<button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(undefined,' + claimerType.PublishClaimer + ')" id="remove-claim-publish-btn">' +
+        claimButton = title + '<button type="button" class="btn btn-sm remove-claim"' + publishClaimColor +
+            ' onclick="RemoveClaim(undefined,' + claimerType.PublishClaimer + ',' + claim.generate_label +')" id="remove-claim-publish-btn">' +
             ' <span style = "padding:inherit">' + claim.publish_claimer_name + '</span>' +
             ' <span class="fa fa-times"></span></button >';
         $("#publish-claim").remove("#claim-publish-btn");
@@ -86,7 +89,7 @@ function BindPublishClaimHtml(claim) {
 //    event.preventDefault();
 //});
 
-function Claim(po_id, claimerType) {
+function Claim(po_id, claimerType, generateLabel) {
     var poId = po_id < 1 ? $("#poId").val() : po_id;
     $.ajax({
         url: '/purchaseorders/claim/',
@@ -98,7 +101,8 @@ function Claim(po_id, claimerType) {
             ToggleClaim(true);
         },
         success: function (response) {
-            PushNotifyClaim(response);
+            console.log('remove claim label: ' + generateLabel);
+            PushNotifyClaim(response, generateLabel);
             ToggleClaim(false);
         },
         error: function (ex) {
@@ -111,7 +115,7 @@ function Claim(po_id, claimerType) {
     });
 }
 
-function RemoveClaim(po_id, claimerType) {
+function RemoveClaim(po_id, claimerType, generateLabel) {
     var poId = po_id < 1 ? $("#poId").val() : po_id;
     $.ajax({
         url: '/purchaseorders/removeclaim/',
@@ -123,7 +127,8 @@ function RemoveClaim(po_id, claimerType) {
             ToggleClaim(true);
         },
         success: function (response) {
-            PushNotifyClaim(response);
+            console.log('remove claim label: '+ generateLabel);
+            PushNotifyClaim(response, generateLabel);
             ToggleClaim(false);
         },
         error: function (ex) {
@@ -167,7 +172,8 @@ function ToggleClaim(disabled) {
     }
 }
 
-function PushNotifyClaim(claim) {
+function PushNotifyClaim(claim, generateLabel) {
+    claim.generate_label = generateLabel;
     connection.invoke("SendClaim", claim).catch(function (err) {
         return console.error(err.toString());
     });
