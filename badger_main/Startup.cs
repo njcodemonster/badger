@@ -34,6 +34,7 @@ namespace badgerApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddTransient<INotesAndDocHelper, NotesAndDocHelper>();
             services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
             services.AddTransient<IVendorRepository, VendorRepo>();
@@ -56,8 +57,9 @@ namespace badgerApi
             services.AddTransient<IVendorProductRepository, VendorProductRepo>();
             services.AddTransient<iBarcodeRangeRepo, BarcodeRangeRepo>();
             services.AddTransient<IReportRepository, ReportsRepo>();
+            services.AddTransient<IClaimRepository, ClaimRepository>();
 
-            //*              Singletons                                   *\\
+            //* Singletons *\\
             services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
             services.AddSingleton<ICategoryRepository, CategoryRepo>();
             services.AddSingleton<IEventRepo, EventsRepo>();

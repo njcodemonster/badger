@@ -60,12 +60,15 @@ function LoadPoCountReport() {
 function getStyles(cellvalue, options, rowObject) {
     var aref = "PO(";
     var arefEnd = ")";
-    var html = '';
+    var row = '<div >';
+    var column = '<div >'
+    var html = row;
     var styles = JSON.parse(rowObject.styles);
     $.each(styles, function (index, value) {
-          html += aref + value.vendor_po_number + ") = Styles(" + value.product_count + arefEnd + "</br>";
+        // html += aref + value.vendor_po_number + ") = Styles(" + value.product_count + arefEnd + "</br>";
+        html += column + aref + value.vendor_po_number + arefEnd + '</div>' + column + value.product_count + '<div/>';
     });
-   
+    html += '</div>';
     var uniqueId = rowObject.username + rowObject.created_at.replace(/-/g, "");
     return '<p>' +
         ' <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#' + uniqueId + '" aria-expanded="false" aria-controls="collapseExample">' +
