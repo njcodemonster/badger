@@ -33,22 +33,16 @@ namespace badger_view.Controllers
         private String S3bucket = "";
         private String S3folder = "";
         private ILoginHelper _LoginHelper;
-        public ProductsController(IConfiguration config, ILoginHelper LoginHelper)
+        public ProductsController(IConfiguration config, ILoginHelper LoginHelper, BadgerApiHelper badgerApiHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
+            _BadgerApiHelper = badgerApiHelper;
+        }
 
-        }
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-        }
         /*
             Developer: Azeem Hassan
             Date: 7-3-19
@@ -64,8 +58,6 @@ namespace badger_view.Controllers
         {
 
             ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
-
-            SetBadgerHelper();
 
             productDetailsPageData = await _BadgerApiHelper.GenericGetAsync<ProductDetailsPageData>("/Product/detailpage/" + id);
             //  dynamic AttributeListDetails = new ExpandoObject();
@@ -97,7 +89,6 @@ namespace badger_view.Controllers
         [HttpPost("/product/InsertattributeImages")]
         public async Task<string> InsertattributeImages(productFileData productFiles)
         {
-            SetBadgerHelper();
             JArray productDetailArray = new JArray();
             string messageDocuments = "";
             List<IFormFile> files = productFiles.productImages;
@@ -152,7 +143,6 @@ namespace badger_view.Controllers
         [HttpPost("/product/UpdateProductImagePrimary")]
         public async Task<string> UpdateProductImagePrimary([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string result = "0";
             try
             {
@@ -187,8 +177,6 @@ namespace badger_view.Controllers
         [HttpGet("product/autosuggest/{vendor_id}/{productname}")]
         public async Task<string> Autosuggest(int vendor_id, string productname)
         {
-            SetBadgerHelper();
-
             var  ProductList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getProductsbyVendor/" + vendor_id + "/" + productname);
             return JsonConvert.SerializeObject(ProductList);
         }

@@ -18,19 +18,12 @@ namespace badger_view.Controllers
 {
     public class AttributesController : Controller
     {
-        private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
-        public AttributesController(IConfiguration config, ILoginHelper LoginHelper)
+        public AttributesController(ILoginHelper LoginHelper,BadgerApiHelper badgerApiHelper)
         {
-            _config = config;
+            _BadgerApiHelper = badgerApiHelper;
         }
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-        }
+
         /*
         Developer: Hamza Haq
         Date:9-04-19 
@@ -43,7 +36,6 @@ namespace badger_view.Controllers
         [HttpGet("attributes/getskusizes")]
         public async Task<object> GetSkuSizes()
         {
-            SetBadgerHelper();
             var skuSizesList = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
             return skuSizesList;
         }

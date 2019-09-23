@@ -49,7 +49,7 @@ namespace badger_view.Controllers
 
         private int default_pagination = 50;
 
-        public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory)
+        public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory, BadgerApiHelper badgerApiHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
@@ -57,16 +57,9 @@ namespace badger_view.Controllers
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
             _loggerFactory = loggerFactory;
+            _BadgerApiHelper = badgerApiHelper;
         }
         private BadgerApiHelper _BadgerApiHelper;
-
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-        }
 
         /*
         Developer: Sajid Khan
@@ -80,7 +73,7 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            SetBadgerHelper();
+            
 
             // PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
             var purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
@@ -218,7 +211,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/listpagination/{start}/{limit}/{count}")]
         public async Task<string> ListPagination(int start, int limit, Boolean count)
         {
-            SetBadgerHelper();
+            
 
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/" + start + "/" + limit + "/" + count);
 
@@ -280,7 +273,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/details/{id}")]
         public async Task<string> GetDetails(Int32 id)
         {
-            SetBadgerHelper();
+            
 
             dynamic purchaseOrdersData = new ExpandoObject();
 
@@ -352,7 +345,7 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Single()
         {
-            SetBadgerHelper();
+            
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
@@ -375,7 +368,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/newpurchaseorder")]
         public async Task<String> CreateNewPurchaseOrder([FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -515,7 +508,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/purchaseorder_doc")]
         public async Task<String> CreateNewPurchaseOrderDoc(purchaseOrderFileData purchaseorderfile)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -583,7 +576,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/updatepurchaseorder/{id}")]
         public async Task<String> UpdatePurchaseOrder(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -804,7 +797,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/discountcreate")]
         public async Task<String> DiscountCreate([FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -849,7 +842,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/discountupdate/{id}")]
         public async Task<String> DiscountUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -892,7 +885,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/ledgercreate")]
         public async Task<String> LedgerCreate([FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -937,7 +930,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/ledgerupdate/{id}")]
         public async Task<String> LedgerUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -976,7 +969,7 @@ namespace badger_view.Controllers
         */
         public async Task<List<POLineItems>> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
-            SetBadgerHelper();
+            
 
             dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<List<POLineItems>>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
@@ -995,7 +988,7 @@ namespace badger_view.Controllers
         */
         public async Task<IActionResult> PurchaseOrdersManagement()
         {
-            SetBadgerHelper();
+            
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
@@ -1012,7 +1005,7 @@ namespace badger_view.Controllers
         [HttpGet("PurchaseOrders/lineitemsdetails/{po_id}")]
         public async Task<IActionResult> GetLineItemsByPOID(int po_id)
         {
-            SetBadgerHelper();
+            
 
             dynamic PageModal = new ExpandoObject();
 
@@ -1035,7 +1028,7 @@ namespace badger_view.Controllers
         */
         public async Task<IActionResult> PurchaseOrdersCheckIn()
         {
-            SetBadgerHelper();
+            
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
@@ -1069,7 +1062,7 @@ namespace badger_view.Controllers
         [HttpGet("PurchaseOrders/PurchaseOrdersCheckIn/Page/{num}")]
         public async Task<IActionResult> PurchaseOrdersPagesCheckIn(int num)
         {
-            SetBadgerHelper();
+            
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
@@ -1115,7 +1108,7 @@ namespace badger_view.Controllers
         [HttpGet("PurchaseOrders/PurchaseOrdersCheckIn/Single/{id}")]
         public async Task<IActionResult> PurchaseOrdersSingleCheckIn(int id)
         {
-            SetBadgerHelper();
+            
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
@@ -1146,7 +1139,7 @@ namespace badger_view.Controllers
         [HttpGet("PurchaseOrders/itemsdetails/{po_id}")]
         public async Task<IActionResult> GetItemsDetailsByPOID(int po_id)
         {
-            SetBadgerHelper();
+            
 
             POLineItemsView PageModal = new POLineItemsView();
 
@@ -1177,7 +1170,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/notecreate")]
         public async Task<String> NoteCreate([FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1222,7 +1215,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/itemnotecreate")]
         public async Task<String> ItemNoteCreate([FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1254,7 +1247,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/getnote/{id}")]
         public async Task<String> GetNote(int id)
         {
-            SetBadgerHelper();
+            
 
             dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
 
@@ -1274,7 +1267,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/getitemnotes/{poid}")]
         public async Task<String> GetItemNotes(int poid)
         {
-            SetBadgerHelper();
+            
 
             dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemnotes/" + poid.ToString());
 
@@ -1294,7 +1287,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/getdocument/{id}")]
         public async Task<String> GetDocument(int id)
         {
-            SetBadgerHelper();
+            
 
             dynamic purchaseOrdersData = new ExpandoObject();
 
@@ -1324,7 +1317,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/getitemdocument/{id}")]
         public async Task<String> GetItemDocument(int id)
         {
-            SetBadgerHelper();
+            
 
             dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemdocuments/" + id.ToString() + "/1");
 
@@ -1344,7 +1337,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/trackingdelete/{id}")]
         public async Task<string> TrackingDelete(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1368,7 +1361,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/delete/{id}")]
         public async Task<string> PurchaseOrdersDelete(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string updatePurchaseOrderID = "0";
 
@@ -1404,7 +1397,7 @@ namespace badger_view.Controllers
         public async Task<string> GetAsyncLineitems(Int32 product_id, Int32 PO_id)
         {
 
-            SetBadgerHelper();
+            
             dynamic poLineitems = new ExpandoObject();
 
             poLineitems = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/lineitems/" + product_id.ToString() + "/" + PO_id.ToString());
@@ -1425,7 +1418,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/itemdocumentcreate")]
         public async Task<String> CreateNewItemDoc(purchaseOrderFileData purchaseorderfile)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1491,7 +1484,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/itemupdate/{id}")]
         public async Task<string> ItemStatusUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
             string loginUserId = await _LoginHelper.GetLoginUserId();
             string updateItemID = "0";
             try
@@ -1551,7 +1544,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/skuweightupdate/{id}")]
         public async Task<string> SkuWeightUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1587,7 +1580,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/MultipleskuWeightUpdate")]
         public async Task<string> MultipleskuWeightUpdate([FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1629,7 +1622,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/skuupdate/{id}")]
         public async Task<string> SkuUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1695,7 +1688,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/polineitemupdate/{id}")]
         public async Task<string> POLineItemUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1736,7 +1729,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/documentsdelete/{id}")]
         public async Task<string> DocumentsDelete(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
             string res = "0";
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1801,7 +1794,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/productwashtypeupdate/{id}")]
         public async Task<string> ProductUpdate(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -1839,7 +1832,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/checkskuexist/{sku}")]
         public async Task<string> CheckSkuExist(string sku)
         {
-            SetBadgerHelper();
+            
 
             string result = "false";
             try
@@ -1866,7 +1859,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/checkbarcodeexist/{barcode}")]
         public async Task<string> CheckBarcodeExist(int barcode)
         {
-            SetBadgerHelper();
+            
 
             string result = "false";
             try
@@ -1893,7 +1886,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/checkpoexist/{colname}/{colvalue}")]
         public async Task<string> CheckPOExist(string colname, string colvalue)
         {
-            SetBadgerHelper();
+            
 
             string result = "false";
             try
@@ -1920,7 +1913,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/PurchaseOrderItemDetails/{poid}")]
         public async Task<string> PurchaseOrderItemDetails(int poid)
         {
-            SetBadgerHelper();
+            
 
             dynamic purchaseOrdersData = new ExpandoObject();
 
@@ -2033,7 +2026,7 @@ namespace badger_view.Controllers
         [HttpPost("purchaseorders/updatepurchaseordercheckin/{id}")]
         public async Task<String> updatepurchaseordercheckin(int id, [FromBody] JObject json)
         {
-            SetBadgerHelper();
+            
 
             string loginUserId = await _LoginHelper.GetLoginUserId();
 
@@ -2106,7 +2099,7 @@ namespace badger_view.Controllers
         {
             try
             {
-                SetBadgerHelper();
+                
                 var userId = await _LoginHelper.GetLoginUserId();
                 BindClaimerType(claim, userId);
                 var response = await _BadgerApiHelper.GenericPostAsync(claim, "/PurchaseOrders/Claim/");
@@ -2133,7 +2126,7 @@ namespace badger_view.Controllers
         {
             try
             {
-                SetBadgerHelper();
+                
                 var userId = await _LoginHelper.GetLoginUserId();
                 BindClaimerType(claim, userId);
                 var response = await _BadgerApiHelper.GenericPostAsync(claim, "/PurchaseOrders/removeclaim/");
@@ -2150,7 +2143,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/loadclaim/{poId:int}")]
         public async Task<IActionResult> LoadClaim(int poId)
         {
-            SetBadgerHelper();
+            
             var response = await _BadgerApiHelper.GetAsync<PoClaim>("/PurchaseOrders/loadclaim/" + poId);
             return Ok(response);
         }
@@ -2168,7 +2161,7 @@ namespace badger_view.Controllers
         [HttpGet("purchaseorders/verifyStylesQuantity/{poId}")]
         public async Task<bool> VerifyTotalStyle(int poId)
         {
-            SetBadgerHelper();
+            
 
             bool result = false;
             try

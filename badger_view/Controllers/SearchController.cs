@@ -21,27 +21,17 @@ namespace badger_view.Controllers
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public SearchController(IConfiguration config, ILoginHelper LoginHelper)
+        public SearchController(IConfiguration config, ILoginHelper LoginHelper,BadgerApiHelper badgerApiHelper)
         {
             _ILoginHelper = LoginHelper;
             _config = config;
-
-        }
-
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
+            _BadgerApiHelper = badgerApiHelper;
         }
 
         [Authorize]
         [HttpPost("search/autosuggest")]
         public async Task<String> AutoSuggest([FromBody] JObject json)
         {
-            SetBadgerHelper();
-
             dynamic multipleObject = new ExpandoObject();
             string[] xobject = new string[] { };
             string search = json.Value<string>("search");
@@ -114,7 +104,6 @@ namespace badger_view.Controllers
         {
             ViewBag.SearchKey = search;
 
-            SetBadgerHelper();
             return View();
            /* PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/searchbypoandinvoice/" + search);
 

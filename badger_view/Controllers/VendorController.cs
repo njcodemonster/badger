@@ -32,21 +32,14 @@ namespace badger_view.Controllers
         private String S3bucket = "";
         private String S3folder = "";
         private ILoginHelper _LoginHelper;
-        public VendorController(IConfiguration config, ILoginHelper LoginHelper)
+        public VendorController(IConfiguration config, ILoginHelper LoginHelper, BadgerApiHelper badgerApiHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
-
-        }
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
+            _BadgerApiHelper = badgerApiHelper;
         }
 
         /*
@@ -60,7 +53,7 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            SetBadgerHelper();
+            
            
             VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/0/0");
 
@@ -83,7 +76,7 @@ namespace badger_view.Controllers
         public async Task<IActionResult> single()
         {
             dynamic vendorDetails = new ExpandoObject();
-            SetBadgerHelper();
+            
             List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
             vendorDetails.VendorType = getVendorTypes;
             return View("AddVendor", vendorDetails);
@@ -101,7 +94,7 @@ namespace badger_view.Controllers
         [HttpGet("vendor/listpagination/{start}/{limit}")]
         public async Task<string> ListPagination(int start, int limit)
         {
-            SetBadgerHelper();
+            
 
             VendorPagerList vendorPagerList = await _BadgerApiHelper.GenericGetAsync<VendorPagerList>("/vendor/listpageview/" + start + "/" + limit);
 
@@ -127,7 +120,7 @@ namespace badger_view.Controllers
         public async Task<Object> GetDetails(Int32 id)
         {
             dynamic vendorDetails = new ExpandoObject();
-            SetBadgerHelper();
+            
             
             VenderAdressandRep venderAdressandRep = await _BadgerApiHelper.GenericGetAsync<VenderAdressandRep>("/vendor/detailsaddressandrep/" + id.ToString());
             dynamic venderDocAndNotes = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/getnoteanddoc/" + id.ToString());
@@ -147,7 +140,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/newvendor_logo")]
         public async Task<String> CreateNewVendorLogo(vendorFileData vendorLogo)
         {
-            SetBadgerHelper();
+            
             string loginUserId = await _LoginHelper.GetLoginUserId();
             string messageDocuments = "";
             string messageAlreadyDocuments = "";
@@ -189,7 +182,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/deletevendor_logo")]
         public async Task<String> DeleteVendorLogo([FromBody]   JObject json)
         {
-            SetBadgerHelper();
+            
             try
             {
 
@@ -220,7 +213,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/newvendor")]
         public  async Task<String> CreateNewVendor([FromBody]   JObject json)
         {
-            SetBadgerHelper();
+            
             string loginUserId = await _LoginHelper.GetLoginUserId();
             //string newVendorID = "12";
             JObject vendor = new JObject();
@@ -295,7 +288,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/updatevendor/{id}")]
         public async Task<String> UpdateNewVendor(int id ,[FromBody]   JObject json)
         {
-            SetBadgerHelper();
+            
             string loginUserId = await _LoginHelper.GetLoginUserId();
             //string newVendorID = "12";
             JObject vendor = new JObject();
@@ -392,7 +385,7 @@ namespace badger_view.Controllers
         [HttpGet("vendor/getvendornoteanddoc/{id}")]
         public async Task<Object> GetNotesAndDoc(Int32 id)
         {
-            SetBadgerHelper();
+            
             dynamic venderDocAndNotes = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/getnoteanddoc/" + id.ToString());
        
             return JsonConvert.SerializeObject(venderDocAndNotes);
@@ -410,7 +403,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/insertvendornote/{id}")]
         public async Task<String> InsertVendorNote(int id, [FromBody]   JObject json)
         {
-            SetBadgerHelper();
+            
             string loginUserId = await _LoginHelper.GetLoginUserId();
             string vendor_notes = json.Value<string>("vendor_notes");
             String newNoteID = "0";
@@ -447,7 +440,7 @@ namespace badger_view.Controllers
         [HttpGet("vendor/products/{id}/{product_id}/{po_id}")]
         public async Task<Object> GetVendorProducts(Int32 id,int product_id,int po_id)
         {
-            SetBadgerHelper();
+            
             dynamic vendorProductsandSku = new ExpandoObject();
 
             vendorProductsandSku.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/vendor/list/products/" + id.ToString()+"/"+product_id);
@@ -473,7 +466,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/autosuggest")]
         public async Task<string> Autosuggest([FromBody]   JObject json)
         {
-            SetBadgerHelper();
+            
 
             string search = json.Value<string>("search");
             string columnName = json.Value<string>("columnname");
@@ -494,7 +487,7 @@ namespace badger_view.Controllers
         [HttpPost("vendor/vendorcodeexist")]
         public async Task<string> VendorCodeExist([FromBody]   JObject json)
         {
-            SetBadgerHelper();
+            
 
             string vendorcode = json.Value<string>("vendorcode");
             dynamic vendorCodeList = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/checkvendorcodeexist/"+ vendorcode);

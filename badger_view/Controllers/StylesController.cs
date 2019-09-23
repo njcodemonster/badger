@@ -32,23 +32,14 @@ namespace badger_view.Controllers
         //private IItemServiceHelper _itemService
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         private String UploadPath = "";
-        public StylesController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory)
+        public StylesController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory, BadgerApiHelper badgerApiHelper)
         {
             _config = config;
             _ILoginHelper = LoginHelper;
             UploadPath = _config.GetValue<string>("UploadPath:path");
             _loggerFactory = loggerFactory;
-
-
+            _BadgerApiHelper = badgerApiHelper;
         }
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-        }
-
 
         /*
         Developer: ubaid
@@ -65,7 +56,6 @@ namespace badger_view.Controllers
             {
                 string Fill_path = "";
                 string product_id = StyleFileData.product_id;
-                SetBadgerHelper();
 
                 if (StyleFileData != null && StyleFileData.StyleImage != null)
                 {
@@ -105,7 +95,6 @@ namespace badger_view.Controllers
         [HttpPost("/styles/create")]
         public async Task<String> CreateNewStyle([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             int user_id = Int32.Parse(await _ILoginHelper.GetLoginUserId());
 
             String product_id = "";
@@ -435,7 +424,6 @@ namespace badger_view.Controllers
         [HttpGet("/styles/deleteFromPO/{product_id}/{po_id}")]
         public async Task<bool> DeleteStyle(int product_id, int po_id)
         {
-            SetBadgerHelper();
             var response = await _BadgerApiHelper.GenericGetAsync<bool>("/product/delete/" + product_id.ToString() + "/" + po_id.ToString());
             string a = po_id.ToString();
             return response;

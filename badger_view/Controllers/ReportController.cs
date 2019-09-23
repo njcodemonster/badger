@@ -14,9 +14,9 @@ namespace badger_view.Controllers
     public class ReportController : Controller
     {
         private BadgerApiHelper _badgerApiHelper;
-        public ReportController(IConfiguration config)
+        public ReportController(BadgerApiHelper badgerApiHelper)
         {
-            _badgerApiHelper = new BadgerApiHelper(config);
+            _badgerApiHelper = badgerApiHelper;
         }
         public IActionResult POCountByUser()
         {
