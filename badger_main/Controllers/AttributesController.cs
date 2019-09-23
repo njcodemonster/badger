@@ -8,6 +8,7 @@ using badgerApi.Interfaces;
 using GenericModals.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using GenericModals;
 
 namespace badgerApi.Controllers
 {
@@ -95,6 +96,25 @@ namespace badgerApi.Controllers
             {
                 ToReturn = await _AttributesRepo.GetByTypeId(id);
                 
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ToReturn;
+        }
+
+        [HttpGet("list/type/{id}/{name}")]
+        public async Task<List<AutoComplete>> GetAsyncType(int id,string name)
+        {
+            List<AutoComplete> ToReturn = new List<AutoComplete>();
+            try
+            {
+                ToReturn = await _AttributesRepo.GetByTypeId(id, name);
+
 
             }
             catch (Exception ex)

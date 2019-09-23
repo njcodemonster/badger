@@ -200,9 +200,41 @@ namespace badgerApi.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<bool> DeleteAsync(int id)
         {
+
+            var IsSuccess =await _AttributeValuesRepo.DeleteById(id);
+            return IsSuccess;
+            
         }
+
+
+        /*
+        Developer: Hamza Haq
+        Date: 9-23-19 
+        Action: GetAttributesbyProductID/{productID}/{attribute_type_id} 
+        Input: productID id and attributeTypeid
+        output: list of attributes
+        */
+        [HttpGet("GetAttributesbyProductID/{productID}/{attribute_type_id}")]
+        public async Task<List<AttributeValues>> GetAttributesbyProductID(int productID, int attribute_type_id)
+        {
+            List<AttributeValues> ToReturn = new List<AttributeValues>();
+            try
+            {
+                ToReturn = await _AttributeValuesRepo.GetAttributesbyProductID(productID, attribute_type_id);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for GetAsync with message" + ex.Message);
+
+            }
+            return ToReturn;
+
+        }
+
     }
 }

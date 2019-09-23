@@ -13,6 +13,8 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using GenericModals;
+using Microsoft.Extensions.Options;
 
 namespace badger_view.Controllers
 {
@@ -27,28 +29,32 @@ namespace badger_view.Controllers
     {
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
+        private ProductHelper _ProductHelper;
+        private AppSettings _appSettings;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
         private CommonHelper.awsS3helper awsS3Helper = new CommonHelper.awsS3helper();
         private String UploadPath = "";
         private String S3bucket = "";
         private String S3folder = "";
         private ILoginHelper _LoginHelper;
-        public ProductsController(IConfiguration config, ILoginHelper LoginHelper)
+        public ProductsController(IConfiguration config, ILoginHelper LoginHelper )
         {
+            
             _LoginHelper = LoginHelper;
             _config = config;
-            UploadPath = _config.GetValue<string>("UploadPath:path");
-            S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
-            S3folder = _config.GetValue<string>("S3config:Folder");
-
-        }
-        private void SetBadgerHelper()
-        {
+            _ProductHelper = new ProductHelper(_config);
             if (_BadgerApiHelper == null)
             {
                 _BadgerApiHelper = new BadgerApiHelper(_config);
             }
+
+            UploadPath = _config.GetValue<string>("UploadPath:path");
+            S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
+            S3folder = _config.GetValue<string>("S3config:Folder");
+
+
         }
+
         /*
             Developer: Azeem Hassan
             Date: 7-3-19
@@ -64,9 +70,6 @@ namespace badger_view.Controllers
         {
 
             ProductDetailsPageData productDetailsPageData = new ProductDetailsPageData();
-
-            SetBadgerHelper();
-
             productDetailsPageData = await _BadgerApiHelper.GenericGetAsync<ProductDetailsPageData>("/Product/detailpage/" + id);
             //  dynamic AttributeListDetails = new ExpandoObject();
             //  VendorPageModal.VendorCount = vendorPagerList.Count;
@@ -81,7 +84,7 @@ namespace badger_view.Controllers
         [HttpPost("product/UpdateAttributes/{productId}")]
         public async Task<string> UpdateAttributes([FromBody]   JObject json, int productId)
         {
-            SetBadgerHelper();
+       
             JArray product_subtype_ids = new JArray();
             string user_id = await _LoginHelper.GetLoginUserId();
 
@@ -100,14 +103,14 @@ namespace badger_view.Controllers
             product.Add("RemovePairWithProductIds", json.Value<string>("RemovePairWithProductIds"));
             product.Add("otherColorsProductIds", json.Value<string>("otherColorsProductIds"));
             product.Add("RemoveOtherColorProductIds", json.Value<string>("RemoveOtherColorProductIds"));
-            
+
 
             product.Add("photoshootStatus", json.Value<string>("photoshootStatus"));
             product.Add("photoshootStatusOld", json.Value<string>("photoshootStatusOld"));
 
             product.Add("updated_by", user_id);
             product.Add("updated_at", _common.GetTimeStemp());
-            
+
             string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(product.ToString(Formatting.None), "/Product/UpdateAttributes/" + productId.ToString());
 
             if (json["product_subtype_ids"] != null)
@@ -141,7 +144,7 @@ namespace badger_view.Controllers
                     foreach (var tagId in ids)
                     {
                         JObject product_attr = new JObject();
-                        Int16 attribute_id = Int16.Parse(tagId); 
+                        Int16 attribute_id = Int16.Parse(tagId);
 
                         product_attr.Add("attribute_id", attribute_id);
                         product_attr.Add("product_id", productId);
@@ -178,7 +181,7 @@ namespace badger_view.Controllers
                 {
 
                 }
-            } 
+            }
 
             if (json.Value<string>("photoshootStatus") != json.Value<string>("photoshootStatusOld"))
             {
@@ -214,11 +217,11 @@ namespace badger_view.Controllers
         [HttpGet("product/PairWithProductsAutocomplete/{id}")]
         public async Task<string> PairWithProductsAutocomplete(string id)
         {
-            SetBadgerHelper();
+       
 
-            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/"+id);
+            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/" + id);
             return ProductsPairWithSearch.ToString();
-        } 
+        }
 
         /*
            Developer: Azeem Hassan
@@ -233,7 +236,7 @@ namespace badger_view.Controllers
         [HttpPost("/product/InsertattributeImages")]
         public async Task<string> InsertattributeImages(productFileData productFiles)
         {
-            SetBadgerHelper();
+       
             JArray productDetailArray = new JArray();
             string messageDocuments = "";
             List<IFormFile> files = productFiles.productImages;
@@ -288,7 +291,7 @@ namespace badger_view.Controllers
         [HttpPost("/product/UpdateProductImagePrimary")]
         public async Task<string> UpdateProductImagePrimary([FromBody]   JObject json)
         {
-            SetBadgerHelper();
+       
             string result = "0";
             try
             {
@@ -323,10 +326,44 @@ namespace badger_view.Controllers
         [HttpGet("product/autosuggest/{vendor_id}/{productname}")]
         public async Task<string> Autosuggest(int vendor_id, string productname)
         {
-            SetBadgerHelper();
+       
 
-            var  ProductList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getProductsbyVendor/" + vendor_id + "/" + productname);
+            var ProductList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getProductsbyVendor/" + vendor_id + "/" + productname);
             return JsonConvert.SerializeObject(ProductList);
+        }
+
+        /*
+        Developer: Hamza Haq
+        Date: 9-21-19
+        Request: Post
+        Action:create new/update fabric
+        URL: /product/addFabric
+        Input: fabric list and product name
+        output: fabric id
+        */
+        [Authorize]
+        [HttpPost("product/addFabric")]
+        public async Task<string> addFabric([FromBody] List<Fabric> _fabrics)
+        {
+       
+            string _userid = await _LoginHelper.GetLoginUserId();
+            return await _ProductHelper.UpdateFabric(_fabrics, int.Parse(_userid));
+        }
+        /*
+        Developer: Hamza Haq
+        Date: 9-23-19
+        Request: GEt
+        Action:get products attribute (fabrics)
+        URL: /product/getFabric/{productid}
+        Input: (attribute) fabric list by productID
+        output: fabric id
+        */
+        [Authorize]
+        [HttpGet("product/getFabric/{productid}")]
+        public async Task<object> getFabric(int productid)
+        {
+
+            return await _ProductHelper.GetFabric(productid);
         }
     }
 }

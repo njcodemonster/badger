@@ -352,6 +352,12 @@ namespace badgerApi.Controllers
             {
                 Product newProduct = JsonConvert.DeserializeObject<Product>(value);
                 NewInsertionID = await _ProductRepo.Create(newProduct);
+                // Add +1 Style Count in calculation against PO for style count
+                if (NewInsertionID !="0")
+                {
+                    var check = await _CalculationValuesRepo.CreateProductCalculation(newProduct.po_id.ToString(), 6, 1, true);
+                }
+               
             }
             catch (Exception ex)
             {
@@ -613,8 +619,7 @@ namespace badgerApi.Controllers
                 NewInsertionID = await _ProductRepo.CreatePOLineitems(newPOlineitems);
                 // Add Line Style Qty in calculation against PO for style Qty
                 var _check = await _CalculationValuesRepo.CreateProductCalculation(newPOlineitems.po_id.ToString(), 5, newPOlineitems.line_item_ordered_quantity, true);
-                // Add +1 Style Count in calculation against PO for style count
-                var check = await _CalculationValuesRepo.CreateProductCalculation(newPOlineitems.po_id.ToString(), 6, 1, true);
+            
              
             }
             catch (Exception ex)
@@ -624,6 +629,8 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+
 
         /*
         Developer: Hamza Haq

@@ -9,20 +9,21 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using GenericModals;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace badger_view.Helpers
 {
     public class BadgerApiHelper
     {
-       
+
         private String BadgerAPIURL = "";
+        private BadgerApiHelper _BadgerApiHelper;
+
         private readonly IConfiguration _config;
         public BadgerApiHelper(IConfiguration config)
         {
-
             _config = config;
             BadgerAPIURL = _config.GetValue<string>("Services:Badger");
-
         }
 
         /*
@@ -55,7 +56,7 @@ namespace badger_view.Helpers
         public async Task<T> GenericGetAsync<T>(String _call)
         {
             var client = new HttpClient();
-           // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
             var response = await client.GetAsync(BadgerAPIURL + _call, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
@@ -64,7 +65,7 @@ namespace badger_view.Helpers
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
-            return JsonConvert.DeserializeObject<T>(data,settings);
+            return JsonConvert.DeserializeObject<T>(data, settings);
 
         }
 
@@ -100,7 +101,7 @@ namespace badger_view.Helpers
             var response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json.ToString());
 
             var data = await response.Content.ReadAsStringAsync();
-            
+
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -119,13 +120,13 @@ namespace badger_view.Helpers
         Input: Json Type, URL
         output: json object 
         */
-        public async Task<T> GenericPostAsync<T>(T json,String _call)
+        public async Task<T> GenericPostAsync<T>(T json, String _call)
         {
             var client = new HttpClient();
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
             var response = await client.PostAsJsonAsync(BadgerAPIURL + _call, json);
             response.EnsureSuccessStatusCode();
-           
+
             var data = await response.Content.ReadAsStringAsync();
             var settings = new JsonSerializerSettings
             {
@@ -193,7 +194,28 @@ namespace badger_view.Helpers
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
-            return  JsonConvert.DeserializeObject<T>(data, settings);
+            return JsonConvert.DeserializeObject<T>(data, settings);
+        }
+
+        /*
+       Developer: hamza Haq
+       Date: 7-7-19 
+       Action: data sends to badger api
+       Request: Put 
+       Input: Json Type, URL
+       output: string data
+       */
+        public async Task<String> GenericDeleteAsyncString<T>(String _call)
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.DeleteAsync(BadgerAPIURL + _call);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            return data.ToString();
+
         }
     }
 }

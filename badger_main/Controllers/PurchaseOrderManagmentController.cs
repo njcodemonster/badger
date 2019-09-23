@@ -194,18 +194,12 @@ namespace badgerApi.Controllers
         [HttpGet("getitemnotes/{poid}")]
         public async Task<List<Notes>> GetItemNotesViewAsync(int poid)
         {
-            string ref_ids = "";
+          
             List<Notes> notes = new List<Notes>();
             try
             {
-                dynamic getItemIds = await _ItemsHelper.GetItemIds(poid);
-
-                foreach (dynamic item in getItemIds)
-                {
-                    ref_ids += item.item_id+",";
-                }
-
-                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids.TrimEnd(','), note_type);
+                string ref_ids = string.Join(",", await _ItemsHelper.GetItemIds(poid));
+                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids, note_type);
             }
             catch (Exception ex)
             {

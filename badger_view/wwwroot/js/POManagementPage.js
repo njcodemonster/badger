@@ -4,6 +4,60 @@
         $('.collapsButton').click();
         $('.total_po_count,.custom_pagination').hide();
     }
+
+
+    $("#tb_fabricSuggest").autocomplete({
+        source: function (request, response) {
+            if (request.term.length > 2) {
+                $.ajax({
+                    url: "/attributes/getfabrics/" + request.term,
+                    dataType: 'json',
+                    type: 'GET',
+                    contentType: 'application/json',
+                    processData: false,
+                }).always(function (data) {
+
+                    if (data.length > 0) {
+                        response(data);
+                        $('#tb_fabricSuggest').removeClass("errorFeild");
+                        $('.errorMsg').remove();
+                    } else {
+                        $('#tb_fabricSuggest').removeClass("errorFeild");
+                        $('.errorMsg').remove();
+                        $('#tb_fabricSuggest').addClass('errorFeild');
+                        $('#tb_fabricSuggest').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                        $('.ui-autocomplete').empty().css("border", "0");
+                    }
+
+                });
+            } else {
+                $('#tb_fabricSuggest').removeClass("errorFeild");
+                $('.errorMsg').remove();
+            }
+
+            if (request.term.length == 0) {
+                $('#tb_fabricSuggest').removeClass("errorFeild");
+                $('.errorMsg').remove();
+                $('#tb_fabricSuggest').val(""); // display the selected text
+                $('#tb_fabricSuggest').attr("data-val", "");
+            }
+        },
+        select: function (event, ui) {
+            var wrapper = $(".UpdateFabricGroup")[0];
+            var oldFabric =
+                '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=0 disabled data-attributeid=' + ui.item.value + ' value=' + ui.item.label + '  class="form-control required"></div>' +
+                '<div class="form-inline  input-group col-md-4"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
+                '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+            $(wrapper).append(oldFabric)
+            $(wrapper).show();
+
+            return false;
+        },
+        focus: function (event, ui) {
+            event.preventDefault();
+            $("#tb_fabricSuggest").val(ui.item.label);
+        }
+    });
 });
 /*
 Developer: Sajid Khan
@@ -54,7 +108,7 @@ $(document).on('change', ".item_note", function () {
 
     $.ajax({
         url: '/purchaseorders/itemnotecreate',
-        
+
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -97,7 +151,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-itemid="+id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href='../uploads/" + i.url + "' target='_blank' class='documentsLink' data-itemid=" + id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -119,7 +173,7 @@ Output: item document id
 $(document).on("click", "#document_submit", function () {
     var po_id = $('#document_form').attr("data-productid");
     var itemid = $('#document_form').attr("data-documentid");
-    
+
     $(".poDocAlertMsg").text("");
     if ($('#poUploadImages').val() == "") {
         $(".poDocAlertMsg").css("color", "red").text("Please upload files.");
@@ -142,7 +196,7 @@ $(document).on("click", "#document_submit", function () {
             url: "/purchaseorders/itemdocumentcreate",
             type: 'POST',
             data: formData,
-            
+
             processData: false,
             contentType: false,
         }).always(function (data) {
@@ -156,7 +210,7 @@ $(document).on("click", "#document_submit", function () {
                     $('.message-' + po_id).empty().html("");
                 } else {
                     alertInnerBox('message-' + po_id, 'green', 'Item document has been updated successfully');
-                    $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").addClass("redDOtElement");
+                    $("#AddDocument[data-itemid='" + itemid + "']").find(".redDotDoc").addClass("redDOtElement");
                     $("#modaladddocument").modal("hide");
                 }
             }
@@ -195,7 +249,7 @@ $(document).on("change", ".item_status", function () {
 
                 $.ajax({
                     url: "/purchaseorders/itemupdate/" + item_id,
-                    
+
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(itemdata),
@@ -235,7 +289,7 @@ $(document).on("change", ".item_status", function () {
 
         $.ajax({
             url: "/purchaseorders/itemupdate/" + id,
-            
+
             type: 'post',
             contentType: 'application/json',
             data: JSON.stringify(itemdata),
@@ -290,7 +344,7 @@ $(document).on("change", ".sku_weight", function () {
 
             $.ajax({
                 url: "/purchaseorders/skuweightupdate/" + sku_id,
-                
+
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(jsonData),
@@ -321,7 +375,7 @@ $(document).on("change", ".sku_weight", function () {
 
         }
     });
-    
+
 });
 
 /*
@@ -351,7 +405,7 @@ $(document).on("change", ".item_barcode", function (e) {
     var old_barcode = $(this).attr('data-barcode');
     var size = $(this).parents("tr").attr('data-size');
     var barcode = $(this).val();
-    var barcodeRanges = JSON.parse( $("#allBarcodeRanges").val());
+    var barcodeRanges = JSON.parse($("#allBarcodeRanges").val());
     $(this).removeClass('errorFeild');
     if (barcode.length < 8) {
         $(this).addClass('errorFeild');
@@ -369,7 +423,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
         var single = barcodeRanges[i];
 
-        if (barcode >= single.barcode_from && barcode <= single.barcode_to ) {
+        if (barcode >= single.barcode_from && barcode <= single.barcode_to) {
             hasMatch = true;
             index = i;
             break;
@@ -388,7 +442,7 @@ $(document).on("change", ".item_barcode", function (e) {
                     $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
                     $.ajax({
                         url: "/purchaseorders/checkbarcodeexist/" + barcode,
-                        
+
                         type: 'Get',
                         contentType: 'application/json',
                     }).always(function (data) {
@@ -408,7 +462,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
                             $.ajax({
                                 url: "/purchaseorders/itemupdate/" + id,
-                                
+
                                 type: 'post',
                                 contentType: 'application/json',
                                 data: JSON.stringify(itemdata),
@@ -439,7 +493,7 @@ $(document).on("change", ".item_barcode", function (e) {
             $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
             $.ajax({
                 url: "/purchaseorders/checkbarcodeexist/" + barcode,
-                
+
                 type: 'Get',
                 contentType: 'application/json',
             }).always(function (data) {
@@ -459,7 +513,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
                     $.ajax({
                         url: "/purchaseorders/itemupdate/" + id,
-                        
+
                         type: 'post',
                         contentType: 'application/json',
                         data: JSON.stringify(itemdata),
@@ -483,7 +537,7 @@ $(document).on("change", ".item_barcode", function (e) {
         $('.message-' + po_id).append('<div class="spinner-border text-info"></div>');
         $.ajax({
             url: "/purchaseorders/checkbarcodeexist/" + barcode,
-            
+
             type: 'Get',
             contentType: 'application/json',
         }).always(function (data) {
@@ -503,7 +557,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
                 $.ajax({
                     url: "/purchaseorders/itemupdate/" + id,
-                    
+
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(itemdata),
@@ -525,7 +579,7 @@ $(document).on("change", ".item_barcode", function (e) {
 
 
 
-   
+
 })
 
 /*
@@ -558,7 +612,7 @@ $(document).on("click", ".item_row_remove", function () {
 
             $.ajax({
                 url: "/purchaseorders/itemupdate/" + id,
-                
+
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(itemdata),
@@ -573,7 +627,7 @@ $(document).on("click", ".item_row_remove", function () {
 
                 $.ajax({
                     url: "/purchaseorders/polineitemupdate/" + polineitem,
-                    
+
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(jsonData),
@@ -648,7 +702,7 @@ $(document).on("change", ".item_sku", function () {
 
     $.ajax({
         url: "/purchaseorders/checkskuexist/" + sku,
-        
+
         type: 'Get',
         contentType: 'application/json',
     }).always(function (data) {
@@ -674,7 +728,7 @@ $(document).on("change", ".item_sku", function () {
 
                     $.ajax({
                         url: "/purchaseorders/skuupdate/" + sku_id,
-                        
+
                         type: 'post',
                         contentType: 'application/json',
                         data: JSON.stringify(jsonData),
@@ -700,7 +754,7 @@ $(document).on("change", ".item_sku", function () {
 
                                     $.ajax({
                                         url: "/purchaseorders/itemupdate/" + id,
-                                        
+
                                         type: 'post',
                                         contentType: 'application/json',
                                         data: JSON.stringify(itemdata),
@@ -729,14 +783,14 @@ $(document).on("change", ".item_sku", function () {
                         }
                     });
                 }
-            });   
+            });
         }
 
     });
 
 
-    
-   
+
+
 });
 
 
@@ -768,7 +822,7 @@ function getPOdetail(PO_id) {
 
     $.ajax({
         url: "/PurchaseOrders/lineitemsdetails/" + PO_id,
-        
+
         type: 'get',
         contentType: 'application/json',
         processData: false
@@ -792,12 +846,12 @@ $('.POListCheckIn .card-header .card-box').click(function () {
     var POid = thisPO.attr("data-POId");
 
     console.log($("#collapse_" + POid));
-    console.log($("#collapse_" + POid).is(":visible")) 
+    console.log($("#collapse_" + POid).is(":visible"))
     console.log($("#collapse_" + POid).is(":hidden"))
 
     if ($("#collapse_" + POid).is(":hidden")) {
         if ($("#collapse_" + POid).find('.card-body').length == 0) {
-             getPurchaseOrdersItemdetails(POid);
+            getPurchaseOrdersItemdetails(POid);
         }
         $("#collapse_" + POid).show();
         $("#collapse_" + POid).attr('data-colapse', true);
@@ -819,7 +873,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
 
     $.ajax({
         url: "/PurchaseOrders/itemsdetails/" + PO_id,
-        
+
         type: 'get',
         contentType: 'application/json',
         processData: false
@@ -845,7 +899,7 @@ function getPurchaseOrdersItemdetails(PO_id) {
                 $('#sku_weight').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
             }
         });
-        $('.item_sku').each(function(){
+        $('.item_sku').each(function () {
             if ($(this).val().indexOf('-') == -1) {
                 $(this).attr('disabled', true)
             }
@@ -880,7 +934,7 @@ $(document).on("change", ".item_bagcode", function () {
 
     $.ajax({
         url: "/purchaseorders/itemupdate/" + id,
-        
+
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(itemdata),
@@ -918,7 +972,7 @@ $(document).on("change", ".item_ra_status", function () {
 
     $.ajax({
         url: "/purchaseorders/itemupdate/" + id,
-        
+
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(itemdata),
@@ -948,7 +1002,7 @@ $(document).on("click", "#sku_weight", function () {
     $('#weight_form').attr("data-productid", productid);
 
     var sku = $(this).attr("data-sku");
-    var img_src = $(".img-"+productid).attr("src");
+    var img_src = $(".img-" + productid).attr("src");
     console.log(sku + " -- " + img_src);
 
     $("#weight_form .weight_image").attr("src", img_src);
@@ -983,7 +1037,7 @@ $(document).on("click", "#weight_submit", function () {
         sku_weight = $(this).val();
         sku_id = $(this).attr("data-skuid");
 
-        if ( (sku_id != 0 || sku_id != "") && (sku_weight != 0 || sku_weight != "") ) {
+        if ((sku_id != 0 || sku_id != "") && (sku_weight != 0 || sku_weight != "")) {
 
             var jsonData = {};
             jsonData["sku_id"] = sku_id;
@@ -994,7 +1048,7 @@ $(document).on("click", "#weight_submit", function () {
 
     $.ajax({
         url: "/purchaseorders/MultipleskuWeightUpdate/",
-        
+
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(sku),
@@ -1009,20 +1063,20 @@ $(document).on("click", "#weight_submit", function () {
                 $(".table-data-" + productid + " tbody tr[data-skuid='" + sku.skuData[i].sku_id + "']").attr("data-weight", sku.skuData[i].weight);
                 if (sku.skuData[i].weight == 0) {
                     checkweightzero = true;
-                }                
+                }
             }
 
             if (checkweightzero == true) {
                 $('#sku_weight').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
             }
 
-            if (checkweightzero == false){
+            if (checkweightzero == false) {
                 $('#sku_weight').addClass('btn-primary').removeClass("btn-success").text("EDIT WEIGHT");
             }
 
             $('#modaladdweight').modal('hide');
             alertInnerBox('message-' + productid, 'green', 'SKU weight has been updated successfully');
-   
+
         } else {
             result = "error";
             //error = data.responseText;
@@ -1030,8 +1084,8 @@ $(document).on("click", "#weight_submit", function () {
             alertInnerBox('message-' + productid, 'red', 'SKU weight has error - ' + error);
 
         }
-    }); 
-   
+    });
+
 });
 
 
@@ -1042,32 +1096,32 @@ Action: Product Wash type status change
 output: Boolean
 */
 $(document).on("change", ".wash_type_status", function () {
-        var product_id = $(this).attr("data-productid");
-        $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
-        var wash_type_id = $(this).val();
+    var product_id = $(this).attr("data-productid");
+    $('.message-' + product_id).append('<div class="spinner-border text-info"></div>');
+    var wash_type_id = $(this).val();
 
     console.log(product_id + " -- " + wash_type_id);
 
-            var jsonData = {};
-            jsonData["product_id"] = product_id;
-            jsonData["wash_type_id"] = wash_type_id;
+    var jsonData = {};
+    jsonData["product_id"] = product_id;
+    jsonData["wash_type_id"] = wash_type_id;
 
-            $.ajax({
-                url: "/purchaseorders/productwashtypeupdate/" + product_id,
-                
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(jsonData),
-                processData: false
-            }).always(function (data) {
-                console.log(data);
-                if (data == "Success") {
-                    alertInnerBox('message-' + product_id, 'green', 'Product wash type has been updated successfully');
-                } else {
-                    alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error - ' + data);
-                }
+    $.ajax({
+        url: "/purchaseorders/productwashtypeupdate/" + product_id,
 
-            });
+        type: 'post',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false
+    }).always(function (data) {
+        console.log(data);
+        if (data == "Success") {
+            alertInnerBox('message-' + product_id, 'green', 'Product wash type has been updated successfully');
+        } else {
+            alertInnerBox('message-' + product_id, 'red', 'Product wash type has an error - ' + data);
+        }
+
+    });
 });
 
 /*
@@ -1096,7 +1150,7 @@ $(document).on('click', ".podeleteImage", function (e) {
 
     $.ajax({
         url: "/purchaseorders/documentsdelete/" + docid,
-        
+
         type: 'post',
         contentType: 'application/json',
         data: JSON.stringify(jsonData),
@@ -1107,7 +1161,7 @@ $(document).on('click', ".podeleteImage", function (e) {
             _this.parents('.documentsLink').remove();
 
         if ($('#modaladddocument .po_doc_section a').length == 0) {
-            $("#AddDocument[data-itemid='"+itemid+"']").find(".redDotDoc").removeClass("redDOtElement");
+            $("#AddDocument[data-itemid='" + itemid + "']").find(".redDotDoc").removeClass("redDOtElement");
         }
     });
 });
@@ -1139,15 +1193,163 @@ $(document).on('change', '.checkitemstatus', function (e) {
     if ($(this).is(':checked')) {
         $(".checkitemstatus").each(function () {
             if ($(this).attr("data-status") == checkdata) {
-                $(this).prop('checked',true);
+                $(this).prop('checked', true);
             }
         })
     } else {
         $(".checkitemstatus").each(function () {
             if ($(this).attr("data-status") == checkdata) {
-                $(this).prop('checked',false);
+                $(this).prop('checked', false);
             }
         })
     }
 
 });
+
+
+
+function Fabric(name, percentage, _isNew, attribute_id, ToDelete) {
+    var Fabric = new Object();
+    Fabric.name = name;
+    Fabric.percentage = percentage;
+    Fabric.value_id = _isNew;
+    Fabric.attribute_id = attribute_id;
+    Fabric.product_id = $('#tbH_ProductID').val();
+    Fabric.toDelete = ToDelete
+    
+    return Fabric;
+}
+
+
+/*
+Developer: Hamza Haq
+Date: 21-09-19
+Action: Fabric working
+*/
+$(document).on('click', '#addnewFabric', function (e) {
+    
+    var wrapper = $(".UpdateFabricGroup")[0];
+    var oldFabric =
+        '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-attributeid="0" data-valueid=0 class="form-control required"></div>' +
+        '<div class="form-inline  input-group col-md-4"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
+        '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+    $(wrapper).append(oldFabric)
+    $(wrapper).show();
+
+
+});
+
+$(document).on('click', '#btn_fabric_refresh', function (e) {
+    $('#div_fabricSuggest').show();
+    $('#div_AddfabricInputGroup').hide();
+    $('#btn_fabric_submit').html('Submit');
+    $('#btn_fabric_refresh').hide();
+    $('#tb_fabricName').val('');
+    $('#tbH_AttributeID').val('');
+    $('#tb_fabricPercentage').val('');
+    $('#tb_fabricSuggest').val('');
+    $('#tb_fabricSuggest').val('');
+    $('.errorMsg').remove();
+
+});
+
+$(document).on('click', '#btn_fabric_submit', function (e) {
+
+    if (emptyFeildValidation('Fabric_form') == false) {
+        $('.loading').hide();
+        return false;
+    }
+    var attribute_id = 0
+    var fabricArray = [];
+
+    $.each($('.UpdateFabricGroup').children(), function (index, value) {
+
+        var Attribute_id = 0;
+        var isNewAttribute = 0;
+
+        var fabricName = $(this).find('#tb_fabricName').val();
+        var fabricValue = $(this).find('#tb_fabricValue').val();
+        var ToDelete = $(value).is(":visible") ? false : true;
+        isNewAttribute = $(this).find('#tb_fabricName').data('valueid'); 
+        if ($(this).find('#tb_fabricName').data('attributeid') != null || $(this).find('#tb_fabricName').data('attributeid') !="") {
+            Attribute_id = $(this).find('#tb_fabricName').data('attributeid');
+        }
+        var _fabric = Fabric(fabricName, fabricValue, isNewAttribute, Attribute_id == null ? 0 : Attribute_id, ToDelete)
+        
+        fabricArray.push(_fabric)
+    
+    })
+    addFabrics(fabricArray);
+
+
+});
+
+
+$(document).on('click', '.ModalAddFabric', function (e) {
+    $('.loading').show();
+    var _productid = $(this).data('productid')
+    $('#tbH_ProductID').val(_productid);
+    getFabrics(_productid);
+
+});
+
+function getFabrics(productId) {
+    $.ajax({
+
+        url: location.origin + '/product/getfabric/' + productId,
+        type: 'get',
+        contentType: 'application/json',
+        processData: false,
+
+    }).always(function (data) {
+        $(".UpdateFabricGroup")[0].innerHTML = ''
+        var wrapper = $(".UpdateFabricGroup")[0];
+   
+        if (data.length > 0) {
+            
+            $.each(data, function (index, value) {
+
+                var oldFabric =
+                    '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id+' data-attributeid=' + value.attribute_id+' class="form-control required" disabled value=' + value.attribute_Name + '></div>' +
+                    '<div class="form-inline  input-group col-md-4"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>'+
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().hide()"></i></div> </div>';
+
+                $(wrapper).append(oldFabric)
+            })
+            $(wrapper).show();
+
+        } else {
+            $('#modalFabric').modal('show');
+
+        }
+        $('#modalFabric').modal('show');
+        $('.loading').hide();
+
+    });
+}
+
+function addFabrics(_fabrics) {
+    $('.loading').show();
+    $.ajax({
+
+        url: location.origin + '/product/addFabric',
+        type: 'POST',
+        contentType: 'application/json',
+        processData: false,
+        data: JSON.stringify(_fabrics),
+
+    }).always(function (data) {
+
+        if (data=="Success") {
+            alertBox('poAlertMsg', 'green', 'Fabric(s) added/updated successfully');
+        } else {
+            alertBox('poAlertMsg', 'red', 'Could not add/update Fabric for product.');
+            return;
+        }
+        $('.loading').hide();
+       
+    });
+}
+
+
+

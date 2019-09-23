@@ -189,6 +189,7 @@ namespace badger_view.Controllers
 
             product.Add("created_by", user_id);
             product.Add("created_at", _common.GetTimeStemp());
+            product.Add("po_id", po_id.ToString());
 
 
             vendorProduct.Add("vendor_id", vendor_id);

@@ -20,6 +20,8 @@ namespace badgerApi.Interfaces
         Task<String> Create(AttributeValues NewAttributeValue);
         Task<Boolean> Update(AttributeValues AttributeValuesToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
+        Task<List<AttributeValues>> GetAttributesbyProductID(int productID, int attribute_type_id);
+        Task<bool> DeleteById(int id);
     }
     public class AttributeValuesRepo : IAttributeValuesRepository
     {
@@ -133,5 +135,52 @@ namespace badgerApi.Interfaces
 
         }
 
+
+        /*
+        Developer: Hamza Haq
+        Date: 9-23-19 
+        Action: Get 
+        Input: productID id and attributeTypeid
+        output: list of attributes
+        */
+        public async Task<List<AttributeValues>> GetAttributesbyProductID(int productID, int attribute_type_id)
+        {
+            List<AttributeValues> _attributeValues = new List<AttributeValues>();
+            string sQuery = @"SELECT a.attribute_display_name as attribute_Name ,av.value_id ,a.attribute_id AS attribute_id , VALUE AS value FROM attributes AS a 
+                            INNER JOIN attribute_values AS av ON a.attribute_id=av.attribute_id
+                            WHERE attribute_type_id=@attributeTypeID AND av.product_id=@productID";
+
+            sQuery = sQuery.Replace("@attributeTypeID", attribute_type_id.ToString());
+            sQuery = sQuery.Replace("@productID", productID.ToString());
+
+            using (IDbConnection conn = Connection)
+            {
+                var queryResult = await conn.QueryAsync<AttributeValues>(sQuery);
+                _attributeValues = queryResult.ToList();
+
+            }
+            return _attributeValues;
+
+
+
+        }
+
+        /*
+           Developer: Hamza Haq
+           Date: 9-23-19 
+           Action: getting AttributeValues by id from database
+           Input: int id
+           output: AttributeValues
+        */
+        public async Task<bool> DeleteById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                AttributeValues _attributeValues = new AttributeValues();
+                _attributeValues.value_id = id;
+                var result = await conn.DeleteAsync<AttributeValues>(_attributeValues);
+                return result;
+            }
+        }
     }
 }

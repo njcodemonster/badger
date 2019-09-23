@@ -831,6 +831,7 @@ namespace badgerApi.Interfaces
                 int checkData = productPairWith.Count();
                 if (checkData > 0)
                 {
+
                 }
                 else
                 {
@@ -894,6 +895,8 @@ namespace badgerApi.Interfaces
             }
             return vendorDetails;
         }
+
+
     }
 }
 
