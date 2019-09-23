@@ -12,7 +12,7 @@ namespace GenericModals.Models
         public string sku { get; set; }
         public int vendor_id { get; set; }
         public int product_id { get; set; }
-        public int weight { get; set; }
+        public decimal weight { get; set; }
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double created_at { get; set; }

@@ -113,7 +113,7 @@ namespace badgerApi.Controllers
             List<PurchaseOrders> ToReturn = new List<PurchaseOrders>();
             try
             {
-                PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id);
+                PurchaseOrders Res = await _PurchaseOrdersRepo.GetById(id, true);
                 ToReturn.Add(Res);
             }
             catch (Exception ex)
@@ -138,6 +138,22 @@ namespace badgerApi.Controllers
         public async Task<string> CountAsync()
         {
             return await _PurchaseOrdersRepo.Count();
+
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Count of purchase orders "api/purchaseorders/count"
+        URL: api/purchaseorders/count
+        Request: Get
+        Input: /count
+        output: Count of Purchase Orders
+        */
+        [HttpGet("documentcount/{poid}")]
+        public async Task<string> DocumentCountAsync(int poid)
+        {
+            return await _PurchaseOrdersRepo.DocumentCount(poid);
 
         }
 
@@ -411,6 +427,34 @@ namespace badgerApi.Controllers
         /*
         Developer: Sajid Khan
         Date: 7-5-19 
+        Action: Get purchase order document by doc id and limit  "api/purchaseorders/getdocument/ref_id/limit"
+        URL: api/purchaseorders/getdocument/doctype/ref_id/limit
+        Request: Get
+        Input: int ref_id, int limit 
+        output: List of Purchase Orders document
+        */
+        [HttpGet("getdocument/{ref_id}/{doctype}/{limit}")]
+        public async Task<List<Documents>> GetDocumentViewAsync(int ref_id, int doctype, int limit)
+        {
+            List<Documents> documents = new List<Documents>();
+            try
+            {
+                documents = await _NotesAndDoc.GenericGetDocAsync<Documents>(ref_id, doctype, limit);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for purchaseorders Get documents with message" + ex.Message);
+
+            }
+
+            return documents;
+
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
         Action: update purchase order by id with events created in purchase order event and user event  "api/purchaseorders/update/5"
         URL: api/purchaseorders/update/5
         Request: Put
@@ -499,27 +543,27 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("vendor_id", PurchaseOrdersToUpdate.vendor_id.ToString());
                 }
-                if (PurchaseOrdersToUpdate.defected != 0)
+                if (PurchaseOrdersToUpdate.defected != 0 && PurchaseOrdersToUpdate.defected != null)
                 {
                     ValuesToUpdate.Add("defected", PurchaseOrdersToUpdate.defected.ToString());
                 }
-                if (PurchaseOrdersToUpdate.good_condition != 0)
+                if (PurchaseOrdersToUpdate.good_condition != 0 && PurchaseOrdersToUpdate.good_condition != null)
                 {
                     ValuesToUpdate.Add("good_condition", PurchaseOrdersToUpdate.good_condition.ToString());
                 }
-                if (PurchaseOrdersToUpdate.total_styles != 0)
+                if (PurchaseOrdersToUpdate.total_styles != 0 && PurchaseOrdersToUpdate.total_styles != null)
                 {
                     ValuesToUpdate.Add("total_styles", PurchaseOrdersToUpdate.total_styles.ToString());
                 }
-                if (PurchaseOrdersToUpdate.total_quantity != 0)
+                if (PurchaseOrdersToUpdate.total_quantity != 0 && PurchaseOrdersToUpdate.total_quantity != null)
                 {
                     ValuesToUpdate.Add("total_quantity", PurchaseOrdersToUpdate.total_quantity.ToString());
                 }
-                if (PurchaseOrdersToUpdate.subtotal != 0)
+                if (PurchaseOrdersToUpdate.subtotal != 0 && PurchaseOrdersToUpdate.subtotal != null)
                 {
                     ValuesToUpdate.Add("subtotal", PurchaseOrdersToUpdate.subtotal.ToString());
                 }
-                if (PurchaseOrdersToUpdate.shipping != 0)
+                if (PurchaseOrdersToUpdate.shipping != 0 && PurchaseOrdersToUpdate.shipping != null)
                 {
                     ValuesToUpdate.Add("shipping", PurchaseOrdersToUpdate.shipping.ToString());
                 }
@@ -1159,6 +1203,33 @@ namespace badgerApi.Controllers
         {
             var response = await _claimRepository.GetClaim(poId);
             return ResponseHelper.GetResponse(response);
+        }
+
+        /*
+        Developer: Rizvan Ali
+        Date: 7-5-19 
+        Action: get and Verify Total Styles available in po as well as in list of items  
+        URL: /purchaseorders/verifyStylesQuantity/id
+        Request: Get
+        Input: int id
+        output: bool
+        */
+        [HttpGet("verifyStylesQuantity/{po_id}")]
+        public async Task<bool> VerifyTotalStyle(int po_id)
+        {
+            bool result = false;
+            try
+            {
+                result = await _PurchaseOrdersRepo.VerifyStyleQuantity(po_id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in verifyng total Style in PO" + ex.Message);
+            }
+
+            return result;
+
         }
     }
     

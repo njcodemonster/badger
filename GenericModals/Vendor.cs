@@ -25,6 +25,7 @@ namespace GenericModals.Models
         public double created_at { get; set; }
         public double updated_at { get; set; }
         public int has_note { get; set; }
+       
 
     }
 }

@@ -26,7 +26,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
     var poid = $(this).attr("data-ID");
     var shipping = $(this).attr("data-shipping");
     $("#checkin_form #poShipping").val(shipping);
-    $('.loading').removeClass("d-none");
+    $('.loading').show();
     $.ajax({
         url: '/purchaseorders/PurchaseOrderItemDetails/' + poid,
         dataType: 'json',
@@ -44,18 +44,46 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
             }
 
             $(".po_doc_section").empty();
-            if (data.documents.length > 0) {
+            $(".po_doc_section").addClass('d-none');
+            if (data.originalpo.length > 0) {
 
-                $(data.documents).each(function (e, i) {
-                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                $(data.originalpo).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
                 });
 
                 $(".po_doc_section").removeClass('d-none');
 
-            } else {
-                $(".po_doc_section").addClass('d-none');
             }
 
+            if (data.shipmentinvoice.length > 0) {
+
+                $(data.shipmentinvoice).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
+
+            if (data.mainshipmentinvoice.length > 0) {
+
+                $(data.mainshipmentinvoice).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
+
+            if (data.others.length > 0) {
+
+                $(data.others).each(function (e, i) {
+                    $(".po_doc_section").append("<a href='uploads/" + i.url + "' target='_blank' class='documentsLink' data-documentid=" + i.ref_id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a> <br>");
+                });
+
+                $(".po_doc_section").removeClass('d-none');
+
+            }
 
             $(".poTracking").val("");
             $("#wrapper_checkin_tracking").empty().html("");
@@ -72,7 +100,7 @@ $(document).on('click', "#EditPurhaseOrderCheckedIn", function () {
 
         }
 
-        $('.loading').addClass("d-none");
+        $('.loading').hide();
         $(".wrapper_product").empty().html(producthtml);
         $("#checkin_form").attr("data-poid", poid);
         $("#modalcheckin").modal("show");
@@ -165,17 +193,18 @@ $(document).on('click', ".submit-check-in", function () {
                 $.ajax({
                     url: "/purchaseorders/purchaseorder_doc",
                     type: 'POST',
-                    data: formData,
-                    
+                    data: formData,                   
                     processData: false,
                     contentType: false,
-                }).always(function (data) {
-                    console.log(data);
-                    if (data == "0") {
+                }).always(function (docdata) {
+                    console.log(docdata);
+                    if (docdata.indexOf('File Already') > -1) {
+                        alertBox('poAlertMsg', 'red', docdata);
+                    } else if (docdata == "0") {
                         console.log("Exception Error");
-                       // alertBox('poAlertMsg', 'red', 'Purchase order document not updated Exception Error');
+                        alertBox('poAlertMsg', 'red', 'Purchase order document Exception Error.');
                     } else {
-                       // console.log(data.responseText);
+                        $("#EditPurhaseOrderDocument[data-id='" + po_id + "']").find(".redDotDoc").addClass("redDOtElement");
                     }
                 });
             }
@@ -231,3 +260,83 @@ $(document).on('click', ".add-check-in", function () {
 
 
 });
+
+
+
+function pagination(length, currentPage, itemsPerPage) {
+    return {
+        total: length,
+        per_page: itemsPerPage,
+        current_page: currentPage,
+        last_page: Math.ceil(length / itemsPerPage),
+        from: ((currentPage - 1) * itemsPerPage) + 1,
+        to: currentPage * itemsPerPage
+    };
+};
+
+//console.log(pagination(100,1,50))
+
+function pageNumbers(total, current, itemsPerPage) {
+    var count = Math.ceil(total / itemsPerPage);
+    var shownPages = 3;
+    var result = [];
+    if (current > count - shownPages) {
+        result.push(count - 2, count - 1, count);
+    } else {
+        result.push(current, current + 1, current + 2, '...', count);
+    }
+    return result;
+}
+
+//console.log(pageNumbers(7,1));
+
+var total = $('.total_purchase_order_count').text();
+
+if (total) {
+    var currentPage = window.location.href + "/";
+    var currentPageNumber = 1;
+
+    if (window.location.href.indexOf('PurchaseOrdersCheckIn/Page') > -1) {
+        currentPage = window.location.href.split('Page/')[0];
+        currentPageNumber = window.location.href.split('Page/')[1];
+    }
+
+    var pagenumberData = pageNumbers(total, currentPageNumber, 50);
+
+    var textData = "";
+
+    if (currentPageNumber < 2) {
+        textData += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>Previous</a></li>";
+    } else {
+        textData += "<li class='page-item'><a class='page-link' href=" + currentPage + "Page/" + (parseInt(currentPageNumber) - 1) + ">Previous</a></li>";
+    }
+
+    if (total < 51) {
+        textData += "<li class='page-item active'><a class='page-link' href='javascript:void(0)'>1</a></li>";
+    } else {
+        for (i = 0; i < pagenumberData.length; i++) {
+
+            if (pagenumberData[i] != 0) {
+                if (pagenumberData[i] == currentPageNumber) {
+                    textData += "<li class='page-item active'><a class='page-link' href='javascript:void(0)'>" + pagenumberData[i] + "</a></li>";
+                }
+                else if (pagenumberData[i] == '...') {
+                    textData += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>...</a></li>";
+                } else {
+                    textData += "<li class='page-item'><a class='page-link' href=" + currentPage + "Page/" + pagenumberData[i] + ">" + pagenumberData[i] + "</a></li>";
+                }
+            }
+           
+        }
+    }
+
+    if (currentPageNumber == pagenumberData[pagenumberData.length - 1]) {
+        textData += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>Next</a></li>";
+    } else {
+        textData += "<li class='page-item'><a class='page-link' href=" + currentPage + "Page/" + (parseInt(currentPageNumber) + 1) + ">Next</a></li>";
+    }
+    $('.custom_pagination .pagination').append(textData);
+}
+
+
+

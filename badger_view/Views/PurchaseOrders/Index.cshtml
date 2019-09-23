@@ -10,11 +10,11 @@
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
     <script src="~/js/checkin.js" asp-append-version="true"></script>
+    <script src="~/js/addstylepopup.js" asp-append-version="true"></script>
 }
-<div class="loading d-none"></div>
 <div class="row">
     <div class="col-md-3 col-sm-12">
-        <h4 class="text-info">Open Purchase Orders (<span class="total_purchase_order_count"></span>)</h4>
+        <h4 class="text-info">Open Purchase Orders (<span class="total_purchase_order_count">@Model.PurchaseOrdersCount</span>)</h4>
     </div>
     <div class="col-md-9">
         <button type="button" class="btn btn-success btn-sm model_purchase_order" data-toggle="modal" data-target="#modalPurchaseOrder">
@@ -76,7 +76,7 @@
                             }
                         </td>
                         <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
-                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><a class="text-danger font-weight-bold" target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id"><span class="postatus-@purchaseOrders.po_id">Not Recieved</span></a></td>
+                        <td class="text-danger font-weight-bold removeRed-@purchaseOrders.po_id"><a class="text-danger font-weight-bold" target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/Single/@purchaseOrders.po_id"><span class="postatus-@purchaseOrders.po_id">Not Recieved</span></a></td>
                     }
                     else
                     {
@@ -88,7 +88,7 @@
                         </td>
                         <td><span class="days-@purchaseOrders.po_id">@purchaseOrders.num_of_days</span></td>
                         <td>
-                            <a target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/@purchaseOrders.po_id">
+                            <a target="_blank" href="/PurchaseOrders/PurchaseOrdersCheckIn/Single/@purchaseOrders.po_id">
                                 @if (@purchaseOrders.po_status == 1)
                                 {
                                     <span class="postatus-@purchaseOrders.po_id">Open</span>
@@ -124,23 +124,29 @@
                         <button type="button" id="EditPurhaseOrder" data-ID="@purchaseOrders.po_id" class="btn btn-light btn-sm">Edit</button>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote">@if (purchaseOrders.has_note == 1)
-                        {<div class="redDotNote redDOtElement"></div>}else{ <div class="redDotNote"></div> }<i class="fa fa-edit h3"></i></a>
-                    </td>
-                    <td>
-                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument">
-                            @if (purchaseOrders.has_doc == 1)
-                        {<div class="redDotDoc redDOtElement"></div>}else{ <div class="redDotDoc"></div> }<i class="fa fa-upload h3"></i>
-                                            </a>
-                    </td>
-                    <td>
-                        <a href="javascript:void(0)">Claim</a>
-                    </td>
-                    <td>
-                        <a href="javascript:void(0)">Claim</a>
-                    </td>
-                </tr>
-            }
+                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderNote">
+                            @if (purchaseOrders.has_note == 1)
+                            {<div class="redDotNote redDOtElement"></div>}
+                            else
+                            { <div class="redDotNote"></div>}<i class="fa fa-edit h3"></i>
+                    </a>
+                </td>
+                <td>
+                    <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument">
+                        @if (purchaseOrders.has_doc == 1)
+                        {<div class="redDotDoc redDOtElement"></div>}
+                        else
+                        { <div class="redDotDoc"></div>}<i class="fa fa-upload h3"></i>
+                    </a>
+                </td>
+                <td>
+                    <a href="javascript:void(0)">Claim</a>
+                </td>
+                <td>
+                    <a href="javascript:void(0)">Claim</a>
+                </td>
+            </tr>
+        }
         </tbody>
         <tfoot>
             <tr>
@@ -379,6 +385,8 @@
     <!-- Modal Check-in -->
     @{ Html.RenderPartial("~/Views/Shared/model_checkin.cshtml"); }
 
+    <!-- Modal Add Style Item Clothing -->
+    @{ Html.RenderPartial("~/Views/Shared/AddStyle.cshtml"); }
 
     <!-- Modal Add Note -->
     <div class="modal fade" id="modaladdnote" tabindex="-1" role="dialog" aria-hidden="true">

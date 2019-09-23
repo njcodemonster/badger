@@ -169,7 +169,7 @@
                         <form id="weight_form">
                             <div class="form-row">
                                 <div class="form-group col-md-3 text-center">
-                                    <img src="https://cdn.shopify.com/s/files/1/1952/2795/products/a-bit-of-something-sweet-top-free-people-fashionpass-front.jpg?v=1522084555" width="75" height="75" class="weight_image" />
+                                    <div style="width:75px;height:75px;margin:0 auto;"><img src="https://cdn.shopify.com/s/files/1/1952/2795/products/a-bit-of-something-sweet-top-free-people-fashionpass-front.jpg?v=1522084555" width="75" height="75" class="weight_image" alt="" title="" /></div>
                                     <strong class="weight_sku"> BL118</strong>
                                 </div>
                                 <div class="form-group col-md-9 pt-3 pl-4">
@@ -180,7 +180,7 @@
                                 </div>
                             </div>
                             <div class="form-row sku_weight_inputs " style="margin-top:-40px;">
-                               
+
                             </div>
                         </form>
                     </div>
@@ -197,6 +197,16 @@
 
 
 }
+
+
+<div class="row total_po_count">
+    <div class="col-md-3 col-sm-12">
+        <h4 class="text-info">Open Purchase Orders (<span class="total_purchase_order_count">@Model.PurchaseOrdersCount</span>)</h4>
+    </div>
+    <div class="col-md-9">
+
+    </div>
+</div>
 
 <div class="">
 
@@ -217,14 +227,14 @@
                             <a class="btn btn-light btn-sm" href="/PurchaseOrders/Single/@purchaseOrder.po_id" target="_blank">
                                 Edit Original PO
                             </a>
-                            <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" class="btn btn-light btn-sm">Add an item</button>
+                            <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" data-skufamily="@purchaseOrder.latest_sku" data-vendorcode="@purchaseOrder.vendor_code" class="btn btn-light btn-sm">Add an item</button>
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12" style="white-space: nowrap">
                             <span class="text-center d-inline-block" id="inspect-claim-@purchaseOrder.po_id">
 
                                 @if (purchaseOrder.Claim?.inspect_claimer > 0)
                                 {
-                                   
+
                                     <b>Inspect</b><br />
                                     <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))" id="remove-claim-inspect-btn">
                                         <span style="padding:inherit">@purchaseOrder.Claim.inspect_claimer_name</span>
@@ -274,4 +284,18 @@
     }
 
 
+</div>
+
+
+<div class="row">
+    <div class="col-sm-12 col-md-5">
+    </div>
+    <div class="col-sm-12 col-md-7">
+        <div class="custom_pagination">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>

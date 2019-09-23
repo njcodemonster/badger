@@ -12,12 +12,13 @@ using MySql.Data.MySqlClient;
 using CommonHelper;
 using System.Dynamic;
 using GenericModals.PurchaseOrder;
+using GenericModals;
 
 namespace badgerApi.Interfaces
 {
     public interface IPurchaseOrdersRepository
     {
-        Task<PurchaseOrders> GetById(int id);
+        Task<PurchaseOrders> GetById(int id, bool skufamily = false);
         Task<List<PurchaseOrders>> GetAll(Int32 Limit);
         Task<String> Create(PurchaseOrders NewPurchaseOrder);
         Task<Boolean> Update(PurchaseOrders PurchaseOrdersToUpdate);
@@ -25,7 +26,7 @@ namespace badgerApi.Interfaces
         Task<string> Count();
         Task<object> GetPurchaseOrdersPageList(int start, int limit);
         Task<object> GetPurchaseOrdersPageData(int id);
-        Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit);
+        Task<List<POLineItems>> GetOpenPOLineItemDetails(int PO_id, int Limit);
         Task<List<PurchaseOrderLineItems>> GetPOLineitems(Int32 product_id, Int32 PO_id);
         Task<List<RaStatus>> GetAllRaStatus();
         Task<List<ProductWashTypes>> GetAllWashTypes();
@@ -33,6 +34,8 @@ namespace badgerApi.Interfaces
         Task<Object> GetNameAndSizeByProductAndSku(string product_id, string sku);
         Task<object> SearchByPOAndInvoice(string search);
         Task<List<PurchaseOrders>> CheckPOExist(string colname, string colvalue);
+        Task<bool> VerifyStyleQuantity(int poId);
+        Task<string> DocumentCount(int poid);
         Task<Object> GetPOList(string search);
     }
     public class PurchaseOrdersRepo : IPurchaseOrdersRepository
@@ -84,7 +87,31 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + ";");
+                //var result = await conn.QueryAsync<String>("select count(po_id) from " + TableName + ";");
+
+                string sQuery = @"SELECT count(a.po_id) FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
+                                LEFT JOIN po_claim poc ON a.po_id = poc.po_id
+                                LEFT JOIN users u ON poc.inspect_claimer = u.user_id
+                                LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
+                                where a.po_status != 2 AND a.po_status != 4 order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
+                var result = await conn.QueryAsync<String>(sQuery);
+
+                return result.FirstOrDefault();
+            }
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-5-19 
+        Action: Total document count of purchase order data from database
+        Input: int poid
+        output: string of PurchaseOrders document count
+        */
+        public async Task<string> DocumentCount(int poid)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                var result = await conn.QueryAsync<String>("select count(doc_id) from documents where ref_id ="+poid+";");
                 return result.FirstOrDefault();
             }
         }
@@ -103,7 +130,7 @@ namespace badgerApi.Interfaces
                 IEnumerable<PurchaseOrders> result = new List<PurchaseOrders>();
                 if (Limit > 0)
                 {
-                    result = await conn.QueryAsync<PurchaseOrders>("Select * from " + TableName + " Limit " + Limit.ToString() + ";");
+                    result = await conn.QueryAsync<PurchaseOrders>("Select *, from " + TableName + " Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
@@ -120,13 +147,18 @@ namespace badgerApi.Interfaces
         Input: int id
         output: list of PurchaseOrders
         */
-        public async Task<PurchaseOrders> GetById(int id)
+        public async Task<PurchaseOrders> GetById(int id, bool skufamily=false)
         {
+            string query = "";
             using (IDbConnection conn = Connection)
             {
 
-                var result = await conn.GetAsync<PurchaseOrders>(id);
-                return result;
+                if (skufamily == true) {
+                    query = ",(SELECT a.sku_family FROM product a WHERE po.vendor_id=a.vendor_id ORDER BY a.sku_family DESC LIMIT 1) AS latest_sku ";
+                }
+               var result = await conn.QueryAsync<PurchaseOrders>("Select po.* "+ query + " from purchase_orders po WHERE po.po_id = " + id.ToString() + ";");
+                //var result = await conn.GetAsync<PurchaseOrders>(id);
+                return result.FirstOrDefault();
             }
         }
 
@@ -174,21 +206,21 @@ namespace badgerApi.Interfaces
         Input: int purhcase order id,int limit
         output: Dynamic object of purchase order line item
         */
-        public async Task<Object> GetOpenPOLineItemDetails(int PO_id, int Limit)
+        public async Task<List<POLineItems>> GetOpenPOLineItemDetails(int PO_id, int Limit)
         {
 
-            dynamic OpenPoLineItemDetails = new ExpandoObject();
-            string sQuery = "SELECT A.*  FROM( SELECT purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.product_cost,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id FROM purchase_order_line_items , product ,product_attributes,attributes,sku where (purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku)) AS A ";
+            List<POLineItems> OpenPoLineItemDetails = new List<POLineItems>();
+            string sQuery = "SELECT A.*  FROM( SELECT purchase_orders.vendor_po_number, purchase_order_line_items.vendor_id,purchase_order_line_items.po_id,product.product_id,product.product_cost,product.wash_type_id,product.vendor_color_name,product.product_name,product.product_vendor_image,purchase_order_line_items.line_item_id,purchase_order_line_items.sku,attributes.attribute_display_name AS \"Size\" , purchase_order_line_items.line_item_ordered_quantity AS \"Quantity\" ,sku.weight,product_attributes.product_attribute_id,product.sku_family,vendor_products.vendor_color_code,vendor_products.vendor_product_name,vendor_products.vendor_product_code   FROM purchase_order_line_items , product ,product_attributes,attributes,sku,vendor_products,purchase_orders  where ( purchase_orders.po_id=purchase_order_line_items.po_id and purchase_order_line_items.product_id = product.product_id AND purchase_order_line_items.po_id = " + PO_id.ToString() + " and product_attributes.sku = purchase_order_line_items.sku AND attributes.attribute_id = product_attributes.attribute_id  and sku.sku = purchase_order_line_items.sku AND vendor_products.vendor_id = product.vendor_id AND vendor_products.product_id = product.product_id)) AS A ";
 
             if (Limit > 0)
             {
                 sQuery += " Limit " + Limit + ";";
             }
-            
+
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<object> purchaseOrdersInfo = await conn.QueryAsync<object>(sQuery);
-                OpenPoLineItemDetails.LineItemDetails = purchaseOrdersInfo;
+                IEnumerable<POLineItems> purchaseOrdersInfo = await conn.QueryAsync<POLineItems>(sQuery);
+                OpenPoLineItemDetails = purchaseOrdersInfo.ToList();
             }
             return OpenPoLineItemDetails;
         }
@@ -206,6 +238,8 @@ namespace badgerApi.Interfaces
             string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
                                 a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor,
                                 a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
+                                (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
+                                b.vendor_code ,
                                 a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
                                 FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
                                 LEFT JOIN po_claim poc ON a.po_id = poc.po_id
@@ -214,7 +248,7 @@ namespace badgerApi.Interfaces
                                 where a.po_status != 2 AND a.po_status != 4 order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
             if (limit > 0)
             {
-                sQuery += " limit "+ start + "," + limit + ";";
+                sQuery += " limit " + start + "," + limit + ";";
             }
 
             using (IDbConnection conn = Connection)
@@ -238,22 +272,33 @@ namespace badgerApi.Interfaces
      */
         public async Task<object> GetPurchaseOrdersPageData(int id)
         {
-
             dynamic poPageList = new ExpandoObject();
-            string sQuery = "";
+            string sQuery = @"SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number,
+                                a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor,
+                                a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc,a.updated_at,
+                                (SELECT sku_family FROM product WHERE product.vendor_id=a.vendor_id ORDER BY sku_family DESC LIMIT 1) AS latest_sku,
+                                b.vendor_code ,
+                                a.po_id AS po_claim_id,poc.inspect_claimer, poc.publish_claimer, u.name as inspect_claimer_name, u1.name as publish_claimer_name
+                                FROM purchase_orders a INNER JOIN vendor b ON b.vendor_id = a.vendor_id 
+                                LEFT JOIN po_claim poc ON a.po_id = poc.po_id
+                                LEFT JOIN users u ON poc.inspect_claimer = u.user_id
+                                LEFT JOIN users u1 ON poc.publish_claimer = u1.user_id
+                                where a.po_status != 2 AND a.po_status != 4 AND a.po_id ="+id+" order by ra_flag=1 DESC, FIELD(a.po_status, 3, 6, 5) asc, a.po_id ASC";
            
-                sQuery = "SELECT a.po_id, a.vendor_po_number, a.vendor_invoice_number, a.vendor_order_number, a.vendor_id, a.total_styles, a.shipping, a.order_date,b.vendor_name as vendor, a.delivery_window_start, a.delivery_window_end, a.po_status,a.ra_flag,a.has_note,a.has_doc, a.updated_at FROM purchase_orders a left JOIN(SELECT vendor.vendor_id, vendor.vendor_name FROM vendor GROUP BY vendor.vendor_id) b ON b.vendor_id = a.vendor_id where a.po_status != 2 AND a.po_status != 4 AND a.po_id = "+id+";";
-            
-
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<object> purchaseOrdersInfo = await conn.QueryAsync<object>(sQuery);
+                IEnumerable<PurchaseOrdersInfo> purchaseOrdersInfo = await conn.QueryAsync<PurchaseOrdersInfo, PoClaim, PurchaseOrdersInfo>(sQuery,
+                    map: (a, b) =>
+                    {
+                        a.Claim = b;
+                        return a;
+                    }, splitOn: "po_claim_id");
                 poPageList.purchaseOrdersInfo = purchaseOrdersInfo;
             }
             return poPageList;
 
         }
-        
+
 
         /*
         Developer: Sajid Khan
@@ -429,7 +474,7 @@ namespace badgerApi.Interfaces
             {
                 IEnumerable<PurchaseOrders> result = new List<PurchaseOrders>();
 
-                string squery = "Select * from " + TableName + " WHERE "+ colname + " = '" + colvalue + "';";
+                string squery = "Select * from " + TableName + " WHERE " + colname + " = '" + colvalue + "';";
 
                 result = await conn.QueryAsync<PurchaseOrders>(squery);
 

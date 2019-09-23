@@ -25,8 +25,8 @@ namespace badgerApi.Helper
         Task<object> GetBarcode(int barcode);
         Task<string> GenericGetsAsync(String _call);
         Task<T> GenericGetAsync<T>(String _call);
-
         Task<bool> DeleteItemByProduct(string product_id,string po_id);
+        Task<object> GetItemIds(int poid);
     }
     public class ItemsServiceHelper : IItemServiceHelper
     {
@@ -309,6 +309,28 @@ namespace badgerApi.Helper
             response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
+        }
+
+        /*
+        Developer: Sajid Khan
+        Date: 11-9-19 
+        Action: Get Items by poid
+        Request: Get
+        Input:  int poid
+        output: dynamic object of items by poid
+        */
+        public async Task<object> GetItemIds(int poid)
+        {
+            var client = new HttpClient();
+            var response = await client.GetAsync(ItemApiUrl + "/item/getitemids/" + poid, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<object>(data, settings);
         }
 
         /*

@@ -172,7 +172,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("product_id", SkuToUpdate.product_id.ToString());
                 }
-                if (SkuToUpdate.weight != 0)
+                if (SkuToUpdate.weight == 0 || SkuToUpdate.weight > 0)
                 {
                     ValuesToUpdate.Add("weight", SkuToUpdate.weight.ToString());
                 }

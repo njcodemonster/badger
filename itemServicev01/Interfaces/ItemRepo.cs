@@ -45,6 +45,7 @@ namespace itemService.Interfaces
         Task<Object> GetBarcode(int barcode);
         Task<bool> DeleteBySku(Items NewItem, int qty);
         Task<bool> DeleteItemByProduct(string id,string po_id);
+        Task<Object> GetItemsIdsByPoId(int poid);
     }
     public class ItemRepo : ItemRepository
     {
@@ -845,7 +846,7 @@ namespace itemService.Interfaces
             {
                 using (IDbConnection conn = Connection)
                 {
-                    string sQuery = "Delete from items where sku='" + ItemToDelete.sku + "' and po_id='" + ItemToDelete.PO_id + "' limit " + qty + ";";
+                    string sQuery = "Delete from items where item_status_id=1  and sku='" + ItemToDelete.sku + "' and po_id='" + ItemToDelete.PO_id + "' limit " + qty + ";";
                     var result = await conn.QueryAsync<string>(sQuery);
 
                     IsSuccess = true;
@@ -1006,6 +1007,26 @@ namespace itemService.Interfaces
             return barcodeDetails;
         }
 
+        /*
+        Developer: Sajid Khan
+        Date: 11-09-19 
+        Action: Get items by poid from database 
+        Input:  int poid
+        output: dynamic list of item data
+        */
+        public async Task<Object> GetItemsIdsByPoId(int poid)
+        {
+            dynamic itemDetails = new ExpandoObject();
+
+            string sQuery = "SELECT item_id FROM " + TableName + " WHERE item_status_id <> 5 AND PO_id =" + poid + ";";
+
+            using (IDbConnection conn = Connection)
+            {
+                itemDetails = await conn.QueryAsync<object>(sQuery);
+
+            }
+            return itemDetails;
+        }
 
         /*
         Developer: Rizwan Ali
@@ -1038,14 +1059,13 @@ namespace itemService.Interfaces
                         else 
                         {
                             //False return no item can be deleted because it has some record other then not received
-                            status = false;
+                            return false;
                         }
                     }
                     else
                     {
-                        status = false;
+                        return false;
                     }
-                    status = true;
 
                 }
             }

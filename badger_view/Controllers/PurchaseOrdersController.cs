@@ -41,6 +41,14 @@ namespace badger_view.Controllers
 
         ILoggerFactory _loggerFactory;
 
+        /********** Document Types **************************/
+        private int original_po = 4;
+        private int shipment_invoice = 7;
+        private int main_shipment_invoice = 8;
+        private int other = 9;
+
+        private int default_pagination = 50;
+
         public PurchaseOrdersController(IConfiguration config, ILoginHelper LoginHelper, ILoggerFactory loggerFactory)
         {
             _LoginHelper = LoginHelper;
@@ -73,10 +81,10 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             SetBadgerHelper();
-            
+
             // PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
             var purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/0/true");
-            
+
             String poIdsList = "";
 
             dynamic ProductIdsList = await _BadgerApiHelper.GenericGetAsync<object>("/product/getproductidsbypurchaseorder/");
@@ -114,7 +122,7 @@ namespace badger_view.Controllers
                     dynamic TotalData = await _BadgerApiHelper.GenericGetAsync<object>("/product/getpublishedproductCount/" + poIdsList.TrimEnd(','));
                     TotalPublishedProducts = TotalData.Count;
                 }
-                
+
                 DeliveryStartEnd = _common.MultiDatePickerFormat(poList.delivery_window_start, poList.delivery_window_end);
 
                 double DateToCheck = _common.GetTimeStemp();
@@ -130,7 +138,7 @@ namespace badger_view.Controllers
                 NumDays = _common.NumberOfDays(poList.updated_at);
 
 
-                if (CheckDaysRange ==  true && poList.po_status == 5)
+                if (CheckDaysRange == true && poList.po_status == 5)
                 {
                     newPurchaseOrderInfoList2.Add(new PurchaseOrdersInfo
                     {
@@ -212,7 +220,7 @@ namespace badger_view.Controllers
         {
             SetBadgerHelper();
 
-            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/"+start+"/"+limit+"/"+count);
+            PurchaseOrdersPagerList purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/" + start + "/" + limit + "/" + count);
 
             string DeliveryStartEnd = "";
 
@@ -280,11 +288,37 @@ namespace badger_view.Controllers
 
             string vendor_id = purchaseOrder[0].vendor_id;
 
-            dynamic vendorData = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/list/"+ vendor_id);
+            dynamic vendorData = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/list/" + vendor_id);
 
-            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString()+"/1");
+            if (purchaseOrder[0].has_note == 1)
+            {
+                dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getnote/" + id.ToString() + "/1");
+                purchaseOrdersData.notes = purchaseOrderNote;
+            }
+            else
+            {
+                purchaseOrdersData.notes = "";
+            }
 
-            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+            //dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
+            if (purchaseOrder[0].has_doc == 1)
+            {
+                dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + original_po + "/0");
+                dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + shipment_invoice + "/0");
+                dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + main_shipment_invoice + "/0");
+                dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + other + "/0");
+                purchaseOrdersData.originalpo = originalpo;
+                purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+                purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+                purchaseOrdersData.others = others;
+            }
+            else
+            {
+                purchaseOrdersData.originalpo = "";
+                purchaseOrdersData.shipmentinvoice = "";
+                purchaseOrdersData.mainshipmentinvoice = "";
+                purchaseOrdersData.others = "";
+            }
 
             dynamic purchaseOrderTracking = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorderstracking/gettracking/" + id.ToString());
 
@@ -296,8 +330,9 @@ namespace badger_view.Controllers
 
             purchaseOrdersData.purchase_order = purchaseOrder;
             purchaseOrdersData.vendor = vendorData;
-            purchaseOrdersData.notes = purchaseOrderNote;
-            purchaseOrdersData.documents = purchaseOrderDocs;
+            
+            //purchaseOrdersData.documents = purchaseOrderDocs;
+            
             purchaseOrdersData.tracking = purchaseOrderTracking;
             purchaseOrdersData.ledger = getLedger;
             purchaseOrdersData.discount = getDiscount;
@@ -315,11 +350,11 @@ namespace badger_view.Controllers
         output: dynamic object of purchase orders
         */
         [Authorize]
-        public async Task<IActionResult> Single() 
+        public async Task<IActionResult> Single()
         {
             SetBadgerHelper();
             List<Vendor> getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<Vendor>>("/vendor/getvendorsnameandid");
-            List < VendorType > getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
+            List<VendorType> getVendorTypes = await _BadgerApiHelper.GenericGetAsync<List<VendorType>>("/vendor/getvendortypes");
 
             dynamic vendor = new ExpandoObject();
             vendor.GetVendorsNameAndId = getVendorsNameAndId;
@@ -413,7 +448,7 @@ namespace badger_view.Controllers
 
             string daterange = json.Value<string>("vendor_po_delievery_range");
             if (daterange != "")
-            {               
+            {
                 string[] dateRangeList = daterange.Split(" - ");
 
                 string startDate = dateRangeList[0].ToString();
@@ -441,7 +476,7 @@ namespace badger_view.Controllers
             else
             {
                 purchaseOrder.Add("order_date", 0);
-            }            
+            }
             purchaseOrder.Add("created_at", _common.GetTimeStemp());
 
             String newPurchaseOrderID = await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrder.ToString(Formatting.None), "/purchaseorders/create");
@@ -690,7 +725,8 @@ namespace badger_view.Controllers
 
                     await _BadgerApiHelper.GenericPostAsyncString<String>(purchaseOrderNote.ToString(Formatting.None), "/purchaseorders/notecreate");
 
-                    if (json.Value<string>("note") != ""){
+                    if (json.Value<string>("note") != "")
+                    {
                         purchaseOrderStatusNote.Add("has_note", 1);
                     }
                     else
@@ -938,11 +974,11 @@ namespace badger_view.Controllers
         Input:int poid, int limit
         output: dynamic object of purchase orders line item
         */
-        public async Task<Object> PurchaseOrderLineItemDetails(int PO_id, int limit)
+        public async Task<List<POLineItems>> PurchaseOrderLineItemDetails(int PO_id, int limit)
         {
             SetBadgerHelper();
 
-            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
+            dynamic LineItemsDetails = await _BadgerApiHelper.GenericGetAsync<List<POLineItems>>("/PurchaseOrderManagement/GetLineItemDetails/" + PO_id.ToString() + "/" + limit.ToString());
 
             return LineItemsDetails;
         }
@@ -979,11 +1015,11 @@ namespace badger_view.Controllers
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
-            
+
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             PageModal.AllRaStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllRaStatus");
-            
+
             return View("PurchaseOrdersManagementViewAjax", PageModal);
         }
 
@@ -997,46 +1033,122 @@ namespace badger_view.Controllers
         Input: Null
         output: dynamic object of purchase orders management list
         */
-        [Authorize]
-        public async Task<IActionResult> PurchaseOrdersCheckIn(int id)
+        public async Task<IActionResult> PurchaseOrdersCheckIn()
         {
             SetBadgerHelper();
 
             dynamic PageModal = new ExpandoObject();
             PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
-            if (id == 0)
-            {
-                 purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/false");
+            purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/0/50/true");
+            PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
+            //int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
+            //PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+            List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
+            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges);
 
+            ViewBag.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            ViewBag.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
+
+            PageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
+
+            return View("PurchaseOrdersCheckIn", PageModal);
+        }
+
+
+        /*
+        Developer: Sajid Khan
+        Date: 7-16-19 
+        Action: Purchase Order List & Get first purchase order by id and Get purchase order line item by id & 
+        List all status by purchase order for itemm by using badger api helper
+        URL: /purchaseorders/PurchaseOrdersCheckIn
+        Request: Get
+        Input: Null
+        output: dynamic object of purchase orders management list
+        */
+        [HttpGet("PurchaseOrders/PurchaseOrdersCheckIn/Page/{num}")]
+        public async Task<IActionResult> PurchaseOrdersPagesCheckIn(int num)
+        {
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+            PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
+
+            if (num > 0)
+            {
+                int start = ((num-1)*default_pagination);
+
+                purchaseOrdersPagerList = await _BadgerApiHelper.GetAsync<PurchaseOrdersPagerList>("/purchaseorders/listpageview/"+start+ "/"+ default_pagination + "/true");
             }
             else
             {
-                 purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/singlepageview/" + id);
-                if (purchaseOrdersPagerList.purchaseOrdersInfo.Count() == 0)
-                {
-                 
-                        return Redirect("~/PurchaseOrders");
-                }
+                return Redirect("~/PurchaseOrders");
             }
-            
 
             PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
             //int purchase_order_id = purchaseOrdersPagerList.purchaseOrdersInfo.First().po_id;
             //PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(purchase_order_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
             List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
-            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges); 
+            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges);
+
+            ViewBag.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            ViewBag.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
+
+            PageModal.PurchaseOrdersCount = purchaseOrdersPagerList.Count;
+
             return View("PurchaseOrdersCheckIn", PageModal);
         }
 
+
+        /*
+       Developer: Sajid Khan
+       Date: 7-16-19 
+       Action: Purchase Order List & Get first purchase order by id and Get purchase order line item by id & 
+       List all status by purchase order for itemm by using badger api helper
+       URL: /purchaseorders/PurchaseOrdersCheckIn
+       Request: Get
+       Input: Null
+       output: dynamic object of purchase orders management list
+       */
+        //[Authorize]
+        [HttpGet("PurchaseOrders/PurchaseOrdersCheckIn/Single/{id}")]
+        public async Task<IActionResult> PurchaseOrdersSingleCheckIn(int id)
+        {
+            SetBadgerHelper();
+
+            dynamic PageModal = new ExpandoObject();
+            PurchaseOrdersPagerList purchaseOrdersPagerList = new PurchaseOrdersPagerList();
+            
+            purchaseOrdersPagerList = await _BadgerApiHelper.GenericGetAsync<PurchaseOrdersPagerList>("/purchaseorders/singlepageview/" + id);
+            if (purchaseOrdersPagerList.purchaseOrdersInfo.Count() == 0)
+            {
+
+                return Redirect("~/PurchaseOrders");
+            }
+            
+            PageModal.POList = purchaseOrdersPagerList.purchaseOrdersInfo;
+            PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
+            List<Barcode> allBarcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/purchaseorders/getBarcodeRange/");
+            ViewBag.allBarcodeRanges = JsonConvert.SerializeObject(allBarcodeRanges);
+
+            ViewBag.Sizes = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
+            ViewBag.categories = await _BadgerApiHelper.GenericGetAsync<object>("/categories/list");
+
+            PageModal.PurchaseOrdersCount = 1;
+
+            return View("PurchaseOrdersCheckIn", PageModal);
+        }
+
+
         //purchaseorders/lineitemsdetails/poid
-        [Authorize]
+        //[Authorize]
         [HttpGet("PurchaseOrders/itemsdetails/{po_id}")]
         public async Task<IActionResult> GetItemsDetailsByPOID(int po_id)
         {
             SetBadgerHelper();
 
-            dynamic PageModal = new ExpandoObject();
+            POLineItemsView PageModal = new POLineItemsView();
 
             PageModal.FirstPOInfor = await PurchaseOrderLineItemDetails(po_id, 0);
             PageModal.AllItemStatus = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/ListAllItemStatus");
@@ -1116,7 +1228,7 @@ namespace badger_view.Controllers
 
             String newItemID = "0";
 
-            if (json.Value<string>("item_note") != "")
+            if (json.Value<string>("item_note") != null)
             {
                 JObject ItemNotes = new JObject();
                 ItemNotes.Add("ref_id", json.Value<string>("item_id"));
@@ -1159,12 +1271,12 @@ namespace badger_view.Controllers
         output: string of purchase orders item notes
         */
         [Authorize]
-        [HttpGet("purchaseorders/getitemnotes/{ids}")]
-        public async Task<String> GetItemNotes(string ids)
+        [HttpGet("purchaseorders/getitemnotes/{poid}")]
+        public async Task<String> GetItemNotes(int poid)
         {
             SetBadgerHelper();
 
-            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemnotes/" + ids.ToString());
+            dynamic purchaseOrderNote = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemnotes/" + poid.ToString());
 
             return JsonConvert.SerializeObject(purchaseOrderNote);
         }
@@ -1186,8 +1298,15 @@ namespace badger_view.Controllers
 
             dynamic purchaseOrdersData = new ExpandoObject();
 
-            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + id.ToString() + "/0");
-            purchaseOrdersData.documents = purchaseOrderDocs;
+            dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + original_po + "/0");
+            dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + shipment_invoice + "/0");
+            dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + main_shipment_invoice + "/0");
+            dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + id.ToString() + "/" + other + "/0");
+
+            purchaseOrdersData.originalpo = originalpo;
+            purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+            purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+            purchaseOrdersData.others = others;
 
             return JsonConvert.SerializeObject(purchaseOrdersData);
         }
@@ -1344,7 +1463,7 @@ namespace badger_view.Controllers
                                 JObject itemDocStatus = new JObject();
                                 itemDocStatus.Add("has_doc", 1);
                                 itemDocStatus.Add("updated_by", Int32.Parse(loginUserId));
-                                await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocStatus.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/"+purchaseorderfile.po_id);
+                                await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocStatus.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/" + purchaseorderfile.po_id);
                             }
                         }
                     }
@@ -1379,7 +1498,8 @@ namespace badger_view.Controllers
             {
                 updateItemID = await _BadgerApiHelper.GenericPostAsyncString<String>(json.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/" + id.ToString());
 
-                if (updateItemID == "Success") {
+                if (updateItemID == "Success")
+                {
 
                     int po_id = json.Value<int>("pO_id");
                     int ra_status = json.Value<int>("ra_status");
@@ -1415,7 +1535,7 @@ namespace badger_view.Controllers
                 logger.LogInformation("Problem happened in updating new delete purchaseorders with message" + ex.Message);
                 updateItemID = "Failed";
             }
-           return updateItemID;
+            return updateItemID;
         }
 
         /*
@@ -1629,9 +1749,9 @@ namespace badger_view.Controllers
 
             if (fileName != null || fileName != string.Empty)
             {
-                if ((System.IO.File.Exists(UploadPath+fileName)))
+                if ((System.IO.File.Exists(UploadPath + fileName)))
                 {
-                    System.IO.File.Delete(UploadPath+fileName);
+                    System.IO.File.Delete(UploadPath + fileName);
                 }
 
             }
@@ -1641,19 +1761,19 @@ namespace badger_view.Controllers
             {
                 if (json.Value<string>("item") == "item")
                 {
-                    dynamic purchaseOrderItemDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemdocuments/"+json.Value<string>("itemid") + "/0");
+                    dynamic purchaseOrderItemDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseordermanagement/getitemdocuments/" + json.Value<string>("itemid") + "/0");
                     if (purchaseOrderItemDocs.Count == 0)
                     {
                         JObject itemDocStatus = new JObject();
                         itemDocStatus.Add("has_doc", 2);
                         itemDocStatus.Add("updated_by", Int32.Parse(loginUserId));
-                        await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocStatus.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/"+json.Value<string>("itemid"));
+                        await _BadgerApiHelper.GenericPostAsyncString<String>(itemDocStatus.ToString(Formatting.None), "/purchaseordermanagement/itemupdate/" + json.Value<string>("itemid"));
                     }
                 }
                 else
                 {
-                    dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + json.Value<string>("po_id") + "/0");
-                    if (purchaseOrderDocs.Count == 0)
+                    dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/documentcount/" + json.Value<string>("po_id"));
+                    if (purchaseOrderDocs == 0)
                     {
                         JObject purchaseOrderStatusDoc = new JObject();
                         purchaseOrderStatusDoc.Add("has_doc", 2);
@@ -1662,7 +1782,7 @@ namespace badger_view.Controllers
                     }
                 }
 
-                
+
             }
 
             return res;
@@ -1778,7 +1898,7 @@ namespace badger_view.Controllers
             string result = "false";
             try
             {
-                result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkpoexist/"+colname+"/"+colvalue);
+                result = await _BadgerApiHelper.GenericGetAsync<string>("/purchaseorders/checkpoexist/" + colname + "/" + colvalue);
             }
             catch (Exception ex)
             {
@@ -1805,7 +1925,11 @@ namespace badger_view.Controllers
             dynamic purchaseOrdersData = new ExpandoObject();
 
             dynamic purchaseOrderTracking = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorderstracking/gettracking/" + poid.ToString());
-            dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + poid.ToString() + "/0");
+            //dynamic purchaseOrderDocs = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocuments/" + poid.ToString() + "/0");
+            dynamic originalpo = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + original_po + "/0");
+            dynamic shipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + shipment_invoice + "/0");
+            dynamic mainshipmentinvoice = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + main_shipment_invoice + "/0");
+            dynamic others = await _BadgerApiHelper.GenericGetAsync<Object>("/purchaseorders/getdocument/" + poid.ToString() + "/" + other + "/0");
 
             dynamic ItemsDetails = await _BadgerApiHelper.GenericGetAsync<Object>("/PurchaseOrderManagement/GetItemsGroupByProductId/" + poid.ToString());
 
@@ -1816,19 +1940,19 @@ namespace badger_view.Controllers
 
             foreach (dynamic element in ItemsDetails)
             {
-                if(i == 0)
+                if (i == 0)
                 {
                     product_ids += element.product_id;
                 }
                 else
                 {
-                    product_ids += ","+element.product_id;
+                    product_ids += "," + element.product_id;
                 }
 
                 i++;
             }
 
-            if(product_ids != "")
+            if (product_ids != "")
             {
                 string smallestSku = await _BadgerApiHelper.GenericGetsAsync("/PurchaseOrders/smallestsku/" + product_ids);
 
@@ -1883,10 +2007,14 @@ namespace badger_view.Controllers
                 }
             }
 
-            
+
 
             purchaseOrdersData.itemsList = newItemsList;
-            purchaseOrdersData.documents = purchaseOrderDocs;
+            //purchaseOrdersData.documents = purchaseOrderDocs;
+            purchaseOrdersData.originalpo = originalpo;
+            purchaseOrdersData.shipmentinvoice = shipmentinvoice;
+            purchaseOrdersData.mainshipmentinvoice = mainshipmentinvoice;
+            purchaseOrdersData.others = others;
             purchaseOrdersData.tracking = purchaseOrderTracking;
 
             return JsonConvert.SerializeObject(purchaseOrdersData);
@@ -1988,7 +2116,7 @@ namespace badger_view.Controllers
             {
                 throw;
             }
-            
+
         }
 
         private static void BindClaimerType(ClaimModel claim, string userId)
@@ -2025,6 +2153,34 @@ namespace badger_view.Controllers
             SetBadgerHelper();
             var response = await _BadgerApiHelper.GetAsync<PoClaim>("/PurchaseOrders/loadclaim/" + poId);
             return Ok(response);
+        }
+
+        /*
+        Developer:  Rizvan Ali
+        Date: 7-5-19 
+        Action: get and Verify Total Styles available in po as well as in list of items  
+        URL: /purchaseorders/verifyStylesQuantity/id
+        Request: Get
+        Input: int id
+        output: bool
+        */
+        [Authorize]
+        [HttpGet("purchaseorders/verifyStylesQuantity/{poId}")]
+        public async Task<bool> VerifyTotalStyle(int poId)
+        {
+            SetBadgerHelper();
+
+            bool result = false;
+            try
+            {
+                result = await _BadgerApiHelper.GenericGetAsync<bool>("/purchaseorders/verifyStylesQuantity/" + poId);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in verifyng total Style in PO" + ex.Message);
+            }
+            return result;
         }
     }
 }

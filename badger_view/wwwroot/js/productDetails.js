@@ -1,4 +1,5 @@
-﻿﻿$(document).ready(function () {
+﻿$(document).ready(function () {
+    $('.loading').hide();
     $(".current_tags").tagsinput('items');
 })
 var color_added = new Array();

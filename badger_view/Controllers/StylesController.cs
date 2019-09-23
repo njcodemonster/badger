@@ -135,20 +135,8 @@ namespace badger_view.Controllers
             string product_name = json.Value<string>("product_name");
             bool IsLineItemExists = json.Value<bool>("IsLineItemExists");
 
-            string first_sku_family = "";
-            string first_sku = string.Empty;
-            if (vendor_style_sku_data.Count > 0)
-            {
-                string first_style_vendor_size = vendor_style_sku_data[0].Value<string>("style_vendor_size");
-                string first_style_size = vendor_style_sku_data[0].Value<string>("style_size");
-                string first_style_qty = vendor_style_sku_data[0].Value<string>("style_qty");
-                first_sku = vendor_style_sku_data[0].Value<string>("style_sku");
+            string first_sku_family = json.Value<string>("sku_family");
 
-                if (first_sku != null && first_sku.Count() > 0)
-                {
-                    first_sku_family = first_sku.Split('-')[0];
-                }
-            }
 
             string vendor_color_name = json.Value<string>("vendor_color_name");
             string product_cost = json.Value<string>("product_cost");
@@ -318,7 +306,7 @@ namespace badger_view.Controllers
 
                     if (int.Parse(itemCount) < style_qty)
                     {
-                        // -3 for indicating error in javascript.
+                        // -3 for indicating error in javascript : cannot decrease quantity of sku.
                         return "-3";
                     }
 
@@ -337,15 +325,7 @@ namespace badger_view.Controllers
                 bool IsNewSku = vendor_style_sku_data[i].Value<bool>("IsNewSku");
                 int original_qty = vendor_style_sku_data[i].Value<int>("original_qty");
 
-                string sku_family = "";
-                if (first_sku == null)
-                {
-                    break;
-                }
-                if (first_sku.Count() > 0)
-                {
-                    sku_family = sku.Split('-')[0];
-                }
+                string sku_family = json.Value<string>("sku_family");
 
 
 
@@ -452,13 +432,13 @@ namespace badger_view.Controllers
         Input: HTML form with the data of product
         output: status of deletion
         */
-		[HttpGet("/styles/deleteFromPO/{product_id}/{po_id}")]
-		public async Task<bool> DeleteStyle(int product_id,int po_id)
-		{
-			SetBadgerHelper();
-			var response = await _BadgerApiHelper.GenericGetAsync<bool>("/product/delete/" + product_id.ToString()+"/"+po_id.ToString());
+        [HttpGet("/styles/deleteFromPO/{product_id}/{po_id}")]
+        public async Task<bool> DeleteStyle(int product_id, int po_id)
+        {
+            SetBadgerHelper();
+            var response = await _BadgerApiHelper.GenericGetAsync<bool>("/product/delete/" + product_id.ToString() + "/" + po_id.ToString());
             string a = po_id.ToString();
-			return response;
-		}
-	}
+            return response;
+        }
+    }
 }

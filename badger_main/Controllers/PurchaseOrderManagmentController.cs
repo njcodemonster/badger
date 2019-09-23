@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GenericModals.Models;
 using GenericModals.Event;
+using GenericModals;
 
 namespace badgerApi.Controllers
 {
@@ -30,7 +31,7 @@ namespace badgerApi.Controllers
 
         private string userEventTableName = "user_events";
         private string tableName = "item_events";
-        
+
         IEventRepo _eventRepo;
         public PurchaseOrderManagementController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo)
         {
@@ -51,12 +52,12 @@ namespace badgerApi.Controllers
        Input: dynamic LineItemArray,String sku
        output: int number count which matched
        */
-        private int FindSku(dynamic LineItemArray,String sku)
+        private int FindSku(dynamic LineItemArray, String sku)
         {
             int index = -1;
-            foreach(dynamic LineItem in LineItemArray)
+            foreach (dynamic LineItem in LineItemArray)
             {
-                if(sku == (String)LineItem.sku)
+                if (sku == (String)LineItem.sku)
                 {
                     index++;
                     break;
@@ -84,7 +85,7 @@ namespace badgerApi.Controllers
                 AllItemStatus = await _ItemsHelper.GetAllStatus();
             }
             catch (Exception ex)
-            {   
+            {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for all Item status from Item service with message" + ex.Message);
             }
@@ -102,48 +103,29 @@ namespace badgerApi.Controllers
         output: dynamic object of purchase orders items 
         */
         [HttpGet("GetLineItemDetails/{PO_id}/{limit}")]
-        public async Task<object> GetLineItemsDetails(int PO_id, int limit)
+        public async Task<List<POLineItems>> GetLineItemsDetails(int PO_id, int limit)
         {
-            dynamic LineITemsDetails = new object();
+            List<POLineItems> LineITemsDetails = new List<POLineItems>();
             try
             {
-                LineITemsDetails = await _PurchaseOrdersRepo.GetOpenPOLineItemDetails(PO_id,limit);
+                LineITemsDetails = await _PurchaseOrdersRepo.GetOpenPOLineItemDetails(PO_id, limit);
                 List<Items> items = await _ItemsHelper.GetItemsByOrder(PO_id);
                 List<Items> skuItems = new List<Items>();
                 string currentSKU = "";
                 Boolean First = true;
                 int Index = -1;
-                foreach (Items item in items)
-                {
-                    if(item.sku != currentSKU)
-                    {
-                        
-                        if (!First)
-                        {
-                            Index = FindSku(LineITemsDetails.LineItemDetails, currentSKU);
-                            if(Index != -1)
-                            {
-                                LineITemsDetails.LineItemDetails[Index].EndItems = skuItems;
-                            }
-                        }
-                        currentSKU = item.sku;
-                        First = false;
-                        skuItems = new List<Items>();
-                    }
-                    skuItems.Add(item);
-                   
 
-                }
-                Index = FindSku(LineITemsDetails.LineItemDetails, currentSKU);
-                if (Index != -1)
+                foreach (POLineItems LineItems in LineITemsDetails)
                 {
-                    LineITemsDetails.LineItemDetails[Index].EndItems = skuItems;
+                    var ItemList = items.Where(x => x.sku == LineItems.sku).ToList();
+                    LineItems.EndItems = ItemList;
+
                 }
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in selecting the data for GetLineItemsDetails for PO : "+PO_id.ToString()+" with message" + ex.Message);
+                logger.LogInformation("Problem happened in selecting the data for GetLineItemsDetails for PO : " + PO_id.ToString() + " with message" + ex.Message);
             }
 
             return LineITemsDetails;
@@ -209,13 +191,21 @@ namespace badgerApi.Controllers
         Input: string ids
         output: string of purchase orders note id 
         */
-        [HttpGet("getitemnotes/{ref_ids}")]
-        public async Task<List<Notes>> GetItemNotesViewAsync(string ref_ids)
+        [HttpGet("getitemnotes/{poid}")]
+        public async Task<List<Notes>> GetItemNotesViewAsync(int poid)
         {
+            string ref_ids = "";
             List<Notes> notes = new List<Notes>();
             try
             {
-                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids, note_type);
+                dynamic getItemIds = await _ItemsHelper.GetItemIds(poid);
+
+                foreach (dynamic item in getItemIds)
+                {
+                    ref_ids += item.item_id+",";
+                }
+
+                notes = await _NotesAndDoc.GenericNotes<Notes>(ref_ids.TrimEnd(','), note_type);
             }
             catch (Exception ex)
             {
@@ -297,7 +287,7 @@ namespace badgerApi.Controllers
                     UserId = created_by,
                     EventNoteId = Int32.Parse(NewInsertionID)
                 };
-                await _eventRepo.AddEventAsync(userEvent);              
+                await _eventRepo.AddEventAsync(userEvent);
             }
             catch (Exception ex)
             {
@@ -317,12 +307,12 @@ namespace badgerApi.Controllers
         output: string of purchase orders item
         */
         [HttpPost("itemupdate/{id}")]
-        public async Task<string> ItemUpdate(int id,[FromBody] string value)
+        public async Task<string> ItemUpdate(int id, [FromBody] string value)
         {
             string ItemUpdate = "0";
             try
             {
-                ItemUpdate = await _ItemsHelper.ItemUpdateById(id,value); 
+                ItemUpdate = await _ItemsHelper.ItemUpdateById(id, value);
             }
             catch (Exception ex)
             {
@@ -411,7 +401,7 @@ namespace badgerApi.Controllers
         }
 
 
-        
+
 
     }
 }

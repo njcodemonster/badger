@@ -30,6 +30,10 @@ namespace GenericModals.PurchaseOrder
         public int photos { get; set; }
         public int remaining { get; set; }
         public PoClaim Claim { get; set; }
+        public string latest_sku { get; set; }
+        public string vendor_code { get; set; }
+        
+
 
     }
 

@@ -153,7 +153,7 @@ function general_search() {
                     });
                 } else {
                     img.attr({
-                        src: 'uploads/' + item.image,
+                        src: window.location.origin+'/uploads/' + item.image,
                         //alt: item.label
                     });
                 }
@@ -196,24 +196,7 @@ function general_search() {
 
 }
 
-// Accordian PO Mgmt
-
-$(document).ready(function () {
-    // Add minus icon for collapse element which is open by default
-    /*$(".collapse.show").each(function () {
-        $(this).prev(".card-header").find(".fa").addClass("fa-minus").removeClass("fa-plus");
-    });
-
-    // Toggle plus minus icon on show hide of collapse element
-    $(".collapse").on('show.bs.collapse', function () {
-        $(this).prev(".card-header").find(".fa").removeClass("fa-plus").addClass("fa-minus");
-    }).on('hide.bs.collapse', function () {
-        $(this).prev(".card-header").find(".fa").removeClass("fa-minus").addClass("fa-plus");
-    });*/
-});
-
 // Edit Label and Field
-
 $(document).ready(function () {
 
     $('.edit').click(function () {

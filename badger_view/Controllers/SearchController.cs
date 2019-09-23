@@ -68,18 +68,9 @@ namespace badger_view.Controllers
             }
            
             /*********   SKU  *********************/
-            if (searchLength >= 5 && searchLength <= 8)
+            if (Regex.IsMatch(search, "(^[a-zA-Z]+[0-9]+$)|(^[a-zA-Z]+[0-9]+-{1}$)|(^[a-zA-Z]+[0-9]+-{1}[0-9]{1}$)"))
             {
-                checkPattern = Regex.IsMatch(search, "(^([a-zA-Z]{2}[0-9]{3})|([a-zA-Z]{2}[0-9]{3}-)||([A-Za-z]{2}[0-9]{3}-[0-9]{1}))+$");
-                if (checkPattern == true)
-                {
                     multipleObject.skuList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/sku/getsku/"+search);
-                    
-                }
-                else
-                {
-                    multipleObject.skuList = xobject;
-                }
             }
             else
             {
@@ -98,7 +89,7 @@ namespace badger_view.Controllers
             }
 
             /********* Vendor & Product *********************/
-            checkPattern = Regex.IsMatch(search, "^[a-zA-Z0-9_ ]+$");
+            checkPattern = Regex.IsMatch(search, "^[a-zA-Z0-9_ -]+$");
             if (checkPattern)
             {
                 multipleObject.vendorList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendor/"+search);

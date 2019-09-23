@@ -32,5 +32,8 @@ namespace GenericModals.PurchaseOrder
         public double order_date { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
+        [Write(false)]
+        public string latest_sku { get; set; }
+
     }
 }

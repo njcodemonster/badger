@@ -596,6 +596,7 @@ Output: it will add notes into note textarea
 */
 
 $(document).ready(function () { 
+    $('.loading').hide();
     var photoshootids = [];
     $(".ps_notes textarea").each(function () {
         console.log($(this).val())
