@@ -50,7 +50,7 @@ $(document).ready(function () {
             // { "orderable": true, "targets": [1, 2, 3] }
         ]
     });
-    general_search();
+    //general_search();
 });
 
 $(document).on('click', "#general_search_btn", function () {

@@ -19,6 +19,10 @@ namespace GenericModals.Models
         public string inspect_claimer_name { get; set; }
         [Write(false)]
         public string publish_claimer_name { get; set; }
+        [Write(false)]
+        public string inspect_claim_color { get; set; }
+        [Write(false)]
+        public string publish_claim_color { get; set; }
         public ClaimerType claim_type { get; set; }
     }
 }

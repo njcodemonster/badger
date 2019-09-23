@@ -26,6 +26,7 @@ namespace GenericModals.Models
         public decimal product_retail { get; set; }
         public int published_status { get; set; }
         public int is_on_site_status { get; set; }
+        public bool is_ready { get; set; } = false;
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double updated_at { get; set; }

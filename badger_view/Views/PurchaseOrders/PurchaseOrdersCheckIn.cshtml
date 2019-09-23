@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "PurchaseOrdersCheckIn";
 }
-
+@using Newtonsoft;
 @model dynamic
 @section Scripts {
     <environment include="Development">
@@ -210,9 +210,17 @@
 
 <div class="">
 
+    <style>
+        .btn-custom {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
+
     @using CommonHelper;
     @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrder in Model.POList)
-    {
+    {   
         <div class="accordion" id="accordionpocheck-@purchaseOrder.po_id">
             <div class="card POListCheckIn">
                 <div class="card-header" id="heading_@purchaseOrder.po_id" data-POid="@purchaseOrder.po_id">
@@ -220,14 +228,14 @@
                         <a class="card-box collapsButton" data-POid="@purchaseOrder.po_id" data-toggle="collapse" data-target="#collapse_@purchaseOrder.po_id" style="cursor: pointer;"><i class="fa fa-plus"></i></a>
 
                         <div class="col-md-3 col-sm-10  col-xs-10">
-                            <h5>Purchase Order #: <a href="#">@purchaseOrder.vendor_po_number</a></h5>
-                            <h5>Vendor Name: <a href="#">@purchaseOrder.vendor</a></h5>
+                            <h5>Purchase Order #: <a href="/PurchaseOrders/Single/@purchaseOrder.po_id" target="_blank">@purchaseOrder.vendor_po_number</a></h5>
+                            <h5>Vendor Name: <a href="#" style="pointer-events:none">@purchaseOrder.vendor</a></h5>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <a class="btn btn-light btn-sm" href="/PurchaseOrders/Single/@purchaseOrder.po_id" target="_blank">
                                 Edit Original PO
                             </a>
-                            <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" data-skufamily="@purchaseOrder.latest_sku" data-vendorcode="@purchaseOrder.vendor_code" class="btn btn-light btn-sm">Add an item</button>
+                            <button type="button" id="AddItemButton" data-poid="@purchaseOrder.po_id" data-vendorstyle="@purchaseOrder.vendor_type" data-ponumber="@purchaseOrder.vendor_po_number" data-vendorid="@purchaseOrder.vendor_id" data-skufamily="@purchaseOrder.latest_sku" data-vendorcode="@purchaseOrder.vendor_code" data-total_styles='@purchaseOrder.total_styles' data-total_quantity='@purchaseOrder.total_quantity' data-calculationValues="@purchaseOrder.calculation_Values" class="btn btn-light btn-sm">Add an item</button>
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12" style="white-space: nowrap">
                             <span class="text-center d-inline-block" id="inspect-claim-@purchaseOrder.po_id">
@@ -236,7 +244,8 @@
                                 {
 
                                     <b>Inspect</b><br />
-                                    <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))" id="remove-claim-inspect-btn">
+                                    <button type="button" class="btn btn-sm remove-claim" style="background-color:@purchaseOrder.Claim.inspect_claim_color;color:#fff;border-color:gray"
+                                            onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))" id="remove-claim-inspect-btn">
                                         <span style="padding:inherit">@purchaseOrder.Claim.inspect_claimer_name</span>
                                         <span class="fa fa-times"></span>
                                     </button>
@@ -251,7 +260,8 @@
                                 <b>Go Live</b><br />
                                 @if (purchaseOrder.Claim?.publish_claimer > 0)
                                 {
-                                    <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.PublishClaimer))" id="remove-claim-publish-btn">
+                                    <button type="button" class="btn btn-sm remove-claim" style="background-color:@purchaseOrder.Claim.publish_claim_color;color:#fff;border-color:gray"
+                                            onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.PublishClaimer))" id="remove-claim-publish-btn">
                                         <span style="padding:inherit">@purchaseOrder.Claim.publish_claimer_name</span>
                                         <span class="fa fa-times"></span>
                                     </button>

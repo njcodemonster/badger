@@ -44,7 +44,7 @@
                         <button type="button" class="btn btn-link mt-0 pt-0 collapsButton" data-toggle="collapse" data-target="#collapseOne@(LineItem.product_id)" aria-expanded="true"><i class="fa fa-minus"></i></button>
                     </td>
                     <td>
-                        <span class="text-dark font-weight-bold h5">@LineItem.product_name (@LineItem.vendor_product_code) in @LineItem.vendor_color_name (@LineItem.vendor_color_code) - @LineItem.sku_family</span>
+                        <span class="text-dark font-weight-bold h5 skufamilyArea" data-skufamily="@LineItem.sku_family">@LineItem.product_name (@LineItem.vendor_product_code) in @LineItem.vendor_color_name (@LineItem.vendor_color_code) - @LineItem.sku_family</span>
                     </td>
                     <td>
                         <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
@@ -219,7 +219,7 @@
                 </a>
             </td>
             <td>
-                <input type="text" data-quantity="@DisplayTimes" data-sku="@item.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@item.sku" id="@item.sku_id" class="form-control item_sku" maxlength="7" />
+                <input type="text" data-quantity="@DisplayTimes" data-sku="@item.sku" data-productattributeid="@LineItem.product_attribute_id" data-itemid="@item.item_id" data-productid="@LineItem.product_id" data-polineitem="@LineItem.line_item_id" value="@item.sku" id="@item.sku_id" class="form-control item_sku" maxlength="50" />
             </td>
             <td>
                 <input type="text" data-itemid="@item.item_id" class="form-control item_barcode" data-barcode="@item].barcode" value="@((int)@item.barcode)" maxlength="8" />

@@ -37,7 +37,7 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>("/Photoshoots/listpageview/10");
+            ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>("/Photoshoots/listpageview/0");
             dynamic ProductPhotoshootModal = new ExpandoObject();
             ProductPhotoshootModal.Lists = photoshootPagerList.photoshootsInfo;
             return View("Index", ProductPhotoshootModal);

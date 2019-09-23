@@ -183,15 +183,15 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result = default;
-                foreach (var item in category_options)
+                long result; //=default;
+            foreach (var item in category_options)
+            {
+                using (IDbConnection conn = Connection)
                 {
-                    using (IDbConnection conn = Connection)
-                    {
-                        result = conn.Insert<CategoryOptions>(item);
-
-                    }
+                     result = conn.Insert<CategoryOptions>(item);
+                   
                 }
+            }
                 return true;
             }
             catch (Exception ex)
@@ -213,7 +213,7 @@ namespace badgerApi.Interfaces
             bool status = false;
             try
             {
-                long result = default;
+                long result; // = default;
                 foreach (var item in category_options)
                 {
                     using (IDbConnection conn = Connection)

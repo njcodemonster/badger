@@ -620,14 +620,18 @@ $(document).on("change", ".item_sku", function () {
     var product_attribute_id = $(this).attr('data-productattributeid');
     var quantity = $(this).attr('data-quantity');
     var product_id = $(this).attr('data-productid');
-
+    if ($(this).val().split('-')[0] != $(this).parents('.card').find('.skufamilyArea').attr('data-skufamily')) {
+        $(this).addClass('errorFeild');
+        alertInnerBox('message-' + po_id, 'red', 'SKU-family is not match');
+        return false;
+    }
     $(this).removeClass('errorFeild');
     if (sku == "") {
         $(this).addClass('errorFeild');
         return false;
     }
 
-    var patt = new RegExp('^([A-Z]{2})([0-9]{3})([-]{1})([0-9]{1})$');
+    var patt = checkClothingSkuPattern()
     var value = sku.toUpperCase();
     if (patt.test(value) == false) {
         $(this).addClass('errorFeild');
@@ -841,7 +845,11 @@ function getPurchaseOrdersItemdetails(PO_id) {
                 $('#sku_weight').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
             }
         });
-
+        $('.item_sku').each(function(){
+            if ($(this).val().indexOf('-') == -1) {
+                $(this).attr('disabled', true)
+            }
+        })
     });
 }
 

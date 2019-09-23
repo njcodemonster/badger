@@ -1,4 +1,8 @@
-﻿$(document).on('click', "#AddNewBarcodeButton", function () {
+﻿$(document).ready(function () {
+    $(".loading").hide();
+});
+
+$(document).on('click', "#AddNewBarcodeButton", function () {
     $('#AddBarcodeForm input').removeClass('errorFeild');
     $('#AddBarcodeForm .errorMsg').remove();
     $('#modalAddBarcode').modal('show');
@@ -111,6 +115,7 @@ function AddBarcode() {
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
 
 
+
     jsonData["barcode_from"] = BarcodeFrom;
     jsonData["barcode_to"] = BarcodeTo;
     jsonData["size"] = Size;
@@ -150,7 +155,7 @@ function AddBarcode() {
                 }
                 else {
                     //Success Save Method Now All saving Done
-                    if (barcodeid == -1) {
+                    if (barcodeid == '') {
                         //insert
                         alertBox('poAlertMsg', 'green', 'Barcode Inserted Successfully');
                     }
