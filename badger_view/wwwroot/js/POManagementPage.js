@@ -43,14 +43,22 @@
             }
         },
         select: function (event, ui) {
-            var wrapper = $(".UpdateFabricGroup")[0];
-            var oldFabric =
-                '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=0 disabled data-attributeid=' + ui.item.value + ' value=' + ui.item.label + '  class="form-control required"></div>' +
-                '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-                '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
-            $(wrapper).append(oldFabric)
-            $(wrapper).show();
 
+            if ($('.UpdateFabricGroup #tb_fabricName[value="' + ui.item.label + '"]').length == 0) {
+
+
+
+                var wrapper = $(".UpdateFabricGroup")[0];
+                var oldFabric =
+                    '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=0 disabled data-attributeid=' + ui.item.value + ' value="' + ui.item.label + '"  class="form-control required"></div>' +
+                    '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+                $(wrapper).append(oldFabric)
+                $(wrapper).show();
+            } else {
+                alertBox('poAlertMsg', 'Red', 'Fabric already exists.');
+                return false;
+            }
             return false;
         },
         focus: function (event, ui) {
