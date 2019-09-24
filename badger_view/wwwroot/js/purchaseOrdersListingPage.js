@@ -1191,7 +1191,12 @@ function purchaseOrderData(data) {
             });
             debugger;
             subCost = subCost - Debit + Credit;
-            $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, total cost $" + subCost);
+            if (Debit == null && Credit == null) {
+                $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost);
+            }
+            else {
+                $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost + " (Amount Adjusted: Credit $" + Credit + ", Debit $" + Debit+")");
+            }
         }
         $("#newPurchaseOrderForm #po_status").val(podata.po_status);
         $("#newPurchaseOrderForm #photos").val(podata.photos);

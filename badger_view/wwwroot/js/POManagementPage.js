@@ -447,7 +447,7 @@ $(document).on("change", ".item_barcode", function (e) {
                 contentType: 'application/json',
             }).always(function (data) {
                 console.log(data);
-                if (data == true) {
+                if (data == 'true') {
                     _self.addClass('errorFeild');
                     alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
                     return false;
@@ -491,7 +491,7 @@ $(document).on("change", ".item_barcode", function (e) {
             contentType: 'application/json',
         }).always(function (data) {
             console.log(data);
-            if (data == true) {
+            if (data == 'true') {
                 _self.addClass('errorFeild');
                 alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
                 return false;
