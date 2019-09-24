@@ -180,6 +180,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
         var style_sku = jsonData["vendor_style_sku"];
         $.each(style_sku, function (index, value) {
             var originalQty = parseInt(value.original_qty);
+            if (originalQty == null || isNaN(originalQty)) {
+                originalQty = 0;
+            }
             var styleQty = parseInt(value.style_qty);
             if (originalQty != styleQty) {
 
@@ -317,6 +320,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
                     $.each(style_sku, function (index, value) {
                         var originalQty = parseInt(value.original_qty);
                         var styleQty = parseInt(value.style_qty);
+                        if (originalQty == null || isNaN(originalQty)) {
+                            originalQty = 0;
+                        }
                         if (originalQty != styleQty) {
 
                             if (originalQty > styleQty) {
@@ -330,7 +336,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
                     })
                     TotalQty[0].value = Qty;
-                    TotalStyleCount[0].value += 1;
+                    if (IsUpdate == false) {
+                        TotalStyleCount[0].value += 1;
+                    }
                     var finalJson = [TotalQty[0], TotalStyleCount[0]];
                     $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues", finalJson);
 
@@ -453,7 +461,7 @@ $(document).ready(function () {
     $("#tb_StyleNameSuggest").autocomplete({
         source: function (request, response) {
 
-            if (request.term.length > 3) {
+            if (request.term.length >= 3) {
                 $.ajax({
                     url: "/product/autosuggest/" + CurrentVendorId + "/" + request.term,
                     dataType: 'json',

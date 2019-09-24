@@ -896,7 +896,9 @@ function getPurchaseOrdersItemdetails(PO_id) {
             var appendData = "";
             $(".item_sizes").each(function () {
                 if ($(this).attr("data-orderproduct") == product_id) {
-                    appendData += $(this).attr("data-size") + " (" + $(this).text() + ") ";
+                    if ($(this).text() != "0") {
+                        appendData += $(this).attr("data-size") + " (" + $(this).text() + ") ";
+                    }
                 }
             })
             $(".size" + product_id).text(appendData);
@@ -1216,18 +1218,6 @@ $(document).on('change', '.checkitemstatus', function (e) {
 
 
 
-function Fabric(name, percentage, _isNew, attribute_id, ToDelete) {
-    var Fabric = new Object();
-    Fabric.name = name;
-    Fabric.percentage = percentage;
-    Fabric.value_id = _isNew;
-    Fabric.attribute_id = attribute_id;
-    Fabric.product_id = $('#tbH_ProductID').val();
-    Fabric.toDelete = ToDelete
-    
-    return Fabric;
-}
-
 
 /*
 Developer: Hamza Haq
@@ -1360,6 +1350,20 @@ function addFabrics(_fabrics) {
        
     });
 }
+
+function Fabric(name, percentage, _isNew, attribute_id, ToDelete) {
+    var Fabric = new Object();
+    Fabric.name = name;
+    Fabric.percentage = percentage;
+    Fabric.value_id = _isNew;
+    Fabric.attribute_id = attribute_id;
+    Fabric.product_id = $('#tbH_ProductID').val();
+    Fabric.toDelete = ToDelete
+
+    return Fabric;
+}
+
+
 
 
 
