@@ -216,6 +216,14 @@
 
 <div class="">
 
+    <style>
+        .btn-custom {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
+
     @using CommonHelper;
     @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrder in Model.POList)
     {
@@ -242,7 +250,8 @@
                                 {
 
                                     <b>Inspect</b><br />
-                                    <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))" id="remove-claim-inspect-btn">
+                                    <button type="button" class="btn btn-sm remove-claim" style="background-color:@purchaseOrder.Claim.inspect_claim_color;color:#fff;border-color:gray"
+                                            onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.InspectClaimer))" id="remove-claim-inspect-btn">
                                         <span style="padding:inherit">@purchaseOrder.Claim.inspect_claimer_name</span>
                                         <span class="fa fa-times"></span>
                                     </button>
@@ -257,7 +266,8 @@
                                 <b>Go Live</b><br />
                                 @if (purchaseOrder.Claim?.publish_claimer > 0)
                                 {
-                                    <button type="button" class="btn btn-danger btn-sm remove-claim" onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.PublishClaimer))" id="remove-claim-publish-btn">
+                                    <button type="button" class="btn btn-sm remove-claim" style="background-color:@purchaseOrder.Claim.publish_claim_color;color:#fff;border-color:gray"
+                                            onclick="RemoveClaim(@purchaseOrder.po_id, @((int)ClaimerType.PublishClaimer))" id="remove-claim-publish-btn">
                                         <span style="padding:inherit">@purchaseOrder.Claim.publish_claimer_name</span>
                                         <span class="fa fa-times"></span>
                                     </button>

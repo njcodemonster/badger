@@ -100,7 +100,11 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
+<<<<<<< HEAD
                 $(".po_doc_section").append("<a href='../uploads/" + i.url + "' target='_blank' class='documentsLink' data-itemid=" + id + " data-docid=" + i.doc_id + " data-val=" + i.url + ">" + i.url + " <span class='podeleteImage'>×</span></a>");
+=======
+                $(".po_doc_section").append("<a href="+ window.location.origin +'/uploads/'+i.url+" target='_blank' class='documentsLink' data-itemid="+id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+>>>>>>> 2e4ce11341f47416b895de95a49d0ccdb5485340
             });
 
             $(".po_doc_section").removeClass('d-none');
@@ -447,7 +451,7 @@ $(document).on("change", ".item_barcode", function (e) {
                 contentType: 'application/json',
             }).always(function (data) {
                 console.log(data);
-                if (data == true) {
+                if (data == 'true') {
                     _self.addClass('errorFeild');
                     alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
                     return false;
@@ -491,7 +495,7 @@ $(document).on("change", ".item_barcode", function (e) {
             contentType: 'application/json',
         }).always(function (data) {
             console.log(data);
-            if (data == true) {
+            if (data == 'true') {
                 _self.addClass('errorFeild');
                 alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
                 return false;

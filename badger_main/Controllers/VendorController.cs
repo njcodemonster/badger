@@ -901,6 +901,35 @@ namespace badgerApi.Controllers
             return vendorDetails;
 
         }
-        
+        /*
+         Developer: Azeem Hassan
+         Date: 7-11-19 
+         Action: checking vendor existance
+         URL:  checkvendornameexist/vendorname
+         Request POST
+         Input: vendorcode
+         output: vendor existance massage
+       */
+        //GET: api/vendor/getvendornameandid
+        [HttpGet("checkvendornameexist/{vendorname}")]
+        public async Task<List<object>> CheckVendorNameExist(string vendorname)
+        {
+            dynamic vendorExist = new object();
+            try
+            {
+                vendorExist = await _VendorRepo.CheckVendorNameExist(vendorname);
+
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
+
+            }
+
+            return vendorExist;
+
+        }
+
     }
 }

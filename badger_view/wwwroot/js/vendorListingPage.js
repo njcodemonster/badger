@@ -46,6 +46,37 @@ $(document).ready(function () {
             $(".autocomplete").val("");
         }
     });
+         $("#vendorName").autocomplete({
+             source: function (request, response) {
+                 var jsonData = {};
+                 jsonData["columnname"] = 'vendor_name';
+                 jsonData["search"] = request.term;
+                 console.log(jsonData);
+
+                 if (request.term.length > 1) {
+                     $.ajax({
+                         url: "/vendor/autosuggest/",
+                         dataType: 'json',
+                         type: 'post',
+                         data: JSON.stringify(jsonData),
+                         contentType: 'application/json',
+                         processData: false,
+                     }).always(function (data) {
+                         response(data);
+                     });
+                 }
+             },
+             select: function (event, ui) {
+                 // Set selection
+                 console.log(ui.item.label);
+                 console.log(ui.item.value);
+                 return false;
+             },
+             focus: function (event, ui) {
+                 event.preventDefault();
+                 $(".autocomplete").val("");
+             }
+         });
 
      /*
        Developer: Azeem Hassan
@@ -81,6 +112,7 @@ $(document).on('click', "#NewVendorButton", function () {
     $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
+        $('.errorFeild:first').focus()
         return false;
     }
     if ($('#vendorZip').val().length < 5) {
@@ -168,7 +200,7 @@ $(document).on('click', "#NewVendorButton", function () {
                 ]).draw();
                 var table = $('#vendorListingArea').DataTable();
                 table.page('last').draw('page');
-                //alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
+                alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
 
                 $('#newVendorModal').modal('hide');
 
@@ -294,6 +326,7 @@ $(document).on('click', "#EditVendorButton", function () {
      $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
+        $('.errorFeild:first').focus();
         return false;
     }
     if ($('#vendorZip').val().length < 5) {
@@ -740,4 +773,43 @@ $(document).on('keydown', '#vendorCode', function (e) {
     if (e.which === 32) {
         return false;
     }
+});
+
+/*
+   Developer: Azeem Hassan
+   Date: 9-24-19
+   Action: checking vendor name exist in db
+   URL:/vendor/vendornameexist
+   Input: string
+   Request: POST
+   output: vendor code array 
+*/
+$(document).on('blur', "#vendorName", function (event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var jsonData = {};
+    var _this = $(this);
+    if ($(this).val() == '') {
+        return false;
+    }
+    $('#NewVendorButton,#EditVendorButton').attr('disabled', true)
+    jsonData["vendorname"] = $(this).val();
+    $.ajax({
+        url: "/vendor/vendornameexist",
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.length > 0) {
+            _this.addClass('errorFeild');
+            _this.parents('.form-group').find('.errorMsg').remove();
+            _this.parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this name is already exist</span>');
+        } else {
+            $('#NewVendorButton,#EditVendorButton').attr('disabled', false)
+        }
+    });
+
 });
