@@ -1,6 +1,9 @@
 ﻿$(document).ready(function () {
     $('.loading').hide();
     $(".current_tags").tagsinput('items');
+
+
+    getFabrics($('#product_name').attr('data-id'));
 })
 var color_added = new Array();
 var color_removed = new Array();
