@@ -73,7 +73,6 @@ namespace badger_view.Controllers
         [HttpPost("product/UpdateAttributes/{productId}")]
         public async Task<string> UpdateAttributes([FromBody]   JObject json, int productId)
         {
-            SetBadgerHelper();
             JArray product_subtype_ids = new JArray();
             string user_id = await _LoginHelper.GetLoginUserId();
 
@@ -206,8 +205,6 @@ namespace badger_view.Controllers
         [HttpGet("product/PairWithProductsAutocomplete/{id}")]
         public async Task<string> PairWithProductsAutocomplete(string id)
         {
-            SetBadgerHelper();
-
             Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/"+id);
             return ProductsPairWithSearch.ToString();
         } 
