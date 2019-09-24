@@ -95,7 +95,6 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
 
     var jsonData = {};
-    $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
     selectedProject = $('#ExistingProductSelect option:selected');
     if (SelectedProductID && SelectedProductID > 0) {
         jsonData["product_id"] = SelectedProductID;
@@ -145,6 +144,14 @@ $(document).on('click', ".AddNewStyleButton", function () {
         }
     });
 
+ 
+    if (jsonData["vendor_style_sku"].length== 0) {
+        alertBox('poAlertMsg', 'red', 'Atleast one SKU is required.');
+        $('.loading').hide();
+        return;
+
+    }
+
     var calulationValuesJson = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues");
     var totalQty = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("total_quantity");
     var totalStyles = $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("total_styles");
@@ -189,8 +196,6 @@ $(document).on('click', ".AddNewStyleButton", function () {
             var styleQty = parseInt(value.style_qty);
             if (originalQty != styleQty) {
 
-                var _value = originalQty - styleQty;
-
                 if (originalQty > styleQty) {
                     var _value = originalQty - styleQty;
                     Qty = Qty - _value;
@@ -224,8 +229,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
     }).always(function (data) {
 
+
         if (data == "0") {
-            alertBox('poAlertMsg', 'red', 'Seomething went wrong.');
+            alertBox('poAlertMsg', 'red', 'Unable to create/update style.');
             $('.loading').hide();
             return;
         }
@@ -241,6 +247,8 @@ $(document).on('click', ".AddNewStyleButton", function () {
         }
         else
             if (data != "0") {
+                $('#StyleSubType').multiselect("clearSelection");
+                $(".style_doc_section").empty();
                 $(".vendorSkuBox").remove();
                 console.log("New style Added");
 
@@ -414,7 +422,12 @@ $(document).ready(function () {
     });
 
     $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove(); x--;
+        if ($('#po_input_fields_wrap .vendorSkuBox').length==1) {
+            alertBox('poAlertMsg', 'red', 'Atleast one item is required.');
+        } else {
+            e.preventDefault(); $(this).parent('div').remove(); x--;
+        }
+      
     })
 
 
@@ -536,8 +549,7 @@ $(document).on('click', "#AddItemButton", function () {
             this.remove();
         }
     });
-    $('#StyleSubType option').remove();
-    $('#StyleSubType').multiselect('rebuild');
+    $('#StyleSubType').multiselect("clearSelection");
     $('.errorMsg').remove();
     $("#modaladdstylec input,#modaladdstylec textarea, #modaladdstylec select").val("").removeClass('errorFeild');
     $(".vendorSkuBox").remove();
@@ -586,12 +598,7 @@ $(document).on('click', "#AddItemButton", function () {
     var productImage = $(this).data("product_vendor_image");
     $('.poNumber').text($(this).data("ponumber"))
   
-    if (CurrentProductId == null) {
-        $('#modaladdstylec').modal({ backdrop: 'static', keyboard: false });
-    } else {
-        $('#modaladdstylec').modal('show');
-    }
-
+  
 
     $('.poVendor').text($(this).data("vendorcode"))
 
@@ -630,6 +637,8 @@ $(document).on('click', "#AddItemButton", function () {
 
     if (CurrentProductId) {
         GetProductDetails(CurrentVendorId, CurrentProductId, CurrentPOID);
+    } else {
+        $('#modaladdstylec').modal('show');
     }
 });
 
@@ -721,6 +730,7 @@ function GetProductDetails(vendor_id, product_id, po_id) {
         $('.poSkuFamily').text(new_sku);
         $('.poVendor').text(data_vendor[0].vendor_code)
         $('.loading').hide();
+        $('#modaladdstylec').modal({ backdrop: 'static', keyboard: false });
         console.log(data);
 
     });

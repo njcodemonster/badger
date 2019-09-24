@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
+using GenericModals;
 
 namespace badgerApi.Interfaces
 {
@@ -17,6 +18,7 @@ namespace badgerApi.Interfaces
     {
         Task<Attributes> GetById(int id);
         Task<List<Attributes>> GetByTypeId(int attribute_type_id);
+        Task<List<AutoComplete>> GetByTypeId(int attribute_type_id,string name);
         Task<List<Attributes>> GetAll(Int32 Limit);
         Task<String> Create(Attributes NewAttribute);
         Task<Boolean> Update(Attributes AttributesToUpdate);
@@ -101,6 +103,24 @@ namespace badgerApi.Interfaces
             }
         }
 
+        /*
+       Developer: Hamza Haq
+       Date: 21-8-19 
+       Action: getting attributes with type id and name for autocomplete from database
+       Input: type id
+       output: attributes list
+        */
+        public async Task<List<AutoComplete>> GetByTypeId(Int32 attribute_type_id,string name)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<AutoComplete> result = new List<AutoComplete>();
+
+                string _query = "Select  attribute_id as value , attribute_display_name as label from " + TableName + " Where attribute like '%" + name + "%' and attribute_type_id=" + attribute_type_id.ToString() + ";";
+                result = await conn.QueryAsync<AutoComplete>(_query);
+                return result.ToList();
+            }
+        }
         /*
             Developer: Azeem Hassan
             Date: 7-5-19 

@@ -39,7 +39,9 @@ namespace GenericModals.Models
         public string productCategories { get; set; }
         [Write(false)]
         public string skulist { get; set; }
-        
+        [Write(false)]
+        public int po_id { get; set; }
+
     }
 
 

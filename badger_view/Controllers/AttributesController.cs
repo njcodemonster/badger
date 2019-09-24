@@ -47,5 +47,23 @@ namespace badger_view.Controllers
             var skuSizesList = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/1");
             return skuSizesList;
         }
+
+        /*
+        Developer: Hamza Haq
+        Date:9-21-19 
+        Action: Get All fabrics from database
+        URL: attributes/getfabrics/{name}
+        Input: None
+        output: get fabric list
+        */
+        [Authorize]
+        [HttpGet("attributes/getfabrics/{name}")]
+        public async Task<object> GetFabrics(string name)
+        {
+            SetBadgerHelper();
+            var fabricLists = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/5/" + name + "");
+            return fabricLists;
+        }
+
     }
 }

@@ -36,6 +36,10 @@ namespace badger_view
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IConfigurationSection sec = Configuration.GetSection("Services_LIVE");
+            services.Configure<AppSettings>(sec);
+            //services.Configure<AppSettings>(Configuration);
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

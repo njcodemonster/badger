@@ -162,9 +162,13 @@ namespace badgerApi.Interfaces
             {
 
                 if (skufamily == true) {
-                    query = ",(SELECT a.sku_family FROM product a WHERE po.vendor_id=a.vendor_id ORDER BY a.sku_family DESC LIMIT 1) AS latest_sku ";
+                    query = " ,(SELECT a.sku_family FROM product a WHERE po.vendor_id=a.vendor_id ORDER BY a.sku_family DESC LIMIT 1) AS latest_sku, ";
                 }
-               var result = await conn.QueryAsync<PurchaseOrders>("Select po.* "+ query + " from purchase_orders po WHERE po.po_id = " + id.ToString() + ";");
+                query += " (SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('value', cv.value, 'calculation_id', cv.calculation_id)), ']') AS JSON) AS calculation_Values  FROM calculation_values cv WHERE cv.calculation_id in (5,6) and  cv.reffrence_id =po.po_id) calculation_Values";
+
+
+                string finalquery = "Select po.*" + query + " from purchase_orders po WHERE po.po_id = " + id.ToString() + ";";
+                var result = await conn.QueryAsync<PurchaseOrders>(finalquery);
                 //var result = await conn.GetAsync<PurchaseOrders>(id);
                 return result.FirstOrDefault();
             }
