@@ -1647,14 +1647,15 @@ namespace badger_view.Controllers
 
                 updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(skuUpdate.ToString(Formatting.None), "/sku/updatespecific/" + id);
 
-                JObject productUpdate = new JObject();
-                id = Int32.Parse(json.Value<string>("product_id"));
-                productUpdate.Add("product_id", json.Value<string>("product_id"));
-                productUpdate.Add("sku_family", json.Value<string>("sku"));
-                productUpdate.Add("updated_by", Int32.Parse(loginUserId));
-                productUpdate.Add("updated_at", _common.GetTimeStemp());
+                //Commented By Hamza Haq - need to ask questions
+                //JObject productUpdate = new JObject();
+                //id = Int32.Parse(json.Value<string>("product_id"));
+                //productUpdate.Add("product_id", json.Value<string>("product_id"));
+                //productUpdate.Add("sku_family", json.Value<string>("sku"));
+                //productUpdate.Add("updated_by", Int32.Parse(loginUserId));
+                //productUpdate.Add("updated_at", _common.GetTimeStemp());
 
-                updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(productUpdate.ToString(Formatting.None), "/product/updatespecific/" + id);
+                //updateSkuID = await _BadgerApiHelper.GenericPutAsyncString<String>(productUpdate.ToString(Formatting.None), "/product/updatespecific/" + id);
 
                 JObject productAttributeUpdate = new JObject();
                 id = Int32.Parse(json.Value<string>("product_attribute_id"));
