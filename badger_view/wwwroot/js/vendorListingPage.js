@@ -112,6 +112,7 @@ $(document).on('click', "#NewVendorButton", function () {
     $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
+        $('.errorFeild:first').focus()
         return false;
     }
     if ($('#vendorZip').val().length < 5) {
@@ -199,7 +200,7 @@ $(document).on('click', "#NewVendorButton", function () {
                 ]).draw();
                 var table = $('#vendorListingArea').DataTable();
                 table.page('last').draw('page');
-                //alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
+                alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
 
                 $('#newVendorModal').modal('hide');
 
@@ -325,6 +326,7 @@ $(document).on('click', "#EditVendorButton", function () {
      $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
+        $('.errorFeild:first').focus();
         return false;
     }
     if ($('#vendorZip').val().length < 5) {
