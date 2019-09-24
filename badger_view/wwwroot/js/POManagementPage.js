@@ -46,7 +46,7 @@
             var wrapper = $(".UpdateFabricGroup")[0];
             var oldFabric =
                 '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=0 disabled data-attributeid=' + ui.item.value + ' value=' + ui.item.label + '  class="form-control required"></div>' +
-                '<div class="form-inline  input-group col-md-4"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
+                '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
                 '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
             $(wrapper).append(oldFabric)
             $(wrapper).show();
@@ -1231,7 +1231,7 @@ $(document).on('click', '#addnewFabric', function (e) {
     var wrapper = $(".UpdateFabricGroup")[0];
     var oldFabric =
         '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-attributeid="0" data-valueid=0 class="form-control required"></div>' +
-        '<div class="form-inline  input-group col-md-4"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
+        '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
         '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
     $(wrapper).append(oldFabric)
     $(wrapper).show();
@@ -1266,7 +1266,6 @@ $(document).on('click', '#btn_fabric_submit', function (e) {
 
         var Attribute_id = 0;
         var isNewAttribute = 0;
-
         var fabricName = $(this).find('#tb_fabricName').val();
         var fabricValue = $(this).find('#tb_fabricValue').val();
         var ToDelete = $(value).is(":visible") ? false : true;
@@ -1311,7 +1310,7 @@ function getFabrics(productId) {
 
                 var oldFabric =
                     '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id+' data-attributeid=' + value.attribute_id+' class="form-control required" disabled value=' + value.attribute_Name + '></div>' +
-                    '<div class="form-inline  input-group col-md-4"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>'+
+                    '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>'+
                     '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().hide()"></i></div> </div>';
 
                 $(wrapper).append(oldFabric)
@@ -1319,9 +1318,11 @@ function getFabrics(productId) {
             $(wrapper).show();
 
         } else {
+
             $('#modalFabric').modal('show');
 
         }
+        $('#tb_fabricSuggest').val('');
         $('#modalFabric').modal('show');
         $('.loading').hide();
 
@@ -1342,6 +1343,7 @@ function addFabrics(_fabrics) {
 
         if (data=="Success") {
             alertBox('poAlertMsg', 'green', 'Fabric(s) added/updated successfully');
+            $('#modalFabric').modal('hide');
         } else {
             alertBox('poAlertMsg', 'red', 'Could not add/update Fabric for product.');
             return;
