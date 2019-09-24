@@ -97,7 +97,7 @@ $(document).on("click", "#AddDocument", function () {
         if (data.length > 0) {
 
             $(data).each(function (e, i) {
-                $(".po_doc_section").append("<a href='../uploads/" + i.url +"' target='_blank' class='documentsLink' data-itemid="+id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
+                $(".po_doc_section").append("<a href="+ window.location.origin +'/uploads/'+i.url+" target='_blank' class='documentsLink' data-itemid="+id+" data-docid=" + i.doc_id +" data-val=" + i.url +">" + i.url + " <span class='podeleteImage'>×</span></a>");
             });
 
             $(".po_doc_section").removeClass('d-none');
