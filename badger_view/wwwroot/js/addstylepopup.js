@@ -549,7 +549,7 @@ $(document).on('click', "#AddItemButton", function () {
     $("#modaladdstylec input,#modaladdstylec textarea, #modaladdstylec select").val("").removeClass('errorFeild');
     $(".vendorSkuBox").remove();
     $(".vendorSkuBox_disabled").remove();
-
+    $(".style_doc_section").empty();
 
     var vendor_type = $(this).data("vendorstyle");
     $.when(GetCategories(), GetSkuSizes()).done(function (p1,p2)
@@ -642,7 +642,7 @@ function GetProductDetails(vendor_id, product_id, po_id) {
     $('.loading').show();
     SelectedProductID = product_id;
     var CurrentProductId = product_id;
-
+   
     $.ajax({
         url: '/vendor/products/' + vendor_id + "/" + CurrentProductId + "/" + po_id,
         dataType: 'json',

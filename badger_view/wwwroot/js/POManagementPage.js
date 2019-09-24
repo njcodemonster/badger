@@ -1233,7 +1233,7 @@ $(document).on('click', '#addnewFabric', function (e) {
         '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
     $(wrapper).append(oldFabric)
     $(wrapper).show();
-
+    $('.fabricHeading').show();
 
 });
 
@@ -1281,12 +1281,12 @@ $(document).on('click', '#btn_fabric_submit', function (e) {
 
 });
 
-
 $(document).on('click', '.ModalAddFabric', function (e) {
     $('.loading').show();
     var _productid = $(this).data('productid')
     $('#tbH_ProductID').val(_productid);
     getFabrics(_productid);
+    $('.fabricHeading').hide();
 
 });
 
@@ -1303,11 +1303,11 @@ function getFabrics(productId) {
         var wrapper = $(".UpdateFabricGroup")[0];
    
         if (data.length > 0) {
-            
+            $('.fabricHeading').show();
             $.each(data, function (index, value) {
 
                 var oldFabric =
-                    '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id+' data-attributeid=' + value.attribute_id+' class="form-control required" disabled value=' + value.attribute_Name + '></div>' +
+                    '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id+' data-attributeid=' + value.attribute_id+' class="form-control required" disabled value="' + value.attribute_Name + '"></div>' +
                     '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>'+
                     '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().hide()"></i></div> </div>';
 
@@ -1316,7 +1316,8 @@ function getFabrics(productId) {
             $(wrapper).show();
 
         } else {
-
+            
+            $('.fabricHeading').hide();
             $('#modalFabric').modal('show');
 
         }
