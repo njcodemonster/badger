@@ -69,7 +69,8 @@ namespace badgerApi.Interfaces
         public async Task<PoClaim> GetClaim(int poId)
         {
             var query = string.Format(@" SELECT po_id,inspect_claimer, inspect_claimed_at, publish_claimer,
-                        publish_claimed_at,u.name as inspect_claimer_name, u1.name as publish_claimer_name 
+                        publish_claimed_at,u.name as inspect_claimer_name, u1.name as publish_claimer_name, 
+                        u.claim_color AS inspect_claim_color, u1.claim_color AS publish_claim_color
                         FROM po_claim pc LEFT JOIN users u ON pc.inspect_claimer = u.user_id
                         LEFT JOIN users u1 ON pc.publish_claimer = u1.user_id
                         WHERE po_id={0} LIMIT 1", poId);

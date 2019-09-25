@@ -488,8 +488,6 @@ namespace badger_view.Controllers
         [HttpPost("vendor/vendorcodeexist")]
         public async Task<string> VendorCodeExist([FromBody]   JObject json)
         {
-            
-
             string vendorcode = json.Value<string>("vendorcode");
             dynamic vendorCodeList = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/checkvendorcodeexist/"+ vendorcode);
             return JsonConvert.SerializeObject(vendorCodeList); 
@@ -507,8 +505,6 @@ namespace badger_view.Controllers
         [HttpPost("vendor/vendornameexist")]
         public async Task<string> VendorNameExist([FromBody]   JObject json)
         {
-            SetBadgerHelper();
-
             string vendorname = json.Value<string>("vendorname");
             dynamic vendorCodeList = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/checkvendornameexist/" + vendorname);
             return JsonConvert.SerializeObject(vendorCodeList);

@@ -100,9 +100,18 @@ namespace badger_view.Helpers
         public async Task<TReturn> PostAsync<TReturn>(object json, string uri)
         {
             var client = new HttpClient();
+            HttpResponseMessage response;
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
-            StringContent content = new StringContent(JsonConvert.SerializeObject(json, Formatting.Indented), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BadgerAPIURL + uri, content);
+
+            if (json is JObject)
+            {
+                response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json.ToString());
+            }
+            else
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(json, Formatting.Indented), Encoding.UTF8, "application/json");
+                response = await client.PostAsync(BadgerAPIURL + uri, content);
+            }
 
             var data = await response.Content.ReadAsStringAsync();
 

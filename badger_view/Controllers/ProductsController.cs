@@ -46,6 +46,7 @@ namespace badger_view.Controllers
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
             _BadgerApiHelper = badgerApiHelper;
+            _ProductHelper = new ProductHelper(_config);
         }
 
         /*

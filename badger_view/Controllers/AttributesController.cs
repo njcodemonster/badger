@@ -52,7 +52,6 @@ namespace badger_view.Controllers
         [HttpGet("attributes/getfabrics/{name}")]
         public async Task<object> GetFabrics(string name)
         {
-            SetBadgerHelper();
             var fabricLists = await _BadgerApiHelper.GenericGetAsync<object>("/attributes/list/type/5/" + name + "");
             return fabricLists;
         }
