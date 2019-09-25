@@ -4,7 +4,14 @@
 @using Newtonsoft;
 @model dynamic
 @section Scripts {
-    <environment include="Development">
+
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/js/common.js"></script>
+    <script src="~/js/POManagementPage.js"></script>
+    <script src="~/js/POClaim.js"></script>
+    <script src="~/js/checkin.js"></script>
+
+    @*<environment include="Development">
         <script src="~/lib/signalr/signalr.js"></script>
         <script src="~/js/common.js"></script>
         <script src="~/js/POManagementPage.js"></script>
@@ -13,7 +20,7 @@
     </environment>
     <environment exclude="Development">
         <script src="~/js/po-checkin.min.js" asp-append-version="true"></script>
-    </environment>
+    </environment>*@
 }
 
 @section page_popup_area{
@@ -203,9 +210,9 @@
                     <h4 class="modal-title">Add Fabric(s)</h4>
                 </div>
                 @{ Html.RenderPartial("~/Views/Shared/AddFabric.cshtml"); }
-                </div>
             </div>
         </div>
+    </div>
 
 }
 
