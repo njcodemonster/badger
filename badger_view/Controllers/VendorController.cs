@@ -507,7 +507,6 @@ namespace badger_view.Controllers
         [HttpPost("vendor/vendornameexist")]
         public async Task<string> VendorNameExist([FromBody]   JObject json)
         {
-            SetBadgerHelper();
 
             string vendorname = json.Value<string>("vendorname");
             dynamic vendorCodeList = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/checkvendornameexist/" + vendorname);
