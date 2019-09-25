@@ -21,17 +21,32 @@ namespace badgerApi.Controllers
     {
 
         private readonly IProductRepository _ProductRepo;
+        private readonly ICalculationValuesRepository _CalculationValuesRepo;
         private IItemServiceHelper _ItemsHelper;
         ILoggerFactory _loggerFactory;
         INotesAndDocHelper _notesAndDocHelper;
         public IProductCategoriesRepository _ProductCategoriesRepository;
-        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory, INotesAndDocHelper notesAndDocHelper, IItemServiceHelper ItemsHelper, IProductCategoriesRepository ProductCategoriesRepository)
+        private int note_type = 1;
+        private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
+        private INotesAndDocHelper _NotesAndDoc;
+        private IEventRepo _eventRepo;
+
+
+        string event_product_note_create = "Product note created by user = %%userid%% with product id = %%pid%%"; ///event_create_photoshoot_note
+        int event_product_note_create_id = 37;
+        string table_name = "product_events";
+        string user_event_table_name = "user_events";
+
+        public ProductController(IProductRepository ProductRepo, ILoggerFactory loggerFactory, INotesAndDocHelper notesAndDocHelper, IItemServiceHelper ItemsHelper, INotesAndDocHelper NotesAndDoc, IEventRepo eventRepo, IProductCategoriesRepository ProductCategoriesRepository, ICalculationValuesRepository CalculationValuesRepo)
         {
             _ItemsHelper = ItemsHelper;
             _ProductRepo = ProductRepo;
             _loggerFactory = loggerFactory;
             _notesAndDocHelper = notesAndDocHelper;
+            _NotesAndDoc = NotesAndDoc;
+            _eventRepo = eventRepo;
             _ProductCategoriesRepository = ProductCategoriesRepository;
+            _CalculationValuesRepo = CalculationValuesRepo;
         }
 
         // GET: api/Product
@@ -60,6 +75,33 @@ namespace badgerApi.Controllers
             }
         }
 
+
+        /*
+        Developer: Mohi
+        Date:8-21-19
+        Action: getting all Products list with vendor for Product Pair With 
+        Request:GET
+        URL: api/Product
+        Input: null
+        output: list of Products
+        */
+        [HttpGet("ProductsPairWithSearch/{prodcut_id}")]
+        public async Task<object> ProductsPairWithSearch(string prodcut_id)
+        {
+            dynamic ToReturn = new object();
+            try
+            {
+                ToReturn = await _ProductRepo.GetProductsPairWithSearch(prodcut_id);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for ProductsPairWithSearch with message" + ex.Message);
+            }
+            return ToReturn;
+        }
+
+
         /*
         Developer: Azeem Hassan
         Date:7-8-19
@@ -81,7 +123,7 @@ namespace badgerApi.Controllers
                 productDetailsPageData.productpairwiths = await _ProductRepo.GetProductpairwiths(id);
                 productDetailsPageData.product_Images = await _ProductRepo.GetProductImages(id);
                 productDetailsPageData.ProductDetails = await _ProductRepo.GetProductDetails(id);
-                List<Notes> note = await _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1);
+                List<Notes> note = new List<Notes>(); //await _notesAndDocHelper.GenericNote<Notes>(Convert.ToInt32(id), 1, 1);
                 if (note.Count > 0)
                 {
                     productDetailsPageData.Product_Notes = note[0].note;
@@ -90,27 +132,189 @@ namespace badgerApi.Controllers
                 {
                     productDetailsPageData.Product_Notes = "";
                 }
-
                 productDetailsPageData.AllColors = await _ProductRepo.GetAllProductColors();
                 productDetailsPageData.AllTags = await _ProductRepo.GetAllProductTags();
                 productDetailsPageData.shootstatus = await _ProductRepo.GetProductShootStatus(id);
+                productDetailsPageData.shootModels = await _ProductRepo.GetPhotoshootModels();
+                productDetailsPageData.productCategories = await _ProductRepo.GetProductCategories(id);
+               
+                productDetailsPageData.productPhotoshootModel = await _ProductRepo.GetProductPhotoshootModel(id);
+                //(SELECT CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT('product_category_id', pc.product_category_id, 'category_id', pc.category_id)), ']') AS JSON) AS productCategories  FROM product_categories pc WHERE pc.product_id = product.product_id) productCategories
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in selecting the data for ProductDetailsPageData with message" + ex.Message);
             }
             return productDetailsPageData;
 
         }
 
         /*
-        Developer: Azeem Hassan
-        Date:7-8-19
-        Action: getting product by id
-        Request:GET
-        URL: api/Product/list/1
-        Input: int id
-        output: product
+           Developer: Mohi
+           Date:8-8-19
+           Action: Update product Attributes by product id
+           Request:PUT
+           URL:  api/product/UpdateAttributes/5
+           Input: FormBody data and int id
+           output: Success/Failed
+        */
+        [HttpPut("UpdateAttributes/{id}")]
+        public async Task<string> UpdateAttributes(int id, [FromBody] string value)
+        {
+            string UpdateResult = "Success";
+            try
+            {
+                dynamic ProductToUpdate = JsonConvert.DeserializeObject<dynamic>(value);
+                Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
+                if (ProductToUpdate.product_name != null)
+                {
+                    ValuesToUpdate.Add("product_name", ProductToUpdate.product_name.ToString());
+                }
+                if (ProductToUpdate.size_and_fit_id != null)
+                {
+                    ValuesToUpdate.Add("size_and_fit_id", ProductToUpdate.size_and_fit_id.ToString());
+                }
+                if (ProductToUpdate.product_retail != null)
+                {
+                    ValuesToUpdate.Add("product_retail", ProductToUpdate.product_retail.ToString());
+                }
+                if (ProductToUpdate.product_cost != null)
+                {
+                    ValuesToUpdate.Add("product_cost", ProductToUpdate.product_cost.ToString());
+                }
+                if (ProductToUpdate.product_discount != null)
+                {
+                    ValuesToUpdate.Add("product_discount", ProductToUpdate.product_discount.ToString());
+                }
+                if (ProductToUpdate.updated_by != null)
+                {
+                    ValuesToUpdate.Add("updated_by", ProductToUpdate.updated_by.ToString());
+                }
+                if (ProductToUpdate.updated_at != null)
+                {
+                    ValuesToUpdate.Add("updated_at", ProductToUpdate.updated_at.ToString());
+                }
+
+                await _ProductRepo.UpdateSpecific(ValuesToUpdate, "product_id=" + id);
+
+                Dictionary<String, String> ProductDetailValuesToUpdate = new Dictionary<string, string>();
+                if (ProductToUpdate.product_detail_1 != null && ProductToUpdate.product_detail_1.ToString() != "")
+                {
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "1", ProductToUpdate.product_detail_1.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                }
+                if (ProductToUpdate.product_detail_2 != null && ProductToUpdate.product_detail_2.ToString() != "")
+                {
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "2", ProductToUpdate.product_detail_2.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                }
+                if (ProductToUpdate.product_detail_3 != null && ProductToUpdate.product_detail_3.ToString() != "")
+                {
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "3", ProductToUpdate.product_detail_3.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                }
+                if (ProductToUpdate.product_detail_4 != null && ProductToUpdate.product_detail_4.ToString() != "")
+                {
+                    await _ProductRepo.AddEditProductPageDetails(id.ToString(), "4", ProductToUpdate.product_detail_4.ToString(), ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                }
+
+
+                if (ProductToUpdate.pairProductIds != null && ProductToUpdate.pairProductIds.ToString() != "")
+                {
+                    string PairProductIds = ProductToUpdate.pairProductIds.ToString();
+                    int countComma = PairProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = PairProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.AddPairWithProduct(id.ToString(), pair_product_id, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.AddPairWithProduct(id.ToString(), PairProductIds, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                    }
+                }
+
+                if (ProductToUpdate.RemovePairWithProductIds != null && ProductToUpdate.RemovePairWithProductIds.ToString() != "")
+                {
+                    string RemovePairProductIds = ProductToUpdate.RemovePairWithProductIds.ToString();
+                    int countComma = RemovePairProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = RemovePairProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.RemovePairWithProduct(id.ToString(), pair_product_id);
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.RemovePairWithProduct(id.ToString(), RemovePairProductIds);
+                    }
+                }
+
+                if (ProductToUpdate.RemoveOtherColorProductIds != null && ProductToUpdate.RemoveOtherColorProductIds.ToString() != "")
+                {
+                    string RemoveOtherColorProductIds = ProductToUpdate.RemoveOtherColorProductIds.ToString();
+                    int countComma = RemoveOtherColorProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = RemoveOtherColorProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.RemoveOtherColorProducts(id.ToString(), pair_product_id);
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.RemoveOtherColorProducts(id.ToString(), RemoveOtherColorProductIds);
+                    }
+                }
+
+
+                if (ProductToUpdate.otherColorsProductIds != null && ProductToUpdate.otherColorsProductIds.ToString() != "")
+                {
+                    string OtherColorsProductIds = ProductToUpdate.otherColorsProductIds.ToString();
+                    int countComma = OtherColorsProductIds.Count(c => c == ',');
+                    if (countComma > 0)
+                    {
+                        var ids = OtherColorsProductIds.Split(",");
+                        foreach (var pair_product_id in ids)
+                        {
+                            await _ProductRepo.AddOtherColorProducts(id.ToString(), pair_product_id, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                        }
+                    }
+                    else
+                    {
+                        await _ProductRepo.AddOtherColorProducts(id.ToString(), OtherColorsProductIds, ProductToUpdate.updated_by.ToString(), ProductToUpdate.updated_at.ToString());
+                    }
+                }
+
+                /**
+                                product.Add("", json.Value<string>("product_detail_1"));
+                                product.Add("product_detail_2", json.Value<string>("product_detail_2"));
+                                product.Add("product_detail_3", json.Value<string>("product_detail_3"));
+                                product.Add("product_detail_4", json.Value<string>("product_detail_4"));*/
+
+                //UpdateSpecificData
+            }
+            catch (Exception ex)
+            {
+                UpdateResult = "Failed";
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in updating product attribute with message" + ex.Message);
+            }
+            return UpdateResult;
+        }
+
+        /*
+           Developer: Azeem Hassan
+           Date:7-8-19
+           Action: getting product by id
+           Request:GET
+           URL: api/Product/list/1
+           Input: int id
+           output: product
         */
         [HttpGet("list/{id}")]
         public async Task<List<Product>> GetAsync(int id)
@@ -148,6 +352,12 @@ namespace badgerApi.Controllers
             {
                 Product newProduct = JsonConvert.DeserializeObject<Product>(value);
                 NewInsertionID = await _ProductRepo.Create(newProduct);
+                // Add +1 Style Count in calculation against PO for style count
+                if (NewInsertionID !="0")
+                {
+                    var check = await _CalculationValuesRepo.CreateProductCalculation(newProduct.po_id.ToString(), 6, 1, true);
+                }
+               
             }
             catch (Exception ex)
             {
@@ -230,6 +440,7 @@ namespace badgerApi.Controllers
             return itemQuantity;
         }
 
+
         /*
         Developer: Azeem Hassan
         Date:7-8-19
@@ -275,7 +486,7 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("sku_family", ProductToUpdate.sku_family.ToString());
                 }
-                if (ProductToUpdate.wash_type_id == 0 || ProductToUpdate.wash_type_id > 0) 
+                if (ProductToUpdate.wash_type_id == 0 || ProductToUpdate.wash_type_id > 0)
                 {
                     ValuesToUpdate.Add("wash_type_id", ProductToUpdate.wash_type_id.ToString());
                 }
@@ -406,6 +617,10 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
                 NewInsertionID = await _ProductRepo.CreatePOLineitems(newPOlineitems);
+                // Add Line Style Qty in calculation against PO for style Qty
+                var _check = await _CalculationValuesRepo.CreateProductCalculation(newPOlineitems.po_id.ToString(), 5, newPOlineitems.line_item_ordered_quantity, true);
+            
+             
             }
             catch (Exception ex)
             {
@@ -414,6 +629,8 @@ namespace badgerApi.Controllers
             }
             return NewInsertionID;
         }
+
+
 
         /*
         Developer: Hamza Haq
@@ -432,6 +649,19 @@ namespace badgerApi.Controllers
             {
                 PurchaseOrderLineItems newPOlineitems = JsonConvert.DeserializeObject<PurchaseOrderLineItems>(value);
                 NewInsertionID = await _ProductRepo.UpdatePoLineItems(newPOlineitems);
+
+                var qty = 0;
+                if (newPOlineitems.originalQty > newPOlineitems.line_item_ordered_quantity)
+                {
+                    qty = newPOlineitems.originalQty - newPOlineitems.line_item_ordered_quantity;
+                }
+                else
+                {
+                    qty = newPOlineitems.line_item_ordered_quantity - newPOlineitems.originalQty;
+                }
+                // Increase/Decrease Line Style Qty in calculation against PO for style Qty
+                var _check =await _CalculationValuesRepo.CreateProductCalculation(newPOlineitems.po_id.ToString(), 5, qty, newPOlineitems.IsQtyIncreased);
+                
             }
             catch (Exception ex)
             {
@@ -491,6 +721,43 @@ namespace badgerApi.Controllers
                 logger.LogInformation("Problem happened in making new line items with message" + ex.Message);
             }
             return NewInsertionID;
+        }
+
+        /*
+          Developer: Mohi
+          Date: 9-19-19 
+          Action: Create product notes 
+          URL: api/products/notecreate
+          Request: Post
+          Input: FromBody, string 
+          output: string of Last insert product note id
+          */
+        [HttpPost("notecreate")]
+        public async Task<string> NoteCreate([FromBody]   string value)
+        {
+            string newNoteID = "0";
+            try
+            {
+                dynamic productNote = JsonConvert.DeserializeObject<Object>(value);
+                int ref_id = productNote.ref_id;
+                string note = productNote.note;
+                int created_by = productNote.created_by;
+                double created_at = _common.GetTimeStemp();
+                newNoteID = await _NotesAndDoc.GenericPostNote<string>(ref_id, note_type, note, created_by, created_at);
+
+                int userId = productNote.created_by;
+
+                event_product_note_create = event_product_note_create.Replace("%%userid%%", userId.ToString());
+                event_product_note_create = event_product_note_create.Replace("%%pid%%", ref_id.ToString());
+                await _eventRepo.AddPhotoshootAsync(ref_id, event_product_note_create_id, ref_id, event_product_note_create, userId, _common.GetTimeStemp(), table_name);
+                await _eventRepo.AddEventAsync(event_product_note_create_id, userId, ref_id, event_product_note_create, _common.GetTimeStemp(), user_event_table_name);
+            }
+            catch (Exception ex)
+            {
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Photoshoot Note with message" + ex.Message);
+            }
+            return newNoteID;
         }
 
         /*
@@ -654,7 +921,7 @@ namespace badgerApi.Controllers
        */
         // POST: api/product/delete
         [HttpGet("delete/{product_id}/{po_id}")]
-        public async Task<bool> DelAsync(string product_id,string po_id)
+        public async Task<bool> DelAsync(string product_id, string po_id)
         {
             bool isDeleted = false;
             try

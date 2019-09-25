@@ -5,10 +5,12 @@
 @model dynamic
 @section Scripts {
     <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
+    <script src="~/lib/signalr/signalr.js" asp-append-version="true"></script>
     <script src="~/js/daterangepicker.min.js" asp-append-version="true"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/vendorListingPage.js" asp-append-version="true"></script>
     <script src="~/js/purchaseOrdersListingPage.js" asp-append-version="true"></script>
+    <script src="~/js/POClaim.js" asp-append-version="true"></script>
     <script src="~/js/checkin.js" asp-append-version="true"></script>
     <script src="~/js/addstylepopup.js" asp-append-version="true"></script>
 }
@@ -47,6 +49,7 @@
             </tr>
         </thead>
         <tbody>
+            @using CommonHelper;
             @foreach (GenericModals.PurchaseOrder.PurchaseOrdersInfo purchaseOrders in Model.PurchaseOrdersLists)
             {
                 string pinkbgclass = "";
@@ -129,24 +132,51 @@
                             {<div class="redDotNote redDOtElement"></div>}
                             else
                             { <div class="redDotNote"></div>}<i class="fa fa-edit h3"></i>
-                    </a>
-                </td>
-                <td>
-                    <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument">
-                        @if (purchaseOrders.has_doc == 1)
-                        {<div class="redDotDoc redDOtElement"></div>}
-                        else
-                        { <div class="redDotDoc"></div>}<i class="fa fa-upload h3"></i>
-                    </a>
-                </td>
-                <td>
-                    <a href="javascript:void(0)">Claim</a>
-                </td>
-                <td>
-                    <a href="javascript:void(0)">Claim</a>
-                </td>
-            </tr>
-        }
+                        </a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" style="position:relative" data-ID="@purchaseOrders.po_id" id="EditPurhaseOrderDocument">
+                            @if (purchaseOrders.has_doc == 1)
+                            {<div class="redDotDoc redDOtElement"></div>}
+                            else
+                            { <div class="redDotDoc"></div>}<i class="fa fa-upload h3"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <span class="text-center d-inline-block" id="inspect-claim-@purchaseOrders.po_id">
+
+                            @if (purchaseOrders.Claim?.inspect_claimer > 0)
+                            {
+                                <button type="button" class="btn btn-sm remove-claim" style="background-color:@purchaseOrders.Claim.inspect_claim_color;color:#fff;border-color:gray"
+                                        onclick="RemoveClaim(@purchaseOrders.po_id, @((int)ClaimerType.InspectClaimer), false)" id="remove-claim-inspect-btn">
+                                    <span style="padding:inherit">@purchaseOrders.Claim.inspect_claimer_name</span>
+                                    <span class="fa fa-times"></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(@purchaseOrders.po_id, @((int)ClaimerType.InspectClaimer), false)">Claim</button>
+                            }
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-center d-inline-block pl-4" id="publish-claim-@purchaseOrders.po_id">
+                            @if (purchaseOrders.Claim?.publish_claimer > 0)
+                            {
+                                <button type="button" class="btn btn-sm remove-claim" style="background-color:@purchaseOrders.Claim.publish_claim_color;color:#fff;border-color:gray"
+                                        onclick="RemoveClaim(@purchaseOrders.po_id, @((int)ClaimerType.PublishClaimer), false)" id="remove-claim-publish-btn">
+                                    <span style="padding:inherit">@purchaseOrders.Claim.publish_claimer_name</span>
+                                    <span class="fa fa-times"></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link btn-sm claim" id="claim-inspect-btn" onclick="Claim(@purchaseOrders.po_id, @((int)ClaimerType.PublishClaimer), false)">Claim</button>
+                            }
+                        </span>
+                    </td>
+                </tr>
+            }
         </tbody>
         <tfoot>
             <tr>
@@ -190,6 +220,7 @@
                         <form id="newPurchaseOrderForm" data-currentid="" enctype="multipart/form-data">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
+                                    <span class="auto_loader" style="display:none"><img src="~/images/ajax-loader.gif" width="30px" height="30px" /></span>
                                     <label>Vendor Name</label>
                                     <input type="text" class="form-control required d-inline-block autocomplete" id="poVendor" style="width: 90%">
                                     <a href="#" id="addVendorFromPO" class="h4" data-toggle="modal" data-target="#newVendorModal">+</a>

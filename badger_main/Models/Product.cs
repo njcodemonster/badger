@@ -26,6 +26,7 @@ namespace GenericModals.Models
         public decimal product_retail { get; set; }
         public int published_status { get; set; }
         public int is_on_site_status { get; set; }
+        public bool is_ready { get; set; } = false;
         public int created_by { get; set; }
         public int updated_by { get; set; }
         public double updated_at { get; set; }
@@ -38,7 +39,9 @@ namespace GenericModals.Models
         public string productCategories { get; set; }
         [Write(false)]
         public string skulist { get; set; }
-        
+        [Write(false)]
+        public int po_id { get; set; }
+
     }
 
 

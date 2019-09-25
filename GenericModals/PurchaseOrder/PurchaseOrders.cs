@@ -6,7 +6,7 @@ namespace GenericModals.PurchaseOrder
 {
     [Table("purchase_orders")]
     public partial class PurchaseOrders
-    {   
+    {
         [Key]
         public int po_id { get; set; }
         public string vendor_po_number { get; set; }
@@ -34,6 +34,9 @@ namespace GenericModals.PurchaseOrder
         public double updated_at { get; set; }
         [Write(false)]
         public string latest_sku { get; set; }
+        [Write(false)]
+        public string calculation_Values { get; set; }
+
 
     }
 }

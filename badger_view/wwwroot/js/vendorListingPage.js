@@ -46,6 +46,37 @@ $(document).ready(function () {
             $(".autocomplete").val("");
         }
     });
+         $("#vendorName").autocomplete({
+             source: function (request, response) {
+                 var jsonData = {};
+                 jsonData["columnname"] = 'vendor_name';
+                 jsonData["search"] = request.term;
+                 console.log(jsonData);
+
+                 if (request.term.length > 1) {
+                     $.ajax({
+                         url: "/vendor/autosuggest/",
+                         dataType: 'json',
+                         type: 'post',
+                         data: JSON.stringify(jsonData),
+                         contentType: 'application/json',
+                         processData: false,
+                     }).always(function (data) {
+                         response(data);
+                     });
+                 }
+             },
+             select: function (event, ui) {
+                 // Set selection
+                 console.log(ui.item.label);
+                 console.log(ui.item.value);
+                 return false;
+             },
+             focus: function (event, ui) {
+                 event.preventDefault();
+                 $(".autocomplete").val("");
+             }
+         });
 
      /*
        Developer: Azeem Hassan
@@ -82,6 +113,13 @@ $(document).on('click', "#NewVendorButton", function () {
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
         return false;
+    }
+    if ($('#vendorZip').val().length < 5) {
+        $('#vendorZip').addClass('errorFeild');
+        if ($('#vendorZip').parents('.form-group').find('.errorMsg').length == 0)
+                $('#vendorZip').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid zip code</span>')
+        $(this).attr('disabled', false);
+        return false
     }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var newVendorForm = $("#newVendorForm input");
@@ -212,7 +250,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
 $(document).on('click', "#EditVendor", function () {
     $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
-    $('.errorMsg,.documentsLink').remove();
+    $('.errorMsg,.documentsLink,.vendorAlertMsg').remove();
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
@@ -240,7 +278,7 @@ function getSetVendorData(id) {
         var documents = vendor.logo
         $("#newVendorForm").data("currentID", vendor.vendor_id);
         $("#vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name + ")");
-        if (notes.length > 0)
+        if (notes && notes.length > 0)
             $('#vendorNotes').val(notes[notes.length - 1].note).attr('data-value', notes[notes.length - 1].note);
         $('#vendorName').val(vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);
@@ -289,6 +327,13 @@ $(document).on('click', "#EditVendorButton", function () {
         $(this).attr('disabled', false);
         return false;
     }
+    if ($('#vendorZip').val().length < 5) {
+        $('#vendorZip').addClass('errorFeild');
+        if ($('#vendorZip').parents('.form-group').find('.errorMsg').length == 0)
+            $('#vendorZip').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">enter valid zip code</span>')
+        $(this).attr('disabled', false);
+        return false
+    }
     $('.vendorAlertMsg').append('<div class="spinner-border text-info"></div>');
     var jsonData = {};
     var id = $("#newVendorForm").data("currentID");
@@ -313,7 +358,9 @@ $(document).on('click', "#EditVendorButton", function () {
      if($('#vendorNotes').val() != $('#vendorNotes').attr('data-value')) {
          jsonData["vendor_notes"] = $('#vendorNotes').val();
          $('#vendorNotes').attr('data-value',$('#vendorNotes').val())
-       } else {
+     } else if ($('#vendorNotes').val() == $('#vendorNotes').attr('data-value')) {
+         jsonData["vendor_notes"] = 'sameNote';
+    } else {
          jsonData["vendor_notes"] = '';
 
        }
@@ -664,7 +711,6 @@ $(document).on('click', ".deleteImage", function (event) {
     jsonData["Vendor_id"] =  $("#newVendorForm").data("currentID");
     $.ajax({
         url: "/vendor/deletevendor_logo",
-        
         type: 'post',
         contentType: 'application/json',
         data:  JSON.stringify(jsonData) ,
@@ -725,4 +771,43 @@ $(document).on('keydown', '#vendorCode', function (e) {
     if (e.which === 32) {
         return false;
     }
+});
+
+/*
+   Developer: Azeem Hassan
+   Date: 9-24-19
+   Action: checking vendor name exist in db
+   URL:/vendor/vendornameexist
+   Input: string
+   Request: POST
+   output: vendor code array 
+*/
+$(document).on('blur', "#vendorName", function (event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var jsonData = {};
+    var _this = $(this);
+    if ($(this).val() == '') {
+        return false;
+    }
+    $('#NewVendorButton,#EditVendorButton').attr('disabled', true)
+    jsonData["vendorname"] = $(this).val();
+    $.ajax({
+        url: "/vendor/vendornameexist",
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        processData: false,
+    }).always(function (data) {
+        console.log(data);
+        if (data.length > 0) {
+            _this.addClass('errorFeild');
+            _this.parents('.form-group').find('.errorMsg').remove();
+            _this.parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">this name is already exist</span>');
+        } else {
+            $('#NewVendorButton,#EditVendorButton').attr('disabled', false)
+        }
+    });
+
 });

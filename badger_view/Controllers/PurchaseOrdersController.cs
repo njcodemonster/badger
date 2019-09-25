@@ -161,7 +161,8 @@ namespace badger_view.Controllers
                         has_note = poList.has_note,
                         has_doc = poList.has_doc,
                         photos = TotalPublishedProducts,
-                        remaining = (PhotosCount - TotalPublishedProducts)
+                        remaining = (PhotosCount - TotalPublishedProducts),
+                        Claim = poList.Claim
                     });
                 }
                 else
@@ -187,7 +188,8 @@ namespace badger_view.Controllers
                         has_note = poList.has_note,
                         has_doc = poList.has_doc,
                         photos = TotalPublishedProducts,
-                        remaining = (PhotosCount - TotalPublishedProducts)
+                        remaining = (PhotosCount - TotalPublishedProducts),
+                        Claim = poList.Claim
                     });
                 }
                 NewDateFormat = "";
@@ -1504,7 +1506,7 @@ namespace badger_view.Controllers
                 if (updateItemID == "Success")
                 {
 
-                    int po_id = json.Value<int>("pO_id");
+                    int po_id = json.Value<int>("PO_id");
                     int ra_status = json.Value<int>("ra_status");
 
                     dynamic result = await _BadgerApiHelper.GenericGetAsync<object>("/purchaseorders/GetItemsByPurchaseOrderStatusCountResponse/" + po_id);
@@ -2105,7 +2107,7 @@ namespace badger_view.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Claim([FromBody] ClaimModel claim)
+        public async Task<IActionResult> Claim([FromBody] PoClaim claim)
         {
             try
             {
@@ -2122,7 +2124,7 @@ namespace badger_view.Controllers
 
         }
 
-        private static void BindClaimerType(ClaimModel claim, string userId)
+        private static void BindClaimerType(PoClaim claim, string userId)
         {
             if (claim.claim_type == ClaimerType.InspectClaimer)
                 claim.inspect_claimer = Convert.ToInt32(userId);
@@ -2132,7 +2134,7 @@ namespace badger_view.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RemoveClaim([FromBody] ClaimModel claim)
+        public async Task<IActionResult> RemoveClaim([FromBody] PoClaim claim)
         {
             try
             {
