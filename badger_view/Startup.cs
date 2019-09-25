@@ -50,10 +50,10 @@ namespace badger_view
             services.AddSignalR(options =>
             {
                 options.EnableDetailedErrors = true;
-               // options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);
-              //  options.KeepAliveInterval = TimeSpan.FromSeconds(9);
+                // options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);
+                //  options.KeepAliveInterval = TimeSpan.FromSeconds(9);
             });
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
                 options.LoginPath = "/auth/Dologin";
@@ -61,10 +61,10 @@ namespace badger_view
             services.AddSession(opts =>
             {
                 opts.Cookie.IsEssential = true; // make the session cookie Essential
-            }); 
+            });
             services.AddHttpContextAccessor();
             services.AddTransient<ILoginHelper, LoginHelper>();
-            
+            services.AddSingleton(new BadgerApiHelper(Configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -108,11 +108,12 @@ namespace badger_view
         {
             var webSocketOptions = new WebSocketOptions();
             var allowedOrigins = Configuration.GetSection("AllowedOrigins").AsEnumerable().Where(x => x.Value != null);
+            if (allowedOrigins?.Count() < 1 || allowedOrigins == null)
+                webSocketOptions.AllowedOrigins.Add("*");
             foreach (var origin in allowedOrigins)
             {
                 webSocketOptions.AllowedOrigins.Add(origin.Value);
             }
-
             return webSocketOptions;
         }
 

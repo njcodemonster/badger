@@ -19,19 +19,11 @@ namespace badger_view.Controllers
         private readonly IConfiguration _config;
         private BadgerApiHelper _BadgerApiHelper;
         private CommonHelper.CommonHelper _common = new CommonHelper.CommonHelper();
-        public PhotoshootsController(IConfiguration config, ILoginHelper LoginHelper)
+        public PhotoshootsController(IConfiguration config, ILoginHelper LoginHelper, BadgerApiHelper badgerApiHelper)
         {
             _ILoginHelper = LoginHelper; 
             _config = config;
-
-        }
-       
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
+            _BadgerApiHelper = badgerApiHelper;
         }
 
         /*
@@ -45,7 +37,6 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            SetBadgerHelper();
             ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>("/Photoshoots/listpageview/0");
             dynamic ProductPhotoshootModal = new ExpandoObject();
             ProductPhotoshootModal.Lists = photoshootPagerList.photoshootsInfo;
@@ -66,8 +57,6 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/shootInProgress/{selectPhotoshootId}")]
         public async Task<IActionResult> shootInProgress(string selectPhotoshootId)
         {
-            SetBadgerHelper();
-            
             ProductPhotoshootInProgressPagerList photoshootInProgress         = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootInProgressPagerList>("/Photoshoots/inprogress/");
             
             dynamic photoshootInProgressModal   = new ExpandoObject();
@@ -81,8 +70,6 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/shootInProgress/")]
         public async Task<IActionResult> shootInProgress()
         {
-            SetBadgerHelper();
-
             ProductPhotoshootInProgressPagerList photoshootInProgress = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootInProgressPagerList>("/Photoshoots/inprogress/");
             string selectPhotoshootId = "0";
             dynamic photoshootInProgressModal = new ExpandoObject();
@@ -105,7 +92,6 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/getPhotoshootInProgressProducts/{photoshootId}")]
         public async Task<IActionResult> getPhotoshootInProgressProducts(int photoshootId)
         {
-            SetBadgerHelper();
             string callUrl = "/Photoshoots/GetPhotoshootsProducts/" + photoshootId;
             ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>(callUrl);
             dynamic ProductPhotoshootModal = new ExpandoObject();
@@ -125,7 +111,6 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> sentToEditor()
         {
-            SetBadgerHelper();
             ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SentToEditorPhotoshoot/");
             dynamic photoshootSendToEditorModal = new ExpandoObject();
             photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
@@ -145,7 +130,6 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/getPhotoshootAndModels/")]
         public async Task<string> getPhotoshootAndModelsAsync()
         {
-            SetBadgerHelper();
             Object photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<Object>("/Photoshoots/GetPhotoshootsAndModels/");
             return photoshootPagerList.ToString() ;
         }
@@ -161,7 +145,6 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> summary()
         {
-            SetBadgerHelper();
             ProductPhotoshootSummaryPagerList photoshootSummary = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSummaryPagerList>("/Photoshoots/summary/");
             dynamic allPhotoshootModels = await _BadgerApiHelper.GenericGetAsync<dynamic>("/PhotoshootModels/list");
             dynamic photoshootSummaryModal = new ExpandoObject();
@@ -182,7 +165,6 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/addProductInPhotoshoot/{product_id}/{photoshoot_id}")]
         public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
         {
-            SetBadgerHelper();
             string user_id = await _ILoginHelper.GetLoginUserId();
 
             JObject assignPhotoshoot = new JObject();
@@ -207,9 +189,7 @@ namespace badger_view.Controllers
         [Authorize]
         [HttpGet("photoshoots/UpdatePhotoshootProductStatus/{product_id}/{status}")]
         public async Task<string> UpdatePhotoshootProductStatus(string product_id, string status)
-        {
-            SetBadgerHelper();
-              
+        { 
             string user_id = await _ILoginHelper.GetLoginUserId();
             
             JObject photoshoot = new JObject();
@@ -233,7 +213,6 @@ namespace badger_view.Controllers
         [HttpPost("photoshoots/addNewPhotoshoot")]
         public async Task<String> addNewPhotoshoot([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string user_id = await _ILoginHelper.GetLoginUserId();
 
             JObject photoshoot = new JObject();
@@ -275,8 +254,7 @@ namespace badger_view.Controllers
         [Authorize]
         [HttpPost("photoshoots/updateMultiplePhotoshootStatus")]
         public async Task<String> updateMultiplePhotoshootStatus([FromBody]   JObject json)
-        {
-            SetBadgerHelper(); 
+        { 
             string status       = json.Value<string>("status");
             string product_id   = json.Value<string>("product_id");
              
@@ -303,7 +281,6 @@ namespace badger_view.Controllers
         [HttpPost("photoshoots/addNewPhotoshootModel")]
         public async Task<String> addNewPhotoshootModel([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string user_id = await _ILoginHelper.GetLoginUserId();
 
             JObject photoshootModel = new JObject();
@@ -337,7 +314,6 @@ namespace badger_view.Controllers
         [HttpPost("photoshoots/EditPhotoshootSummary")]
         public async Task<String> EditPhotoshootSummary([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string user_id = await _ILoginHelper.GetLoginUserId();
 
             JObject photoshoot = new JObject();
@@ -364,7 +340,6 @@ namespace badger_view.Controllers
         [HttpPost("photoshoots/AddPhotoshootNotes")]
         public async Task<String> AddPhotoshootNotes([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string user_id = await _ILoginHelper.GetLoginUserId();
             int photoshootId = Int32.Parse(json.Value<string>("photoshootId"));
             string returnStatus = "0";
@@ -395,8 +370,6 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/getphotoshootnotes/{ids}")]
         public async Task<String> GetPhotoshootNotes(string ids)
         {
-            SetBadgerHelper();
-
             dynamic photoshootNote = await _BadgerApiHelper.GenericGetAsync<Object>("/photoshoots/getitemnotes/" + ids.ToString());
 
             return JsonConvert.SerializeObject(photoshootNote);

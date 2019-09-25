@@ -7,8 +7,6 @@
     <link rel="icon" href="~/images/favicon.png" sizes="32x32">
     <title>@ViewData["Title"] - Badger</title>
 
-    <environment include="Development">
-    </environment>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <!-- Data Table -->
@@ -16,7 +14,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="~/lib/fontawesome/css/all.css">
     <link rel="stylesheet" type="text/css" href="~/css/jquery-ui.css" />
-
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" />
 
     @RenderSection("Head_Scripts", required: false)
 </head>
@@ -60,6 +58,13 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseOrders" asp-action="InventoryReporting">
                             Purchase Orders Inventory - Reporting Page
                         </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <!-- <a class="nav-link " href="#" id="navbarDropdown"  aria-haspopup="true" aria-expanded="false"> Dropdown </a> -->
+                        <a class="nav-link text-dark dropdown-toggle" role="button" data-toggle="dropdown">Reports</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="POCountByUser">Purchase Order By User</a>
+                        </div>
                     </li>
                 </ul>
                 <div class="form-inline my-2 my-lg-0">
@@ -109,15 +114,27 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/bootstrap/dist/js/popper.js" type="text/javascript"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="~/js/jquery.dataTables.min.js" asp-append-version="true"></script>
-    <script src="~/js/dataTables.bootstrap4.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap-multiselect.min.js" asp-append-version="true"></script>
-    <link href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/moment.min.js" asp-append-version="true"></script>
-    <script src="~/js/jquery-ui.js"></script>
+        <script src="~/lib/bootstrap/dist/js/popper.js" type="text/javascript"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+        <script src="~/js/dataTables.bootstrap4.min.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap-multiselect.min.js" asp-append-version="true"></script>
+
+        <script src="~/js/moment.min.js" asp-append-version="true"></script>
+        <script src="~/js/jquery-ui.js"></script>
+
+    <!-- Multiselect css last location -->
+    @*<script src="~/lib/bootstrap/dist/js/popper.js"></script>
+    <script src="~/js/jsBundle.min.js"></script>*@
+
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/js/addstylepopup.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/sitejs.min.js" asp-append-version="true"></script>
+    </environment>
+
 
     @RenderSection("Scripts", required: false)
     <script>

@@ -30,6 +30,7 @@ namespace badgerApi.Controllers
         private readonly IConfiguration _config;
         private readonly IPurchaseOrdersRepository _PurchaseOrdersRepo;
         private readonly iBarcodeRangeRepo _BarcodeRangeRepo;
+        private readonly IClaimRepository _claimRepository;
         ILoggerFactory _loggerFactory;
 
         private INotesAndDocHelper _NotesAndDoc;
@@ -59,7 +60,7 @@ namespace badgerApi.Controllers
             }
         }
 
-        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo, iBarcodeRangeRepo barcodeRangeRepo)
+        public PurchaseOrdersController(IPurchaseOrdersRepository PurchaseOrdersRepo, ILoggerFactory loggerFactory, INotesAndDocHelper NotesAndDoc, IConfiguration config, IItemServiceHelper ItemsHelper, IEventRepo eventRepo, iBarcodeRangeRepo barcodeRangeRepo, IClaimRepository claimRepository)
         {
             _eventRepo = eventRepo;
             _config = config;
@@ -68,6 +69,7 @@ namespace badgerApi.Controllers
             _NotesAndDoc = NotesAndDoc;
             _ItemsHelper = ItemsHelper;
             _BarcodeRangeRepo = barcodeRangeRepo;
+            _claimRepository = claimRepository;
         }
 
         /*
@@ -1172,9 +1174,9 @@ namespace badgerApi.Controllers
         {
             PoClaim response;
             if (claim.claim_type == ClaimerType.InspectClaimer)
-                response = await _PurchaseOrdersRepo.ClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
+                response = await _claimRepository.ClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
             else
-                response = await _PurchaseOrdersRepo.ClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
+                response = await _claimRepository.ClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
             return Ok(response);
         }
 
@@ -1185,9 +1187,9 @@ namespace badgerApi.Controllers
             {
                 PoClaim response;
                 if (claim.claim_type == ClaimerType.InspectClaimer)
-                    response = await _PurchaseOrdersRepo.RemoveClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
+                    response = await _claimRepository.RemoveClaimInspect(claim.po_id, claim.inspect_claimer ?? 0);
                 else
-                    response = await _PurchaseOrdersRepo.RemoveClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
+                    response = await _claimRepository.RemoveClaimPublish(claim.po_id, claim.publish_claimer ?? 0);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -1199,7 +1201,7 @@ namespace badgerApi.Controllers
         [HttpGet("loadclaim/{poId:int}")]
         public async Task<ResponseModel> LoadClaim(int poId)
         {
-            var response = await _PurchaseOrdersRepo.GetClaim(poId);
+            var response = await _claimRepository.GetClaim(poId);
             return ResponseHelper.GetResponse(response);
         }
 

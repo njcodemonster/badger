@@ -273,3 +273,6 @@ __pycache__/
 !/*.json
 badger_main/Logs/
 itemServicev01/Logs/
+badger_view/wwwroot/js/jsBundle.min.js
+badger_view/wwwroot/js/po-checkin.min.js
+badger_view/wwwroot/js/sitejs.min.js
