@@ -114,7 +114,7 @@ function AddToShootSingle(shootProductId, statusId) {
             processData: false,
 
         }).always(function (data) {
-
+            data = JSON.parse(data);
             var jsonPhotoshootsList = data.photoshootsList;
             var jsonPhotoshootsModelsList = data.photoshootsModelList;
             var allPhotoshootListHTML = '';
@@ -279,7 +279,7 @@ function moveSelectedToPhotoshoot() {
             processData: false,
 
         }).always(function (data) {
-
+            data = JSON.parse(data);
             var jsonPhotoshootsList = data.photoshootsList;
             var jsonPhotoshootsModelsList = data.photoshootsModelList;
             var allPhotoshootListHTML = '';

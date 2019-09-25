@@ -1,5 +1,6 @@
 ﻿var poTable;
 $(document).ready(function () {
+    $(".loading").hide();
     InitializaDatepicker('reportrange');
     poTable = LoadPoCountReport();
 });
