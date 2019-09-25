@@ -1177,7 +1177,6 @@ function purchaseOrderData(data) {
                         $("#itemsTable").append("</tr>");
                     }
                 });
-                debugger;
                 subCost = subCost - Debit + Credit;
                 if (Debit == null && Credit == null) {
                     $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost);
