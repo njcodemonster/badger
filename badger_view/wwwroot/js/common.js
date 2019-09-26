@@ -275,6 +275,9 @@ function emptyFeildValidation(id){
     });
     if (emailvalid == false)
         notvalid = false
+    if ($('#' + id +' .errorFeild').length > 0)
+        notvalid = false
+
     return notvalid;
 }
 
