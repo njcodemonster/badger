@@ -24,22 +24,16 @@ namespace badger_view.Controllers
         private String S3folder = "";
         private ILoginHelper _LoginHelper;
 
-        public BarcodeController(IConfiguration config, ILoginHelper LoginHelper)
+        public BarcodeController(IConfiguration config, ILoginHelper LoginHelper, BadgerApiHelper badgerApiHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
+            _BadgerApiHelper = badgerApiHelper;
+        }
 
-        }
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-        }
          /*
          Developer: Rizwan ali
          Date: 7-3-19 
@@ -51,7 +45,6 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            SetBadgerHelper();
 
             dynamic barcodeRanges = await _BadgerApiHelper.GenericGetAsync<List<Barcode>>("/Barcode/getBarcodeRange/0/0");
             return View("Index", barcodeRanges);
@@ -67,7 +60,6 @@ namespace badger_view.Controllers
         [HttpPost("/barcode/validate")]
         public async Task<bool> ValidateBarcode([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string isValidate = string.Empty;
             // Validate Barcode Range
             JObject bar = new JObject();
@@ -100,7 +92,6 @@ namespace badger_view.Controllers
         [HttpPost("/barcode/create")]
         public async Task<bool> CreateBarcode([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string inserted = string.Empty;
             // Add/Update Barcode Range
             JObject bar = new JObject();
@@ -136,7 +127,6 @@ namespace badger_view.Controllers
         [HttpPost("/barcode/delete/{id}")]
         public async Task<bool> DeleteBarcode(int id)
         {
-            SetBadgerHelper();
             bool deleted = false;
             
             deleted = await _BadgerApiHelper.GenericGetAsync<bool>("/barcode/deletebarcode/"+id);

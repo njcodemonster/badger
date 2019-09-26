@@ -34,6 +34,7 @@ namespace badgerApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddTransient<INotesAndDocHelper, NotesAndDocHelper>();
             services.AddTransient<IItemServiceHelper, ItemsServiceHelper>();
             services.AddTransient<IVendorRepository, VendorRepo>();
@@ -58,15 +59,18 @@ namespace badgerApi
             services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
             services.AddTransient<ICalculationsRepository, CalculationsRepo>();
             services.AddTransient<ICalculationValuesRepository, CalculationValuesRepo>();
+            services.AddTransient<IReportRepository, ReportsRepo>();
+            services.AddTransient<IClaimRepository, ClaimRepository>();
 
-            //*              Singletons                                   *\\
+            //* Singletons *\\
+            services.AddSingleton<IProductCategoriesRepository, ProductCategoriesRepo>();
             services.AddSingleton<ICategoryRepository, CategoryRepo>();
             services.AddSingleton<IEventRepo, EventsRepo>();
 
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
-            });
+            //services.Configure<ApiBehaviorOptions>(options =>
+            //{
+            //    options.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult();
+            //});
         }
 
 
@@ -76,8 +80,8 @@ namespace badgerApi
             loggerFactory.AddFile("Logs/BadgerAPIFunctional-{Date}.txt");
             if (env.IsDevelopment())
             {
-                 app.UseDeveloperExceptionPage();
-               // LogGloblaErrors(app, loggerFactory);
+               //  app.UseDeveloperExceptionPage();
+                LogGloblaErrors(app, loggerFactory);
             }
             else
             {

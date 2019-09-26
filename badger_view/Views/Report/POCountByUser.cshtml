@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Po Report By Users";
+}
+@model GenericModals.Reports.DataTableAjaxModel
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<h1>Po Report By Users</h1>
+
+    <div class="form-row">
+        <div class="col-md-6">
+            <div id="reportrange" class="form-control" 
+                 style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="fa fa-calendar"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down"></i>
+                <input type="hidden" id="reportrange-value" />
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="Search()">Filter</button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="poCountReport" class="table table-bordered dataTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>UserName</th>
+                        <th>Total PO</th>
+
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="~/js/daterangepicker.min.js"></script>
+    <script src="~/js/Reports/POCountByUsersReport.js"></script>
+}

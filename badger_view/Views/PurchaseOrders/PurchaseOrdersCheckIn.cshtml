@@ -4,17 +4,29 @@
 @using Newtonsoft;
 @model dynamic
 @section Scripts {
-    <script src="~/lib/signalr/signalr.js" asp-append-version="true"></script>
-    <script src="~/js/common.js" asp-append-version="true"></script>
-    <script src="~/js/POManagementPage.js" asp-append-version="true"></script>
-    <script src="~/js/POClaim.js" asp-append-version="true"></script>
-    <script src="~/js/checkin.js" asp-append-version="true"></script>
+
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/js/common.js"></script>
+    <script src="~/js/POManagementPage.js"></script>
+    <script src="~/js/POClaim.js"></script>
+    <script src="~/js/checkin.js"></script>
+
+    @*<environment include="Development">
+        <script src="~/lib/signalr/signalr.js"></script>
+        <script src="~/js/common.js"></script>
+        <script src="~/js/POManagementPage.js"></script>
+        <script src="~/js/POClaim.js"></script>
+        <script src="~/js/checkin.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/po-checkin.min.js" asp-append-version="true"></script>
+    </environment>*@
 }
 
 @section page_popup_area{
 
     <!-- Modal Add Style Item Clothing check-->
-    @{ Html.RenderPartial("~/Views/Shared/AddStyle.cshtml"); }
+    @{ await Html.RenderPartialAsync("~/Views/Shared/AddStyle.cshtml"); }
 
 
     <!-- Modal Add Style Item Accessories -->
@@ -198,9 +210,9 @@
                     <h4 class="modal-title">Add Fabric(s)</h4>
                 </div>
                 @{ Html.RenderPartial("~/Views/Shared/AddFabric.cshtml"); }
-                </div>
             </div>
         </div>
+    </div>
 
 }
 

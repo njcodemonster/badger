@@ -37,22 +37,16 @@ namespace badger_view.Controllers
         private String S3bucket = "";
         private String S3folder = "";
         private ILoginHelper _LoginHelper;
-        public ProductsController(IConfiguration config, ILoginHelper LoginHelper )
+        public ProductsController(IConfiguration config, ILoginHelper LoginHelper, BadgerApiHelper badgerApiHelper)
         {
             
             _LoginHelper = LoginHelper;
             _config = config;
-             
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-
             UploadPath = _config.GetValue<string>("UploadPath:path");
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
-
-
+            _BadgerApiHelper = badgerApiHelper;
+            _ProductHelper = new ProductHelper(_config);
         }
 
         /*
@@ -84,7 +78,6 @@ namespace badger_view.Controllers
         [HttpPost("product/UpdateAttributes/{productId}")]
         public async Task<string> UpdateAttributes([FromBody]   JObject json, int productId)
         {
-       
             JArray product_subtype_ids = new JArray();
             string user_id = await _LoginHelper.GetLoginUserId();
 
@@ -217,9 +210,7 @@ namespace badger_view.Controllers
         [HttpGet("product/PairWithProductsAutocomplete/{id}")]
         public async Task<string> PairWithProductsAutocomplete(string id)
         {
-       
-
-            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/" + id);
+            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/"+id);
             return ProductsPairWithSearch.ToString();
         }
 
@@ -236,7 +227,6 @@ namespace badger_view.Controllers
         [HttpPost("/product/InsertattributeImages")]
         public async Task<string> InsertattributeImages(productFileData productFiles)
         {
-       
             JArray productDetailArray = new JArray();
             string messageDocuments = "";
             List<IFormFile> files = productFiles.productImages;
@@ -291,7 +281,6 @@ namespace badger_view.Controllers
         [HttpPost("/product/UpdateProductImagePrimary")]
         public async Task<string> UpdateProductImagePrimary([FromBody]   JObject json)
         {
-       
             string result = "0";
             try
             {
@@ -326,8 +315,6 @@ namespace badger_view.Controllers
         [HttpGet("product/autosuggest/{vendor_id}/{productname}")]
         public async Task<string> Autosuggest(int vendor_id, string productname)
         {
-       
-
             var ProductList = await _BadgerApiHelper.GenericGetAsync<List<object>>("/product/getProductsbyVendor/" + vendor_id + "/" + productname);
             return JsonConvert.SerializeObject(ProductList);
         }

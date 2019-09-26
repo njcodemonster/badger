@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using GenericModals;
 using Microsoft.AspNetCore.Http;
+using System.Text;
+using System.Net.Http.Formatting;
 using Microsoft.Extensions.Options;
+
 
 namespace badger_view.Helpers
 {
@@ -97,8 +100,18 @@ namespace badger_view.Helpers
         public async Task<TReturn> PostAsync<TReturn>(object json, string uri)
         {
             var client = new HttpClient();
+            HttpResponseMessage response;
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
-            var response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json.ToString());
+
+            if (json is JObject)
+            {
+                response = await client.PostAsJsonAsync(BadgerAPIURL + uri, json.ToString());
+            }
+            else
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(json, Formatting.Indented), Encoding.UTF8, "application/json");
+                response = await client.PostAsync(BadgerAPIURL + uri, content);
+            }
 
             var data = await response.Content.ReadAsStringAsync();
 

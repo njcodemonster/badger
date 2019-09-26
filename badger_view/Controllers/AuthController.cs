@@ -22,7 +22,6 @@ namespace badger_view.Controllers
             _LoginHelper = loginHelper;
         }
 
-
         /*
         Developer: Sajid Khan
         Date: 7-7-19 
@@ -33,11 +32,9 @@ namespace badger_view.Controllers
         output: page of login
         */
         [HttpGet("Dologin")]
-        public async Task<IActionResult> DoLogin()
+        public IActionResult DoLogin()
         {
-
             return View("Login");
-
         }
 
         /*
@@ -60,7 +57,6 @@ namespace badger_view.Controllers
             {
                 return RedirectToAction("Dologin", "Auth");
             }
-
         }
 
         [HttpGet("logout")]
