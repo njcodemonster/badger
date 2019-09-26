@@ -1167,6 +1167,8 @@ function purchaseOrderData(data) {
             Debit = debCred[0]["debit"];
         }
         if (it.length > 0) {
+            $("#itemsTable").empty();
+            $("#headingList").empty();
             var quantityUnits = 0;
             var subCost = 0;
             var styles = 0;

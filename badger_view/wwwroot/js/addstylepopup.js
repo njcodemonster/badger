@@ -92,8 +92,12 @@ $(document).on('click', ".AddNewStyleButton", function () {
         $('.loading').hide();
         return false;
     }
-
-
+    if ($('#newAddStyleForm #product_title').val().length < 4) {
+        alertBox('poAlertMsg', 'red', 'Style name cannot be less than 4 characters.', 5000);
+        $('.loading').hide();
+        return false;
+    }
+  
     var jsonData = {};
     selectedProject = $('#ExistingProductSelect option:selected');
     if (SelectedProductID && SelectedProductID > 0) {
@@ -166,7 +170,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
         })
         if (Qty > totalQty) {
-            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', 'Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.', 5000);
             $('.loading').hide();
             return;
         }
@@ -182,7 +186,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
             });
 
             if ((_TotalStyles[0].value + 1) > totalStyles) {
-                alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total style in Purchase Order to proceed.');
+                alertBox('poAlertMsg', 'red', 'Total Styles Count limit reached. Please increase total styles count in Purchase Order to proceed.', 5000);
                 $('.loading').hide();
                 return;
             }
@@ -211,7 +215,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
         })
 
         if (Qty > totalQty) {
-            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', 'Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.', 5000);
             $('.loading').hide();
             return;
         }
@@ -276,13 +280,14 @@ $(document).on('click', ".AddNewStyleButton", function () {
                     });
 
                 }
+
                 if (IsUpdate) {
                     alertBox('poAlertMsg', 'green', 'Style Updated successfully');
                 } else {
                     alertBox('poAlertMsg', 'green', 'New style inserted successfully');
                 }
 
-
+               
                 if (action == 'refreshValue') {
                     $('#newAddStyleForm #po_id').val(CurrentPOID);
                     $('#newAddStyleForm #vendor_id').val(CurrentVendorId);
@@ -293,7 +298,13 @@ $(document).on('click', ".AddNewStyleButton", function () {
                     $("#collapse_" + CurrentPOID).html("");
                     $("#collapse_" + CurrentPOID).hide();
                     $('#modaladdstylec').modal('hide')
-                    $('a[data-poid=' + CurrentPOID + ']').trigger('click');
+
+                    if (window.location.href.indexOf('PurchaseOrders/Single') > -1) {
+                     
+                    } else {
+                        $('a[data-poid=' + CurrentPOID + ']').trigger('click');
+                    }
+                  
                 }
 
                 if (IsUpdate == false) {
@@ -358,7 +369,15 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
                 }
 
+                if (window.location.href.indexOf('PurchaseOrders/Single') > -1) {
+                    var id = window.location.href.split('Single/')[1];
 
+                    if (id != undefined && id != "") {
+                        $('.loading').show();
+                        getSinglePurchaseOrder(id);
+                    } 
+
+                }
             }
         $('.loading').hide();
     });
@@ -513,7 +532,7 @@ $(document).ready(function () {
             // Set selection
             SelectedProductID = ui.item.value;
             GetProductDetails(CurrentVendorId, ui.item.value, CurrentPOID);
-            $('#tb_StyleNameSuggest').val(ui.item.label); // display the selected text
+            $('#tb_StyleNameSuggest').val(ui.item.label.split('(')[0]); // display the selected text
             $('#tb_StyleNameSuggest').attr("data-val", ui.item.value);
             // $('#selectuser_id').val(ui.item.value); // save selected id to input
             return false;
@@ -537,6 +556,15 @@ $(document).on('blur', "#styleSku", function (event) {
         $(this).removeClass('errorFeild')
     }
 
+});
+
+
+$(document).on('blur focusout', "#tb_StyleNameSuggest", function (event) {
+
+    if ($(this).val()=="") {
+        $(this).removeClass('errorFeild')
+        $('.errorMsg').remove();
+    } 
 });
 
 /*
@@ -589,11 +617,11 @@ $(document).on('click', "#AddItemButton", function () {
         });
 
         if (PoTotalStyleCount <= TotalStyleCount[0].value) {
-            alertBox('poAlertMsg', 'red', ' Total Style Count reached, Please increase total count in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', ' Total Styles Count reached, Please increase total styles in Purchase Order to proceed.', 5000);
             return;
         }
         if (PoTotalQty <= TotalQty[0].value) {
-            alertBox('poAlertMsg', 'red', ' Total Quantity reached, Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', ' Total Quantity reached, Please increase total quantity in Purchase Order to proceed.', 5000);
             return;
         }
     }

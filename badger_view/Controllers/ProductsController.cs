@@ -42,7 +42,7 @@ namespace badger_view.Controllers
             
             _LoginHelper = LoginHelper;
             _config = config;
-            _ProductHelper = new ProductHelper(_config);
+             
             if (_BadgerApiHelper == null)
             {
                 _BadgerApiHelper = new BadgerApiHelper(_config);
