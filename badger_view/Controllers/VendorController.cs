@@ -472,7 +472,13 @@ namespace badger_view.Controllers
             string search = json.Value<string>("search");
             string columnName = json.Value<string>("columnname");
             object getVendorsNameAndId = new object();
-            getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendorsbycolumnname/"+columnName+"/"+search);
+            //getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendorsbycolumnname/"+columnName+"/"+search);
+            //return JsonConvert.SerializeObject(getVendorsNameAndId);
+
+            JObject vendorSearchObj = new JObject();
+            vendorSearchObj.Add("search", search);
+            vendorSearchObj.Add("columnName", columnName);
+            getVendorsNameAndId = await _BadgerApiHelper.GenericPostAsync<object>(vendorSearchObj.ToString(Formatting.None), "/vendor/getvendorsbycolumnname");
             return JsonConvert.SerializeObject(getVendorsNameAndId);
         }
         /*

@@ -794,12 +794,15 @@ namespace badgerApi.Controllers
           Input: string columnName, string search 
           output: list of vendor_name and id
         */
-        [HttpGet("getvendorsbycolumnname/{columnName}/{search}")]
-        public async Task<List<object>> GetVendorsByColumnName(string columnName, string search)
+        [HttpPost("getvendorsbycolumnname")]
+        public async Task<List<object>> GetVendorsByColumnName([FromBody] string value)
         {
             dynamic vendorDetails = new object();
             try
             {
+                dynamic VendorSearch = JsonConvert.DeserializeObject<Object>(value);
+                string columnName = VendorSearch.columnName;
+                string search = VendorSearch.search;
                 vendorDetails = await _VendorRepo.GetVendorsByColumnName(columnName, search);
 
             }
