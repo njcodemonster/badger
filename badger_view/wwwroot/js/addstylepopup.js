@@ -118,7 +118,12 @@ $(document).on('click', ".AddNewStyleButton", function () {
     jsonData["IsLineItemExists"] = IsLineItemExists;
     jsonData["product_subtype_ids"] = productSubCategoriesAction;
     jsonData["sku_family"] = new_sku;
+    jsonData["UpdateVendorType"] = false;
 
+
+    if ($('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("vendorstyle") != $('#StyleType').val()) {
+        jsonData["UpdateVendorType"] = true;
+    }
     jsonData["vendor_style_sku"] = [];
     $('#po_input_fields_wrap .vendorSkuBox').each(function () {
         var style_sku = {};
@@ -168,7 +173,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
             Qty = Qty + styleQty;
 
 
-        })
+        });
         if (Qty > totalQty) {
             alertBox('poAlertMsg', 'red', 'Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.', 5000);
             $('.loading').hide();
@@ -517,12 +522,12 @@ $(document).ready(function () {
                 });
             } else {
                 $('#tb_StyleNameSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_StyleNameSuggest').parent().find('.errorMsg').remove();
             }
             
             if (request.term.length == 0) {
                 $('#tb_StyleNameSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_StyleNameSuggest').parent().find('.errorMsg').remove();
                 $('#tb_StyleNameSuggest').val(""); // display the selected text
                 $('#tb_StyleNameSuggest').attr("data-val", "");
                 $('button[data-poid="' + selectedPurchaseOrderID + '"]').trigger("click");
@@ -563,7 +568,7 @@ $(document).on('blur focusout', "#tb_StyleNameSuggest", function (event) {
 
     if ($(this).val()=="") {
         $(this).removeClass('errorFeild')
-        $('.errorMsg').remove();
+        $('#tb_StyleNameSuggest').parent().find('.errorMsg').remove();
     } 
 });
 
@@ -596,8 +601,8 @@ $(document).on('click', "#AddItemButton", function () {
     $.when(GetCategories(), GetSkuSizes()).done(function (p1,p2)
     {
         if (vendor_type != null && vendor_type != "" && vendor_type != 3) {
-            $('#modaladdstylec #StyleType').val(parseInt(vendor_type)).change();
-            $('#modaladdstylec #StyleType').attr('disabled', '');
+            //$('#modaladdstylec #StyleType').val(parseInt(vendor_type)).change();
+            //$('#modaladdstylec #StyleType').attr('disabled', '');
 
         }
     })
@@ -666,8 +671,6 @@ $(document).on('click', "#AddItemButton", function () {
     }
 
 
-    //  alert("Please wait for the data to load");
- 
     $('#newAddStyleForm #po_id').val(CurrentPOID);
     $('#newAddStyleForm #vendor_id').val(CurrentVendorId);
 

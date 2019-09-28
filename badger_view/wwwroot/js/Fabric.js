@@ -60,6 +60,7 @@ $(document).ready(function () {
 
     $("#tb_fabricSuggest").autocomplete({
         source: function (request, response) {
+     
             if (request.term.length > 2) {
                 $.ajax({
                     url: "/attributes/getfabrics/" + request.term,
@@ -84,12 +85,12 @@ $(document).ready(function () {
                 });
             } else {
                 $('#tb_fabricSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_fabricSuggest').parent().find('.errorMsg').remove();
             }
 
             if (request.term.length == 0) {
                 $('#tb_fabricSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_fabricSuggest').parent().find('.errorMsg').remove();
                 $('#tb_fabricSuggest').val(""); // display the selected text
                 $('#tb_fabricSuggest').attr("data-val", "");
             }
@@ -118,6 +119,14 @@ $(document).ready(function () {
         }
     });
 
+});
+
+$(document).on('blur focusout', "#tb_fabricSuggest", function (event) {
+
+    if ($(this).val() == "") {
+        $(this).removeClass('errorFeild')
+        $('#tb_fabricSuggest').parent().find('.errorMsg').remove();
+    }
 });
 
 function getFabrics(productId) {
