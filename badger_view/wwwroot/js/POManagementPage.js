@@ -623,7 +623,9 @@ $(document).on("change", ".item_sku", function () {
     var product_attribute_id = $(this).attr('data-productattributeid');
     var quantity = $(this).attr('data-quantity');
     var product_id = $(this).attr('data-productid');
-    if ($(this).val().split('-')[0] != $(this).parents('.card').find('.skufamilyArea').attr('data-skufamily')) {
+    var skuFamily = $(this).attr('data-productid')
+    skuFamily = $(this).parents('.card').find('#headinginner'+skuFamily).find('.skufamilyArea').attr('data-skufamily')
+    if ($(this).val().split('-')[0] != skuFamily) {
         $(this).addClass('errorFeild');
         alertInnerBox('message-' + po_id, 'red', 'SKU-family is not match');
         return false;
@@ -656,7 +658,7 @@ $(document).on("change", ".item_sku", function () {
         contentType: 'application/json',
     }).always(function (data) {
         console.log(data);
-        if (data == true) {
+        if (data == 'true') {
             _self.addClass('errorFeild');
             alertInnerBox('message-' + po_id, 'red', 'SKU has already exist - ' + sku);
             //_self.val(old_sku);
