@@ -124,9 +124,6 @@ $('input[type="checkbox"].selectedOtherColorProduct').click(function () {
         window.RemoveOtherColorProduct.push($(this).val());
     } 
 });
-
-
-
 $(document).on("click", "#mainSaveButton", function () {
     if (emptyFeildValidation('productDetailPage') == false) {
         return false;
@@ -150,7 +147,27 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["photoshootStatus"] = $("#product_shoot_status").val();
     datatosend["photoshootStatusOld"] = $('#product_shoot_status').attr('data-realvalue'); 
 
+
+
+    datatosend["fabricArray"] = [];
     var productID = $('#product_name').attr('data-id'); 
+    $.each($('.UpdateFabricGroup').children(), function (index, value) {
+
+        var Attribute_id = 0;
+        var isNewAttribute = 0;
+        var fabricName = $(this).find('#tb_fabricName').val();
+        var fabricValue = $(this).find('#tb_fabricValue').val();
+        var ToDelete = $(value).is(":visible") ? false : true;
+        isNewAttribute = $(this).find('#tb_fabricName').data('valueid');
+        if ($(this).find('#tb_fabricName').data('attributeid') != null || $(this).find('#tb_fabricName').data('attributeid') != "") {
+            Attribute_id = $(this).find('#tb_fabricName').data('attributeid');
+        }
+        var _fabric = Fabric(fabricName, fabricValue, isNewAttribute, Attribute_id == null ? 0 : Attribute_id, ToDelete)
+        _fabric.product_id = productID;
+        datatosend["fabricArray"].push(_fabric)
+    })
+    
+
 
     var pairProducts = [];
     $('#PairWithRow .bootstrap-tagsinput span.label-info').each(function () {
@@ -220,7 +237,9 @@ $(document).on("click", "#mainSaveButton", function () {
         processData: false,
 
     }).always(function (data) {
-        if (data ="success") {
+
+        if (data == "success") {
+            getFabrics($('#product_name').attr('data-id'));
             alertBox('poAlertMsg', 'green', 'Product updated successfully.');
         } else {
             alertBox('poAlertMsg', 'red', 'Product updation failed.');

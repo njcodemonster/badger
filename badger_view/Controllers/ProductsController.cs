@@ -39,7 +39,7 @@ namespace badger_view.Controllers
         private ILoginHelper _LoginHelper;
         public ProductsController(IConfiguration config, ILoginHelper LoginHelper, BadgerApiHelper badgerApiHelper)
         {
-            
+
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
@@ -80,7 +80,7 @@ namespace badger_view.Controllers
         {
             JArray product_subtype_ids = new JArray();
             string user_id = await _LoginHelper.GetLoginUserId();
-
+            List<Fabric> _fabrics = new List<Fabric>();
             JObject product = new JObject();
             product.Add("size_and_fit_id", json.Value<string>("size_fit"));
             product.Add("product_retail", json.Value<string>("product_retail"));
@@ -103,6 +103,9 @@ namespace badger_view.Controllers
 
             product.Add("updated_by", user_id);
             product.Add("updated_at", _common.GetTimeStemp());
+
+            _fabrics=json.Value<JArray>("fabricArray").ToObject<List<Fabric>>();
+            
 
             string returnStatus = await _BadgerApiHelper.GenericPutAsyncString<string>(product.ToString(Formatting.None), "/Product/UpdateAttributes/" + productId.ToString());
 
@@ -175,6 +178,12 @@ namespace badger_view.Controllers
 
                 }
             }
+            if (_fabrics.Count() > 0)
+            {
+                await _ProductHelper.UpdateFabric(_fabrics, int.Parse(user_id));
+            }
+
+
 
             if (json.Value<string>("photoshootStatus") != json.Value<string>("photoshootStatusOld"))
             {
@@ -210,7 +219,7 @@ namespace badger_view.Controllers
         [HttpGet("product/PairWithProductsAutocomplete/{id}")]
         public async Task<string> PairWithProductsAutocomplete(string id)
         {
-            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/"+id);
+            Object ProductsPairWithSearch = await _BadgerApiHelper.GenericGetAsync<Object>("/product/ProductsPairWithSearch/" + id);
             return ProductsPairWithSearch.ToString();
         }
 
@@ -332,7 +341,7 @@ namespace badger_view.Controllers
         [HttpPost("product/addFabric")]
         public async Task<string> addFabric([FromBody] List<Fabric> _fabrics)
         {
-       
+
             string _userid = await _LoginHelper.GetLoginUserId();
             return await _ProductHelper.UpdateFabric(_fabrics, int.Parse(_userid));
         }

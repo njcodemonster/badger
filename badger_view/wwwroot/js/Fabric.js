@@ -7,10 +7,11 @@ $(document).ready(function () {
         var oldFabric =
             '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-attributeid="0" data-valueid=0 class="form-control required"></div>' +
             '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-            '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+            '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(true,this)"></i></div> </div>';
         $(wrapper).append(oldFabric)
         $(wrapper).show();
         $('.fabricHeading').show();
+        $("#btn_fabric_submit").show();
 
     });
 
@@ -22,7 +23,6 @@ $(document).ready(function () {
         $('#tb_fabricName').val('');
         $('#tbH_AttributeID').val('');
         $('#tb_fabricPercentage').val('');
-        $('#tb_fabricSuggest').val('');
         $('#tb_fabricSuggest').val('');
         $('.errorMsg').remove();
 
@@ -103,12 +103,13 @@ $(document).ready(function () {
                 var oldFabric =
                     '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=0 disabled data-attributeid=' + ui.item.value + ' value="' + ui.item.label + '"  class="form-control required"></div>' +
                     '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(true,this);"></i></div> </div>';
                 $(wrapper).append(oldFabric)
                 $(wrapper).show();
                 $('.fabricHeading').show();
+                $("#btn_fabric_submit").show();
             } else {
-                alertBox('poAlertMsg', 'Red', 'Fabric already exists.');
+                alertBox('poAlertMsg', 'red', 'Fabric already exists.');
                 return false;
             }
             return false;
@@ -120,6 +121,21 @@ $(document).ready(function () {
     });
 
 });
+
+function checkFabrics(_isNew,source)
+{
+    if (_isNew) {
+        $(source).parent().parent().remove();
+    } else {
+        $(source).parent().parent().hide();
+    }
+
+    if ($('.UpdateFabricGroup').children(':visible').length == 0) {
+        $('.fabricHeading').hide();
+        $("#btn_fabric_submit").hide();
+        $('#tb_fabricSuggest').val('');
+    }
+}
 
 $(document).on('blur focusout', "#tb_fabricSuggest", function (event) {
 
@@ -142,22 +158,26 @@ function getFabrics(productId) {
         var wrapper = $(".UpdateFabricGroup")[0];
 
         if (data.length > 0) {
+            
+            $("#btn_fabric_submit").show();
             $('.fabricHeading').show();
             $.each(data, function (index, value) {
 
                 var oldFabric =
                     '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id + ' data-attributeid=' + value.attribute_id + ' class="form-control required" disabled value="' + value.attribute_Name + '"></div>' +
                     '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().hide()"></i></div> </div>';
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(true,this);"></i></div> </div>';
 
                 $(wrapper).append(oldFabric)
             });
             $(wrapper).show();
 
+
         } else {
 
+            $("#btn_fabric_submit").hide();
             $('.fabricHeading').hide();
-            $('#modalFabric').modal('show');
+          
 
         }
         $('#tb_fabricSuggest').val('');
