@@ -60,7 +60,7 @@ $(document).ready(function () {
 
     $("#tb_fabricSuggest").autocomplete({
         source: function (request, response) {
-     
+
             if (request.term.length > 2) {
                 $.ajax({
                     url: "/attributes/getfabrics/" + request.term,
@@ -122,19 +122,32 @@ $(document).ready(function () {
 
 });
 
-function checkFabrics(_isNew,source)
-{
+function checkFabrics(_isNew, source) {
+
     if (_isNew) {
         $(source).parent().parent().remove();
+        if ($('.UpdateFabricGroup').children(':visible').length == 0) {
+            $('.fabricHeading').hide();
+            $("#btn_fabric_submit").hide();
+            $('#tb_fabricSuggest').val('');
+        }
     } else {
-        $(source).parent().parent().hide();
+        confirmationAlertInnerBox("Remove Are you sure you want to remove this item?", "Are you sure you want to remove this item?", function (result) {
+            if (result == "yes") {
+                $(source).parent().parent().hide();
+                if ($('.UpdateFabricGroup').children(':visible').length == 0) {
+                    $('.fabricHeading').hide();
+                    $("#btn_fabric_submit").hide();
+                    $('#tb_fabricSuggest').val('');
+                }
+                $('#btn_fabric_submit').click();
+            }
+
+        })
+       
+
     }
 
-    if ($('.UpdateFabricGroup').children(':visible').length == 0) {
-        $('.fabricHeading').hide();
-        $("#btn_fabric_submit").hide();
-        $('#tb_fabricSuggest').val('');
-    }
 }
 
 $(document).on('blur focusout', "#tb_fabricSuggest", function (event) {
@@ -158,7 +171,7 @@ function getFabrics(productId) {
         var wrapper = $(".UpdateFabricGroup")[0];
 
         if (data.length > 0) {
-            
+
             $("#btn_fabric_submit").show();
             $('.fabricHeading').show();
             $.each(data, function (index, value) {
@@ -166,7 +179,7 @@ function getFabrics(productId) {
                 var oldFabric =
                     '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id + ' data-attributeid=' + value.attribute_id + ' class="form-control required" disabled value="' + value.attribute_Name + '"></div>' +
                     '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(true,this);"></i></div> </div>';
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(false,this);"></i></div> </div>';
 
                 $(wrapper).append(oldFabric)
             });
@@ -177,7 +190,7 @@ function getFabrics(productId) {
 
             $("#btn_fabric_submit").hide();
             $('.fabricHeading').hide();
-          
+
 
         }
         $('#tb_fabricSuggest').val('');
@@ -199,13 +212,25 @@ function addFabrics(_fabrics) {
 
     }).always(function (data) {
 
+
+        var DeleteList = _fabrics.filter(function (el) {
+            return el.toDelete == true;
+        });
+        var message = "added/updated"
+        if (DeleteList.length > 0) {
+            message = "removed"
+        }
         if (data == "Success") {
-            alertBox('poAlertMsg', 'green', 'Fabric(s) added/updated successfully');
-            $('#modalFabric').modal('hide');
+            alertBox('poAlertMsg', 'green', 'Fabric ' + message + ' successfully.');
+            if (message !="removed") {
+                $('#modalFabric').modal('hide');
+            }
+          
         } else {
-            alertBox('poAlertMsg', 'red', 'Could not add/update Fabric for product.');
+            alertBox('poAlertMsg', 'red', 'Could not ' + message + ' Fabric.');
             return;
         }
+
         $('.loading').hide();
 
     });
