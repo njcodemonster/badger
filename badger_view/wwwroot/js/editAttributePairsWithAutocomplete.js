@@ -84,6 +84,7 @@ $(document).ready(function () {
 
         }
     });
+    $('#StyleSubType').next().css("display", "block");
 
     if (selectedProductCategories != null || selectedProductCategories != "") {
         var selectProductCategories = JSON.parse(selectedProductCategories);
