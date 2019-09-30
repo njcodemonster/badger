@@ -132,7 +132,7 @@ function checkFabrics(_isNew, source) {
             $('#tb_fabricSuggest').val('');
         }
     } else {
-        confirmationAlertInnerBox("Remove Are you sure you want to remove this item?", "Are you sure you want to remove this item?", function (result) {
+        confirmationAlertInnerBox("Remove Fabric", "Are you sure you want to remove this item?", function (result) {
             if (result == "yes") {
                 $(source).parent().parent().hide();
                 if ($('.UpdateFabricGroup').children(':visible').length == 0) {
