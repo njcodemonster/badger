@@ -1177,6 +1177,8 @@ $(document).on('click', '.ModalAddFabric', function (e) {
     getFabrics(_productid);
     $('.fabricHeading').hide();
 
+    $('#tb_fabricSuggest').val('');
+    $('#tb_fabricSuggest').removeClass('errorFeild');
 });
 
 

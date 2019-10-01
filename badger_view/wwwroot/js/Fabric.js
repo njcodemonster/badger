@@ -7,10 +7,11 @@ $(document).ready(function () {
         var oldFabric =
             '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-attributeid="0" data-valueid=0 class="form-control required"></div>' +
             '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-            '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+            '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(true,this)"></i></div> </div>';
         $(wrapper).append(oldFabric)
         $(wrapper).show();
         $('.fabricHeading').show();
+        $("#btn_fabric_submit").show();
 
     });
 
@@ -22,7 +23,6 @@ $(document).ready(function () {
         $('#tb_fabricName').val('');
         $('#tbH_AttributeID').val('');
         $('#tb_fabricPercentage').val('');
-        $('#tb_fabricSuggest').val('');
         $('#tb_fabricSuggest').val('');
         $('.errorMsg').remove();
 
@@ -60,6 +60,7 @@ $(document).ready(function () {
 
     $("#tb_fabricSuggest").autocomplete({
         source: function (request, response) {
+
             if (request.term.length > 2) {
                 $.ajax({
                     url: "/attributes/getfabrics/" + request.term,
@@ -84,12 +85,12 @@ $(document).ready(function () {
                 });
             } else {
                 $('#tb_fabricSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_fabricSuggest').parent().find('.errorMsg').remove();
             }
 
             if (request.term.length == 0) {
                 $('#tb_fabricSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_fabricSuggest').parent().find('.errorMsg').remove();
                 $('#tb_fabricSuggest').val(""); // display the selected text
                 $('#tb_fabricSuggest').attr("data-val", "");
             }
@@ -102,12 +103,13 @@ $(document).ready(function () {
                 var oldFabric =
                     '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=0 disabled data-attributeid=' + ui.item.value + ' value="' + ui.item.label + '"  class="form-control required"></div>' +
                     '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" > <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().remove()"></i></div> </div>';
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(true,this);"></i></div> </div>';
                 $(wrapper).append(oldFabric)
                 $(wrapper).show();
                 $('.fabricHeading').show();
+                $("#btn_fabric_submit").show();
             } else {
-                alertBox('poAlertMsg', 'Red', 'Fabric already exists.');
+                alertBox('poAlertMsg', 'red', 'Fabric already exists.');
                 return false;
             }
             return false;
@@ -118,6 +120,42 @@ $(document).ready(function () {
         }
     });
 
+});
+
+function checkFabrics(_isNew, source) {
+
+    if (_isNew) {
+        $(source).parent().parent().remove();
+        if ($('.UpdateFabricGroup').children(':visible').length == 0) {
+            $('.fabricHeading').hide();
+            $("#btn_fabric_submit").hide();
+            $('#tb_fabricSuggest').val('');
+        }
+    } else {
+        confirmationAlertInnerBox("Remove Fabric", "Are you sure you want to remove this item?", function (result) {
+            if (result == "yes") {
+                $(source).parent().parent().hide();
+                if ($('.UpdateFabricGroup').children(':visible').length == 0) {
+                    $('.fabricHeading').hide();
+                    $("#btn_fabric_submit").hide();
+                    $('#tb_fabricSuggest').val('');
+                }
+                $('#btn_fabric_submit').click();
+            }
+
+        })
+       
+
+    }
+
+}
+
+$(document).on('blur focusout', "#tb_fabricSuggest", function (event) {
+
+    if ($(this).val() == "") {
+        $(this).removeClass('errorFeild')
+        $('#tb_fabricSuggest').parent().find('.errorMsg').remove();
+    }
 });
 
 function getFabrics(productId) {
@@ -133,22 +171,26 @@ function getFabrics(productId) {
         var wrapper = $(".UpdateFabricGroup")[0];
 
         if (data.length > 0) {
+
+            $("#btn_fabric_submit").show();
             $('.fabricHeading').show();
             $.each(data, function (index, value) {
 
                 var oldFabric =
                     '<div class="row col-md-12 " style="margin-bottom: 10px;"> <div class="form-group col-md-6"><input type="text" id="tb_fabricName" data-valueid=' + value.value_id + ' data-attributeid=' + value.attribute_id + ' class="form-control required" disabled value="' + value.attribute_Name + '"></div>' +
                     '<div class="form-inline  input-group col-md-5"><input type="number" min="1" max="100" class="form-control col-md-9 required" id="tb_fabricValue" value=' + value.value + '> <div class="input-group-append"> <div class="input-group-text">%</div></div> </div>' +
-                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="return $(this).parent().parent().hide()"></i></div> </div>';
+                    '<div class="form-inline col-md-1"><i class="fa fa-trash danger" style="color:red;" aria-hidden="true" onclick="checkFabrics(false,this);"></i></div> </div>';
 
                 $(wrapper).append(oldFabric)
             });
             $(wrapper).show();
 
+
         } else {
 
+            $("#btn_fabric_submit").hide();
             $('.fabricHeading').hide();
-            $('#modalFabric').modal('show');
+
 
         }
         $('#tb_fabricSuggest').val('');
@@ -170,13 +212,25 @@ function addFabrics(_fabrics) {
 
     }).always(function (data) {
 
+
+        var DeleteList = _fabrics.filter(function (el) {
+            return el.toDelete == true;
+        });
+        var message = "added/updated"
+        if (DeleteList.length > 0) {
+            message = "removed"
+        }
         if (data == "Success") {
-            alertBox('poAlertMsg', 'green', 'Fabric(s) added/updated successfully');
-            $('#modalFabric').modal('hide');
+            alertBox('poAlertMsg', 'green', 'Fabric ' + message + ' successfully.');
+            if (message !="removed") {
+                $('#modalFabric').modal('hide');
+            }
+          
         } else {
-            alertBox('poAlertMsg', 'red', 'Could not add/update Fabric for product.');
+            alertBox('poAlertMsg', 'red', 'Could not ' + message + ' Fabric.');
             return;
         }
+
         $('.loading').hide();
 
     });

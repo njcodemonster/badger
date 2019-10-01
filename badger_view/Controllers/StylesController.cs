@@ -124,7 +124,7 @@ namespace badger_view.Controllers
             Int32 vendor_id = json.Value<Int32>("vendor_id");
             string product_name = json.Value<string>("product_name");
             bool IsLineItemExists = json.Value<bool>("IsLineItemExists");
-
+            bool UpdateVendorType = json.Value<bool>("UpdateVendorType");
             string first_sku_family = json.Value<string>("sku_family");
 
 
@@ -197,7 +197,7 @@ namespace badger_view.Controllers
                 // add new product in product table
                 var a = await _BadgerApiHelper.GenericPutAsyncString<String>(product.ToString(Formatting.None), "/product/updatespecific/" + product_id);
 
-                if (!string.IsNullOrEmpty(product_id)) ;
+                if (!string.IsNullOrEmpty(product_id))
                 {   //update vendor product
                     vendorProduct.Add("product_id", Convert.ToInt64(product_id));
                     var result = await _BadgerApiHelper.GenericPutAsyncString<String>(vendorProduct.ToString(Formatting.None), "/vendor/vendorproductUpdatespecific");
@@ -226,6 +226,18 @@ namespace badger_view.Controllers
                     logger.LogInformation("Problem happened in making new Product, no product id genrated ");
 
                 }
+            }
+
+            if (UpdateVendorType)
+            {
+                Vendor vendor = new Vendor();
+                vendor.vendor_type = 3;
+                vendor.updated_by = user_id;
+                vendor.active_status = 1;
+                vendor.updated_at = _common.GetTimeStemp();
+                String vendorStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(JsonConvert.SerializeObject(vendor), "/vendor/update/" + vendor_id.ToString());
+
+
             }
 
             if (Int32.Parse(product_id) > 1)

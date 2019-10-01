@@ -111,15 +111,10 @@ namespace badgerApi.Controllers
                 LineITemsDetails = await _PurchaseOrdersRepo.GetOpenPOLineItemDetails(PO_id, limit);
                 List<Items> items = await _ItemsHelper.GetItemsByOrder(PO_id);
                 List<Items> skuItems = new List<Items>();
-                string currentSKU = "";
-                Boolean First = true;
-                int Index = -1;
-
                 foreach (POLineItems LineItems in LineITemsDetails)
                 {
                     var ItemList = items.Where(x => x.sku == LineItems.sku).ToList();
                     LineItems.EndItems = ItemList;
-
                 }
             }
             catch (Exception ex)
