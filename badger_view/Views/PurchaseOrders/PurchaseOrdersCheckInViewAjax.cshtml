@@ -4,6 +4,7 @@
     Layout = null;
 }
 @{ int First = 0;}
+
 @if (First == 0)
 {
 
@@ -13,16 +14,19 @@
 <div class="card-body table-responsive">
     <div class="accordion panel-group" id="accordionpoinnercheck">
         @foreach (GenericModals.POLineItems LineItem in Model.FirstPOInfor)
+        {
+            string vendorSize = string.IsNullOrEmpty(LineItem.vendorSize) ? "" : "(" + LineItem.vendorSize +")";
+            
+
+            @if (Current_product != (String)LineItem.product_id)
             {
-        @if (Current_product != (String)LineItem.product_id)
+                Current_product = (String)LineItem.product_id;
+                outputEnd = true;
+                if (First == 2)
                 {
-                    Current_product = (String)LineItem.product_id;
-                    outputEnd = true;
-                    if (First == 2)
-                    {
-        @:</tbody>
-        @:</table>
-    @:</div>
+                    @:</tbody>
+                    @:</table>
+                @:</div>
 @:</div>
 @:</div>
             }
@@ -51,7 +55,15 @@
                         <a href="/Product/EditAttributes/@LineItem.product_id" target="_blank" class="h5 text-primary">Edit Attribute</a>
                     </td>
                     <td>
-                        <img src="~/images/check-green.jpg" />
+                        @if (@LineItem.Is_Ready)
+                        {
+                            <img style="height:40px;" src="~/images/check-green.jpg" />
+                        }
+                        else
+                        {
+                            <img style="height:40px;" src="~/images/warningicon.png" />
+                        }
+
                     </td>
                     <td>
                         <button type="button" data-productid="@LineItem.product_id" class="btn btn-outline-success ModalAddFabric">Add Fabric</button>
@@ -153,7 +165,7 @@
                             }
             </td>
             <td>
-                @LineItem.Size <input type="hidden" id="@item.item_id" value="@JsonConvert.SerializeObject(item)" />
+                @LineItem.Size @vendorSize <input type="hidden" id="@item.item_id" value="@JsonConvert.SerializeObject(item)" />
             </td>
             <td>
                 <input type="checkbox" class="checkitemstatus" style="float:left;width:10%;transform: scale(1.5);margin-top: 13px;" data-status="@LineItem.Size-@LineItem.product_id">

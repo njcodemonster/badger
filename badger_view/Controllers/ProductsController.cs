@@ -91,7 +91,7 @@ namespace badger_view.Controllers
             product.Add("product_detail_2", json.Value<string>("product_detail_2"));
             product.Add("product_detail_3", json.Value<string>("product_detail_3"));
             product.Add("product_detail_4", json.Value<string>("product_detail_4"));
-
+            product.Add("is_ready", json.Value<bool>("is_ready"));
             product.Add("pairProductIds", json.Value<string>("pairProductIds"));
             product.Add("RemovePairWithProductIds", json.Value<string>("RemovePairWithProductIds"));
             product.Add("otherColorsProductIds", json.Value<string>("otherColorsProductIds"));
