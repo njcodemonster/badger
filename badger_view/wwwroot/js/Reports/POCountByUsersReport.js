@@ -82,7 +82,3 @@ function getStyles(cellvalue, options, rowObject) {
         ' </div>' +
         '</div>';
 }
-
-function Search() {
-    poTable.draw();
-}

@@ -60,10 +60,10 @@ namespace badgerApi.Interfaces
             {
                 string skuExistsQuery = "SELECT * FROM sku WHERE sku='" + NewSku.sku + "' and product_id =" + NewSku.product_id + " and vendor_id=" + NewSku.vendor_id + ";";
 
-                var SkuexistsResult = await conn.QueryAsync<Sku>(skuExistsQuery);
+                var SkuexistsResult = conn.Query<Sku>(skuExistsQuery);
                 if (SkuexistsResult == null || SkuexistsResult.Count() == 0)
                 {
-                    var result = await conn.InsertAsync<Sku>(NewSku);
+                    var result = conn.Insert<Sku>(NewSku);
                     return result.ToString();
                 }
                 else

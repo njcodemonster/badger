@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using GenericModals;
+using GenericModals.Extentions;
 
 namespace itemService.Controllers
 {
@@ -594,43 +596,9 @@ namespace itemService.Controllers
         output: string
         */
         [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
-        public async Task<string> UpdateProductItemForPhotoshoot([FromBody]   string value, int status)
+        public async Task<string> UpdateProductItemForPhotoshoot([FromBody] List<SmallestItem> value, int status)
         {
-            string toReturn = "success";
-            string response = "";
-            try
-            {
-                dynamic ProductSkuList = JsonConvert.DeserializeObject(value);
-                foreach (var ExpendJson in ProductSkuList)
-                {
-                    string SkuListString = ExpendJson.ToString();
-                    int splidIds = SkuListString.Count(c => c == ':');
-                    if (splidIds > 0)
-                    {
-                        string ids = SkuListString.Split(":").Last();
-                        ids = ids.Replace("\"", "");
-                        var idsList = ids.Split(",");
-                        foreach (var skuid in idsList)
-                        {
-                            int skuIdValue = Int32.Parse(skuid.ToString().Trim());
-                            response = await _ItemRepository.SetProductItemForPhotoshoot(skuIdValue, status);
-                            if (response == "success")
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                toReturn = response;
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("internal_error_log");
-                logger.LogInformation("Problem happened in making new Item with message" + ex.Message);
-                toReturn = "failed";
-            }
-            return toReturn;
+            return await _ItemRepository.UpdateBulkSkus(value.Select(x => x.sku_id).ToList(), status);
         }
 
 
@@ -1001,6 +969,19 @@ namespace itemService.Controllers
             return ItemQty;
         }
 
-        
+        [HttpPost("smallestitem")]
+        public async Task<ResponseModel> GetSmallestItem([FromBody] List<SmallestItem> items)
+        {
+            var item = await _ItemRepository.GetSmallestItem(items);
+            return ResponseHelper.GetResponse(item);
+        }
+
+        [HttpPost("bulkupdatebarcode")]
+        public async Task<ResponseModel> BulkUpdateBarcode([FromBody] List<BarcodeUpdate> items)
+        {
+            var item = await _ItemRepository.BulkUpdateBarcode(items);
+            return ResponseHelper.GetResponse(item);
+        }
+
     }
 }

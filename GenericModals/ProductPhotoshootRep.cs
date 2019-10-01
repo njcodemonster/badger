@@ -18,6 +18,7 @@ namespace GenericModals.Models
         public string color { get; set; }
         public string po_id { get; set; }
         public string po_status { get; set; }
+        public int vendor_id { get; set; }
 
     }
     public class ProductPhotoshootPagerList

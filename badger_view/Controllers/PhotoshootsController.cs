@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommonHelper;
 using Microsoft.AspNetCore.Authorization;
+using GenericModals;
+
 namespace badger_view.Controllers
 {
     public class PhotoshootsController : Controller
@@ -162,20 +164,21 @@ namespace badger_view.Controllers
         output: string success or failed
         */
         [Authorize]
-        [HttpGet("photoshoots/addProductInPhotoshoot/{product_id}/{photoshoot_id}")]
-        public async Task<string> addProductInPhotoshoot(string product_id, int photoshoot_id)
+        [HttpPost("photoshoots/addProductInPhotoshoot/{photoshoot_id}")]
+        public async Task<string> addProductInPhotoshoot(int photoshoot_id, [FromBody] PhotoshootWithItems photoshoot)
         {
             string user_id = await _ILoginHelper.GetLoginUserId();
 
-            JObject assignPhotoshoot = new JObject();
-            assignPhotoshoot.Add("photoshoot_id", photoshoot_id);
-            assignPhotoshoot.Add("product_shoot_status_id", 1);
-            assignPhotoshoot.Add("updated_by", user_id);
-            assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
-
-            String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/StartProductPhotoshoot/" + product_id);
-
-            return AssignPhotoshootStatus;
+            var assignPhotoshoot = new ProductPhotoshoots();
+            assignPhotoshoot.photoshoot_id = photoshoot_id;
+            assignPhotoshoot.product_shoot_status_id = 1;
+            assignPhotoshoot.updated_by =int.Parse(user_id);
+            assignPhotoshoot.updated_at = _common.GetTimeStemp();
+            assignPhotoshoot.products = photoshoot.products;
+            await _BadgerApiHelper.PostAsync<string>(photoshoot.items, "/photoshoots/bulkupdatebarcode");
+            var AssignPhotoshootStatus = await _BadgerApiHelper.PostAsync<ProductPhotoshoots>(assignPhotoshoot, "/photoshoots/StartProductPhotoshoot");
+            
+            return AssignPhotoshootStatus.ToString();
         }
 
         /*
@@ -373,6 +376,22 @@ namespace badger_view.Controllers
             dynamic photoshootNote = await _BadgerApiHelper.GenericGetAsync<Object>("/photoshoots/getitemnotes/" + ids.ToString());
 
             return JsonConvert.SerializeObject(photoshootNote);
+        }
+
+        [Authorize]
+        [HttpGet("photoshoots/smallestitem/{po_id}/{vendor_id}/{product_id}")]
+        public async Task<IActionResult> GetSmallestItem(int po_id, int vendor_id, int product_id)
+        {
+            var response = await _BadgerApiHelper.GetAsync<SmallestItem>($"/photoshoots/smallestitem/{po_id}/{vendor_id}/{product_id}");
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("photoshoots/smallestitem")]
+        public async Task<IActionResult> GetSmallestSkus([FromBody] List<SmallestItem> items)
+        {
+            var response = await _BadgerApiHelper.PostAsync<List<SmallestItem>>(items, $"/photoshoots/smallestitem");
+            return Ok(response);
         }
 
     }

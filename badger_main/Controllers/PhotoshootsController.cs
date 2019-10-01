@@ -13,6 +13,8 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using badgerApi.Helper;
 using GenericModals.Event;
+using GenericModals;
+using GenericModals.Extentions;
 
 namespace badgerApi.Controllers
 {
@@ -529,45 +531,33 @@ namespace badgerApi.Controllers
         Input: FromBody, string productId
         output: string success or failed
         */
-        [HttpPost("StartProductPhotoshoot/{productId}")]
-        public async Task<string> StartProductPhotoshoot(string productId, [FromBody]   string value)
+        [HttpPost("StartProductPhotoshoot")]
+        public async Task<ResponseModel> StartProductPhotoshoot([FromBody] ProductPhotoshoots photoshootToUpdate)
         {
             string UpdateResult = "Success";
             try
             {
 
-                ProductPhotoshoots PhotoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshoots>(value);
+                //  ProductPhotoshoots photoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshoots>(value);
 
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                ValuesToUpdate.Add("photoshoot_id", PhotoshootToUpdate.photoshoot_id.ToString());
-                ValuesToUpdate.Add("product_shoot_status_id", PhotoshootToUpdate.product_shoot_status_id.ToString());
-                ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
-                ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
+                ValuesToUpdate.Add("photoshoot_id", photoshootToUpdate.photoshoot_id.ToString());
+                ValuesToUpdate.Add("product_shoot_status_id", photoshootToUpdate.product_shoot_status_id.ToString());
+                ValuesToUpdate.Add("updated_by", photoshootToUpdate.updated_by.ToString());
+                ValuesToUpdate.Add("updated_at", photoshootToUpdate.updated_at.ToString());
+                var productIds = photoshootToUpdate.products.Select(x => x.product_id);
+                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + string.Join(',', productIds) + ")");
 
-                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + productId + ")");
-
-                int userId = PhotoshootToUpdate.updated_by;
-                int photoshootId = PhotoshootToUpdate.photoshoot_id;
-
+                int userId = photoshootToUpdate.updated_by;
+                int photoshootId = photoshootToUpdate.photoshoot_id;
+                string productId = string.Empty;
                 int photoShootStatus = 1;
-                await SetProductItemStatusForPhotoshoot(productId, photoShootStatus);
 
-                int countComma = productId.Count(c => c == ',');
-                if (countComma > 0)
-                {
-                    var ids = productId.Split(",");
-                    foreach (var product_id in ids)
-                    {
-                        int prodId = Int32.Parse(product_id);
-                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = prodId, RefrenceId = photoshootId, UserId = userId });
-                    }
-                }
-                else
-                {
-                    await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = int.Parse(productId), RefrenceId = photoshootId, UserId = userId });
-                }
+                var smallestSkuList = await _PhotoshootRepo.GetSmallestSkuByProduct(productIds.ToList());
+                var result = await _ItemServiceHelper.PostAsync<string>(smallestSkuList, "/item/UpdateProductItemForPhotoshoot/" + photoShootStatus);
 
-
+                var eventModels = GenerateEventModels(productIds, userId, photoshootId);
+                await _eventRepo.AddEventAsync(eventModels);
             }
             catch (Exception ex)
             {
@@ -576,7 +566,15 @@ namespace badgerApi.Controllers
                 UpdateResult = "Failed";
             }
 
-            return UpdateResult;
+            return ResponseHelper.GetResponse(UpdateResult);
+        }
+
+        private IEnumerable<EventModel> GenerateEventModels(IEnumerable<int> productIds, int userId, int photoshootId)
+        {
+            foreach (var product_id in productIds)
+            {
+                yield return new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = product_id, RefrenceId = photoshootId, UserId = userId };
+            }
         }
 
 
@@ -740,6 +738,21 @@ namespace badgerApi.Controllers
                 Result = "failed";
             }
             return Result;
+        }
+
+        [HttpPost("smallestitem")]
+        public async Task<ResponseModel> GetSmallestSkus([FromBody] List<SmallestItem> items)
+        {
+            var response = await _PhotoshootRepo.GetSmallestSkuByProduct(items.Select(x => x.product_id).ToList());
+            var lastItem = await _ItemServiceHelper.PostAsync<List<SmallestItem>>(response, $"/item/smallestitem");
+            return ResponseHelper.GetResponse(lastItem);
+        }
+
+        [HttpPost("bulkupdatebarcode")]
+        public async Task<ResponseModel> BulkUpdateBarcode([FromBody] List<BarcodeUpdate> items)
+        {
+            var item = await _ItemServiceHelper.PostAsync<string>(items, $"/item/bulkupdatebarcode");
+            return ResponseHelper.GetResponse(item);
         }
     }
 

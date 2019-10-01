@@ -63,7 +63,7 @@ function selectAllCheckbox() {
 
     $(".select_menu").hide();
     $(".unselect_menu").show();
-    $(".select-box").attr("checked", true);
+    $(".select-box").prop("checked", true);
 
 }
 
@@ -78,7 +78,7 @@ function unselectAllCheckbox() {
 
     $(".select_menu").show();
     $(".unselect_menu").hide();
-    $(".select-box").attr("checked", false);
+    $(".select-box").prop("checked", false);
 
 }
 
@@ -101,11 +101,12 @@ Action: get all photoshoots & models and add in Add photoshoot modal and open mo
 Input: photoshoot productID, photoshoot status 
 Output: it will add photoshoots & models in add new photoshoot modal and open
 */
-function AddToShootSingle(shootProductId, statusId) {
+function AddToShootSingle(shootProductId,vendorId,poId, statusId) {
     window.photoShootRowId = shootProductId;
     var ProductName = $("#tableRow_" + shootProductId + " .productName").html();
     $("#AddToPhotoshootProductId").val(shootProductId);
     if (statusId == 1) {
+        GetSmallestItem(shootProductId, vendorId, poId);
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
             
@@ -120,9 +121,13 @@ function AddToShootSingle(shootProductId, statusId) {
             var allPhotoshootListHTML = '';
 
             $(jsonPhotoshootsList).each(function (i, val) {
-                allPhotoshootListHTML += '<div class="form-check"><input class="form-check-input selectedPhotoshoot" type = "radio" name = "selectedPhotoshoot" id = "' + val.photoshoot_id + '" value = "' + val.photoshoot_id + '" ><label class="form - check - label" for="' + val.photoshoot_id + '">' + val.photoshoot_name + '</label></div >';
+                allPhotoshootListHTML += GetPhotoshootTr(val);
             });
-            $(".allPhotoshootList").html(allPhotoshootListHTML);
+
+            DestroyPhotoshootTable();
+            $("#prev-photoshoots > tbody").html(allPhotoshootListHTML);
+            InitializePhotoshootTable();
+            // $(".allPhotoshootList").html(allPhotoshootListHTML);
 
             $("#AllModels").find('option').remove()
             $("#AllModels").append(new Option("Choose...", ""));
@@ -133,6 +138,89 @@ function AddToShootSingle(shootProductId, statusId) {
 
             $("#modalAddNewPhotoshoot").modal('show');
         }); 
+    } 
+}
+
+function GetNameValueMapping(list) {
+    var returnList = [];
+    var obj = {};
+    $.each(list, function (index, value) {
+        
+        if (value.name.indexOf('barcode') > -1)
+            obj.barcode = value.value;
+        else
+            obj.item_id = value.value;
+
+        if (obj.item_id && obj.barcode) {
+            returnList.push(obj);
+            obj = {};
+        }
+    });
+    return returnList;
+}
+
+function GetSmallestItem(productIds) {
+    $.ajax({
+        url: '/photoshoots/smallestItem/',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(productIds),
+        processData: false,
+        success: function (responseList) {
+            $("#sku-rows").empty();
+            $.each(responseList, function (index, response) {
+
+                var newIndex = index > 0 ? (index - 1) : index;
+                var $itemRow = $("#item_wrapper_" + newIndex).clone();
+                var $barcode = $itemRow.find("input[name='items[" + newIndex + "].barcode']");
+                var $itemId = $itemRow.find("input[name='items[" + newIndex + "].item_id']");
+                var $itemLabel = $itemRow.find("div[id='items[" + newIndex + "].sku_label']");
+
+                $itemRow.attr("id", "item_wrapper_" + index);
+                $barcode.attr("name", "items[" + index + "].barcode");
+                $itemId.attr("name", "items[" + index + "].item_id");
+                $itemLabel.attr("id", "items[" + index + "].sku_label");
+
+                $itemId.val(response.item_id);
+                $itemLabel.text(response.sku);
+
+                if (response.barcode > 0) {
+                    $barcode.val(response.barcode).prop("disabled", true);
+                }
+                else {
+                    $barcode.prop("disabled", false);
+                }
+                
+                $("#sku-rows").append($itemRow);
+            });
+        }
+    });
+}
+
+var photoshootTable;
+function InitializePhotoshootTable() {
+    photoshootTable = $("#prev-photoshoots").DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false,
+        "scrollY": "200px",
+        language: {
+            "search": "",
+            "searchPlaceholder": "Search...",
+            'processing': '<div><i class="fa fa-spinner fa-3x fa-spin"></i></div>'
+        }
+    });
+    
+}
+
+function GetPhotoshootTr(val) {
+    return '<tr><td><div class="form-check"><input class="form-check-input selectedPhotoshoot"'+
+    ' type="radio" name="selectedPhotoshoot" id="' + val.photoshoot_id + '" value="' + val.photoshoot_id + '" ></td > <td><label class="form-check-label" for="' + val.photoshoot_id + '">' + val.photoshoot_name + '</label></td></div ></tr > ';
+}
+
+function DestroyPhotoshootTable() {
+    if (photoshootTable) {
+        photoshootTable.destroy();
     }
 }
 
@@ -145,36 +233,30 @@ Output: it closes the add new modal and remove the prodcuts from the current lis
 */
 function AddToExistingPhotoshoot() {
     $(".existingShootError").addClass("d-none");
-    var ProductId = $("#AddToPhotoshootProductId").val();
+    var productList = $("#AddToPhotoshootProductId").val();
     var PhotoShootId = $('input[name=selectedPhotoshoot]:checked').val();
-    if (typeof ProductId !== "undefined" && typeof PhotoShootId !== "undefined") {
+    var itemList = $("#sku-rows").find("input").serializeArray();
+    var items = GetNameValueMapping(itemList);
+    if (productList.length > 0 && typeof PhotoShootId !== "undefined") {
         $("#_modal_loader").fadeIn(200);
         $.ajax({
-            url: '/Photoshoots/addProductInPhotoshoot/' + ProductId + "/" + PhotoShootId,
-            type: 'GET',
+            url: '/Photoshoots/addProductInPhotoshoot/' + PhotoShootId,
+            type: 'POST',
             contentType: 'application/json',
+            data: JSON.stringify({ products: JSON.parse(productList), items: items }),
             processData: false,
-            
         }).always(function (data) {
 
             if (data == "Success") {
+                productList = JSON.parse(productList);
                 $("#_modal_loader").fadeOut(200);
                 $("#modalAddNewPhotoshoot").modal('hide');
-                if (ProductId.indexOf(',') == -1) {
+                $.each(productList, function (index, value) {
                     datatable_js_ps
-                        .row($("#shootRow_" + ProductId).parents('tr'))
+                        .row($("#shootRow_" + value.product_id).parents('tr'))
                         .remove()
                         .draw();
-                } else {
-                    var arrayProductId = ProductId.split(",");
-                    $.each(arrayProductId, function (i) {
-                        datatable_js_ps
-                            .row($("#shootRow_" + arrayProductId[i]).parents('tr'))
-                            .remove()
-                            .draw();
-                    });
-                }
-
+                });
             } else {
                 $("#_modal_loader").fadeOut(200);
             }   
@@ -260,17 +342,23 @@ Output: it closes the add new modal and remove the selected prodcut from the cur
 function moveSelectedToPhotoshoot() {
     var productAddToShoot = [];
     var productNameList = [];
-    $.each($("input[name='productAddToShoot']:checked"), function () {
-        var id = $(this).val();
-        productAddToShoot.push($(this).val());
-        productName = $("#tableRow_" + id + " .productName").html();
-        productNameList.push("&nbsp; "+productName );
 
+    $.each($("input[name='productAddToShoot']:checked"), function () {
+        var product = {};
+        var id = $(this).val();
+
+        productName = $("#tableRow_" + id + " .productName").html();
+        productNameList.push("&nbsp; " + productName);
+
+        product.product_id = id;
+        product.product_name = productName;
+        product.vendor_id = $(this).data('vendor-id');
+        productAddToShoot.push(product);
     });
+
     if (productAddToShoot.length > 0) {
-        var product_ids = productAddToShoot.join(","); 
-        var all_products = productNameList.join(", ");
-        $("#AddToPhotoshootProductId").val(productAddToShoot.join(","));
+        GetSmallestItem(productAddToShoot);
+        $("#AddToPhotoshootProductId").val(JSON.stringify(productAddToShoot));
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
             
@@ -285,9 +373,13 @@ function moveSelectedToPhotoshoot() {
             var allPhotoshootListHTML = '';
 
             $(jsonPhotoshootsList).each(function (i, val) {
-                allPhotoshootListHTML += '<div class="form-check"><input class="form-check-input selectedPhotoshoot" type = "radio" name = "selectedPhotoshoot" id = "' + val.photoshoot_id + '" value = "' + val.photoshoot_id + '" ><label class="form - check - label" for="' + val.photoshoot_id + '">' + val.photoshoot_name + '</label></div >';
+                allPhotoshootListHTML += GetPhotoshootTr(val);
             });
-            $(".allPhotoshootList").html(allPhotoshootListHTML);
+
+            DestroyPhotoshootTable();
+            $("#prev-photoshoots > tbody").html(allPhotoshootListHTML);
+            InitializePhotoshootTable();
+           // $(".allPhotoshootList").html(allPhotoshootListHTML);
 
             $("#AllModels").find('option').remove();
             $("#AllModels").append(new Option("Choose...", ""));

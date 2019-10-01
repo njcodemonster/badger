@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
 using System.Dynamic;
+using GenericModals;
 
 namespace badgerApi.Interfaces
 {
@@ -33,13 +34,14 @@ namespace badgerApi.Interfaces
         Task<Object> GetPhotoshootSummary();
 
         Task<Object> GetSkuByProduct(string product_id);
-
+        Task<SmallestItem> GetSmallestSizeItem(int po_id, int vendor_id, int product_id);
+        Task<IEnumerable<SmallestItem>> GetSmallestSkuByProduct(List<int> productIds);
 
     }
     public class PhotoshootRepo : IPhotoshootRepository
     {
         private readonly IConfiguration _config;
-        private string TableName = "product_photoshoots";
+        private string product_photoshoots = "product_photoshoots";
         private string TablePhotoshoots = "photoshoots";
         private string TableProducts = "product";
         private string TableAttributes = "product_attributes";
@@ -106,7 +108,7 @@ namespace badgerApi.Interfaces
                 }
 
             }
-            
+
 
         }
 
@@ -121,7 +123,7 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.QueryAsync<String>("select count(photoshoot_id) from " + TableName + " where photoshoot_id = 0;");
+                var result = await conn.QueryAsync<String>("select count(photoshoot_id) from " + product_photoshoots + " where photoshoot_id = 0;");
                 return result.FirstOrDefault();
             }
         }
@@ -140,12 +142,12 @@ namespace badgerApi.Interfaces
                 IEnumerable<Photoshoots> result = new List<Photoshoots>();
                 if (Limit > 0)
                 {
-                    result = await conn.QueryAsync<Photoshoots>("Select * from " + TableName + " where photoshoot_id = 0 OR product_shoot_status_id = 0  Limit " + Limit.ToString() + ";");
+                    result = await conn.QueryAsync<Photoshoots>("Select * from " + product_photoshoots + " where photoshoot_id = 0 OR product_shoot_status_id = 0  Limit " + Limit.ToString() + ";");
                 }
                 else
                 {
                     //result = await conn.GetAllAsync<Photoshoots>();
-                    result = await conn.QueryAsync<Photoshoots>("Select * from " + TableName + " where photoshoot_id = 0 OR product_shoot_status_id = 0 ;");
+                    result = await conn.QueryAsync<Photoshoots>("Select * from " + product_photoshoots + " where photoshoot_id = 0 OR product_shoot_status_id = 0 ;");
                 }
                 return result.ToList();
             }
@@ -197,7 +199,7 @@ namespace badgerApi.Interfaces
         public async Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where)
         {
             QueryHelper qHellper = new QueryHelper();
-            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, TableName, where);
+            string UpdateQuery = qHellper.MakeUpdateQuery(ValuePairs, product_photoshoots, where);
             using (IDbConnection conn = Connection)
             {
                 var result = await conn.QueryAsync(UpdateQuery);
@@ -219,11 +221,11 @@ namespace badgerApi.Interfaces
             string sQuery = "";
             if (Limit > 0)
             {
-                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2  Limit " + Limit.ToString() + " ;";
+                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status, p.vendor_id FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2  Limit " + Limit.ToString() + " ;";
             }
             else
             {
-                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2; ";
+                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status, p.vendor_id FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2; ";
             }
 
             using (IDbConnection conn = Connection)
@@ -438,6 +440,31 @@ namespace badgerApi.Interfaces
 
             }
 
+        }
+
+        public async Task<SmallestItem> GetSmallestSizeItem(int po_id, int vendor_id, int product_id)
+        {
+            string query = @"SELECT poli.line_item_id, poli.po_id,poli.vendor_id,poli.sku,sku.sku_id,poli.product_id
+                            FROM purchase_order_line_items poli
+                            JOIN sku ON poli.sku = sku.sku" +
+                           $" WHERE poli.po_id = {po_id} AND poli.vendor_id = {vendor_id} AND poli.product_id = {product_id} " +
+                           @" ORDER BY poli.sku ASC
+                            LIMIT 1";
+            using (IDbConnection conn = Connection)
+            {
+                return await conn.QueryFirstOrDefaultAsync<SmallestItem>(query);
+            }
+        }
+
+        public async Task<IEnumerable<SmallestItem>> GetSmallestSkuByProduct(List<int> productIds)
+        {
+            string query = $"SELECT MIN(sk1.sku) AS sku,sku_id,sk1.vendor_id,sk1.product_id FROM `productdb`.`sku` sk1 " +
+                            $"WHERE sk1.product_id IN({string.Join(',', productIds)}) " +
+                            "GROUP BY sk1.vendor_id,sk1.product_id ";
+            using (IDbConnection conn = Connection)
+            {
+                return await conn.QueryAsync<SmallestItem>(query);
+            }
         }
     }
 }

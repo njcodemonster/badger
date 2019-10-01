@@ -24,7 +24,7 @@ namespace badgerApi.Interfaces
         Task<bool> AddVendorEventAsync(int vendor_id,int eventtype, int reffrenceId, int userID, string description, double createdat, string tableName);
         Task<bool> AddItemEventAsync(int item_id, int barcode, int event_type_id, int reffrence_id, string description, int userID, double createdat, string tableName);
         Task<int> AddEventAsync(EventModel eventModel);
-        
+        Task<int> AddEventAsync(IEnumerable<EventModel> eventModels);
     }
     public class EventsRepo : IEventRepo
     {
@@ -124,6 +124,27 @@ namespace badgerApi.Interfaces
             catch (Exception ex)
             {
                 return 0;
+            }
+        }
+
+        public async Task<int> AddEventAsync(IEnumerable<EventModel> eventModels)
+        {
+            string query = string.Empty;
+            foreach (var eventModel in eventModels)
+            {
+                var eventTypeModel = GetEventTypeByName(eventModel.EventName);
+                var eventNote = eventTypeModel.EventDescription
+                    .Replace("%%userId%%", eventModel.UserId.ToString())
+                    .Replace("%%entityId%%", eventModel.EventNoteId > 0 ? eventModel.EventNoteId.ToString() : eventModel.EntityId.ToString());
+                eventModel.EventNotes = eventNote;
+                eventModel.EventId = eventTypeModel.EventId;
+                query += "insert into " + eventModel.Table + " values (null," + eventModel.EntityId + "," + eventModel.EventId + "," + eventModel.RefrenceId + ",\"" + eventModel.EventNotes + "\"," + eventModel.UserId + "," + eventModel.CreatedAt + "); ";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                await conn.ExecuteAsync(query);
+                return 1;
             }
         }
 
