@@ -837,7 +837,7 @@ $(document).on('click', ".remove_tracking", function () {
             processData: false
         }).always(function (data) {
             console.log(data);
-            if (data == true) {
+            if (data == "true") {
                 $(".poTracking#" + track_id).parent().remove();
             }
         });
