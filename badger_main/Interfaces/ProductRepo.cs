@@ -887,7 +887,7 @@ namespace badgerApi.Interfaces
         public async Task<Object> GetProductsbyVendorAutoSuggest(int vendor_id, string productName)
         {
             dynamic vendorDetails = new ExpandoObject();
-            string sQuery = "SELECT product_id as value, product_name as label FROM product WHERE vendor_id=" + vendor_id + " and product_name LIKE '%" + productName + "%';";
+            string sQuery = "SELECT product_id as value, CONCAT(product_name, ' (', sku_family, ')')   as label FROM product WHERE vendor_id=" + vendor_id + " and product_name LIKE '%" + productName + "%';";
             using (IDbConnection conn = Connection)
             {
                 vendorDetails = await conn.QueryAsync<object>(sQuery);

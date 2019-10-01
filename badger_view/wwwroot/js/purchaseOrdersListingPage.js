@@ -1170,6 +1170,8 @@ function purchaseOrderData(data) {
                 var quantityUnits = 0;
                 var subCost = 0;
                 var styles = 0;
+                $("#itemsTable").empty();
+                $("#headingList").empty();
                 jQuery.each(it, function (i, dataNew) {
                     if (dataNew.quantity > 0) {
                         quantityUnits += dataNew.quantity;

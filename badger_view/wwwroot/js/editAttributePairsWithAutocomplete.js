@@ -41,11 +41,11 @@ $(document).ready(function () {
                 brandProducts[val.product_id] = { value: val.vendor + ' - ' + val.title + ' - ' + val.value };
             })
 
-            $('.productAutoCompleteList .bootstrap-tagsinput > input').autocomplete({
+            $('.productAutoCompleteList .bootstrap-tagsinput > input').autocompleteCustom({
                 lookup: brandProductSKU
             });
 
-            $('#tagSearchRow .bootstrap-tagsinput > input').autocomplete({
+            $('#tagSearchRow .bootstrap-tagsinput > input').autocompleteCustom({
                 lookup: window.AllTagsList
             });
 
@@ -84,6 +84,7 @@ $(document).ready(function () {
 
         }
     });
+    $('#StyleSubType').next().css("display", "block");
 
     if (selectedProductCategories != null || selectedProductCategories != "") {
         var selectProductCategories = JSON.parse(selectedProductCategories);
@@ -118,7 +119,7 @@ $(document).ready(function () {
 
         });
 
-        $('#autocomplete').autocomplete({
+        $('#autocompleteCustom').autocompleteCustom({
             lookup: tagsforsearch
         });
     }
@@ -147,7 +148,7 @@ $(document).ready(function () {
         myself.add(product_text);
         $('#tagSearchRow .bootstrap-tagsinput input').val('');
         if ($("#tagsDataId-" + attribute_id).prop("checked") == false) {
-            $(".autocomplete-suggestions").css("display", "none");
+            $(".autocompleteCustom-suggestions").css("display", "none");
             //$("#tagsDataId-" + attribute_id).prop("checked", true);
             $("#tagsDataId-" + attribute_id).click();
         }
@@ -158,27 +159,27 @@ $(document).ready(function () {
 
         skuAndProductSearch = 1;
         tagSearch = 0;
-        $('.autocomplete-suggestions').css('width', '62%');
+        $('.autocompleteCustom-suggestions').css('width', '62%');
 
 
     })
 
     $(document).on("keypress click", "#OtherColorsRow .bootstrap-tagsinput input", function () {
         skuAndProductSearch = 2;
-        $('.autocomplete-suggestions').css('width', '62%');
+        $('.autocompleteCustom-suggestions').css('width', '62%');
 
     })
 
     $(document).on("keypress click", "#tagSearchRow .bootstrap-tagsinput input", function () {
         skuAndProductSearch = 3;
-        $('.autocomplete-suggestions').css('width', '62%');
+        $('.autocompleteCustom-suggestions').css('width', '62%');
 
     })
 
-    $(document).on("keypress click", "#autocomplete", function () {
+    $(document).on("keypress click", "#autocompleteCustom", function () {
         skuAndProductSearch = 0;
         tagSearch = 1;
-        $('.autocomplete-suggestions').css('width', '16%');
+        $('.autocompleteCustom-suggestions').css('width', '16%');
 
     })
 
@@ -294,11 +295,11 @@ function GetCategoriesAjax() {
 
 
 /**
- *  Ajax Autocomplete for jQuery, version 1.2.7
+ *  Ajax autocompleteCustom for jQuery, version 1.2.7
  *  (c) 2013 Tomas Kirda
  *
- *  Ajax Autocomplete for jQuery is freely distributable under the terms of an MIT-style license.
- *  For details, see the web site: http://www.devbridge.com/projects/autocomplete/jquery/
+ *  Ajax autocompleteCustom for jQuery is freely distributable under the terms of an MIT-style license.
+ *  For details, see the web site: http://www.devbridge.com/projects/autocompleteCustom/jquery/
  *
  */
 (function (e) {
@@ -324,7 +325,7 @@ function GetCategoriesAjax() {
                 noCache: !1,
                 onSearchStart: c,
                 onSearchComplete: c,
-                containerClass: "autocomplete-suggestions",
+                containerClass: "autocompleteCustom-suggestions",
                 tabDisabled: !1,
                 dataType: "text",
                 lookupFilter: function (a, b, c) {
@@ -349,8 +350,8 @@ function GetCategoriesAjax() {
         this.suggestionsContainer = null;
         this.options = e.extend({}, c, b);
         this.classes = {
-            selected: "autocomplete-selected",
-            suggestion: "autocomplete-suggestion"
+            selected: "autocompleteCustom-selected",
+            suggestion: "autocompleteCustom-suggestion"
         };
         this.initialize();
         this.setOptions(b)
@@ -366,7 +367,7 @@ function GetCategoriesAjax() {
         }
     };
     g.utils = h;
-    e.Autocomplete = g;
+    e.autocompleteCustom = g;
     g.formatResult = function (a, b) {
         var c = "(" + b.replace(RegExp("(\\/|\\.|\\*|\\+|\\?|\\||\\(|\\)|\\[|\\]|\\{|\\}|\\\\)", "g"), "\\$1") + ")";
         return a.value.replace(RegExp(c, "gi"), "<strong>$1</strong>")
@@ -379,7 +380,7 @@ function GetCategoriesAjax() {
                 c = a.classes.selected,
                 d = a.options,
                 f;
-            a.element.setAttribute("autocomplete", "off");
+            a.element.setAttribute("autocompleteCustom", "off");
             a.killerFn = function (b) {
                 0 === e(b.target).closest("." + a.options.containerClass).length && (a.killSuggestions(), a.disableKillerFn())
             };
@@ -387,30 +388,30 @@ function GetCategoriesAjax() {
             a.suggestionsContainer = g.utils.createNode('<div class="' + d.containerClass + '" style="position: absolute; display: none;"></div>');
             f = e(a.suggestionsContainer);
             f.appendTo(d.appendTo).width(d.width);
-            f.on("mouseover.autocomplete", b, function () {
+            f.on("mouseover.autocompleteCustom", b, function () {
                 a.activate(e(this).data("index"))
             });
-            f.on("mouseout.autocomplete", function () {
+            f.on("mouseout.autocompleteCustom", function () {
                 a.selectedIndex = -1;
                 f.children("." + c).removeClass(c)
             });
-            f.on("click.autocomplete", b, function () {
+            f.on("click.autocompleteCustom", b, function () {
                 //a.select(e(this).data("index"), !1)
             });
             a.fixPosition();
-            if (window.opera) a.el.on("keypress.autocomplete", function (b) {
+            if (window.opera) a.el.on("keypress.autocompleteCustom", function (b) {
                 a.onKeyPress(b)
             });
-            else a.el.on("keydown.autocomplete", function (b) {
+            else a.el.on("keydown.autocompleteCustom", function (b) {
                 a.onKeyPress(b)
             });
-            a.el.on("keyup.autocomplete", function (b) {
+            a.el.on("keyup.autocompleteCustom", function (b) {
                 a.onKeyUp(b)
             });
-            a.el.on("blur.autocomplete", function () {
+            a.el.on("blur.autocompleteCustom", function () {
                 a.onBlur()
             });
-            a.el.on("focus.autocomplete", function () {
+            a.el.on("focus.autocompleteCustom", function () {
                 a.fixPosition()
             })
         },
@@ -451,10 +452,10 @@ function GetCategoriesAjax() {
                 }))
         },
         enableKillerFn: function () {
-            e(document).on("click.autocomplete", this.killerFn)
+            e(document).on("click.autocompleteCustom", this.killerFn)
         },
         disableKillerFn: function () {
-            e(document).off("click.autocomplete", this.killerFn)
+            e(document).off("click.autocompleteCustom", this.killerFn)
         },
         killSuggestions: function () {
             var a = this;
@@ -664,19 +665,19 @@ function GetCategoriesAjax() {
             return 1 === b.length ? a : c.substr(0, c.length - b[b.length - 1].length) + a
         },
         dispose: function () {
-            this.el.off(".autocomplete").removeData("autocomplete");
+            this.el.off(".autocompleteCustom").removeData("autocompleteCustom");
             this.disableKillerFn();
             e(this.suggestionsContainer).remove()
         }
     };
-    e.fn.autocomplete = function (a, b) {
-        return 0 === arguments.length ? this.first().data("autocomplete") : this.each(function () {
+    e.fn.autocompleteCustom = function (a, b) {
+        return 0 === arguments.length ? this.first().data("autocompleteCustom") : this.each(function () {
             var c =
                 e(this),
-                d = c.data("autocomplete");
+                d = c.data("autocompleteCustom");
             if ("string" === typeof a) {
                 if (d && "function" === typeof d[a]) d[a](b)
-            } else d && d.dispose && d.dispose(), d = new g(this, a), c.data("autocomplete", d)
+            } else d && d.dispose && d.dispose(), d = new g(this, a), c.data("autocompleteCustom", d)
         })
     }
 });
