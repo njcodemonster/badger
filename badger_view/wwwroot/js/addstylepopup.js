@@ -134,7 +134,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     if ($('#StyleType').val() == "1") {
         patt = new RegExp('^[a-zA-Z]+[0-9]{3}-{1}[0-9]+$');
     } else {
-        patt = new RegExp('^[a-zA-Z]+[0-9]{3}');
+        patt = new RegExp('^[a-zA-Z]+[0-9]{3}$');
     }
     var IsAllSkuValid = true;
     $('#po_input_fields_wrap .vendorSkuBox').each(function () {
@@ -182,6 +182,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     });
 
     if (!IsAllSkuValid) {
+        $('.loading').hide();
         return;
     }
 
