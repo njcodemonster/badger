@@ -38,7 +38,7 @@
                         $('#poVendor').removeClass("errorFeild");
                         $('.errorMsg').remove();
                         $('#poVendor').addClass('errorFeild');
-                        $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                        $('#poVendor').parents('.form-group').append("<span class='errorMsg' style='color:red;font-size: 11px;'>Vendor name Doesn't exists</span>")
                         $('.ui-autocomplete').empty().css("border", "0");
                         $('#NewPurchaseOrderButton, #EditPurchaseOrderButton').attr('disabled', true);
                         $('.auto_loader').hide();
@@ -1167,6 +1167,8 @@ function purchaseOrderData(data) {
             Debit = debCred[0]["debit"];
         }
         if (it.length > 0) {
+            $("#itemsTable").empty();
+            $("#headingList").empty();
             var quantityUnits = 0;
             var subCost = 0;
             var styles = 0;

@@ -472,7 +472,10 @@ namespace badger_view.Controllers
             string search = json.Value<string>("search");
             string columnName = json.Value<string>("columnname");
             object getVendorsNameAndId = new object();
-            getVendorsNameAndId = await _BadgerApiHelper.GenericGetAsync<List<object>>("/vendor/getvendorsbycolumnname/"+columnName+"/"+search);
+            JObject vendorSearchObj = new JObject();
+            vendorSearchObj.Add("search", search);
+            vendorSearchObj.Add("columnName", columnName);
+            getVendorsNameAndId = await _BadgerApiHelper.GenericPostAsync<object>(vendorSearchObj.ToString(Formatting.None), "/vendor/getvendorsbycolumnname");
             return JsonConvert.SerializeObject(getVendorsNameAndId);
         }
         /*
@@ -497,7 +500,7 @@ namespace badger_view.Controllers
         Date: 9-24-19 
         Action: sending vendor to badger api to check vendor name existence 
         URL: vendor/vendornameexist
-        Request: GET
+        Request: POST
         Input: vendorcode
         output: vendor exist massage
         */
@@ -506,7 +509,10 @@ namespace badger_view.Controllers
         public async Task<string> VendorNameExist([FromBody]   JObject json)
         {
             string vendorname = json.Value<string>("vendorname");
-            dynamic vendorCodeList = await _BadgerApiHelper.GenericGetAsync<Object>("/vendor/checkvendornameexist/" + vendorname);
+            JObject vendorSearchObj = new JObject();
+            vendorSearchObj.Add("vendorname", vendorname);
+            dynamic vendorCodeList = await _BadgerApiHelper.GenericPostAsync<object>(vendorSearchObj.ToString(Formatting.None), "/vendor/checkvendornameexist");
+
             return JsonConvert.SerializeObject(vendorCodeList);
         }
 

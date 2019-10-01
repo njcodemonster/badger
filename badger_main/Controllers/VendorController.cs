@@ -789,17 +789,20 @@ namespace badgerApi.Controllers
           Developer: Sajid Khan
           Date: 7-12-19 
           Action: Getting vendor name and id by search string
-          URL:  api/vendor/getvendorsbycolumnname/columnname/search
-          Request GET
-          Input: string columnName, string search 
+          URL:  api/vendor/getvendorsbycolumnname
+          Request POST
+          Input: [FromBody] string value
           output: list of vendor_name and id
         */
-        [HttpGet("getvendorsbycolumnname/{columnName}/{search}")]
-        public async Task<List<object>> GetVendorsByColumnName(string columnName, string search)
+        [HttpPost("getvendorsbycolumnname")]
+        public async Task<List<object>> GetVendorsByColumnName([FromBody] string value)
         {
             dynamic vendorDetails = new object();
             try
             {
+                dynamic VendorSearch = JsonConvert.DeserializeObject<Object>(value);
+                string columnName = VendorSearch.columnName;
+                string search = VendorSearch.search;
                 vendorDetails = await _VendorRepo.GetVendorsByColumnName(columnName, search);
 
             }
@@ -905,19 +908,21 @@ namespace badgerApi.Controllers
          Developer: Azeem Hassan
          Date: 7-11-19 
          Action: checking vendor existance
-         URL:  checkvendornameexist/vendorname
+         URL:  checkvendornameexist
          Request POST
-         Input: vendorcode
+         Input: [FromBody] string value
          output: vendor existance massage
        */
-        //GET: api/vendor/getvendornameandid
-        [HttpGet("checkvendornameexist/{vendorname}")]
-        public async Task<List<object>> CheckVendorNameExist(string vendorname)
+        //POST: api/vendor
+        [HttpPost("checkvendornameexist")]
+        public async Task<List<object>> CheckVendorNameExist([FromBody] string value)
         {
             dynamic vendorExist = new object();
             try
             {
-                vendorExist = await _VendorRepo.CheckVendorNameExist(vendorname);
+                dynamic VendorSearch = JsonConvert.DeserializeObject<Object>(value);
+                string searchName = VendorSearch.vendorname;
+                vendorExist = await _VendorRepo.CheckVendorNameExist(searchName);
 
             }
             catch (Exception ex)

@@ -209,7 +209,7 @@ function confirmationAlertBox(heading, description, callback) {
 }
 
 function confirmationAlertInnerBox(heading, description, callback) {
-    var html = '<div style="z-index: 9999;width: 30%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
+    var html = '<div style="z-index: 9999;width: 80%;left: 0;position: absolute;right: 0;margin: 0 auto;top: 10%;" role="alert" class="alert alert-success confirmationBox">' +
         '<h4 class="alert-heading">' + heading + '</h4>' +
         '<p>' + description + '</p>' +
         '<hr>' +
@@ -275,6 +275,9 @@ function emptyFeildValidation(id){
     });
     if (emailvalid == false)
         notvalid = false
+    if ($('#' + id +' .errorFeild').length > 0)
+        notvalid = false
+
     return notvalid;
 }
 

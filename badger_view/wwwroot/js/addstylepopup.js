@@ -10,14 +10,14 @@ $(document).on('click', ".DeletefromPOButton", function () {
 
     var jsonData = {};
     $('.poAlertMsg').append('<div class="spinner-border text-info"></div>');
-    
+
     if (SelectedProductID != null) {
         confirmationAlertInnerBox("Delete from PO", "Are you sure that you want to delete this record?", function (result) {
             var po_id = parseInt($('#newAddStyleForm #po_id').val());
             if (result == "yes") {
 
 
-               
+
                 var product_id = SelectedProductID;
                 $.ajax({
 
@@ -42,9 +42,9 @@ $(document).on('click', ".DeletefromPOButton", function () {
             else {
                 $('.text-info').hide();
             }
-        }) 
-        }
-                
+        })
+    }
+
     else {
         //error for selecting a product first to delete 
         alertBox('poAlertMsg', 'red', 'Please select a product');
@@ -84,7 +84,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
     var newVendorForm = $("#newAddStyleForm input");
 
 
-    if ($('.errorFeild').length > 0) {
+    if ($('#newAddStyleForm .errorFeild').length > 0) {
         $('.loading').hide();
         return false;
     }
@@ -92,7 +92,11 @@ $(document).on('click', ".AddNewStyleButton", function () {
         $('.loading').hide();
         return false;
     }
-
+    if ($('#newAddStyleForm #product_title').val().length < 4) {
+        alertBox('poAlertMsg', 'red', 'Style name cannot be less than 4 characters.', 5000);
+        $('.loading').hide();
+        return false;
+    }
 
     var jsonData = {};
     selectedProject = $('#ExistingProductSelect option:selected');
@@ -100,6 +104,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
         jsonData["product_id"] = SelectedProductID;
         IsUpdate = true;
     }
+
+
+
 
 
     jsonData["po_id"] = CurrentPOID;
@@ -114,8 +121,22 @@ $(document).on('click', ".AddNewStyleButton", function () {
     jsonData["IsLineItemExists"] = IsLineItemExists;
     jsonData["product_subtype_ids"] = productSubCategoriesAction;
     jsonData["sku_family"] = new_sku;
+    jsonData["UpdateVendorType"] = false;
 
+
+    if ($('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("vendorstyle") != $('#StyleType').val()) {
+        jsonData["UpdateVendorType"] = true;
+    }
     jsonData["vendor_style_sku"] = [];
+
+
+    var patt;
+    if ($('#StyleType').val() == "1") {
+        patt = new RegExp('^[a-zA-Z]+[0-9]{3}-{1}[0-9]+$');
+    } else {
+        patt = new RegExp('^[a-zA-Z]+[0-9]{3}');
+    }
+    var IsAllSkuValid = true;
     $('#po_input_fields_wrap .vendorSkuBox').each(function () {
         var style_sku = {};
         var styleVendorSize = $(this).find('#styleVendorSize').val();
@@ -133,20 +154,39 @@ $(document).on('click', ".AddNewStyleButton", function () {
         if (IsLineItemExists) {
             OriginalQty = $(this).find('#styleSkuQty').data().originalquantity;
         }
+
+
+
         style_sku["style_vendor_size"] = styleVendorSize;
         style_sku["style_size"] = styleSize;
         style_sku["style_sku"] = styleSku;
         style_sku["style_qty"] = styleSkuQty;
         style_sku["IsNewSku"] = IsNewSku;
         style_sku["original_qty"] = OriginalQty;
+
+
+        var value = styleSku;
+        if (patt.test(value) == false) {
+            $($(this).find('#styleSku')).addClass('errorFeild');
+            jsonData["vendor_style_sku"] = [];
+            IsAllSkuValid = false;
+            return false;
+        } else {
+            $($(this).find('#styleSku')).removeClass('errorFeild');
+        }
+
+
         if (styleVendorSize != null && styleSize != null && styleSku != null && styleSkuQty) {
             jsonData["vendor_style_sku"].push(style_sku);
         }
     });
 
- 
-    if (jsonData["vendor_style_sku"].length== 0) {
-        alertBox('poAlertMsg', 'red', 'Atleast one SKU is required.');
+    if (!IsAllSkuValid) {
+        return;
+    }
+
+    if (jsonData["vendor_style_sku"].length == 0) {
+        alertBox('poAlertMsg', 'red', 'Atleast one valid SKU is required.');
         $('.loading').hide();
         return;
 
@@ -164,9 +204,9 @@ $(document).on('click', ".AddNewStyleButton", function () {
             Qty = Qty + styleQty;
 
 
-        })
+        });
         if (Qty > totalQty) {
-            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', 'Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.', 5000);
             $('.loading').hide();
             return;
         }
@@ -182,13 +222,13 @@ $(document).on('click', ".AddNewStyleButton", function () {
             });
 
             if ((_TotalStyles[0].value + 1) > totalStyles) {
-                alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Style Count limit reached. Please increase total style in Purchase Order to proceed.');
+                alertBox('poAlertMsg', 'red', 'Total Styles Count limit reached. Please increase total styles count in Purchase Order to proceed.', 5000);
                 $('.loading').hide();
                 return;
             }
 
         }
-       
+
         var Qty = TotalQty[0].value;
         var style_sku = jsonData["vendor_style_sku"];
         $.each(style_sku, function (index, value) {
@@ -211,7 +251,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
         })
 
         if (Qty > totalQty) {
-            alertBox('poAlertMsg', 'red', 'Cannot add/update product , Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', 'Total Quantity limit reached. Please increase total quantity in Purchase Order to proceed.', 5000);
             $('.loading').hide();
             return;
         }
@@ -276,6 +316,7 @@ $(document).on('click', ".AddNewStyleButton", function () {
                     });
 
                 }
+
                 if (IsUpdate) {
                     alertBox('poAlertMsg', 'green', 'Style Updated successfully');
                 } else {
@@ -293,7 +334,13 @@ $(document).on('click', ".AddNewStyleButton", function () {
                     $("#collapse_" + CurrentPOID).html("");
                     $("#collapse_" + CurrentPOID).hide();
                     $('#modaladdstylec').modal('hide')
-                    $('a[data-poid=' + CurrentPOID + ']').trigger('click');
+
+                    if (window.location.href.indexOf('PurchaseOrders/Single') > -1) {
+
+                    } else {
+                        $('a[data-poid=' + CurrentPOID + ']').trigger('click');
+                    }
+
                 }
 
                 if (IsUpdate == false) {
@@ -358,7 +405,15 @@ $(document).on('click', ".AddNewStyleButton", function () {
 
                 }
 
+                if (window.location.href.indexOf('PurchaseOrders/Single') > -1) {
+                    var id = window.location.href.split('Single/')[1];
 
+                    if (id != undefined && id != "") {
+                        $('.loading').show();
+                        getSinglePurchaseOrder(id);
+                    }
+
+                }
             }
         $('.loading').hide();
     });
@@ -402,6 +457,7 @@ URL:
 Input: 
 Output: input fields show dynamic 
 */
+
 var dropdownlist;
 $(document).ready(function () {
     // $('.loading').hide();
@@ -424,18 +480,18 @@ $(document).ready(function () {
                     options += " <option value='" + sku_sizes[i].attribute_id + "'  " + selected + ">" + sku_sizes[i].attribute_display_name + "</option>";
                 }
             }
-            $(wrapper).append('<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><select type="text" class="form-control d-inline required" name="styleSize" id="styleSize">' + options + '</select></div> <div class="form-group col-md-3"><input style="text-transform: uppercase;" type="text" maxlength="7" value="' + lastsku + '" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="styleSkuQty" min="1" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+            $(wrapper).append('<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><select type="text" class="form-control d-inline required" name="styleSize" id="styleSize">' + options + '</select></div> <div class="form-group col-md-3"><input style="text-transform: uppercase;" type="text"  value="' + lastsku + '" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline " name="styleSkuQty" min="1" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
         }
 
     });
 
     $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-        if ($('#po_input_fields_wrap .vendorSkuBox').length==1) {
+        if ($('#po_input_fields_wrap .vendorSkuBox').length == 1) {
             alertBox('poAlertMsg', 'red', 'Atleast one item is required.');
         } else {
             e.preventDefault(); $(this).parent('div').remove(); x--;
         }
-      
+
     })
 
 
@@ -498,12 +554,12 @@ $(document).ready(function () {
                 });
             } else {
                 $('#tb_StyleNameSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_StyleNameSuggest').parent().find('.errorMsg').remove();
             }
-            
+
             if (request.term.length == 0) {
                 $('#tb_StyleNameSuggest').removeClass("errorFeild");
-                $('.errorMsg').remove();
+                $('#tb_StyleNameSuggest').parent().find('.errorMsg').remove();
                 $('#tb_StyleNameSuggest').val(""); // display the selected text
                 $('#tb_StyleNameSuggest').attr("data-val", "");
                 $('button[data-poid="' + selectedPurchaseOrderID + '"]').trigger("click");
@@ -513,7 +569,7 @@ $(document).ready(function () {
             // Set selection
             SelectedProductID = ui.item.value;
             GetProductDetails(CurrentVendorId, ui.item.value, CurrentPOID);
-            $('#tb_StyleNameSuggest').val(ui.item.label); // display the selected text
+            $('#tb_StyleNameSuggest').val(ui.item.label.split('(')[0]); // display the selected text
             $('#tb_StyleNameSuggest').attr("data-val", ui.item.value);
             // $('#selectuser_id').val(ui.item.value); // save selected id to input
             return false;
@@ -537,6 +593,15 @@ $(document).on('blur', "#styleSku", function (event) {
         $(this).removeClass('errorFeild')
     }
 
+});
+
+
+$(document).on('blur focusout', "#tb_StyleNameSuggest", function (event) {
+
+    if ($(this).val() == "") {
+        $(this).removeClass('errorFeild')
+        $('#tb_StyleNameSuggest').parent().find('.errorMsg').remove();
+    }
 });
 
 /*
@@ -565,11 +630,10 @@ $(document).on('click', "#AddItemButton", function () {
     $(".style_doc_section").empty();
 
     var vendor_type = $(this).data("vendorstyle");
-    $.when(GetCategories(), GetSkuSizes()).done(function (p1,p2)
-    {
+    $.when(GetCategories(), GetSkuSizes()).done(function (p1, p2) {
         if (vendor_type != null && vendor_type != "" && vendor_type != 3) {
-            $('#modaladdstylec #StyleType').val(parseInt(vendor_type)).change();
-            $('#modaladdstylec #StyleType').attr('disabled', '');
+            //$('#modaladdstylec #StyleType').val(parseInt(vendor_type)).change();
+            //$('#modaladdstylec #StyleType').attr('disabled', '');
 
         }
     })
@@ -589,24 +653,24 @@ $(document).on('click', "#AddItemButton", function () {
         });
 
         if (PoTotalStyleCount <= TotalStyleCount[0].value) {
-            alertBox('poAlertMsg', 'red', ' Total Style Count reached, Please increase total count in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', ' Total Styles Count reached, Please increase total styles in Purchase Order to proceed.', 5000);
             return;
         }
         if (PoTotalQty <= TotalQty[0].value) {
-            alertBox('poAlertMsg', 'red', ' Total Quantity reached, Please increase total quantity in Purchase Order to proceed.');
+            alertBox('poAlertMsg', 'red', ' Total Quantity reached, Please increase total quantity in Purchase Order to proceed.', 5000);
             return;
         }
     }
 
-   
+
     CurrentPOID = $(this).data("poid");
     CurrentVendorId = $(this).data("vendorid");
 
     var CurrentProductId = $(this).data("proid");
     var productImage = $(this).data("product_vendor_image");
     $('.poNumber').text($(this).data("ponumber"))
-  
-  
+
+
 
     $('.poVendor').text($(this).data("vendorcode"))
 
@@ -638,8 +702,6 @@ $(document).on('click', "#AddItemButton", function () {
     }
 
 
-    //  alert("Please wait for the data to load");
- 
     $('#newAddStyleForm #po_id').val(CurrentPOID);
     $('#newAddStyleForm #vendor_id').val(CurrentVendorId);
 
@@ -655,7 +717,7 @@ function GetProductDetails(vendor_id, product_id, po_id) {
     $('.loading').show();
     SelectedProductID = product_id;
     var CurrentProductId = product_id;
-   
+
     $.ajax({
         url: '/vendor/products/' + vendor_id + "/" + CurrentProductId + "/" + po_id,
         dataType: 'json',
@@ -865,14 +927,14 @@ function GetCategories() {
 function GetSkuSizes() {
     var SetSizes = $.Deferred();
     if (window.sku_sizes == null || window.sku_sizes == 0) {
-       $.ajax({
+        $.ajax({
             url: '/attributes/getskusizes',
             type: 'GET',
             contentType: 'application/json',
             processData: true,
 
         }).always(function (data) {
-       
+
             window.sku_sizes = data;
             SetSizes.resolve();
         });
@@ -907,7 +969,7 @@ function AppendSkuTextBoxes(Qtyboxes, styletype) {
                 }
             }
 
-            $("#po_input_fields_wrap").append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"> ' + btnHtml + ' <input type="text" class="form-control required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><select class="form-control d-inline  required" name="styleSize" id="styleSize">' + options + '</select></div> <div class="form-group col-md-3"><input type="text" maxlength="7" style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "" /></div> <div class="form-group col-md-3"><input type="number" class="form-control d-inline  required"  min="1" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+            $("#po_input_fields_wrap").append('<div class="pb-2 vendorSkuBox form-row"> <div class="form-group col-md-3"> ' + btnHtml + ' <input type="text" class="form-control required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><select class="form-control d-inline  required" name="styleSize" id="styleSize">' + options + '</select></div> <div class="form-group col-md-3"><input type="text"  style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "" /></div> <div class="form-group col-md-3"><input type="number" class="form-control d-inline  required"  min="1" name="styleSkuQty" id="styleSkuQty" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
 
         }
 
@@ -1234,7 +1296,7 @@ $(document).on('click', "#EditItemButton", function () {
 
         var sku_sizes = ["", "XS", "S", "M", "L"];
         for (x = 1; x < 5; x++) {
-            $(wrapper).append('<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSize" id="styleSize" placeholder="Size" value = "' + sku_sizes[x] + '" /></div> <div class="form-group col-md-3"><input type="text" maxlength="7" style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "' + new_sku + '-' + x + '" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSkuQty" id="styleSkuQty"  min="1" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
+            $(wrapper).append('<div class="pb-2  vendorSkuBox form-row"> <div class="form-group col-md-3"><input type="text" class="form-control d-inline required" name="styleVendorSize" id="styleVendorSize" placeholder="Vendor Size" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSize" id="styleSize" placeholder="Size" value = "' + sku_sizes[x] + '" /></div> <div class="form-group col-md-3"><input type="text"  style="text-transform: uppercase;" class="form-control d-inline  required" name="styleSku" id="styleSku" placeholder="SKU" value = "' + new_sku + '-' + x + '" /></div> <div class="form-group col-md-3"><input type="text" class="form-control d-inline  required" name="styleSkuQty" id="styleSkuQty"  min="1" placeholder="Qty" /></div> <a href="#" class="remove_field">Remove</a> </div>'); // add input boxes.
 
         }
 

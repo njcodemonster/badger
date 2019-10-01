@@ -8,7 +8,7 @@
 @section Scripts {
     <script type="text/javascript">
         var selectedProductCategories =  '@Html.Raw(Json.Serialize(Model.productCategories))' ;
-   
+
     </script>
     <!--<script src="~/lib/bootstrap/dist/js/bootstrap-tagsinput.js"></script>-->
     <script src="~/js/common.js" asp-append-version="true"></script>
@@ -147,7 +147,24 @@
                             <td><!-- <i class="fa fa-plus addMorePoints" aria-hidden="true"></i>--></td>
                         </tr>
                     </table>
-                    @{ Html.RenderPartial("~/Views/Shared/AddFabric.cshtml"); }
+                    <div class="col-md-8">
+                        <form id="Fabric_form">
+                            <input id="tbH_ProductID" hidden type="text" />
+                            <input id="tbH_AttributeID" hidden type="text" />
+                            <div class="form-row">
+                                <div class="form-group col-md-11" id="div_fabricSuggest">
+                                    <label>Find Existing fabric</label>   <a href="#" id="addnewFabric" class="h4 col-md-11">+</a>
+                                    <input type="text" class="form-control d-inline-block autocomplete" id="tb_fabricSuggest">
+                                </div>
+                            </div>
+
+                            <div id="div_fabricInputGroup" class="form-inline justify-content-center">
+                                <div class="form-group col-md-12 fabricHeading" style="padding-left: 0;"><label for="tb_fabricName"> Fabric Name:</label></div><div class="form-inline col-md-3"></div>
+                                <div class="form-row UpdateFabricGroup" style="display:none;">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
