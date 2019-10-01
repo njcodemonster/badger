@@ -125,7 +125,7 @@
         Input:any keypress
         output: true/false
     */
-    $("#poTotalQuantity,#poSubtotal,#poShipping").on("keydown", function (event) {
+    $("#poSubtotal,#poShipping").on("keydown", function (event) {
         if ($(this).val().indexOf('.') > -1 && event.which == 190) {
             return false;
         }
@@ -139,7 +139,7 @@
        Input:any keypress
        output: true/false
    */
-    $("#poTotalStyles,.poTracking").on("keydown", function (event) {
+    $("#poTotalQuantity,#poTotalStyles,.poTracking").on("keydown", function (event) {
         return isNumber(event);
     });
 
