@@ -385,6 +385,7 @@ $(document).on("change", ".item_barcode", function (e) {
             //alertInnerBox('message-' + po_id, 'red', 'The barcode you entered matched a size "' + currentBarcode.size.toUpperCase() + '" but you are trying to use it for an "' + size.toUpperCase() + '". Are you sure you want to continue?  ');
             debugger;
             confirmationBox(po_id, "", "The barcode you entered matched a size " + currentBarcode.size.toUpperCase() + " but you are trying to use it for an " + size.toUpperCase() + ". Are you sure you want to continue? ", function (result) {
+                debugger;
                 console.log(result)
                 if (result == "yes") {
                     _self.removeClass('errorFeild');
@@ -396,7 +397,7 @@ $(document).on("change", ".item_barcode", function (e) {
                         contentType: 'application/json',
                     }).always(function (data) {
                         console.log(data);
-                        if (data == true) {
+                        if (data == 'true') {
                             _self.addClass('errorFeild');
                             alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
                             return false;
