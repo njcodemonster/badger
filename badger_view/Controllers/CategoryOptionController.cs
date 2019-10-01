@@ -26,22 +26,17 @@ namespace badger_view.Controllers
         private String S3bucket = "";
         private String S3folder = "";
         private ILoginHelper _LoginHelper;
-        public CategoryOptionController(IConfiguration config, ILoginHelper LoginHelper)
+        public CategoryOptionController(IConfiguration config, ILoginHelper LoginHelper,BadgerApiHelper badgerApiHelper)
         {
             _LoginHelper = LoginHelper;
             _config = config;
             UploadPath = _config.GetValue<string>("UploadPath:path");
             S3bucket = _config.GetValue<string>("S3config:Bucket_Name");
             S3folder = _config.GetValue<string>("S3config:Folder");
+            _BadgerApiHelper = badgerApiHelper;
 
         }
-        private void SetBadgerHelper()
-        {
-            if (_BadgerApiHelper == null)
-            {
-                _BadgerApiHelper = new BadgerApiHelper(_config);
-            }
-        }
+
         /*
        Developer: Rizwan Ali
        Date: 8-25-19 
@@ -53,7 +48,6 @@ namespace badger_view.Controllers
         public async Task<IActionResult> Index()
         {
             CategoryOptionPage categoryOption = new CategoryOptionPage();
-            SetBadgerHelper();
             ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<Categories>>("/CategoryOption/SubCategoryAll/");
             categoryOption = await _BadgerApiHelper.GenericGetAsync<CategoryOptionPage>("/CategoryOption/CategoryOptionPage/");
             ViewBag.selected = 0;
@@ -70,7 +64,6 @@ namespace badger_view.Controllers
         public async Task<IActionResult> GetTagsSubCategoryWise(string id)
         {
             CategoryOptionPage categoryOption = new CategoryOptionPage();
-            SetBadgerHelper();
             if (id == "0")
             {
                 ViewBag.SubCats = await _BadgerApiHelper.GenericGetAsync<IEnumerable<Categories>>("/CategoryOption/SubCategoryAll/");
@@ -100,7 +93,6 @@ namespace badger_view.Controllers
         [HttpGet("categoryoption/getParentCategory/")]
         public async Task<Object> GetParentCategory()
         {
-            SetBadgerHelper();
             dynamic ParentCategory = new ExpandoObject();
             ParentCategory.vendorProducts = await _BadgerApiHelper.GenericGetAsync<object>("/CategoryOption/getParentCategory/");
             return JsonConvert.SerializeObject(ParentCategory);
@@ -119,7 +111,6 @@ namespace badger_view.Controllers
         [HttpPost("/Category/Create")]
         public async Task<String> CreateNewCategory([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             string ParentCategoryID = string.Empty;
             // add new Parent Category in categories table
             JObject cat = new JObject();
@@ -147,7 +138,6 @@ namespace badger_view.Controllers
         [HttpPost("categoryoption/updateattributes/")]
         public async Task<string> UpdateAttributes([FromBody]   JObject json)
         {
-            SetBadgerHelper();
             int category_id = json.Value<Int32>("category_id");
             JArray added = json.Value<JArray>("tag_added");
             JArray newAdded = new JArray();
@@ -197,7 +187,6 @@ namespace badger_view.Controllers
         [HttpGet("categoryoption/GetCategories")]
         public async Task<List<Categories>> GetAllCategories()
         {
-            SetBadgerHelper();
             var CategoryList = await _BadgerApiHelper.GenericGetAsync<List<Categories>>("/categories/list");
             return CategoryList;
         }

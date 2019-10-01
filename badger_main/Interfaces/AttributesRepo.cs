@@ -55,7 +55,7 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<Attributes>(NewAttribute);
+                var result = conn.Insert<Attributes>(NewAttribute);
                 return result.ToString();
             }
         }

@@ -20,8 +20,6 @@ $(document).ready(function () {
            var jsonData = {};
                jsonData["columnname"] = 'vendor_code';
                jsonData["search"] = request.term;
-               console.log(jsonData);
-
             if (request.term.length > 1) {
                 $.ajax({
                     url: "/vendor/autosuggest/",
@@ -37,8 +35,8 @@ $(document).ready(function () {
         },
         select: function (event, ui) {
             // Set selection
-            console.log(ui.item.label);
-            console.log(ui.item.value);
+            //console.log(ui.item.label);
+            //console.log(ui.item.value);
             return false;
         },
         focus: function (event, ui) {
@@ -51,7 +49,7 @@ $(document).ready(function () {
                  var jsonData = {};
                  jsonData["columnname"] = 'vendor_name';
                  jsonData["search"] = request.term;
-                 console.log(jsonData);
+                 //console.log(jsonData);
 
                  if (request.term.length > 1) {
                      $.ajax({
@@ -112,6 +110,7 @@ $(document).on('click', "#NewVendorButton", function () {
     $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
+        $('.errorFeild:first').focus()
         return false;
     }
     if ($('#vendorZip').val().length < 5) {
@@ -199,7 +198,7 @@ $(document).on('click', "#NewVendorButton", function () {
                 ]).draw();
                 var table = $('#vendorListingArea').DataTable();
                 table.page('last').draw('page');
-                //alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
+                alertBox('vendorAlertMsg', 'green', 'Vendor inserted successfully');
 
                 $('#newVendorModal').modal('hide');
 
@@ -325,6 +324,7 @@ $(document).on('click', "#EditVendorButton", function () {
      $(this).attr('disabled', true);
     if (emptyFeildValidation('newVendorForm') == false) {
         $(this).attr('disabled', false);
+        $('.errorFeild:first').focus();
         return false;
     }
     if ($('#vendorZip').val().length < 5) {
@@ -762,7 +762,6 @@ $(document).on('blur', "#vendorCode", function (event) {
 });
 
 $(document).on('keydown', '#vendorNote,#vendorDec,#vendorNotes', function (e) {
-    console.log(this.value);
     if (e.which === 32 && e.target.selectionStart === 0) {
         return false;
     }

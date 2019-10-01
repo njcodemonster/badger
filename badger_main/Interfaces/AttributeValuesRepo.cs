@@ -53,7 +53,11 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<AttributeValues>(NewAttributeValue);
+                var result = conn.Insert<AttributeValues>(NewAttributeValue);
+
+                //var sQuery = "Select value_id from attribute_values where attribute_id=" + NewAttributeValue.attribute_id + " and product_id=" + NewAttributeValue.Product_id + "";
+                //var _NewAttributeValue = conn.QuerySingle<AttributeValues>(sQuery);
+
                 return result.ToString();
             }
         }
