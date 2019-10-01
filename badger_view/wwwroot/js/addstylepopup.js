@@ -363,7 +363,6 @@ $(document).on('click', ".AddNewStyleButton", function () {
                         var styleQty = parseInt(value.style_qty);
                         Qty = Qty + styleQty;
 
-
                     })
                     var calulationValuesJson = [{ "value": 1, "calculation_id": 6 }, { "value": Qty, "calculation_id": 5 }];
                     $('button[data-poid="' + CurrentPOID + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues", calulationValuesJson);

@@ -1706,8 +1706,13 @@ namespace badger_view.Controllers
                 poLineItemUpdate.Add("line_item_ordered_quantity", json.Value<string>("line_item_ordered_quantity"));
                 poLineItemUpdate.Add("updated_by", Int32.Parse(loginUserId));
                 poLineItemUpdate.Add("updated_at", _common.GetTimeStemp());
+                poLineItemUpdate.Add("IsQtyIncreased",false);
+                poLineItemUpdate.Add("po_id", json.Value<string>("po_id"));
+                poLineItemUpdate.Add("originalQty", (json.Value<int>("line_item_ordered_quantity") +1 ));
 
-                updatePOLineItemID = await _BadgerApiHelper.GenericPutAsyncString<String>(poLineItemUpdate.ToString(Formatting.None), "/purchaseorderslineitems/updatespecific/" + id);
+                //updatePOLineItemID = await _BadgerApiHelper.GenericPutAsyncString<String>(poLineItemUpdate.ToString(Formatting.None), "/purchaseorderslineitems/updatespecific/" + id);
+                updatePOLineItemID = await _BadgerApiHelper.GenericPostAsyncString<String>(poLineItemUpdate.ToString(Formatting.None), "/product/updateLineitems");
+                updatePOLineItemID = "Success";
             }
             catch (Exception ex)
             {
