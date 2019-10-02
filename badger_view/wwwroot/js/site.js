@@ -43,6 +43,7 @@ $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
 
 
 $(document).ready(function () {
+    $('.loading').hide();
     $('#openpo').DataTable({ "aaSorting": [] });
     $('.datatable_js').DataTable({
         "columnDefs": [

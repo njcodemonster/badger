@@ -195,6 +195,18 @@ namespace badgerApi.Controllers
                 {
                     ValuesToUpdate.Add("updated_at", ProductToUpdate.updated_at.ToString());
                 }
+                if (ProductToUpdate.is_ready != null)
+                {
+                    if ((bool)ProductToUpdate.is_ready)
+                    {
+                        ValuesToUpdate.Add("is_ready", "1");
+                    }
+                    else
+                    {
+                        ValuesToUpdate.Add("is_ready", "0");
+                    }
+                    
+                }
 
                 await _ProductRepo.UpdateSpecific(ValuesToUpdate, "product_id=" + id);
 
