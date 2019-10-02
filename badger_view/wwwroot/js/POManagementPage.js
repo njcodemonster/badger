@@ -385,6 +385,7 @@ $(document).on("change", ".item_barcode", function (e) {
             //alertInnerBox('message-' + po_id, 'red', 'The barcode you entered matched a size "' + currentBarcode.size.toUpperCase() + '" but you are trying to use it for an "' + size.toUpperCase() + '". Are you sure you want to continue?  ');
             debugger;
             confirmationBox(po_id, "", "The barcode you entered matched a size " + currentBarcode.size.toUpperCase() + " but you are trying to use it for an " + size.toUpperCase() + ". Are you sure you want to continue? ", function (result) {
+                debugger;
                 console.log(result)
                 if (result == "yes") {
                     _self.removeClass('errorFeild');
@@ -396,7 +397,7 @@ $(document).on("change", ".item_barcode", function (e) {
                         contentType: 'application/json',
                     }).always(function (data) {
                         console.log(data);
-                        if (data == true) {
+                        if (data == 'true') {
                             _self.addClass('errorFeild');
                             alertInnerBox('message-' + po_id, 'red', 'Item barcode has already exist - ' + barcode);
                             return false;
@@ -573,7 +574,7 @@ $(document).on("click", ".item_row_remove", function () {
                 jsonData["line_item_id"] = polineitem;
                 quantity = (quantity - 1);
                 jsonData["line_item_ordered_quantity"] = quantity;
-
+                jsonData["po_id"] = poid;
                 $.ajax({
                     url: "/purchaseorders/polineitemupdate/" + polineitem,
 
@@ -585,6 +586,27 @@ $(document).on("click", ".item_row_remove", function () {
                     console.log(data);
 
                     if (data == "Success") {
+
+                        var calulationValuesJson = $('button[data-poid="' + poid + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues");
+                        if (calulationValuesJson == "" || calulationValuesJson == null) {
+
+                            var calulationValuesJson = [{ "value": 1, "calculation_id": 6 }, { "value":1, "calculation_id": 5 }];
+                            $('button[data-poid="' + poid + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues", calulationValuesJson);
+                        } else {
+
+                            var TotalQty = calulationValuesJson.filter(function (el) {
+                                return el.calculation_id == 5;
+                            });
+
+                            var TotalStyleCount = calulationValuesJson.filter(function (el) {
+                                return el.calculation_id == 6;
+                            });
+
+                            TotalQty[0].value -= 1;
+                            var finalJson = [TotalQty[0], TotalStyleCount[0]];
+                            $('button[data-poid="' + poid + '"][id=AddItemButton][class="btn btn-light btn-sm"]').data("calculationvalues", finalJson);
+                        }
+
                         $(".item_row_remove").each(function () {
                             if ($(this).attr('data-polineitem') == polineitem) {
                                 $(this).attr('data-quantity', quantity)

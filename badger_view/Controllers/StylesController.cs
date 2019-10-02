@@ -230,13 +230,12 @@ namespace badger_view.Controllers
 
             if (UpdateVendorType)
             {
-                Vendor vendor = new Vendor();
-                vendor.vendor_type = 3;
-                vendor.updated_by = user_id;
-                vendor.active_status = 1;
-                vendor.updated_at = _common.GetTimeStemp();
-                String vendorStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(JsonConvert.SerializeObject(vendor), "/vendor/update/" + vendor_id.ToString());
+                JObject _vendor = new JObject();
+                _vendor.Add("vendor_type", 3);
+                _vendor.Add("updated_by", user_id);
+                _vendor.Add("updated_at", _common.GetTimeStemp());
 
+                String vendorStatus = await _BadgerApiHelper.GenericPutAsyncString<String>(_vendor.ToString(Formatting.None), "/vendor/updatespecific/" + vendor_id.ToString());
 
             }
 

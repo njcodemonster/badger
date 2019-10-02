@@ -374,10 +374,12 @@ namespace badgerApi.Interfaces
             Int32 shootstatus = 0;
             using (IDbConnection conn = Connection)
             {
-                try{ 
+                try
+                {
                     shootstatus = conn.QueryAsync<Int32>("select product_shoot_status_id from product_photoshoots where product_id= " + id).Result.First();
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     return shootstatus;
                 }
             }
@@ -400,7 +402,7 @@ namespace badgerApi.Interfaces
             {
                 try
                 {
-                    photoshootModel  = conn.QueryAsync<Int32>("SELECT photoshoots.model_id FROM `photoshoots`, `product_photoshoots` WHERE  `product_photoshoots`.photoshoot_id = `photoshoots`.photoshoot_id    AND  `product_photoshoots`.`product_id` =  " + id).Result.First();
+                    photoshootModel = conn.QueryAsync<Int32>("SELECT photoshoots.model_id FROM `photoshoots`, `product_photoshoots` WHERE  `product_photoshoots`.photoshoot_id = `photoshoots`.photoshoot_id    AND  `product_photoshoots`.`product_id` =  " + id).Result.First();
                 }
                 catch (Exception ex)
                 {
@@ -481,7 +483,7 @@ namespace badgerApi.Interfaces
             IEnumerable<ProductCategories> _productCategories;
             using (IDbConnection conn = Connection)
             {
-                _productCategories = await conn.QueryAsync<ProductCategories>("SELECT pc.product_category_id ,pc.category_id FROM product_categories pc WHERE pc.product_id ="+ productID);
+                _productCategories = await conn.QueryAsync<ProductCategories>("SELECT pc.product_category_id ,pc.category_id FROM product_categories pc WHERE pc.product_id =" + productID);
 
             }
             return _productCategories.ToList();
@@ -542,7 +544,17 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                String updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " where vendor_id='" + NewLineitem.vendor_id + "' and  sku='" + NewLineitem.sku + "' and  po_id = " + NewLineitem.po_id;
+                String updateQuery = "";
+                if ( NewLineitem.line_item_id ==0)
+                {
+                    updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " where vendor_id='" + NewLineitem.vendor_id + "' and  sku='" + NewLineitem.sku + "' and  po_id = " + NewLineitem.po_id;
+
+                }
+                else
+                {
+                   updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " where line_item_id=" + NewLineitem.line_item_id + "";
+
+                }
                 var result = await conn.QueryAsync(updateQuery);
                 return result.ToString();
             }
@@ -762,13 +774,13 @@ namespace badgerApi.Interfaces
                 int checkData = productPageDetail.Count();
                 if (checkData > 0)
                 {
-                    String InsertQuery = "update product_page_details set `product_detail_value` = \"" + value + "\", `updated_by` = "+ userid +", updated_at = "+dateTime+"  where `product_id` = " + product_id + " and `product_detail_type`  = " + product_detail_type;
+                    String InsertQuery = "update product_page_details set `product_detail_value` = \"" + value + "\", `updated_by` = " + userid + ", updated_at = " + dateTime + "  where `product_id` = " + product_id + " and `product_detail_type`  = " + product_detail_type;
                     await conn.QueryAsync<object>(InsertQuery);
                 }
                 else
                 {
                     String InsertQuery = "insert into product_page_details (`product_id`, `product_detail_type`, `product_detail_value`, `created_by`, `created_at`) " +
-                        "values (" + product_id + "," + product_detail_type + ", \"" + value + "\", " + userid + " , " + dateTime+")";
+                        "values (" + product_id + "," + product_detail_type + ", \"" + value + "\", " + userid + " , " + dateTime + ")";
                     var result = await conn.QueryAsync<object>(InsertQuery);
                 }
 
@@ -796,7 +808,7 @@ namespace badgerApi.Interfaces
                 IEnumerable<object> productPairWith = await conn.QueryAsync<object>(sQuery);
                 int checkData = productPairWith.Count();
                 if (checkData > 0)
-                { 
+                {
                 }
                 else
                 {
@@ -809,7 +821,7 @@ namespace badgerApi.Interfaces
             return toReturn;
         }
 
-        
+
         /*
        Developer: Mohi
        Date: 8-16-19 
@@ -844,7 +856,7 @@ namespace badgerApi.Interfaces
             return toReturn;
         }
 
-        
+
         /*
         Developer: Mohi
         Date: 8-16-19 

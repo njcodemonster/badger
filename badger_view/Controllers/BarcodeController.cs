@@ -77,7 +77,6 @@ namespace badger_view.Controllers
             bar.Add("barcode_from", barcode_from);
             bar.Add("barcode_to", barcode_to);
             isValidate = await _BadgerApiHelper.GenericPostAsyncString<string>(bar.ToString(Formatting.None), "/Barcode/validate");
-
             return Convert.ToBoolean(isValidate);
         }
 

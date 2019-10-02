@@ -125,7 +125,7 @@
         Input:any keypress
         output: true/false
     */
-    $("#poTotalQuantity,#poSubtotal,#poShipping").on("keydown", function (event) {
+    $("#poSubtotal,#poShipping").on("keydown", function (event) {
         if ($(this).val().indexOf('.') > -1 && event.which == 190) {
             return false;
         }
@@ -139,7 +139,7 @@
        Input:any keypress
        output: true/false
    */
-    $("#poTotalStyles,.poTracking").on("keydown", function (event) {
+    $("#poTotalQuantity,#poTotalStyles,.poTracking").on("keydown", function (event) {
         return isNumber(event);
     });
 
@@ -837,7 +837,7 @@ $(document).on('click', ".remove_tracking", function () {
             processData: false
         }).always(function (data) {
             console.log(data);
-            if (data == true) {
+            if (data == "true") {
                 $(".poTracking#" + track_id).parent().remove();
             }
         });
@@ -1166,52 +1166,51 @@ function purchaseOrderData(data) {
             Credit = debCred[0]["credit"];
             Debit = debCred[0]["debit"];
         }
-        if (it.length > 0) {
-            $("#itemsTable").empty();
-            $("#headingList").empty();
-            var quantityUnits = 0;
-            var subCost = 0;
-            var styles = 0;
-            jQuery.each(it, function (i, dataNew) {
-                if (dataNew.quantity > 0) {
-                    quantityUnits += dataNew.quantity;
-                    styles++;
-                    subCost += dataNew.quantity * dataNew.product_cost;
-                    $("#itemsTable").append("<tr>");
-                    //$("#itemsTable").append("<td width = '60' > <img src=" + dataNew.product_vendor_image + " width='50' /></td>");
-                    var productImage = dataNew.product_vendor_image;
-                    if (productImage != null) {
-                        $("#itemsTable").append("<td width='60'><img src=" + window.location.origin + '/uploads/' + productImage + " width='50' /></td>");
-                    } else {
-                        $("#itemsTable").append("<td width='60'> </td>");
+            if (it.length > 0) {
+                var quantityUnits = 0;
+                var subCost = 0;
+                var styles = 0;
+                $("#itemsTable").empty();
+                $("#headingList").empty();
+                jQuery.each(it, function (i, dataNew) {
+                    if (dataNew.quantity > 0) {
+                        quantityUnits += dataNew.quantity;
+                        styles++;
+                        subCost += dataNew.quantity * dataNew.product_cost;
+                        $("#itemsTable").append("<tr>");
+                        //$("#itemsTable").append("<td width = '60' > <img src=" + dataNew.product_vendor_image + " width='50' /></td>");
+                        var productImage = dataNew.product_vendor_image;
+                        if (productImage != null) {
+                            $("#itemsTable").append("<td width='60'><img src=" + window.location.origin + '/uploads/' + productImage + " width='50' /></td>");
+                        } else {
+                            $("#itemsTable").append("<td width='60'> </td>");
+                        }                       
+                        $("#itemsTable").append("<td class='h6'>" + dataNew.product_name + " (DP007) in " + dataNew.vendor_color_name + " - " + dataNew.sku + "</td>");
+                        $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='AddItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber='" + data["purchase_order"][0].vendor_po_number + "' data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id+">Edit Style</a></td>");
+                        $("#itemsTable").append("<td><a href='/Product/EditAttributes/" + dataNew.product_id +"'"+ " class='h6 text-primary'>Edit Attributes</a></td>");
+                        $("#itemsTable").append("<td><a href='#' class='h6 text-danger'>Remove</a></td>");
+                        $("#itemsTable").append("</tr>");
                     }
-                    $("#itemsTable").append("<td class='h6'>" + dataNew.product_name + " (DP007) in " + dataNew.vendor_color_name + " - " + dataNew.sku + "</td>");
-                    $("#itemsTable").append("<td><a href='#' class='h6 text-success' id='AddItemButton' data-poid=" + data["purchase_order"][0].po_id + " data-ponumber='" + data["purchase_order"][0].vendor_po_number + "' data-vendorid=" + data["vendor"][0].vendor_id + " data-proid=" + dataNew.product_id + ">Edit Style</a></td>");
-                    $("#itemsTable").append("<td><a href='/Product/EditAttributes/" + dataNew.product_id + "'" + " class='h6 text-primary'>Edit Attributes</a></td>");
-                    $("#itemsTable").append("<td><a href='#' class='h6 text-danger'>Remove</a></td>");
-                    $("#itemsTable").append("</tr>");
+                });
+                subCost = subCost - Debit + Credit;
+                if (Debit == null && Credit == null) {
+                    $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost);
                 }
-            });
-            debugger;
-            subCost = subCost - Debit + Credit;
-            if (Debit == null && Credit == null) {
-                $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost);
+                else {
+                    $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost + " (Amount Adjusted: Credit $" + Credit + ", Debit $" + Debit+")");
+                }
             }
-            else {
-                $("#headingList").append("Calculated totals:<br />" + styles + " styles, " + quantityUnits + " units, Total cost $" + subCost + " (Amount Adjusted: Credit $" + Credit + ", Debit $" + Debit+")");
-            }
+            $("#newPurchaseOrderForm #po_status").val(podata.po_status);
+            $("#newPurchaseOrderForm #photos").val(podata.photos);
+            $("#newPurchaseOrderForm #remaining").val(podata.remaining);
         }
-        $("#newPurchaseOrderForm #po_status").val(podata.po_status);
-        $("#newPurchaseOrderForm #photos").val(podata.photos);
-        $("#newPurchaseOrderForm #remaining").val(podata.remaining);
-    }
-    window.notes = "";
-    var note = data['notes'];
-    if (note.length > 0) {
-        note = data['notes'][0].note;
-        window.notes = note;
-        $("#newPurchaseOrderForm #poNotes").val(note);
-    }
+        window.notes = "";
+        var note = data['notes'];
+        if (note.length > 0) {
+            note = data['notes'][0].note;
+            window.notes = note;
+            $("#newPurchaseOrderForm #poNotes").val(note);
+        }
 
     var originalpo = data['originalpo'];
     var shipmentinvoice = data['shipmentinvoice'];
