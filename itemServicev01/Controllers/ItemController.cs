@@ -596,9 +596,10 @@ namespace itemService.Controllers
         output: string
         */
         [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
-        public async Task<string> UpdateProductItemForPhotoshoot([FromBody] List<SmallestItem> value, int status)
+        public async Task<ResponseModel> UpdateProductItemForPhotoshoot([FromBody] List<SmallestItem> value, int status)
         {
-            return await _ItemRepository.UpdateBulkSkus(value.Select(x => x.sku_id).ToList(), status);
+            var response = await _ItemRepository.UpdateBulkSkus(value.Select(x => x.sku_id).ToList(), status);
+            return ResponseHelper.GetResponse(response);
         }
 
 
@@ -983,5 +984,11 @@ namespace itemService.Controllers
             return ResponseHelper.GetResponse(item);
         }
 
+        [HttpGet("validatebarcode/{barcode}")]
+        public async Task<ResponseModel> ValidateBarcode(string barcode)
+        {
+            var response = await _ItemRepository.ValidateBarcode(barcode);
+            return ResponseHelper.GetResponse(response.ToString());
+        }
     }
 }

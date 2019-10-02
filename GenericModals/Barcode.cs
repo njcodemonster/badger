@@ -13,5 +13,6 @@ namespace GenericModals.Models
         public int barcode_to { get; set; }
 
         public double updated_at { get; set; }
+        public int barcode { get; set; }
     }
 }

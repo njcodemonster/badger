@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using badgerApi.Helper;
 using badgerApi.Interfaces;
+using GenericModals;
+using GenericModals.Extentions;
 using GenericModals.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -136,6 +138,26 @@ namespace badgerApi.Controllers
             return status.ToString();
         }
 
-
+        [HttpGet("validatebarcode/{barcode}")]
+        public async Task<ResponseModel> ValidateBarcode(string barcode)
+        {
+            bool status = false;
+            try
+            {
+                status = await _BarcodeRangeRepo.ValidateBarcode(barcode);
+                if (status)
+                {
+                    var response = await _ItemsHelper.GetAsync<string>("/item/validatebarcode/" + barcode);
+                    status = bool.Parse(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                status = false;
+                var logger = _loggerFactory.CreateLogger("internal_error_log");
+                logger.LogInformation("Problem happened in making new Parent Category with message" + ex.Message);
+            }
+            return ResponseHelper.GetResponse(status.ToString());
+        }
     }
 }

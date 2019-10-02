@@ -15,6 +15,8 @@ namespace GenericModals.Models
         public int updated_by { get; set; }
         public double created_at { get; set; }
         public double updated_at { get; set; }
+
+        [Write(false)]
         public List<ProductForPhotoshoot> products { get; set; }
     }
 

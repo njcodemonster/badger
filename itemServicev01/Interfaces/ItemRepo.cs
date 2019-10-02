@@ -50,6 +50,7 @@ namespace itemService.Interfaces
         Task<string> UpdateBulkSkus(List<int> skus, int status);
         Task<IEnumerable<SmallestItem>> GetSmallestItem(List<SmallestItem> items);
         Task<string> BulkUpdateBarcode(List<BarcodeUpdate> items);
+        Task<bool> ValidateBarcode(string barcode);
     }
     public class ItemRepo : ItemRepository
     {
@@ -971,7 +972,7 @@ namespace itemService.Interfaces
 
         public async Task<string> UpdateBulkSkus(List<int> skus, int status)
         {
-            string updateQuery = $"update item_status_id = {(status == 1 ? 6 : 1)}, updated_at = " + _common.GetTimeStemp() + $" where sku_id in ({string.Join(',', skus)})";
+            string updateQuery = $"UPDATE items SET item_status_id = {(status == 1 ? 6 : 1)}, updated_at = " + _common.GetTimeStemp() + $" where sku_id in ({string.Join(',', skus)})";
             using (IDbConnection conn = Connection)
             {
                 await conn.ExecuteAsync(updateQuery);
@@ -1132,6 +1133,17 @@ namespace itemService.Interfaces
                         conn.Close();
                     }
                 }
+            }
+        }
+
+        public async Task<bool> ValidateBarcode(string barcode)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string query = "SELECT Count(item_id) FROM items " +
+                                $"WHERE barcode = {barcode};";
+                var isExist = await conn.QueryFirstOrDefaultAsync<int?>(query);
+                return isExist < 1;
             }
         }
 

@@ -18,7 +18,7 @@ namespace badgerApi.Interfaces
         Task<bool> Validate(Barcode barcode);
         Task<bool> DeleteBarcode(int id);
         Task<string> CreateOrUpdate(Barcode barcode);
-
+        Task<bool> ValidateBarcode(string barcode);
     }
     public class BarcodeRangeRepo : iBarcodeRangeRepo
     {
@@ -152,6 +152,17 @@ namespace badgerApi.Interfaces
                 var a = await conn.QueryAsync<object>("delete from barcode_range where id="+id);
 
                 return true;
+            }
+        }
+
+        public async Task<bool> ValidateBarcode(string barcode)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string query = "SELECT id FROM barcode_range " +
+                                $"WHERE {barcode} BETWEEN barcode_from AND barcode_to LIMIT 1;";
+               var rangeFound = await conn.QueryFirstOrDefaultAsync<int>(query);
+                return rangeFound > 0;
             }
         }
     }

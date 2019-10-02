@@ -31,8 +31,8 @@ namespace badgerApi.Helper
         Task<T> GenericGetAsync<T>(String _call);
         Task<bool> DeleteItemByProduct(string product_id,string po_id);
         Task<object> GetItemIds(int poid);
-        Task<T> GetAsync<T>(string uri);
-        Task<TReturn> PostAsync<TReturn>(object json, string uri);
+        Task<T> GetAsync<T>(string uri) where T : class;
+        Task<TReturn> PostAsync<TReturn>(object json, string uri) where TReturn : class;
     }
     public class ItemsServiceHelper : IItemServiceHelper
     {
@@ -65,7 +65,7 @@ namespace badgerApi.Helper
 
         }
 
-        public async Task<T> GetAsync<T>(string uri)
+        public async Task<T> GetAsync<T>(string uri) where T : class
         {
             var client = new HttpClient();
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
@@ -79,7 +79,9 @@ namespace badgerApi.Helper
 
             var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
             ThorwException(responseData);
-            return JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings);
+            return CommonHelper.CommonHelper.IsJson(responseData.Data.ToString()) ?
+                JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings)
+                : responseData.Data as T;
         }
 
         private static void ThorwException(ResponseModel responseData)
@@ -384,7 +386,7 @@ namespace badgerApi.Helper
             return Convert.ToBoolean(data);
         }
 
-        public async Task<TReturn> PostAsync<TReturn>(object json, string uri)
+        public async Task<TReturn> PostAsync<TReturn>(object json, string uri) where TReturn : class
         {
             var client = new HttpClient();
             HttpResponseMessage response;
@@ -409,7 +411,9 @@ namespace badgerApi.Helper
             };
             var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
             ThorwException(responseData);
-            return JsonConvert.DeserializeObject<TReturn>(responseData.Data.ToString(), settings);
+            return CommonHelper.CommonHelper.IsJson(responseData.Data.ToString()) ?
+                JsonConvert.DeserializeObject<TReturn>(responseData.Data.ToString(), settings)
+                : responseData.Data as TReturn;
         }
 
     }

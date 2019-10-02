@@ -99,7 +99,7 @@ namespace badgerApi.Interfaces
 
                 if (PhotoshootExists == null || PhotoshootExists.Count() == 0)
                 {
-                    var result = await conn.InsertAsync<ProductPhotoshoots>(NewPhotoshoot);
+                    var result = conn.Insert<ProductPhotoshoots>(NewPhotoshoot);
                     return result.ToString();
                 }
                 else

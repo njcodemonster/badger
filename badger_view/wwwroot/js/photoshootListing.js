@@ -49,7 +49,11 @@ function getPhotoshootProducts(photoshootId) {
 /**********************************************************/
 
 
-var datatable_js_ps = $('.datatable_js_ps').DataTable();
+var datatable_js_ps = $('.datatable_js_ps').DataTable({
+    "columnDefs": [
+        { "orderable": false, "targets": 1 }
+    ]
+});
 
 
 /*
@@ -715,3 +719,43 @@ $(document).ready(function () {
     }
 });
 
+function ValidateBarcode(e) {
+    var barcode = $(e).val();
+    if (barcode && BarcodeLength(barcode)) {
+        $.ajax({
+            url: '/barcode/validatebarcode/' + barcode,
+            type: 'Get',
+            contentType: 'application/json',
+            success: function (data) {
+                BindValidationClass(data, e);
+            }
+        });
+    }
+    else {
+        BindValidationClass(false, e);
+    }
+}
+
+function BindValidationClass(data, e) {
+    if (data === "True") {
+        $(e).addClass('valid-input');
+        $(e).removeClass('valid-input-error');
+    }
+    else {
+        $(e).removeClass('valid-input');
+        $(e).addClass('valid-input-error');
+    }
+}
+
+function BarcodeLength(barcode) {
+    return barcode.length == 8;
+}
+
+function isOnlyNumbers(e) {
+    var numberRegex = new RegExp(/[0-9 -()+]+$/);
+    var value = $(e).val();
+    var isNumber = numberRegex.test(value);
+    if (!isNumber) {
+        $(e).val('');
+    }
+}
