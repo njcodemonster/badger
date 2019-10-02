@@ -123,14 +123,14 @@ namespace badgerApi.Interfaces
                 if (barcode.id == -1)
                 {
                     //Insert
-                    string InsertQuery = "insert into barcode_range (size,barcode_from,barcode_to) values ('" + barcode.size + "'," + barcode.barcode_from + "," + barcode.barcode_to + ")";
+                    string InsertQuery = "insert into barcode_range (size,barcode_from,barcode_to,created_by) values ('" + barcode.size + "'," + barcode.barcode_from + "," + barcode.barcode_to + "," + barcode.created_by + ")";
                     var InsertResult = await conn.QueryAsync<object>(InsertQuery);
                     return "true";
                 }
                 else
                 {
                     //Update
-                    string updateQuery = "update barcode_range set size='" + barcode.size + "' , barcode_from = " + barcode.barcode_from + " , barcode_to = " + barcode.barcode_to + " where id= " + barcode.id;
+                    string updateQuery = "update barcode_range set size='" + barcode.size + "' , barcode_from = " + barcode.barcode_from + " , barcode_to = " + barcode.barcode_to + " , updated_by = " + barcode.updated_by + " , updated_at = " + barcode.updated_at + " where id= " + barcode.id;
                     var updateResult = await conn.QueryAsync<object>(updateQuery);
                     return "true";
                 }
