@@ -5,19 +5,20 @@
 @model dynamic
 @section Scripts {
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
             if ($(".PhotoshootList").length == 0) {
                 $("#no_result").fadeIn(200);
             }
             var selected = $("#selectedPhotoshootId").val();
-            if (selected != "0"  ) {
-                $("#heading_" + selected +" .btn-link").click();
+            if (selected != "0") {
+                $("#heading_" + selected + " .btn-link").click();
             } else {
                 $(".card-header .btn-link:first").click();
             }
-            
-            
+
+
         })
     </script>
 }
@@ -27,24 +28,24 @@
         <h1>
             @{
                 dynamic selectedPhotoshoot = Model.SelectedPhotoshoot;
-                }  <input type="hidden" id="selectedPhotoshootId" value="@selectedPhotoshoot" />
-            </h1>
+            }  <input type="hidden" id="selectedPhotoshootId" value="@selectedPhotoshoot" />
+        </h1>
         @foreach (GenericModals.Models.ProductPhotoshootInProgressRep inProgress in Model.Lists)
         {
-            <div class="card PhotoshootList" id="inprogressContainer_@inProgress.photoshoot_id">
-                <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id">
-                    <h2 class="mb-0">
-                        <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@inProgress.photoshoot_id">
-                            <i class="fa fa-plus"></i>
-                            <span class="text-dark font-weight-bold h5">@inProgress.photoshoot_name</span>
-                        </button>
-                    </h2>
-                </div>
-                <div class="loading-box-light"><div class="spinner-border" role="status" style=" "><span class="sr-only">Loading...</span></div></div>
-                <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionShootInProgress">
-
-                </div>
+        <div class="card PhotoshootList" id="inprogressContainer_@inProgress.photoshoot_id">
+            <div class="card-header" id="heading_@inProgress.photoshoot_id" data-photoshootId="@inProgress.photoshoot_id">
+                <h2 class="mb-0">
+                    <button type="button" class="btn btn-link collapsButton" data-toggle="collapse" data-target="#collapse_@inProgress.photoshoot_id">
+                        <i class="fa fa-plus"></i>
+                        <span class="text-dark font-weight-bold h5">@inProgress.photoshoot_name</span>
+                    </button>
+                </h2>
             </div>
+            <div class="loading-box-light"><div class="spinner-border" role="status" style=" "><span class="sr-only">Loading...</span></div></div>
+            <div id="collapse_@inProgress.photoshoot_id" class="collapse" aria-labelledby="heading_@inProgress.photoshoot_id" data-parent="#accordionShootInProgress">
+
+            </div>
+        </div>
         }
 
     </div>

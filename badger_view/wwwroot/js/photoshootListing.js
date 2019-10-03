@@ -7,13 +7,17 @@ Input: Null
 Output: 
 */
 $('.card-header').click(function () {
-    $(".PhotoshootList .collapse").html("");
+   // $(".PhotoshootList .collapse").html("");
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
     if ($("#collapse_" + photoshootId).is(":hidden")) {
-        getPhotoshootProducts(photoshootId); 
+        if ($("#collapse_" + photoshootId).find('.card-body').length == 0) {
+            getPhotoshootProducts(photoshootId); 
+        }
+       // $("#collapse_" + photoshootId).show();
+      //  $("#collapse_" + photoshootId).attr('data-colapse', true);
     } else {
-        $("#collapse_" + photoshootId).html("");
+      //  $("#collapse_" + photoshootId).html("");
     }
 });
 
