@@ -142,11 +142,14 @@ namespace badger_view.Controllers
             JArray added = json.Value<JArray>("tag_added");
             JArray newAdded = new JArray();
             List<CategoryOptions> categories = new List<CategoryOptions>();
+            string updatedBy = await _LoginHelper.GetLoginUserId();
             foreach (var item in added)
             {
                 JObject cat = new JObject();
                 cat.Add("attribute_id", Convert.ToInt32(item.Value<Int32>()));
-                cat.Add("category_id", category_id);
+                cat.Add("category_id", category_id); 
+                cat.Add("created_by", Convert.ToInt32(updatedBy));
+                cat.Add("updated_by", Convert.ToInt32(updatedBy));
                 cat.Add("created_at", _common.GetTimeStemp());
                 newAdded.Add(cat);
             }

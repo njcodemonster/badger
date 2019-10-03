@@ -671,6 +671,8 @@ namespace badgerApi.Controllers
                 {
                     qty = newPOlineitems.line_item_ordered_quantity - newPOlineitems.originalQty;
                 }
+                //Updattion
+
                 // Increase/Decrease Line Style Qty in calculation against PO for style Qty
                 var _check =await _CalculationValuesRepo.CreateProductCalculation(newPOlineitems.po_id.ToString(), 5, qty, newPOlineitems.IsQtyIncreased);
                 

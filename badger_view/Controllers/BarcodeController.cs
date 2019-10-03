@@ -98,9 +98,10 @@ namespace badger_view.Controllers
             string barcode_to = json.Value<string>("barcode_to");
             string size = json.Value<string>("size");
             string idStr = json.Value<string>("id");
-            //string updatedBy = await _LoginHelper.GetLoginUserId();
+            string updatedBy = await _LoginHelper.GetLoginUserId();
             if (idStr == "")
             {
+                bar.Add("created_by", Convert.ToInt32(updatedBy));
                 idStr = "-1";
             }
             Int32 id = int.Parse(idStr);
@@ -108,11 +109,12 @@ namespace badger_view.Controllers
             bar.Add("size", size);
             bar.Add("barcode_from", barcode_from);
             bar.Add("barcode_to", barcode_to);
-            //bar.Add("updated_by",Convert.ToInt32(updatedBy));
-            //bar.Add("created_by", Convert.ToInt32(updatedBy));
-            //bar.Add("updated_at", _common.DateConvertToTimeStamp(DateTime.Now.ToString()));
+            if (idStr != "-1")
+            {
+                bar.Add("updated_by", Convert.ToInt32(updatedBy));
+                bar.Add("updated_at", _common.DateConvertToTimeStamp(DateTime.Now.ToShortDateString()));
+            }
             inserted = await _BadgerApiHelper.GenericPostAsyncString<string>(bar.ToString(Formatting.None), "/barcode/createorupdate");
-
             return Convert.ToBoolean(inserted);
         }
         /*

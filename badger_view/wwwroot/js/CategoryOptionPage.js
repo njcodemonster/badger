@@ -132,15 +132,6 @@ $(document).on("click", "#mainSaveButton", function () {
         alertBox('poAlertMsg', 'red', 'No changes to save');
         return false;
     }
-    ////datatosend["color_added"] = color_added;
-    ////datatosend["color_removed"] = color_removed;
-    ////debugger;
-    ////$("input.form-control.dirty").each(function (item) {
-    ////    datatosend[$(this).attr("id")] = $(this).val();
-    ////});
-    ////$("select.form-control.dirty").each(function (item) {
-    ////    datatosend[$(this).attr("id")] = $(this).val();
-    ////});
     $.ajax({
 
         url: '/categoryoption/updateattributes/',
@@ -151,7 +142,6 @@ $(document).on("click", "#mainSaveButton", function () {
         processData: false,
 
     }).always(function (data) { });
-    debugger;
     if (data = "true") {
        
         GetTags("0");
