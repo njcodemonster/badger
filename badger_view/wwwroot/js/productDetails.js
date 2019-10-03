@@ -114,7 +114,6 @@ $('input[type="checkbox"].selectedPairWithProduct').click(function () {
     } 
 });
 
-
 window.RemoveOtherColorProduct= [];
 $('input[type="checkbox"].selectedOtherColorProduct').click(function () {
     if ($(this).prop("checked") == true) {
@@ -147,7 +146,7 @@ $(document).on("click", "#mainSaveButton", function () {
     datatosend["photoshootStatus"] = $("#product_shoot_status").val();
     datatosend["photoshootStatusOld"] = $('#product_shoot_status').attr('data-realvalue'); 
 
-
+ 
 
     datatosend["fabricArray"] = [];
     var productID = $('#product_name').attr('data-id'); 
@@ -226,6 +225,10 @@ $(document).on("click", "#mainSaveButton", function () {
     } else {
         datatosend["otherColorsProductIds"] = "";
     }
+    if ($('#dropBox img').hasClass('dummyImage') == false && $("#product_shoot_status").val() == "3") {
+        is_ready = true;
+    }
+    datatosend["is_ready"] = is_ready;
 
     $.ajax({
 

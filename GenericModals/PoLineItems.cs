@@ -27,8 +27,11 @@ namespace GenericModals
         public string vendor_product_name { get; set; }
         public string vendor_product_code { get; set; }
         public string vendor_po_number { get; set; }
+        public string vendorSize { get; set; }
+        public bool Is_Ready { get; set; }
         
         public List<Items> EndItems { get; set; }
+
 
     }
     public class POLineItemsView
