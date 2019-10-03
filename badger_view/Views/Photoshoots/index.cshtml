@@ -143,7 +143,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <div>&nbsp;</div>
-                                    <input type="button" class="btn btn-primary" value="Add to current photoshoot" onclick="AddToExistingPhotoshoot()">
+                                    <input type="button" id="current-photoshoot" class="btn btn-primary" value="Add to current photoshoot" onclick="AddToExistingPhotoshoot()">
                                     <span class="error existingShootError text-danger d-none"> Select any Photoshoot above please.</span>
                                 </div>
 
@@ -159,7 +159,7 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <input type="button" class="btn btn-primary" value="Add new photoshoot" onclick="AddToNewPhotoshoot()">
+                                    <input type="button" id="new-photoshoot" class="btn btn-primary" value="Add new photoshoot" onclick="AddToNewPhotoshoot()">
                                     <span class="error newShootError text-danger d-none"> Select any Photoshoot Model and date please.</span>
                                 </div>
                                 <div class="col-md-6 text-right">

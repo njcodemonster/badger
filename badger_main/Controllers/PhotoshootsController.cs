@@ -288,26 +288,20 @@ namespace badgerApi.Controllers
         Input: FromBody, string ProductId
         output: dynamic Object of Photoshoot Products
         */
-        [HttpPost("create/{productId}")]
-        public async Task<string> PostAsync([FromBody]   string value, string productId)
+        [HttpPost("create")]
+        public async Task<ResponseModel> PostAsync([FromBody] Photoshoots photoshoot)
         {
             string NewInsertionID = "0";
             try
             {
-                Photoshoots newPhotoshoots = JsonConvert.DeserializeObject<Photoshoots>(value);
-                NewInsertionID = await _PhotoshootRepo.Create(newPhotoshoots);
-                int userId = newPhotoshoots.created_by;
+                NewInsertionID = _PhotoshootRepo.Create(photoshoot);
+                int userId = photoshoot.created_by;
 
-                int countComma = productId.Count(c => c == ',');
-                if (countComma > 0)
+                foreach (var product_id in photoshoot.products.Select(x => x.product_id))
                 {
-                    var ids = productId.Split(",");
-                    foreach (var product_id in ids)
-                    {
-                        int prodId = Int32.Parse(product_id);
-                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
-                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId, EventNoteId = prodId });
-                    }
+                    int prodId = product_id;
+                    await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
+                    await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId, EventNoteId = prodId });
                 }
             }
             catch (Exception ex)
@@ -315,7 +309,7 @@ namespace badgerApi.Controllers
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in making new Photoshoots with message" + ex.Message);
             }
-            return NewInsertionID;
+            return ResponseHelper.GetResponse(NewInsertionID);
         }
 
         /*
@@ -537,9 +531,6 @@ namespace badgerApi.Controllers
             string UpdateResult = "Success";
             try
             {
-
-                //  ProductPhotoshoots photoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshoots>(value);
-
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
                 ValuesToUpdate.Add("photoshoot_id", photoshootToUpdate.photoshoot_id.ToString());
                 ValuesToUpdate.Add("product_shoot_status_id", photoshootToUpdate.product_shoot_status_id.ToString());
@@ -553,8 +544,8 @@ namespace badgerApi.Controllers
                 string productId = string.Empty;
                 int photoShootStatus = 1;
 
-                var smallestSkuList = await _PhotoshootRepo.GetSmallestSkuByProduct(productIds.ToList());
-                var result = await _ItemServiceHelper.PostAsync<string>(smallestSkuList, "/item/UpdateProductItemForPhotoshoot/" + photoShootStatus);
+                // var smallestSkuList = await _PhotoshootRepo.GetSmallestSkuByProduct(productIds.ToList());
+                var result = await _ItemServiceHelper.PostAsync<string>(photoshootToUpdate.items, "/item/UpdateProductItemForPhotoshoot/" + photoShootStatus);
 
                 var eventModels = GenerateEventModels(productIds, userId, photoshootId);
                 await _eventRepo.AddEventAsync(eventModels);

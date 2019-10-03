@@ -596,9 +596,9 @@ namespace itemService.Controllers
         output: string
         */
         [HttpPost("UpdateProductItemForPhotoshoot/{status}")]
-        public async Task<ResponseModel> UpdateProductItemForPhotoshoot([FromBody] List<SmallestItem> value, int status)
+        public async Task<ResponseModel> UpdateProductItemForPhotoshoot([FromBody] List<BarcodeUpdate> value, int status)
         {
-            var response = await _ItemRepository.UpdateBulkSkus(value.Select(x => x.sku_id).ToList(), status);
+            var response = await _ItemRepository.UpdateBulkSkus(value, status);
             return ResponseHelper.GetResponse(response);
         }
 

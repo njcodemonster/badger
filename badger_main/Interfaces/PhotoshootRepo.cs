@@ -20,7 +20,7 @@ namespace badgerApi.Interfaces
         Task<Photoshoots> GetById(int id);
         Task<List<Photoshoots>> GetAll(Int32 Limit);
         Task<string> Count();
-        Task<String> Create(Photoshoots NewPhotoshoot);
+        string Create(Photoshoots NewPhotoshoot);
         Task<String> CreatePhotoshootProduct(ProductPhotoshoots NewPhotoshoot);
         Task<Boolean> Update(Photoshoots PhotoshootToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
@@ -71,12 +71,12 @@ namespace badgerApi.Interfaces
         output: photoshoot id
         */
 
-        public async Task<string> Create(Photoshoots NewPhotoshoot)
+        public string Create(Photoshoots NewPhotoshoot)
         {
 
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<Photoshoots>(NewPhotoshoot);
+                var result = conn.Insert<Photoshoots>(NewPhotoshoot);
                 return result.ToString();
 
             }

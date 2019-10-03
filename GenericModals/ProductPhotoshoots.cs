@@ -18,6 +18,8 @@ namespace GenericModals.Models
 
         [Write(false)]
         public List<ProductForPhotoshoot> products { get; set; }
+        [Write(false)]
+        public List<BarcodeUpdate> items { get; set; }
     }
 
     public partial class ProductPhotoshootStatusUpdate

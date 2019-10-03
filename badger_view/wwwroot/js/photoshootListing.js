@@ -108,41 +108,44 @@ Output: it will add photoshoots & models in add new photoshoot modal and open
 function AddToShootSingle(shootProductId,vendorId,poId, statusId) {
     window.photoShootRowId = shootProductId;
     var ProductName = $("#tableRow_" + shootProductId + " .productName").html();
-    $("#AddToPhotoshootProductId").val(shootProductId);
+    var productList = [{ product_id: shootProductId, vendor_id: vendorId }];
+    $("#AddToPhotoshootProductId").val(JSON.stringify(productList));
     if (statusId == 1) {
-        GetSmallestItem(shootProductId, vendorId, poId);
+        $.when(GetSmallestItem(productList)).done(function (p1) {
+            AddSinglePhotoshoot()
+        });
+    } 
+
+
+    function AddSinglePhotoshoot() {
+        console.log('shoot data');
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
-            
             type: 'GET',
             contentType: 'application/json',
             processData: false,
-
         }).always(function (data) {
+            $('.loading').hide();
             data = JSON.parse(data);
             var jsonPhotoshootsList = data.photoshootsList;
             var jsonPhotoshootsModelsList = data.photoshootsModelList;
             var allPhotoshootListHTML = '';
-
-            $(jsonPhotoshootsList).each(function (i, val) {
+            $(jsonPhotoshootsList).each(function(i, val) {
                 allPhotoshootListHTML += GetPhotoshootTr(val);
             });
-
             DestroyPhotoshootTable();
             $("#prev-photoshoots > tbody").html(allPhotoshootListHTML);
             InitializePhotoshootTable();
             // $(".allPhotoshootList").html(allPhotoshootListHTML);
-
-            $("#AllModels").find('option').remove()
+            $("#AllModels").find('option').remove();
             $("#AllModels").append(new Option("Choose...", ""));
-            $(jsonPhotoshootsModelsList).each(function (i, val) {
+            $(jsonPhotoshootsModelsList).each(function(i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
             $("#modalAddNewPhotoshoot .modal-title").html("Add to photoshoot <small> (" + ProductName + ") </small>");
-
             $("#modalAddNewPhotoshoot").modal('show');
-        }); 
-    } 
+        });
+    }
 }
 
 function GetNameValueMapping(list) {
@@ -164,6 +167,8 @@ function GetNameValueMapping(list) {
 }
 
 function GetSmallestItem(productIds) {
+    $('.loading').show();
+    var done = $.Deferred();
     $.ajax({
         url: '/photoshoots/smallestItem/',
         type: 'POST',
@@ -192,13 +197,32 @@ function GetSmallestItem(productIds) {
                     $barcode.val(response.barcode).prop("disabled", true);
                 }
                 else {
-                    $barcode.prop("disabled", false);
+                    $barcode.val('').prop("disabled", true);
+                    $itemLabel.attr('style', 'color:red');
                 }
                 
                 $("#sku-rows").append($itemRow);
             });
+
+            var barcodes = responseList.filter(function (item) {
+                return item.barcode > 0;
+            });
+
+            if (barcodes.length == 0) {
+                $("#current-photoshoot").prop('disabled', true);
+                $("#new-photoshoot").prop('disabled', true);
+            }
+            else {
+                $("#current-photoshoot").prop('disabled', false);
+                $("#new-photoshoot").prop('disabled', false);
+            }
+
+            done.resolve();
+            console.log('Barcode data');
         }
     });
+
+    return done.promise();
 }
 
 var photoshootTable;
@@ -239,8 +263,7 @@ function AddToExistingPhotoshoot() {
     $(".existingShootError").addClass("d-none");
     var productList = $("#AddToPhotoshootProductId").val();
     var PhotoShootId = $('input[name=selectedPhotoshoot]:checked').val();
-    var itemList = $("#sku-rows").find("input").serializeArray();
-    var items = GetNameValueMapping(itemList);
+    var items = GetItems();
     if (productList.length > 0 && typeof PhotoShootId !== "undefined") {
         $("#_modal_loader").fadeIn(200);
         $.ajax({
@@ -281,7 +304,7 @@ Output: it closes the add new modal and remove the selected prodcut from the cur
 
 function AddToNewPhotoshoot() {
     $(".newShootError").addClass("d-none");
-    var ProductId = $("#AddToPhotoshootProductId").val();
+    var productList = JSON.parse($("#AddToPhotoshootProductId").val());
 
     var PhotoshootModelId   = $('#AllModels').val();
     var PhotoshootModelName = $("#AllModels option:selected").text();
@@ -294,11 +317,13 @@ function AddToNewPhotoshoot() {
     var jsonData = {};
     jsonData["photoshoot_name"] = PhotoshootModelName + " " + PhotoshootDate; 
     jsonData["model_id"] = PhotoshootModelId;
-    jsonData["product_id"] = ProductId;
     jsonData["shoot_start_date"] = shoot_date_seconds;
     jsonData["shoot_end_date"] = 0;
+    jsonData["products"] = productList;
+    jsonData["items"] = GetItems();
 
-    if (typeof ProductId !== "undefined" && PhotoshootDate != "" && PhotoshootModelId != "") {
+    if (productList.length > 0 && jsonData.items.length > 0
+        && PhotoshootDate != "" && PhotoshootModelId != "") {
         $("#_modal_loader").fadeIn(200);
         $.ajax({
             url: '/Photoshoots/addNewPhotoshoot/',
@@ -311,21 +336,13 @@ function AddToNewPhotoshoot() {
             if (data == "Success") {
                 $("#_modal_loader").fadeOut(200);
                 $("#modalAddNewPhotoshoot").modal('hide');
-                if (ProductId.indexOf(',') == -1) {
+
+                $.each(productList, function (i,v) {
                     datatable_js_ps
-                        .row($("#shootRow_" + ProductId).parents('tr'))
+                        .row($("#shootRow_" + v.product_id).parents('tr'))
                         .remove()
                         .draw();
-                } else {
-                    var arrayProductId = ProductId.split(",");
-                    $.each(arrayProductId, function (i) {
-                        datatable_js_ps
-                            .row($("#shootRow_" + arrayProductId[i]).parents('tr'))
-                            .remove()
-                            .draw();
-                    });
-                }
-                
+                });
             } else {
                 $("#_modal_loader").fadeOut(200);
             }    
@@ -361,40 +378,42 @@ function moveSelectedToPhotoshoot() {
     });
 
     if (productAddToShoot.length > 0) {
-        GetSmallestItem(productAddToShoot);
+        $.when(GetSmallestItem(productAddToShoot)).done(function (p1) {
+            MultiPhotoshoot();
+        });
         $("#AddToPhotoshootProductId").val(JSON.stringify(productAddToShoot));
+    }
+    
+
+    function MultiPhotoshoot() {
+        console.log('shoot data');
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
-            
             type: 'GET',
             contentType: 'application/json',
             processData: false,
-
         }).always(function (data) {
+            $('.loading').hide();
             data = JSON.parse(data);
             var jsonPhotoshootsList = data.photoshootsList;
             var jsonPhotoshootsModelsList = data.photoshootsModelList;
             var allPhotoshootListHTML = '';
-
-            $(jsonPhotoshootsList).each(function (i, val) {
+            $(jsonPhotoshootsList).each(function(i, val) {
                 allPhotoshootListHTML += GetPhotoshootTr(val);
             });
-
             DestroyPhotoshootTable();
             $("#prev-photoshoots > tbody").html(allPhotoshootListHTML);
             InitializePhotoshootTable();
-           // $(".allPhotoshootList").html(allPhotoshootListHTML);
-
+            // $(".allPhotoshootList").html(allPhotoshootListHTML);
             $("#AllModels").find('option').remove();
             $("#AllModels").append(new Option("Choose...", ""));
-            $(jsonPhotoshootsModelsList).each(function (i, val) {
+            $(jsonPhotoshootsModelsList).each(function(i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
             $("#modalAddNewPhotoshoot .modal-title").html("Add to photoshoot <small> (" + productNameList + ") </small>");
             $("#modalAddNewPhotoshoot").modal('show');
         });
     }
-    
 }
 
 /*
@@ -758,4 +777,21 @@ function isOnlyNumbers(e) {
     if (!isNumber) {
         $(e).val('');
     }
+}
+
+function ToggleBarcodeInput(enable) {
+    if (enable) {
+        $("input[name*='barcode']").prop('disabled', false);
+    }
+    else {
+        $("input[name*='barcode']").prop('disabled', true);
+    }
+}
+
+function GetItems() {
+    ToggleBarcodeInput(true);
+    var itemList = $("#sku-rows").find("input").serializeArray();
+    var items = GetNameValueMapping(itemList);
+    ToggleBarcodeInput(true);
+    return items;
 }

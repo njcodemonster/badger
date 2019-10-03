@@ -175,10 +175,11 @@ namespace badger_view.Controllers
             assignPhotoshoot.updated_by =int.Parse(user_id);
             assignPhotoshoot.updated_at = _common.GetTimeStemp();
             assignPhotoshoot.products = photoshoot.products;
-            await _BadgerApiHelper.PostAsync<string>(photoshoot.items, "/photoshoots/bulkupdatebarcode");
-            var AssignPhotoshootStatus = await _BadgerApiHelper.PostAsync<ProductPhotoshoots>(assignPhotoshoot, "/photoshoots/StartProductPhotoshoot");
+            assignPhotoshoot.items = photoshoot.items;
+            // await _BadgerApiHelper.PostAsync<string>(photoshoot.items, "/photoshoots/bulkupdatebarcode");
+            var AssignPhotoshootStatus = await _BadgerApiHelper.PostAsync<string>(assignPhotoshoot, "/photoshoots/StartProductPhotoshoot");
             
-            return AssignPhotoshootStatus.ToString();
+            return AssignPhotoshootStatus;
         }
 
         /*
@@ -214,34 +215,31 @@ namespace badger_view.Controllers
         */
         [Authorize]
         [HttpPost("photoshoots/addNewPhotoshoot")]
-        public async Task<String> addNewPhotoshoot([FromBody]   JObject json)
+        public async Task<String> addNewPhotoshoot([FromBody] Photoshoots photoshootDto)
         {
             string user_id = await _ILoginHelper.GetLoginUserId();
 
-            JObject photoshoot = new JObject();
-            photoshoot.Add("photoshoot_name", json.Value<string>("photoshoot_name"));
-            photoshoot.Add("model_id", json.Value<int>("model_id"));
-            photoshoot.Add("shoot_start_date", json.Value<double>("shoot_start_date"));
-            photoshoot.Add("shoot_end_date", json.Value<double>("shoot_end_date"));
-            photoshoot.Add("active_status", 1);
-            photoshoot.Add("created_by", user_id);
-            photoshoot.Add("updated_by", 0);
-            photoshoot.Add("created_at", _common.GetTimeStemp());
-            photoshoot.Add("updated_at", 0);
+            photoshootDto.active_status = 1;
+            photoshootDto.created_by = int.Parse(user_id);
+            photoshootDto.created_at = _common.GetTimeStemp();
+            photoshootDto.updated_at = 0;
+            photoshootDto.updated_by = 0;
 
-            string productId = json.Value<string>("product_id");
+            string productId = photoshootDto.products.ToString();
 
-            String newPhotoshootID = await _BadgerApiHelper.GenericPostAsyncString<String>(photoshoot.ToString(Formatting.None), "/photoshoots/create/"+ productId);
+            String newPhotoshootID = await _BadgerApiHelper.PostAsync<String>(photoshootDto, "/photoshoots/create");
             
 
-            JObject assignPhotoshoot = new JObject();
+            var assignPhotoshoot = new ProductPhotoshoots();
             //assignPhotoshoot.Add("product_id", productId);
-            assignPhotoshoot.Add("photoshoot_id", newPhotoshootID);
-            assignPhotoshoot.Add("product_shoot_status_id", 1);
-            assignPhotoshoot.Add("updated_by", user_id);
-            assignPhotoshoot.Add("updated_at", _common.GetTimeStemp());
+            assignPhotoshoot.photoshoot_id = int.Parse(newPhotoshootID);
+            assignPhotoshoot.product_shoot_status_id = 1;
+            assignPhotoshoot.updated_by = int.Parse(user_id);
+            assignPhotoshoot.updated_at = _common.GetTimeStemp();
+            assignPhotoshoot.products = photoshootDto.products;
+            assignPhotoshoot.items = photoshootDto.items;
 
-            String AssignPhotoshootStatus = await _BadgerApiHelper.GenericPostAsyncString<String>(assignPhotoshoot.ToString(Formatting.None), "/photoshoots/StartProductPhotoshoot/" + productId);
+            String AssignPhotoshootStatus = await _BadgerApiHelper.PostAsync<String>(assignPhotoshoot, "/photoshoots/StartProductPhotoshoot");
 
             return AssignPhotoshootStatus;
         }

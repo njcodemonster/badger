@@ -51,6 +51,7 @@ namespace itemService.Interfaces
         Task<IEnumerable<SmallestItem>> GetSmallestItem(List<SmallestItem> items);
         Task<string> BulkUpdateBarcode(List<BarcodeUpdate> items);
         Task<bool> ValidateBarcode(string barcode);
+        Task<string> UpdateBulkSkus(List<BarcodeUpdate> items, int status);
     }
     public class ItemRepo : ItemRepository
     {
@@ -980,6 +981,16 @@ namespace itemService.Interfaces
             return "success";
         }
 
+        public async Task<string> UpdateBulkSkus(List<BarcodeUpdate> items, int status)
+        {
+            string updateQuery = $"UPDATE items SET item_status_id = {(status == 1 ? 6 : 1)}, updated_at = " + _common.GetTimeStemp() + $" where barcode in ({string.Join(',', items.Where(x => x.barcode > 0).Select(x => x.barcode))})";
+            using (IDbConnection conn = Connection)
+            {
+                await conn.ExecuteAsync(updateQuery);
+            }
+            return "success";
+        }
+
         /*
         Developer: Sajid Khan
         Date: 7-20-19 
@@ -1095,7 +1106,7 @@ namespace itemService.Interfaces
         public async Task<IEnumerable<SmallestItem>> GetSmallestItem(List<SmallestItem> items)
         {
             string query = $"SELECT MIN(item_id) AS item_id,MAX(barcode) AS barcode,item_status_id,sku,po_id,sku_family,sku_id " +
-                            $"FROM items WHERE item_status_id = 1 " +
+                            $"FROM items WHERE item_status_id = 17 " +
                             $"AND vendor_id IN ({string.Join(',', items.Select(x => x.vendor_id))}) AND sku_id IN ({string.Join(',', items.Select(x => x.sku_id))}) "+
                             "GROUP BY item_status_id,po_id,sku,sku_family,sku_id ";
             using (IDbConnection conn = Connection)
