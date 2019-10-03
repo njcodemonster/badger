@@ -38,7 +38,7 @@
                         $('#poVendor').removeClass("errorFeild");
                         $('.errorMsg').remove();
                         $('#poVendor').addClass('errorFeild');
-                        $('#poVendor').parents('.form-group').append('<span class="errorMsg" style="color:red;font-size: 11px;">Record Not Found</span>')
+                        $('#poVendor').parents('.form-group').append("<span class='errorMsg' style='color:red;font-size: 11px;'>Vendor name Doesn't exists</span>")
                         $('.ui-autocomplete').empty().css("border", "0");
                         $('#NewPurchaseOrderButton, #EditPurchaseOrderButton').attr('disabled', true);
                         $('.auto_loader').hide();
@@ -125,7 +125,7 @@
         Input:any keypress
         output: true/false
     */
-    $("#poTotalQuantity,#poSubtotal,#poShipping").on("keydown", function (event) {
+    $("#poSubtotal,#poShipping").on("keydown", function (event) {
         if ($(this).val().indexOf('.') > -1 && event.which == 190) {
             return false;
         }
@@ -139,7 +139,7 @@
        Input:any keypress
        output: true/false
    */
-    $("#poTotalStyles,.poTracking").on("keydown", function (event) {
+    $("#poTotalQuantity,#poTotalStyles,.poTracking").on("keydown", function (event) {
         return isNumber(event);
     });
 
@@ -837,7 +837,7 @@ $(document).on('click', ".remove_tracking", function () {
             processData: false
         }).always(function (data) {
             console.log(data);
-            if (data == true) {
+            if (data == "true") {
                 $(".poTracking#" + track_id).parent().remove();
             }
         });
@@ -1170,6 +1170,8 @@ function purchaseOrderData(data) {
                 var quantityUnits = 0;
                 var subCost = 0;
                 var styles = 0;
+                $("#itemsTable").empty();
+                $("#headingList").empty();
                 jQuery.each(it, function (i, dataNew) {
                     if (dataNew.quantity > 0) {
                         quantityUnits += dataNew.quantity;

@@ -8,7 +8,7 @@ namespace GenericModals.Models
     public  class Fabric
     {
         public string name { get; set; }
-        public int percentage { get; set; }
+        public decimal percentage { get; set; }
         public int value_id { get; set; }
         public string attribute_id { get; set; }
         public int product_id { get; set; }

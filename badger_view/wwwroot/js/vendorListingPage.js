@@ -249,7 +249,7 @@ $(document).on('keyup', "#newVendorForm input.phone", function (e) {
 $(document).on('click', "#EditVendor", function () {
     $('#NewVendorButton,#EditVendorButton').attr('disabled',false)
     $("#newVendorForm input,textarea").val("").removeClass('errorFeild');
-    $('.errorMsg,.documentsLink,.vendorAlertMsg').remove();
+    $('.errorMsg,.documentsLink').remove();
     $("#newVendorModal #vendorModalLongTitle").text("Edit Vendor");
     $('#newVendorModal input').prop("disabled","true");
     $('#newVendorModal').modal('show');
@@ -279,11 +279,11 @@ function getSetVendorData(id) {
         $("#vendorModalLongTitle").text("Edit Vendor (" + vendor.vendor_name + ")");
         if (notes && notes.length > 0)
             $('#vendorNotes').val(notes[notes.length - 1].note).attr('data-value', notes[notes.length - 1].note);
-        $('#vendorName').val(vendor.vendor_name);
+        $('#vendorName').val(vendor.vendor_name).attr('data-name',vendor.vendor_name);
         $('#vendorCorpName').val(vendor.corp_name);
         $('#vendorStatmentName').val(vendor.statement_name);
         $('#vendorDec').val(vendor.vendor_description);
-        $('#vendorCode').val(vendor.vendor_code);
+        $('#vendorCode').val(vendor.vendor_code).attr('data-name',vendor.vendor_code);
         $('#vendortype').val(vendor.vendor_type);
         $('#vendorourCustomerNumber').val(vendor.our_customer_number);
         // $('#vendorourCustomerNumber').val(vendor.vendor_name);
@@ -736,7 +736,9 @@ $(document).on('blur', "#vendorCode", function (event) {
     event.preventDefault();
     var jsonData = {};
     var _this = $(this);
-    if ($(this).val() == '') {
+    var attrname = '';
+    attrname =  $(this).attr('data-name') 
+    if ($(this).val() == '' || $(this).val().toLowerCase() == attrname.toLowerCase()) {
         return false;
     }
     $('#NewVendorButton,#EditVendorButton').attr('disabled',true)
@@ -786,7 +788,9 @@ $(document).on('blur', "#vendorName", function (event) {
     event.preventDefault();
     var jsonData = {};
     var _this = $(this);
-    if ($(this).val() == '') {
+    var attrname = '';
+    attrname =  $(this).attr('data-name') 
+    if ($(this).val() == '' || $(this).val().toLowerCase() == attrname.toLowerCase()) {
         return false;
     }
     $('#NewVendorButton,#EditVendorButton').attr('disabled', true)
