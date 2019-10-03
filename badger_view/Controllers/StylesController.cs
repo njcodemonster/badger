@@ -377,16 +377,29 @@ namespace badger_view.Controllers
                 items.Add("PO_id", po_id);
                 items.Add("created_by", user_id);
                 items.Add("original_qty", original_qty);
-                items.Add("created_at", _common.GetTimeStemp());
 
 
                 if (!IsLineItemExists || IsNewSku)
                 {
+                    //for item when they are created
+                    items.Add("created_at", _common.GetTimeStemp());
+                    items.Add("created_by", user_id);
+                    //for po line item when they are created 
+                    lineitem_obj.Add("created_by", user_id);
+                    lineitem_obj.Add("created_at", _common.GetTimeStemp());
+
                     String item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(items.ToString(Formatting.None), "/product/createitems/" + style_qty);
                     String line_item_id = await _BadgerApiHelper.GenericPostAsyncString<String>(lineitem_obj.ToString(Formatting.None), "/product/createLineitems");
                 }
                 else
                 {
+                    //for item when they are updated
+                    items.Add("updated_at", _common.GetTimeStemp());
+                    items.Add("updated_by", user_id);
+                    //for po line item when they are updated 
+                    lineitem_obj.Add("updated_by", user_id);
+                    lineitem_obj.Add("updated_at", _common.GetTimeStemp());
+
                     int _style_qty = int.Parse(style_qty);
                     if (original_qty != _style_qty)
                     {

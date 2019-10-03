@@ -547,12 +547,12 @@ namespace badgerApi.Interfaces
                 String updateQuery = "";
                 if ( NewLineitem.line_item_id ==0)
                 {
-                    updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " where vendor_id='" + NewLineitem.vendor_id + "' and  sku='" + NewLineitem.sku + "' and  po_id = " + NewLineitem.po_id;
+                    updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " , updated_by = "+NewLineitem.updated_by+ " , updated_at = " + NewLineitem.updated_at + " where vendor_id='" + NewLineitem.vendor_id + "' and  sku='" + NewLineitem.sku + "' and  po_id = " + NewLineitem.po_id;
 
                 }
                 else
                 {
-                   updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " where line_item_id=" + NewLineitem.line_item_id + "";
+                   updateQuery = "update purchase_order_line_items set line_item_ordered_quantity = " + NewLineitem.line_item_ordered_quantity + " , updated_by = " + NewLineitem.updated_by + " , updated_at = " + NewLineitem.updated_at + " where line_item_id=" + NewLineitem.line_item_id + "";
 
                 }
                 var result = await conn.QueryAsync(updateQuery);
