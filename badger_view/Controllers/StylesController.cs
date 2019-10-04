@@ -375,7 +375,6 @@ namespace badger_view.Controllers
                 items.Add("product_id", product_id);
                 items.Add("vendor_id", vendor_id);
                 items.Add("PO_id", po_id);
-                items.Add("created_by", user_id);
                 items.Add("original_qty", original_qty);
 
 
