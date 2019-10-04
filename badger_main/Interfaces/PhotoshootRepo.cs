@@ -25,18 +25,18 @@ namespace badgerApi.Interfaces
         Task<Boolean> Update(Photoshoots PhotoshootToUpdate);
         Task UpdateSpecific(Dictionary<String, String> ValuePairs, String where);
         Task UpdatePhotoshootForSummary(Dictionary<String, String> ValuePairs, String where);
-        Task<Object> GetPhotoshootDetailsRep(Int32 id);
+        Task<IEnumerable<ProductPhotoshootRep>> GetPhotoshootDetailsRep(Int32 Limit);
         Task<Object> GetPhotoshootProducts(Int32 photoshootId);
         Task<Object> GetAllPhotoshootsAndModels();
         Task<Object> GetAllPhotoshootsModels(Int32 limit);
         Task<Object> GetInprogressPhotoshoot(Int32 limit);
-        Task<Object> GetSentToEditorPhotoshoot(Int32 limit);
+        Task<IEnumerable<ProductPhotoshootRep>> GetSentToEditorPhotoshoot(Int32 Limit);
         Task<Object> GetPhotoshootSummary();
 
         Task<Object> GetSkuByProduct(string product_id);
         Task<SmallestItem> GetSmallestSizeItem(int po_id, int vendor_id, int product_id);
         Task<IEnumerable<SmallestItem>> GetSmallestSkuByProduct(List<int> productIds);
-
+        Task<object> GetInprogressPhotoshootById(int photoshootId);
     }
     public class PhotoshootRepo : IPhotoshootRepository
     {
@@ -215,27 +215,26 @@ namespace badgerApi.Interfaces
         Input: Limit int
         output: Object photoshoots
         */
-        public async Task<Object> GetPhotoshootDetailsRep(Int32 Limit)
+        public async Task<IEnumerable<ProductPhotoshootRep>> GetPhotoshootDetailsRep(Int32 Limit)
         {
-            dynamic photoshootsDetails = new ExpandoObject();
-            string sQuery = "";
+            string sQuery = @"SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family,
+                                v.`vendor_name`, pui.`po_id`, pos.`po_status_name` AS po_status, p.vendor_id, 
+                                CONCAT(FROM_UNIXTIME(po.delivery_window_start,'%m/%d'),'-',FROM_UNIXTIME(po.delivery_window_end,'%m/%d')) AS expected_date
+                                 FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos 
+                                 WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) 
+                                 AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` 
+                                 AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` 
+                                 AND pos.po_status_id NOT IN (2,4) ";
+            // Status 2=(Closed),4=(Deleted) //
             if (Limit > 0)
             {
-                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status, p.vendor_id FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2  Limit " + Limit.ToString() + " ;";
-            }
-            else
-            {
-                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status, p.vendor_id FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND (ps.photoshoot_id = 0 OR product_shoot_status_id = 0) AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2; ";
+                sQuery = " Limit " + Limit.ToString() + " ;";
             }
 
             using (IDbConnection conn = Connection)
             {
-                // photoshootsDetails = await conn.QueryAsync<object>(sQuery);
-                IEnumerable<object> photoshootsInfo = await conn.QueryAsync<object>(sQuery);
-                photoshootsDetails.photoshootsInfo = photoshootsInfo;
-
+                return await conn.QueryAsync<ProductPhotoshootRep>(sQuery);
             }
-            return photoshootsDetails;
         }
 
         /*
@@ -351,6 +350,18 @@ namespace badgerApi.Interfaces
             return photoshootsDetails;
         }
 
+        public async Task<object> GetInprogressPhotoshootById(int photoshootId)
+        {
+               string sQuery = "SELECT photoshoots.photoshoot_name, `product_photoshoots`.`photoshoot_id` FROM photoshoots, `product_photoshoots` WHERE `product_photoshoots`.photoshoot_id = photoshoots.`photoshoot_id` " +
+                $"AND  product_photoshoots.product_shoot_status_id = 1 AND photoshoots.photoshoot_id = {photoshootId}" +
+                " GROUP BY photoshoots.`photoshoot_id`";
+
+            using (IDbConnection conn = Connection)
+            {
+                return await conn.QueryFirstOrDefaultAsync<object>(sQuery);
+            }
+        }
+
         /*
         Developer: Mohi
         Date: 7-3-19 
@@ -379,25 +390,25 @@ namespace badgerApi.Interfaces
         Input: int Limit
         output: ExpandoObject Photoshoot
         */
-        public async Task<Object> GetSentToEditorPhotoshoot(Int32 Limit)
+        public async Task<IEnumerable<ProductPhotoshootRep>> GetSentToEditorPhotoshoot(Int32 Limit)
         {
-            dynamic photoshootsDetails = new ExpandoObject();
-            string sQuery = "";
+            string sQuery = @"SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image,
+                                p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` AS po_status, 
+                                CONCAT(FROM_UNIXTIME(po.delivery_window_start,'%m/%d'),'-',FROM_UNIXTIME(po.delivery_window_end,'%m/%d')) AS expected_date
+                                FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos 
+                                WHERE p.product_id = ps.product_id AND  ps.product_shoot_status_id = 2 
+                                AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` 
+                                AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id`
+                                AND pos.`po_status_id` NOT IN (2,4) ";
             if (Limit > 0)
             {
-                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND  ps.product_shoot_status_id = 2 AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2 Limit " + Limit.ToString();
-            }
-            else
-            {
-                sQuery = "SELECT  ps.product_shoot_status_id, p.product_id, p.product_name, p.vendor_color_name AS color, p.product_vendor_image, p.sku_family, v.`vendor_name`, pui.`po_id`, pos.`po_status_name` as po_status FROM product_photoshoots ps, product p, vendor v, product_used_in pui, purchase_orders po, purchase_order_status pos WHERE p.product_id = ps.product_id AND  ps.product_shoot_status_id = 2 AND p.`vendor_id`  = v.`vendor_id` AND po.`po_id` = pui.`po_id` AND p.`product_id` = pui.`product_id` AND po.`po_status` = pos.`po_status_id` AND pos.`po_status_id` <> 2;  ";
+                sQuery = " Limit " + Limit.ToString() + ";";
             }
 
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<object> photoshootsModelList = await conn.QueryAsync<object>(sQuery);
-                photoshootsDetails.photoshootSendToEditor = photoshootsModelList;
+                return await conn.QueryAsync<ProductPhotoshootRep>(sQuery);
             }
-            return photoshootsDetails;
         }
 
         /*

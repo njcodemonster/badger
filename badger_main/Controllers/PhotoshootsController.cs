@@ -101,6 +101,13 @@ namespace badgerApi.Controllers
             }
         }
 
+        [HttpGet("inprogress/{photoshootId}")]
+        public async Task<ResponseModel> GetInprogress(int photoshootId)
+        {
+            var response = await _PhotoshootRepo.GetInprogressPhotoshootById(photoshootId);
+            return ResponseHelper.GetResponse(response);
+        }
+
         // GET: api/Photoshoots/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
@@ -146,24 +153,20 @@ namespace badgerApi.Controllers
         output:  Object Photoshoot products 
         */
         [HttpGet("listpageview/{limit}")]
-        public async Task<object> listpageviewAsync(int limit)
+        public async Task<ResponseModel> listpageviewAsync(int limit)
         {
-            dynamic vPageList = new object();
             try
             {
-                vPageList = await _PhotoshootRepo.GetPhotoshootDetailsRep(limit);
-                //string vPageCount = await _PhotoshootsRepo.Count();
-                //vPageList.Count = vPageCount;
+                var productList = await _PhotoshootRepo.GetPhotoshootDetailsRep(limit);
+                productList.Where(x => x.po_status == "Not Recieved").ToList().ForEach(x => x.po_status = "Expected " + x.expected_date);
+                return ResponseHelper.GetResponse(productList);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
-
+                return new ResponseModel { Message = ex.Message, Status = HttpStatusCode.InternalServerError };
             }
-
-            return vPageList;
-
         }
 
         /*
@@ -232,22 +235,20 @@ namespace badgerApi.Controllers
         output:  dynamic Object of Photoshoot Products
         */
         [HttpGet("SentToEditorPhotoshoot")]
-        public async Task<object> SentToEditorPhotoshoot()
+        public async Task<ResponseModel> SentToEditorPhotoshoot()
         {
-            dynamic SendToEditorProduct = new object();
             try
             {
-                SendToEditorProduct = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
+                var productList = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
+                productList.Where(x => x.po_status == "Not Recieved").ToList().ForEach(x => x.po_status = "Expected " + x.expected_date);
+                return ResponseHelper.GetResponse(productList);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for SendToEditor Product with message" + ex.Message);
-
+                return new ResponseModel { Message = ex.Message, Status = HttpStatusCode.InternalServerError };
             }
-
-            return SendToEditorProduct;
-
         }
 
         /*

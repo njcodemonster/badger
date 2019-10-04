@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Sent to editor Photoshoots";
 }
-@model dynamic
+@model List<GenericModals.Models.ProductPhotoshootRep>
 @section Scripts {
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
     }
@@ -39,7 +39,7 @@
             </tr>
         </thead>
         <tbody>
-           @foreach (GenericModals.Models.ProductPhotoshootRep photoshoot in Model.Lists)
+           @foreach (var photoshoot in Model)
             {
 
                 <tr style="">

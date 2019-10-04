@@ -39,11 +39,8 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            ProductPhotoshootPagerList photoshootPagerList = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootPagerList>("/Photoshoots/listpageview/0");
-            dynamic ProductPhotoshootModal = new ExpandoObject();
-            ProductPhotoshootModal.Lists = photoshootPagerList.photoshootsInfo;
-            return View("Index", ProductPhotoshootModal);
-
+            var photoshootPagerList = await _BadgerApiHelper.GetAsync<List<ProductPhotoshootRep>>("/Photoshoots/listpageview/0");
+            return View("Index", photoshootPagerList);
         }
 
 
@@ -59,10 +56,14 @@ namespace badger_view.Controllers
         [HttpGet("photoshoots/shootInProgress/{selectPhotoshootId}")]
         public async Task<IActionResult> shootInProgress(string selectPhotoshootId)
         {
-            ProductPhotoshootInProgressPagerList photoshootInProgress         = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootInProgressPagerList>("/Photoshoots/inprogress/");
+            var singleShoot = await _BadgerApiHelper.GetAsync<ProductPhotoshootInProgressRep>("/Photoshoots/inprogress/" + selectPhotoshootId);
+            ProductPhotoshootInProgressPagerList photoshootInProgress = new ProductPhotoshootInProgressPagerList
+            {
+                photoshootsInprogress = new List<ProductPhotoshootInProgressRep> { singleShoot }
+            };
             
-            dynamic photoshootInProgressModal   = new ExpandoObject();
-            photoshootInProgressModal.Lists     = photoshootInProgress.photoshootsInprogress;
+            dynamic photoshootInProgressModal = new ExpandoObject();
+            photoshootInProgressModal.Lists = photoshootInProgress.photoshootsInprogress;
             photoshootInProgressModal.SelectedPhotoshoot = selectPhotoshootId;
 
             return View("ShootInProgress", photoshootInProgressModal);
@@ -113,10 +114,8 @@ namespace badger_view.Controllers
         [Authorize]
         public async Task<IActionResult> sentToEditor()
         {
-            ProductPhotoshootSendToEditorPagerList photoshootSendToEditor = await _BadgerApiHelper.GenericGetAsync<ProductPhotoshootSendToEditorPagerList>("/Photoshoots/SentToEditorPhotoshoot/");
-            dynamic photoshootSendToEditorModal = new ExpandoObject();
-            photoshootSendToEditorModal.Lists = photoshootSendToEditor.photoshootSendToEditor;
-            return View("SentToEditor", photoshootSendToEditorModal);
+            var products = await _BadgerApiHelper.GetAsync<List<ProductPhotoshootRep>>("/Photoshoots/SentToEditorPhotoshoot/");
+            return View("SentToEditor", products);
         }
 
 

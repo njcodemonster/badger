@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Photo Management - Shoot not started";
 }
-@model dynamic
+@model List<GenericModals.Models.ProductPhotoshootRep>
 
 @section Scripts {
     <script src="~/js/jquery-ui.js"></script>
@@ -60,7 +60,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (GenericModals.Models.ProductPhotoshootRep photoshoot in Model.Lists)
+            @foreach (var photoshoot in Model)
             {
 
                 <tr style="" id="tableRow_@photoshoot.product_id">
