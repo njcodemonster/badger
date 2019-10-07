@@ -67,12 +67,12 @@ Action: Check All Checkboxes
 Input: Null
 Output: 
 */
-function selectAllCheckbox() {
+function selectAllCheckbox(item) {
 
-    $(".select_menu").hide();
-    $(".unselect_menu").show();
+    $(item).parent().find(".select_menu").hide();
+    $(item).parent().find(".unselect_menu").show();
     $(".select-box").prop("checked", true);
-
+    return false;
 }
 
 /*
@@ -82,12 +82,12 @@ Action: Uncheck All Checkboxes
 Input: Null
 Output:
 */
-function unselectAllCheckbox() {
+function unselectAllCheckbox(item) {
+    $(item).parent().find(".select_menu").show();
+    $(item).parent().find(".unselect_menu").hide();
 
-    $(".select_menu").show();
-    $(".unselect_menu").hide();
     $(".select-box").prop("checked", false);
-
+    return false;
 }
 
 /*
@@ -497,7 +497,7 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
     }) 
  
     if (productAddToShootNotStarted.length > 0) {
-        var product_ids = productAddToShootNotStarted.join(","); 
+        var product_ids = productAddToShootNotStarted.join(",");
         var jsonData = {};
         jsonData["product_id"] = product_ids;
         jsonData["status"] = Status;
@@ -510,7 +510,7 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
             processData: false,
 
         }).always(function (data) {
-            if (data == "Success") { 
+            if (data == "Success") {
                 if (product_ids.indexOf(',') == -1) {
                     PhotoshootInProgressProductsList
                         .row($("#shootRow_" + product_ids).parents('tr'))
@@ -527,8 +527,13 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
                 }
 
 
-            } $(".loading-box").css("visibility", "hidden");
-        }); 
+            }
+            $(".loading-box").css("visibility", "hidden");
+        });
+    }
+    else {
+        $(".loading-box").css("visibility", "hidden");
+        alertBox('vendorAlertMsg', 'red', 'Please select the item');
     }
     
 }

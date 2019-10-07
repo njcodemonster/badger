@@ -248,7 +248,10 @@ namespace badgerApi.Interfaces
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
-            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id ,p.vendor_color_name as color, p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, u.name AS username FROM users u ,product_photoshoots ps  , product p, vendor v, photoshoots sh WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " AND p.`vendor_id` = v.`vendor_id` AND sh.created_by = u.user_id AND ps.product_shoot_status_id = 1 AND sh.photoshoot_id = ps.photoshoot_id; ";
+            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id ,p.vendor_color_name as color, p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, CONCAT(u.name,' ',FROM_UNIXTIME(sh.created_at,'%m/%d')) AS username  " +
+                "FROM users u ,product_photoshoots ps  , product p, vendor v, photoshoots sh" +
+                " WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " " +
+                "AND p.`vendor_id` = v.`vendor_id` AND sh.created_by = u.user_id AND ps.product_shoot_status_id = 1 AND sh.photoshoot_id = ps.photoshoot_id; ";
 
 
             using (IDbConnection conn = Connection)
@@ -275,11 +278,12 @@ namespace badgerApi.Interfaces
             string sQuery2 = "";
 
 
-            sQuery = " SELECT p.`photoshoot_id`, p.`photoshoot_name` FROM `photoshoots` p, `product_photoshoots` pp" +
-                        " WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pp.product_shoot_status_id IN(1, 2) " +
+            sQuery = " SELECT p.`photoshoot_id`, p.`photoshoot_name` FROM `photoshoots` p, `product_photoshoots` pp, photoshoot_models pm" +
+                        " WHERE p.`photoshoot_id` = pp.`photoshoot_id` AND pm.model_id = p.model_id AND pp.product_shoot_status_id IN(1, 2) " +
+                        "AND pm.active_status = 1 " +
                         " GROUP BY p.`photoshoot_id` ORDER BY p.`photoshoot_id`  ";
 
-            sQuery2 = "SELECT  model_id, model_name FROM photoshoot_models ";
+            sQuery2 = "SELECT  model_id, model_name FROM photoshoot_models where active_status = 1";
 
 
             using (IDbConnection conn = Connection)
