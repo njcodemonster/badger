@@ -1042,11 +1042,11 @@ $(document).on("click", "#weight_submit", function () {
             }
 
             if (checkweightzero == true) {
-                $('#sku_weight').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
+                $('#sku_weight[data-productid=' + productid+']').removeClass('btn-primary').addClass("btn-success").text("ADD WEIGHT");
             }
 
             if (checkweightzero == false) {
-                $('#sku_weight').addClass('btn-primary').removeClass("btn-success").text("EDIT WEIGHT");
+                $('#sku_weight[data-productid=' + productid + ']').addClass('btn-primary').removeClass("btn-success").text("EDIT WEIGHT");
             }
 
             $('#modaladdweight').modal('hide');
