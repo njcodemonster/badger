@@ -63,11 +63,13 @@
             @foreach (var photoshoot in Model)
             {
 
+            string image = string.IsNullOrEmpty(photoshoot.product_vendor_image) ? "" : "uploads/" + photoshoot.product_vendor_image;
+
                 <tr style="" id="tableRow_@photoshoot.product_id">
                     <td class="text-center">
                         <input type="checkbox" name="productAddToShoot" value="@photoshoot.product_id" data-vendor-id="@photoshoot.vendor_id" class="select-box">
                     </td>
-                    <td><img style="width:85px;" src="@photoshoot.product_vendor_image"></td>
+                    <td><img style="width:85px;" src="@image"></td>
                     <td>@photoshoot.vendor_name</td>
                     <td class="productName">@photoshoot.product_name</td>
                     <td><b>@photoshoot.color</b></td>
