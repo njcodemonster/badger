@@ -1,5 +1,6 @@
 ﻿var poTable;
 $(document).ready(function () {
+    $(".loading").hide();
     InitializaDatepicker('reportrange');
     poTable = LoadPoCountReport();
 });
@@ -80,8 +81,4 @@ function getStyles(cellvalue, options, rowObject) {
         html +
         ' </div>' +
         '</div>';
-}
-
-function Search() {
-    poTable.draw();
 }

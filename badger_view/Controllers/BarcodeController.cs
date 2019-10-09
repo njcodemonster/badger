@@ -134,5 +134,11 @@ namespace badger_view.Controllers
 
             return Convert.ToBoolean(deleted);
         }
+
+        [HttpGet("/barcode/validatebarcode/{barcode}")]
+        public async Task<string> ValidateBarcode(string barcode)
+        {
+           return await _BadgerApiHelper.GetAsync<string>("/barcode/validatebarcode/" + barcode);
+        }
     }
 }

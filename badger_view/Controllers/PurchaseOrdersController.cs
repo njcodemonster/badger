@@ -2091,7 +2091,7 @@ namespace badger_view.Controllers
                             JObject UpdatePurchaseOrdersItemBarcode = new JObject();
                             UpdatePurchaseOrdersItemBarcode.Add("item_id", item_id);
                             UpdatePurchaseOrdersItemBarcode.Add("barcode", item.barcode);
-                            UpdatePurchaseOrdersItemBarcode.Add("item_status_id", 6);
+                            UpdatePurchaseOrdersItemBarcode.Add("item_status_id", 17);
                             UpdatePurchaseOrdersItemBarcode.Add("updated_by", Int32.Parse(loginUserId));
                             UpdatePurchaseOrdersItemBarcode.Add("updated_at", _common.GetTimeStemp());
                             await _BadgerApiHelper.GenericPostAsyncString<String>(UpdatePurchaseOrdersItemBarcode.ToString(Formatting.None), "/purchaseorders/ItemSpecificUpdateById/" + item_id);

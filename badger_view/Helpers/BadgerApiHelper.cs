@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System.Text;
 using System.Net.Http.Formatting;
 using Microsoft.Extensions.Options;
-
+using CommonHelper;
 
 namespace badger_view.Helpers
 {
@@ -72,7 +72,7 @@ namespace badger_view.Helpers
 
         }
 
-        public async Task<T> GetAsync<T>(string uri)
+        public async Task<T> GetAsync<T>(string uri) where T : class
         {
             var client = new HttpClient();
             // client.BaseAddress = new Uri(BadgerAPIURL + _call);
@@ -86,7 +86,9 @@ namespace badger_view.Helpers
 
             var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
             ThorwException(responseData);
-            return JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings);
+            return CommonHelper.CommonHelper.IsJson(responseData.Data.ToString()) ?
+                JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings)
+                : responseData.Data as T;
         }
 
         private static void ThorwException(ResponseModel responseData)
@@ -97,7 +99,7 @@ namespace badger_view.Helpers
             }
         }
 
-        public async Task<TReturn> PostAsync<TReturn>(object json, string uri)
+        public async Task<TReturn> PostAsync<TReturn>(object json, string uri) where TReturn : class
         {
             var client = new HttpClient();
             HttpResponseMessage response;
@@ -122,7 +124,9 @@ namespace badger_view.Helpers
             };
             var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
             ThorwException(responseData);
-            return JsonConvert.DeserializeObject<TReturn>(responseData.Data.ToString(), settings);
+            return CommonHelper.CommonHelper.IsJson(responseData.Data.ToString()) ?
+                JsonConvert.DeserializeObject<TReturn>(responseData.Data.ToString(), settings) 
+                : responseData.Data as TReturn;
         }
 
         /*

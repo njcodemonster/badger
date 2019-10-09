@@ -13,6 +13,8 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using badgerApi.Helper;
 using GenericModals.Event;
+using GenericModals;
+using GenericModals.Extentions;
 
 namespace badgerApi.Controllers
 {
@@ -99,6 +101,13 @@ namespace badgerApi.Controllers
             }
         }
 
+        [HttpGet("inprogress/{photoshootId}")]
+        public async Task<ResponseModel> GetInprogress(int photoshootId)
+        {
+            var response = await _PhotoshootRepo.GetInprogressPhotoshootById(photoshootId);
+            return ResponseHelper.GetResponse(response);
+        }
+
         // GET: api/Photoshoots/count
         [HttpGet("count")]
         public async Task<string> CountAsync()
@@ -144,24 +153,20 @@ namespace badgerApi.Controllers
         output:  Object Photoshoot products 
         */
         [HttpGet("listpageview/{limit}")]
-        public async Task<object> listpageviewAsync(int limit)
+        public async Task<ResponseModel> listpageviewAsync(int limit)
         {
-            dynamic vPageList = new object();
             try
             {
-                vPageList = await _PhotoshootRepo.GetPhotoshootDetailsRep(limit);
-                //string vPageCount = await _PhotoshootsRepo.Count();
-                //vPageList.Count = vPageCount;
+                var productList = await _PhotoshootRepo.GetPhotoshootDetailsRep(limit);
+                productList.Where(x => x.po_status == "Not Recieved").ToList().ForEach(x => x.po_status = "Expected " + x.expected_date);
+                return ResponseHelper.GetResponse(productList);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for listpageviewAsync with message" + ex.Message);
-
+                return new ResponseModel { Message = ex.Message, Status = HttpStatusCode.InternalServerError };
             }
-
-            return vPageList;
-
         }
 
         /*
@@ -230,22 +235,20 @@ namespace badgerApi.Controllers
         output:  dynamic Object of Photoshoot Products
         */
         [HttpGet("SentToEditorPhotoshoot")]
-        public async Task<object> SentToEditorPhotoshoot()
+        public async Task<ResponseModel> SentToEditorPhotoshoot()
         {
-            dynamic SendToEditorProduct = new object();
             try
             {
-                SendToEditorProduct = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
+                var productList = await _PhotoshootRepo.GetSentToEditorPhotoshoot(0);
+                productList.Where(x => x.po_status == "Not Recieved").ToList().ForEach(x => x.po_status = "Expected " + x.expected_date);
+                return ResponseHelper.GetResponse(productList);
             }
             catch (Exception ex)
             {
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in selecting the data for SendToEditor Product with message" + ex.Message);
-
+                return new ResponseModel { Message = ex.Message, Status = HttpStatusCode.InternalServerError };
             }
-
-            return SendToEditorProduct;
-
         }
 
         /*
@@ -286,26 +289,20 @@ namespace badgerApi.Controllers
         Input: FromBody, string ProductId
         output: dynamic Object of Photoshoot Products
         */
-        [HttpPost("create/{productId}")]
-        public async Task<string> PostAsync([FromBody]   string value, string productId)
+        [HttpPost("create")]
+        public async Task<ResponseModel> PostAsync([FromBody] Photoshoots photoshoot)
         {
             string NewInsertionID = "0";
             try
             {
-                Photoshoots newPhotoshoots = JsonConvert.DeserializeObject<Photoshoots>(value);
-                NewInsertionID = await _PhotoshootRepo.Create(newPhotoshoots);
-                int userId = newPhotoshoots.created_by;
+                NewInsertionID = _PhotoshootRepo.Create(photoshoot);
+                int userId = photoshoot.created_by;
 
-                int countComma = productId.Count(c => c == ',');
-                if (countComma > 0)
+                foreach (var product_id in photoshoot.products.Select(x => x.product_id))
                 {
-                    var ids = productId.Split(",");
-                    foreach (var product_id in ids)
-                    {
-                        int prodId = Int32.Parse(product_id);
-                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
-                        await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId, EventNoteId = prodId });
-                    }
+                    int prodId = product_id;
+                    await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_created, EntityId = prodId, RefrenceId = Int32.Parse(NewInsertionID), UserId = userId });
+                    await _eventRepo.AddEventAsync(new EventModel(user_event_table_name) { EventName = photoshoot_created, EntityId = userId, RefrenceId = prodId, UserId = userId, EventNoteId = prodId });
                 }
             }
             catch (Exception ex)
@@ -313,7 +310,7 @@ namespace badgerApi.Controllers
                 var logger = _loggerFactory.CreateLogger("internal_error_log");
                 logger.LogInformation("Problem happened in making new Photoshoots with message" + ex.Message);
             }
-            return NewInsertionID;
+            return ResponseHelper.GetResponse(NewInsertionID);
         }
 
         /*
@@ -529,45 +526,30 @@ namespace badgerApi.Controllers
         Input: FromBody, string productId
         output: string success or failed
         */
-        [HttpPost("StartProductPhotoshoot/{productId}")]
-        public async Task<string> StartProductPhotoshoot(string productId, [FromBody]   string value)
+        [HttpPost("StartProductPhotoshoot")]
+        public async Task<ResponseModel> StartProductPhotoshoot([FromBody] ProductPhotoshoots photoshootToUpdate)
         {
             string UpdateResult = "Success";
             try
             {
-
-                ProductPhotoshoots PhotoshootToUpdate = JsonConvert.DeserializeObject<ProductPhotoshoots>(value);
-
                 Dictionary<String, String> ValuesToUpdate = new Dictionary<string, string>();
-                ValuesToUpdate.Add("photoshoot_id", PhotoshootToUpdate.photoshoot_id.ToString());
-                ValuesToUpdate.Add("product_shoot_status_id", PhotoshootToUpdate.product_shoot_status_id.ToString());
-                ValuesToUpdate.Add("updated_by", PhotoshootToUpdate.updated_by.ToString());
-                ValuesToUpdate.Add("updated_at", PhotoshootToUpdate.updated_at.ToString());
+                ValuesToUpdate.Add("photoshoot_id", photoshootToUpdate.photoshoot_id.ToString());
+                ValuesToUpdate.Add("product_shoot_status_id", photoshootToUpdate.product_shoot_status_id.ToString());
+                ValuesToUpdate.Add("updated_by", photoshootToUpdate.updated_by.ToString());
+                ValuesToUpdate.Add("updated_at", photoshootToUpdate.updated_at.ToString());
+                var productIds = photoshootToUpdate.products.Select(x => x.product_id);
+                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + string.Join(',', productIds) + ")");
 
-                await _PhotoshootRepo.UpdateSpecific(ValuesToUpdate, "product_id IN (" + productId + ")");
-
-                int userId = PhotoshootToUpdate.updated_by;
-                int photoshootId = PhotoshootToUpdate.photoshoot_id;
-
+                int userId = photoshootToUpdate.updated_by;
+                int photoshootId = photoshootToUpdate.photoshoot_id;
+                string productId = string.Empty;
                 int photoShootStatus = 1;
-                await SetProductItemStatusForPhotoshoot(productId, photoShootStatus);
 
-                int countComma = productId.Count(c => c == ',');
-                if (countComma > 0)
-                {
-                    var ids = productId.Split(",");
-                    foreach (var product_id in ids)
-                    {
-                        int prodId = Int32.Parse(product_id);
-                        await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = prodId, RefrenceId = photoshootId, UserId = userId });
-                    }
-                }
-                else
-                {
-                    await _eventRepo.AddEventAsync(new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = int.Parse(productId), RefrenceId = photoshootId, UserId = userId });
-                }
+                // var smallestSkuList = await _PhotoshootRepo.GetSmallestSkuByProduct(productIds.ToList());
+                var result = await _ItemServiceHelper.PostAsync<string>(photoshootToUpdate.items, "/item/UpdateProductItemForPhotoshoot/" + photoShootStatus);
 
-
+                var eventModels = GenerateEventModels(productIds, userId, photoshootId);
+                await _eventRepo.AddEventAsync(eventModels);
             }
             catch (Exception ex)
             {
@@ -576,7 +558,15 @@ namespace badgerApi.Controllers
                 UpdateResult = "Failed";
             }
 
-            return UpdateResult;
+            return ResponseHelper.GetResponse(UpdateResult);
+        }
+
+        private IEnumerable<EventModel> GenerateEventModels(IEnumerable<int> productIds, int userId, int photoshootId)
+        {
+            foreach (var product_id in productIds)
+            {
+                yield return new EventModel(product_event_table_name) { EventName = photoshoot_started, EntityId = product_id, RefrenceId = photoshootId, UserId = userId };
+            }
         }
 
 
@@ -740,6 +730,21 @@ namespace badgerApi.Controllers
                 Result = "failed";
             }
             return Result;
+        }
+
+        [HttpPost("smallestitem")]
+        public async Task<ResponseModel> GetSmallestSkus([FromBody] List<SmallestItem> items)
+        {
+            var response = await _PhotoshootRepo.GetSmallestSkuByProduct(items.Select(x => x.product_id).ToList());
+            var lastItem = await _ItemServiceHelper.PostAsync<List<SmallestItem>>(response, $"/item/smallestitem");
+            return ResponseHelper.GetResponse(lastItem);
+        }
+
+        [HttpPost("bulkupdatebarcode")]
+        public async Task<ResponseModel> BulkUpdateBarcode([FromBody] List<BarcodeUpdate> items)
+        {
+            var item = await _ItemServiceHelper.PostAsync<string>(items, $"/item/bulkupdatebarcode");
+            return ResponseHelper.GetResponse(item);
         }
     }
 

@@ -7,13 +7,17 @@ Input: Null
 Output: 
 */
 $('.card-header').click(function () {
-    $(".PhotoshootList .collapse").html("");
+   // $(".PhotoshootList .collapse").html("");
     var thisPhotoshoot = $(this);
     var photoshootId = thisPhotoshoot.attr("data-photoshootId");
     if ($("#collapse_" + photoshootId).is(":hidden")) {
-        getPhotoshootProducts(photoshootId); 
+        if ($("#collapse_" + photoshootId).find('.card-body').length == 0) {
+            getPhotoshootProducts(photoshootId); 
+        }
+       // $("#collapse_" + photoshootId).show();
+      //  $("#collapse_" + photoshootId).attr('data-colapse', true);
     } else {
-        $("#collapse_" + photoshootId).html("");
+      //  $("#collapse_" + photoshootId).html("");
     }
 });
 
@@ -49,7 +53,11 @@ function getPhotoshootProducts(photoshootId) {
 /**********************************************************/
 
 
-var datatable_js_ps = $('.datatable_js_ps').DataTable();
+var datatable_js_ps = $('.datatable_js_ps').DataTable({
+    "columnDefs": [
+        { "orderable": false, "targets": 1 }
+    ]
+});
 
 
 /*
@@ -59,12 +67,12 @@ Action: Check All Checkboxes
 Input: Null
 Output: 
 */
-function selectAllCheckbox() {
+function selectAllCheckbox(item) {
 
-    $(".select_menu").hide();
-    $(".unselect_menu").show();
-    $(".select-box").attr("checked", true);
-
+    $(item).parent().find(".select_menu").hide();
+    $(item).parent().find(".unselect_menu").show();
+    $(".select-box").prop("checked", true);
+    return false;
 }
 
 /*
@@ -74,12 +82,12 @@ Action: Uncheck All Checkboxes
 Input: Null
 Output:
 */
-function unselectAllCheckbox() {
+function unselectAllCheckbox(item) {
+    $(item).parent().find(".select_menu").show();
+    $(item).parent().find(".unselect_menu").hide();
 
-    $(".select_menu").show();
-    $(".unselect_menu").hide();
-    $(".select-box").attr("checked", false);
-
+    $(".select-box").prop("checked", false);
+    return false;
 }
 
 /*
@@ -101,38 +109,150 @@ Action: get all photoshoots & models and add in Add photoshoot modal and open mo
 Input: photoshoot productID, photoshoot status 
 Output: it will add photoshoots & models in add new photoshoot modal and open
 */
-function AddToShootSingle(shootProductId, statusId) {
+function AddToShootSingle(shootProductId,vendorId,poId, statusId) {
     window.photoShootRowId = shootProductId;
     var ProductName = $("#tableRow_" + shootProductId + " .productName").html();
-    $("#AddToPhotoshootProductId").val(shootProductId);
+    var productList = [{ product_id: shootProductId, vendor_id: vendorId }];
+    $("#AddToPhotoshootProductId").val(JSON.stringify(productList));
     if (statusId == 1) {
+        $.when(GetSmallestItem(productList)).done(function (p1) {
+            AddSinglePhotoshoot()
+        });
+    } 
+
+
+    function AddSinglePhotoshoot() {
+        console.log('shoot data');
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
-            
             type: 'GET',
             contentType: 'application/json',
             processData: false,
-
         }).always(function (data) {
-
+            $('.loading').hide();
+            data = JSON.parse(data);
             var jsonPhotoshootsList = data.photoshootsList;
             var jsonPhotoshootsModelsList = data.photoshootsModelList;
             var allPhotoshootListHTML = '';
-
-            $(jsonPhotoshootsList).each(function (i, val) {
-                allPhotoshootListHTML += '<div class="form-check"><input class="form-check-input selectedPhotoshoot" type = "radio" name = "selectedPhotoshoot" id = "' + val.photoshoot_id + '" value = "' + val.photoshoot_id + '" ><label class="form - check - label" for="' + val.photoshoot_id + '">' + val.photoshoot_name + '</label></div >';
+            $(jsonPhotoshootsList).each(function(i, val) {
+                allPhotoshootListHTML += GetPhotoshootTr(val);
             });
-            $(".allPhotoshootList").html(allPhotoshootListHTML);
-
-            $("#AllModels").find('option').remove()
+            DestroyPhotoshootTable();
+            $("#prev-photoshoots > tbody").html(allPhotoshootListHTML);
+            InitializePhotoshootTable();
+            // $(".allPhotoshootList").html(allPhotoshootListHTML);
+            $("#AllModels").find('option').remove();
             $("#AllModels").append(new Option("Choose...", ""));
-            $(jsonPhotoshootsModelsList).each(function (i, val) {
+            $(jsonPhotoshootsModelsList).each(function(i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
             $("#modalAddNewPhotoshoot .modal-title").html("Add to photoshoot <small> (" + ProductName + ") </small>");
-
             $("#modalAddNewPhotoshoot").modal('show');
-        }); 
+        });
+    }
+}
+
+function GetNameValueMapping(list) {
+    var returnList = [];
+    var obj = {};
+    $.each(list, function (index, value) {
+        
+        if (value.name.indexOf('barcode') > -1)
+            obj.barcode = value.value;
+        else
+            obj.item_id = value.value;
+
+        if (obj.item_id && obj.barcode) {
+            returnList.push(obj);
+            obj = {};
+        }
+    });
+    return returnList;
+}
+
+function GetSmallestItem(productIds) {
+    $('.loading').show();
+    var done = $.Deferred();
+    $.ajax({
+        url: '/photoshoots/smallestItem/',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(productIds),
+        processData: false,
+        success: function (responseList) {
+            $("#sku-rows").empty();
+            $.each(responseList, function (index, response) {
+
+                var newIndex = index > 0 ? (index - 1) : index;
+                var $itemRow = $("#item_wrapper_" + newIndex).clone();
+                var $barcode = $itemRow.find("input[name='items[" + newIndex + "].barcode']");
+                var $itemId = $itemRow.find("input[name='items[" + newIndex + "].item_id']");
+                var $itemLabel = $itemRow.find("div[id='items[" + newIndex + "].sku_label']");
+
+                $itemRow.attr("id", "item_wrapper_" + index);
+                $barcode.attr("name", "items[" + index + "].barcode");
+                $itemId.attr("name", "items[" + index + "].item_id");
+                $itemLabel.attr("id", "items[" + index + "].sku_label");
+
+                $itemId.val(response.item_id);
+                $itemLabel.text(response.sku);
+
+                if (response.barcode > 0) {
+                    $barcode.val(response.barcode).prop("disabled", true);
+                }
+                else {
+                    $barcode.val('').prop("disabled", true);
+                    $itemLabel.attr('style', 'color:red');
+                }
+                
+                $("#sku-rows").append($itemRow);
+            });
+
+            var barcodes = responseList.filter(function (item) {
+                return item.barcode > 0;
+            });
+
+            if (barcodes.length == 0) {
+                $("#current-photoshoot").prop('disabled', true);
+                $("#new-photoshoot").prop('disabled', true);
+            }
+            else {
+                $("#current-photoshoot").prop('disabled', false);
+                $("#new-photoshoot").prop('disabled', false);
+            }
+
+            done.resolve();
+            console.log('Barcode data');
+        }
+    });
+
+    return done.promise();
+}
+
+var photoshootTable;
+function InitializePhotoshootTable() {
+    photoshootTable = $("#prev-photoshoots").DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false,
+        "scrollY": "200px",
+        language: {
+            "search": "",
+            "searchPlaceholder": "Search...",
+            'processing': '<div><i class="fa fa-spinner fa-3x fa-spin"></i></div>'
+        }
+    });
+    
+}
+
+function GetPhotoshootTr(val) {
+    return '<tr><td><div class="form-check"><input class="form-check-input selectedPhotoshoot"'+
+    ' type="radio" name="selectedPhotoshoot" id="' + val.photoshoot_id + '" value="' + val.photoshoot_id + '" ></td > <td><label class="form-check-label" for="' + val.photoshoot_id + '">' + val.photoshoot_name + '</label></td></div ></tr > ';
+}
+
+function DestroyPhotoshootTable() {
+    if (photoshootTable) {
+        photoshootTable.destroy();
     }
 }
 
@@ -145,36 +265,29 @@ Output: it closes the add new modal and remove the prodcuts from the current lis
 */
 function AddToExistingPhotoshoot() {
     $(".existingShootError").addClass("d-none");
-    var ProductId = $("#AddToPhotoshootProductId").val();
+    var productList = $("#AddToPhotoshootProductId").val();
     var PhotoShootId = $('input[name=selectedPhotoshoot]:checked').val();
-    if (typeof ProductId !== "undefined" && typeof PhotoShootId !== "undefined") {
+    var items = GetItems();
+    if (productList.length > 0 && typeof PhotoShootId !== "undefined") {
         $("#_modal_loader").fadeIn(200);
         $.ajax({
-            url: '/Photoshoots/addProductInPhotoshoot/' + ProductId + "/" + PhotoShootId,
-            type: 'GET',
+            url: '/Photoshoots/addProductInPhotoshoot/' + PhotoShootId,
+            type: 'POST',
             contentType: 'application/json',
+            data: JSON.stringify({ products: JSON.parse(productList), items: items }),
             processData: false,
-            
         }).always(function (data) {
 
             if (data == "Success") {
+                productList = JSON.parse(productList);
                 $("#_modal_loader").fadeOut(200);
                 $("#modalAddNewPhotoshoot").modal('hide');
-                if (ProductId.indexOf(',') == -1) {
+                $.each(productList, function (index, value) {
                     datatable_js_ps
-                        .row($("#shootRow_" + ProductId).parents('tr'))
+                        .row($("#shootRow_" + value.product_id).parents('tr'))
                         .remove()
                         .draw();
-                } else {
-                    var arrayProductId = ProductId.split(",");
-                    $.each(arrayProductId, function (i) {
-                        datatable_js_ps
-                            .row($("#shootRow_" + arrayProductId[i]).parents('tr'))
-                            .remove()
-                            .draw();
-                    });
-                }
-
+                });
             } else {
                 $("#_modal_loader").fadeOut(200);
             }   
@@ -195,7 +308,7 @@ Output: it closes the add new modal and remove the selected prodcut from the cur
 
 function AddToNewPhotoshoot() {
     $(".newShootError").addClass("d-none");
-    var ProductId = $("#AddToPhotoshootProductId").val();
+    var productList = JSON.parse($("#AddToPhotoshootProductId").val());
 
     var PhotoshootModelId   = $('#AllModels').val();
     var PhotoshootModelName = $("#AllModels option:selected").text();
@@ -208,11 +321,13 @@ function AddToNewPhotoshoot() {
     var jsonData = {};
     jsonData["photoshoot_name"] = PhotoshootModelName + " " + PhotoshootDate; 
     jsonData["model_id"] = PhotoshootModelId;
-    jsonData["product_id"] = ProductId;
     jsonData["shoot_start_date"] = shoot_date_seconds;
     jsonData["shoot_end_date"] = 0;
+    jsonData["products"] = productList;
+    jsonData["items"] = GetItems();
 
-    if (typeof ProductId !== "undefined" && PhotoshootDate != "" && PhotoshootModelId != "") {
+    if (productList.length > 0 && jsonData.items.length > 0
+        && PhotoshootDate != "" && PhotoshootModelId != "") {
         $("#_modal_loader").fadeIn(200);
         $.ajax({
             url: '/Photoshoots/addNewPhotoshoot/',
@@ -225,21 +340,13 @@ function AddToNewPhotoshoot() {
             if (data == "Success") {
                 $("#_modal_loader").fadeOut(200);
                 $("#modalAddNewPhotoshoot").modal('hide');
-                if (ProductId.indexOf(',') == -1) {
+
+                $.each(productList, function (i,v) {
                     datatable_js_ps
-                        .row($("#shootRow_" + ProductId).parents('tr'))
+                        .row($("#shootRow_" + v.product_id).parents('tr'))
                         .remove()
                         .draw();
-                } else {
-                    var arrayProductId = ProductId.split(",");
-                    $.each(arrayProductId, function (i) {
-                        datatable_js_ps
-                            .row($("#shootRow_" + arrayProductId[i]).parents('tr'))
-                            .remove()
-                            .draw();
-                    });
-                }
-                
+                });
             } else {
                 $("#_modal_loader").fadeOut(200);
             }    
@@ -260,45 +367,57 @@ Output: it closes the add new modal and remove the selected prodcut from the cur
 function moveSelectedToPhotoshoot() {
     var productAddToShoot = [];
     var productNameList = [];
-    $.each($("input[name='productAddToShoot']:checked"), function () {
-        var id = $(this).val();
-        productAddToShoot.push($(this).val());
-        productName = $("#tableRow_" + id + " .productName").html();
-        productNameList.push("&nbsp; "+productName );
 
+    $.each($("input[name='productAddToShoot']:checked"), function () {
+        var product = {};
+        var id = $(this).val();
+
+        productName = $("#tableRow_" + id + " .productName").html();
+        productNameList.push("&nbsp; " + productName);
+
+        product.product_id = id;
+        product.product_name = productName;
+        product.vendor_id = $(this).data('vendor-id');
+        productAddToShoot.push(product);
     });
+
     if (productAddToShoot.length > 0) {
-        var product_ids = productAddToShoot.join(","); 
-        var all_products = productNameList.join(", ");
-        $("#AddToPhotoshootProductId").val(productAddToShoot.join(","));
+        $.when(GetSmallestItem(productAddToShoot)).done(function (p1) {
+            MultiPhotoshoot();
+        });
+        $("#AddToPhotoshootProductId").val(JSON.stringify(productAddToShoot));
+    }
+    
+
+    function MultiPhotoshoot() {
+        console.log('shoot data');
         $.ajax({
             url: '/photoshoots/getPhotoshootAndModels',
-            
             type: 'GET',
             contentType: 'application/json',
             processData: false,
-
         }).always(function (data) {
-
+            $('.loading').hide();
+            data = JSON.parse(data);
             var jsonPhotoshootsList = data.photoshootsList;
             var jsonPhotoshootsModelsList = data.photoshootsModelList;
             var allPhotoshootListHTML = '';
-
-            $(jsonPhotoshootsList).each(function (i, val) {
-                allPhotoshootListHTML += '<div class="form-check"><input class="form-check-input selectedPhotoshoot" type = "radio" name = "selectedPhotoshoot" id = "' + val.photoshoot_id + '" value = "' + val.photoshoot_id + '" ><label class="form - check - label" for="' + val.photoshoot_id + '">' + val.photoshoot_name + '</label></div >';
+            $(jsonPhotoshootsList).each(function(i, val) {
+                allPhotoshootListHTML += GetPhotoshootTr(val);
             });
-            $(".allPhotoshootList").html(allPhotoshootListHTML);
-
+            DestroyPhotoshootTable();
+            $("#prev-photoshoots > tbody").html(allPhotoshootListHTML);
+            InitializePhotoshootTable();
+            // $(".allPhotoshootList").html(allPhotoshootListHTML);
             $("#AllModels").find('option').remove();
             $("#AllModels").append(new Option("Choose...", ""));
-            $(jsonPhotoshootsModelsList).each(function (i, val) {
+            $(jsonPhotoshootsModelsList).each(function(i, val) {
                 $("#AllModels").append(new Option(val.model_name, val.model_id));
             });
             $("#modalAddNewPhotoshoot .modal-title").html("Add to photoshoot <small> (" + productNameList + ") </small>");
             $("#modalAddNewPhotoshoot").modal('show');
         });
     }
-    
 }
 
 /*
@@ -378,7 +497,7 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
     }) 
  
     if (productAddToShootNotStarted.length > 0) {
-        var product_ids = productAddToShootNotStarted.join(","); 
+        var product_ids = productAddToShootNotStarted.join(",");
         var jsonData = {};
         jsonData["product_id"] = product_ids;
         jsonData["status"] = Status;
@@ -391,7 +510,7 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
             processData: false,
 
         }).always(function (data) {
-            if (data == "Success") { 
+            if (data == "Success") {
                 if (product_ids.indexOf(',') == -1) {
                     PhotoshootInProgressProductsList
                         .row($("#shootRow_" + product_ids).parents('tr'))
@@ -408,8 +527,13 @@ function updateMultipleProductStatusOnInprogress(PhotoshootId, Status) {
                 }
 
 
-            } $(".loading-box").css("visibility", "hidden");
-        }); 
+            }
+            $(".loading-box").css("visibility", "hidden");
+        });
+    }
+    else {
+        $(".loading-box").css("visibility", "hidden");
+        alertBox('vendorAlertMsg', 'red', 'Please select the item');
     }
     
 }
@@ -623,3 +747,60 @@ $(document).ready(function () {
     }
 });
 
+function ValidateBarcode(e) {
+    var barcode = $(e).val();
+    if (barcode && BarcodeLength(barcode)) {
+        $.ajax({
+            url: '/barcode/validatebarcode/' + barcode,
+            type: 'Get',
+            contentType: 'application/json',
+            success: function (data) {
+                BindValidationClass(data, e);
+            }
+        });
+    }
+    else {
+        BindValidationClass(false, e);
+    }
+}
+
+function BindValidationClass(data, e) {
+    if (data === "True") {
+        $(e).addClass('valid-input');
+        $(e).removeClass('valid-input-error');
+    }
+    else {
+        $(e).removeClass('valid-input');
+        $(e).addClass('valid-input-error');
+    }
+}
+
+function BarcodeLength(barcode) {
+    return barcode.length == 8;
+}
+
+function isOnlyNumbers(e) {
+    var numberRegex = new RegExp(/[0-9 -()+]+$/);
+    var value = $(e).val();
+    var isNumber = numberRegex.test(value);
+    if (!isNumber) {
+        $(e).val('');
+    }
+}
+
+function ToggleBarcodeInput(enable) {
+    if (enable) {
+        $("input[name*='barcode']").prop('disabled', false);
+    }
+    else {
+        $("input[name*='barcode']").prop('disabled', true);
+    }
+}
+
+function GetItems() {
+    ToggleBarcodeInput(true);
+    var itemList = $("#sku-rows").find("input").serializeArray();
+    var items = GetNameValueMapping(itemList);
+    ToggleBarcodeInput(true);
+    return items;
+}

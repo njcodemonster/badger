@@ -7,6 +7,10 @@ using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using GenericModals.Models;
+using GenericModals;
+using Newtonsoft.Json.Linq;
+using System.Text;
+
 namespace badgerApi.Helper
 {
 
@@ -27,6 +31,8 @@ namespace badgerApi.Helper
         Task<T> GenericGetAsync<T>(String _call);
         Task<bool> DeleteItemByProduct(string product_id,string po_id);
         Task<object> GetItemIds(int poid);
+        Task<T> GetAsync<T>(string uri) where T : class;
+        Task<TReturn> PostAsync<TReturn>(object json, string uri) where TReturn : class;
     }
     public class ItemsServiceHelper : IItemServiceHelper
     {
@@ -57,6 +63,33 @@ namespace badgerApi.Helper
             var data = await response.Content.ReadAsStringAsync();
             return data;
 
+        }
+
+        public async Task<T> GetAsync<T>(string uri) where T : class
+        {
+            var client = new HttpClient();
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+            var response = await client.GetAsync(ItemApiUrl + uri, HttpCompletionOption.ResponseHeadersRead);
+            var data = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
+            ThorwException(responseData);
+            return CommonHelper.CommonHelper.IsJson(responseData.Data.ToString()) ?
+                JsonConvert.DeserializeObject<T>(responseData.Data.ToString(), settings)
+                : responseData.Data as T;
+        }
+
+        private static void ThorwException(ResponseModel responseData)
+        {
+            if (responseData.Status != System.Net.HttpStatusCode.OK)
+            {
+                throw new Exception(responseData.Message);
+            }
         }
 
         /*
@@ -353,6 +386,35 @@ namespace badgerApi.Helper
             return Convert.ToBoolean(data);
         }
 
-       
+        public async Task<TReturn> PostAsync<TReturn>(object json, string uri) where TReturn : class
+        {
+            var client = new HttpClient();
+            HttpResponseMessage response;
+            // client.BaseAddress = new Uri(BadgerAPIURL + _call);
+
+            if (json is JObject)
+            {
+                response = await client.PostAsJsonAsync(ItemApiUrl + uri, json.ToString());
+            }
+            else
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(json, Formatting.Indented), Encoding.UTF8, "application/json");
+                response = await client.PostAsync(ItemApiUrl + uri, content);
+            }
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            var responseData = JsonConvert.DeserializeObject<ResponseModel>(data, settings);
+            ThorwException(responseData);
+            return CommonHelper.CommonHelper.IsJson(responseData.Data.ToString()) ?
+                JsonConvert.DeserializeObject<TReturn>(responseData.Data.ToString(), settings)
+                : responseData.Data as TReturn;
+        }
+
     }
 }

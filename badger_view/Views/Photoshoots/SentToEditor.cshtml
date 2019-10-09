@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Sent to editor Photoshoots";
 }
-@model dynamic
+@model List<GenericModals.Models.ProductPhotoshootRep>
 @section Scripts {
     <script src="~/js/photoshootListing.js" asp-append-version="true"></script>
     }
@@ -24,8 +24,8 @@
                             Actions
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                             <a class="dropdown-item select_menu" href="#" onclick="selectAllCheckbox()">Select All</a>
-                            <a class="dropdown-item unselect_menu" href="#" onclick="unselectAllCheckbox()">Unselect All</a>
+                             <a class="dropdown-item select_menu" href="#" onclick="selectAllCheckbox(this)">Select All</a>
+                            <a class="dropdown-item unselect_menu" href="#" onclick="unselectAllCheckbox(this)">Unselect All</a>
                             <a class="dropdown-item" href="#" onclick="updateMultipleProductStatusOnSentToEditor('0')">Mark selected as "Shoot not started"</a>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
             </tr>
         </thead>
         <tbody>
-           @foreach (GenericModals.Models.ProductPhotoshootRep photoshoot in Model.Lists)
+           @foreach (var photoshoot in Model)
             {
 
                 <tr style="">

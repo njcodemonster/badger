@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using CommonHelper;
 using System.Dynamic;
+using GenericModals;
 
 namespace itemService.Interfaces
 {
@@ -46,6 +47,11 @@ namespace itemService.Interfaces
         Task<bool> DeleteBySku(Items NewItem, int qty);
         Task<bool> DeleteItemByProduct(string id,string po_id);
         Task<Object> GetItemsIdsByPoId(int poid);
+        Task<string> UpdateBulkSkus(List<int> skus, int status);
+        Task<IEnumerable<SmallestItem>> GetSmallestItem(List<SmallestItem> items);
+        Task<string> BulkUpdateBarcode(List<BarcodeUpdate> items);
+        Task<bool> ValidateBarcode(string barcode);
+        Task<string> UpdateBulkSkus(List<BarcodeUpdate> items, int status);
     }
     public class ItemRepo : ItemRepository
     {
@@ -965,6 +971,26 @@ namespace itemService.Interfaces
             return ToReturn;
         }
 
+        public async Task<string> UpdateBulkSkus(List<int> skus, int status)
+        {
+            string updateQuery = $"UPDATE items SET item_status_id = {(status == 1 ? 6 : 1)}, updated_at = " + _common.GetTimeStemp() + $" where sku_id in ({string.Join(',', skus)})";
+            using (IDbConnection conn = Connection)
+            {
+                await conn.ExecuteAsync(updateQuery);
+            }
+            return "success";
+        }
+
+        public async Task<string> UpdateBulkSkus(List<BarcodeUpdate> items, int status)
+        {
+            string updateQuery = $"UPDATE items SET item_status_id = {(status == 1 ? 6 : 1)}, updated_at = " + _common.GetTimeStemp() + $" where barcode in ({string.Join(',', items.Where(x => x.barcode > 0).Select(x => x.barcode))})";
+            using (IDbConnection conn = Connection)
+            {
+                await conn.ExecuteAsync(updateQuery);
+            }
+            return "success";
+        }
+
         /*
         Developer: Sajid Khan
         Date: 7-20-19 
@@ -1075,6 +1101,61 @@ namespace itemService.Interfaces
             }
 
             return status;
+        }
+
+        public async Task<IEnumerable<SmallestItem>> GetSmallestItem(List<SmallestItem> items)
+        {
+            string query = $"SELECT MIN(item_id) AS item_id,MAX(barcode) AS barcode,item_status_id,sku,po_id,sku_family,sku_id " +
+                            $"FROM items WHERE item_status_id = 17 " +
+                            $"AND vendor_id IN ({string.Join(',', items.Select(x => x.vendor_id))}) AND sku_id IN ({string.Join(',', items.Select(x => x.sku_id))}) "+
+                            "GROUP BY item_status_id,po_id,sku,sku_family,sku_id ";
+            using (IDbConnection conn = Connection)
+            {
+                return await conn.QueryAsync<SmallestItem>(query);
+            }
+        }
+
+        public async Task<string> BulkUpdateBarcode(List<BarcodeUpdate> items)
+        {
+            string query = string.Empty;
+            foreach (var item in items)
+            {
+                query += $"UPDATE items SET barcode = {item.barcode}, item_status_id = 6 WHERE item_id = {item.item_id}; ";
+            }
+
+            using (IDbConnection conn = Connection)
+            {
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        await conn.ExecuteAsync(query);
+                        tran.Commit();
+                        return "success";
+                    }
+                    catch (Exception)
+                    {
+                        tran.Rollback();
+                        return "failed";
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> ValidateBarcode(string barcode)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string query = "SELECT Count(item_id) FROM items " +
+                                $"WHERE barcode = {barcode};";
+                var isExist = await conn.QueryFirstOrDefaultAsync<int?>(query);
+                return isExist < 1;
+            }
         }
 
     }
