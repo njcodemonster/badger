@@ -1168,7 +1168,7 @@ $(document).on('keydown', "#product_unit_cost,#product_retail", function (e) {
 });
 
 $(document).on('keydown', "#styleSkuQty", function (e) {
-    return onlyNumbers(e)
+    return isNumber(e)
 });
 
 //Edit Style for Single PO Using Drop down

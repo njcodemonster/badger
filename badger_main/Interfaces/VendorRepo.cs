@@ -103,7 +103,7 @@ namespace badgerApi.Interfaces
         {
             using (IDbConnection conn = Connection)
             {
-                var result = await conn.InsertAsync<Vendor>(NewVendor);
+                var result = conn.Insert<Vendor>(NewVendor);
                 return result.ToString() ;
             }
         }
