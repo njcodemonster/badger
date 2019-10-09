@@ -473,7 +473,7 @@ namespace badgerApi.Interfaces
 
         public async Task<IEnumerable<SmallestItem>> GetSmallestSkuByProduct(List<int> productIds)
         {
-            string query = $"SELECT MIN(sk1.sku) AS sku,sku_id,sk1.vendor_id,sk1.product_id FROM `productdb`.`sku` sk1 " +
+            string query = $"SELECT MIN(sk1.sku) AS sku,sku_id,sk1.vendor_id,sk1.product_id FROM `sku` sk1 " +
                             $"WHERE sk1.product_id IN({string.Join(',', productIds)}) " +
                             "GROUP BY sk1.vendor_id,sk1.product_id ";
             using (IDbConnection conn = Connection)
