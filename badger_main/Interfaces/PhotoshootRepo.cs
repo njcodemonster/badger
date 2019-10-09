@@ -248,7 +248,7 @@ namespace badgerApi.Interfaces
         {
             dynamic photoshootsDetails = new ExpandoObject();
             string sQuery = "";
-            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id ,p.vendor_color_name as color, p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, CONCAT(u.name,' ',FROM_UNIXTIME(sh.created_at,'%m/%d')) AS username  " +
+            sQuery = "SELECT  ps.photoshoot_id, ps.product_shoot_status_id ,p.vendor_color_name as color, p.product_id, p.product_name, p.product_vendor_image, p.sku_family, v.`vendor_name`, CONCAT(u.name,' on ',FROM_UNIXTIME(sh.created_at,'%m/%d')) AS username  " +
                 "FROM users u ,product_photoshoots ps  , product p, vendor v, photoshoots sh" +
                 " WHERE  p.product_id = ps.product_id  AND ps.photoshoot_id = " + photoshootId + " " +
                 "AND p.`vendor_id` = v.`vendor_id` AND sh.created_by = u.user_id AND ps.product_shoot_status_id = 1 AND sh.photoshoot_id = ps.photoshoot_id; ";
